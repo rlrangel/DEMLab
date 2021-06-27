@@ -1,0 +1,8 @@
+{
+	"ProblemData": {
+		"name"             : "Bouncing_Disk",
+		"analysis_type"    : "mechanical",
+		"dimension"        : 2,
+		"model_parts_file" : "ModelParts.txt"
+	}
+}

@@ -1,0 +1,672 @@
+->inputoutput classes
+Plot
+Plot_2D
+Plot_3D
+Graph
+Print
+Export
+Export_Paraview
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Master:
+	Tasks:
+	* Run solution loop (from Driver);
+	* Plot results (from Plot, Plot_2D, Plot_3D: for animation and pictures);
+	* Graph results (from Graph - for graph mode results);
+	* Print results (from Print);
+	* Export results (from Export - for Paraview);
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Read:
+	Tasks:
+	* Check for data consistency and send warnings/erros;
+	* Use parallelization with maximum cores avaliable;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Driver: (subclasses: Mechanical, Thermal, ThermoMechanical)
+Thermal analysis assumes that particle does not change position or kinematic variables - no search needed and larger time step allowed;
+
+	Properties:
+	* Model components: total numbers
+	  -Number of binary interactions;
+	  -Number of materials;
+	  -Number of variable properties;
+	  -Number of prescribed conditions;
+	
+	* Model components: handle to objects
+	  -Handles to Interact objects;
+	  -Handles to Material objects;
+	  -Handles to VariableProperty objects;
+	  -Handles to PrecribedCondition objects;
+	
+	* Arrays of IDs:
+	  -Array of active particles IDs;
+	  -Array of active walls IDs;
+	
+	* Model limits:
+	  -Handle to BBox object;
+	  -Handles to Sink objects;
+	
+	* Global conditions:
+	  -Gravity; (default: [])
+	  -GlobalDampingTranslational; (default: [])
+	  -GlobalDampingRotational; (default: [])
+	
+	* Parallelization:
+	  -Parallel; (default: true)
+	  -NumberOfWorkers; (default: max)
+	
+	* Neighbours search:
+	  -Handle to Search object;
+	
+	* Time integration: (handles to scheme objects)
+	  -TranslationalIntegrationScheme;
+	  -RotationalIntegrationScheme;
+	  -ThermalIntegrationScheme;
+	
+	* Time advancing:
+	  -AutoTimeStep; (default: true)
+	  -TimeStep;
+	  -MaxTime;
+	  -MaxSteps;
+	  -Step;
+	  -Time;
+	
+	Tasks: (for thermomechanical)
+	* Pre-precess (parallel loop through all elements):
+	  -Consider time and step as zero to allow respecting the frequency requirements of some methods;
+	  -Remove active particles initially not respecting bbox and sinks;
+	  -Build arrays of active particles/walls IDs; (may need to be updated if particles are removed/created or elements become active)
+	  -Set initial variable properties values of particles and walls;
+	  -Compute the NeighbourDistance according to the models assumed for the interactions (particle property): each model returns the required distance;
+	   (also needs to update NeighbourDistance when particles are created/deleted)
+	  -Virtual method to compute automatic time step according to mechanical or thermal formula (may need to be updated if particles are removed/created);
+	  -Store initial states to results?;
+	
+	* Virtual method to run generic solution loop (check for time and steps limit):
+	  1) Interaction search:
+	     -Call method to perform the algorithm and create the binary Interact objects;
+	  
+	  Interactions loop (parallel):
+	  2) Evaluate interactions sources: forces, torques, heat fluxes;
+	  
+	  Active particles loop (parallel): 
+	  3) Prescribed conditions evaluation:
+	     -Check if particle has PrecribedCondition objects (forces,torques,heat_fluxes), if so, loop through each of them;
+		 -Call method to check if condition is active according to interval and return the value of the condition;
+		 -Sum contribution from conditions of the same type;
+	  
+	  4) Global conditions evaluation:
+	     -Check if particle has weight, if so, add it to the total forces;
+		 -Check if model has global damping, if so, compute them in a particle method (damping coeff. x velocity components);
+	  
+	  5) Contributions summation:
+	     -Sum up all sources of forces, torques and heat fluxes to compute resulting components;
+	  
+	  6) Numerical integration:
+	     -Call scheme objects to integrate Newton and energy balance equations;
+	  
+	  7) Store results: check if it is time;
+	  
+	  8) State update:
+	     -Update kinematic (position,orientation,velocities,accelerations) and thermal state (temperature) of particles;
+	  
+	  9) Particles removal:
+	     -Check if model has bbox;
+		 -Call method to check if bbox is active according to interval and if particle is outside it in order to delete it and finish current iteration; 
+		 -Check if model has sinks, if so, loop through them;
+		 -Call method to check if sink is active according to interval and if particle is inside it in order to delete it and finish current iteration;
+		 -Check if particle has passed its destruction time, is so, delete it;
+	  
+	  10) Particles activation:
+	     -If particle is innactive, check if it is time to activate it;
+	   
+	  11) Properties update:
+	     -Check if particle has VariableProperty objects, if so, loop through them;
+		 -Loop through VariableProperty objects: call method to update the dependent variable of each VariableProperty object;
+		 -Update particle properties that dependends on the basic physical and geometric properties: area/volume, weight, thermal inertia, etc;
+		 -Update also some interaction properties that depend on the modified physical and geometric properties of the particles;
+		  (in fact, some interaction properties are stored to avoid re-computation, but they must be re-computed when the basic physical and geometric properties are changed)
+	  
+	  12) Time advancing:
+	     -Increment step number;
+		 -Update time;
+	
+	* Compute average properties of particles (may be only free ones): velocities,acceleration,mass,forces,temperature,etc;
+	* Compute total properties of particles (may be only free ones): forces,mass,etc;
+	* Compute max/min properties/states of particles (may be only free ones);
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Modelpart:
+	Tasks:
+	* Compute average properties of particles (may be only free ones): velocities,acceleration,mass,forces,temperature,etc;
+	* Compute total properties of particles (may be only free ones): forces,mass,etc;
+	* Compute max/min properties/states of particles (may be only free ones);
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+BBox: (Super)
+	Properties:
+	* Type;
+	* Interval; (default: [0,inf])
+	
+	Tasks:
+	* Main virtual method to check if bbox is active according to interval and delete particle;
+
+BBox_Rectangle:
+	Properties:
+	* Xlimits;
+	* Ylimits;
+
+BBox_Circle:
+	Properties:
+	* Center;
+	* Radius;
+
+BBox_ConvexPolygon:
+	Properties:
+	* TableOfPoints;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Sink: (Super)
+	Properties:
+	* Type;
+	* Interval; (default: [0,inf])
+	
+	Tasks:
+	* Main virtual method to check if sink is active according to interval and delete particle;
+
+Sink_Rectangle:
+	Properties:
+	* Xlimits;
+	* Ylimits;
+
+	Tasks:
+	* Implementation of the virtual method to delete particles inside the rectangle;
+	
+Sink_Circle:
+	Properties:
+	* Center;
+	* Radius;
+
+	Tasks:
+	* Implementation of the virtual method to delete particles inside the circle;
+
+Sink_ConvexPolygon:
+	Properties:
+	* TableOfPoints;
+
+	Tasks:
+	* Implementation of the virtual method to delete particles inside the polygon (Matlab command);
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Material: (subclasses? Solid, Fluid)
+	Properties:
+	* Name;
+	* Mechanical properties:
+	  -Density;
+	  -YoungModulus;
+	  -RealYoungModulus; (default: YoungModulus)
+	  -ShearModulus;
+	  -PoissonRation;
+	  -NormalRestitutionCoeff;
+	* Thermal properties:
+	  -ThermalConductivity;
+	  -SpecificHeatCapacity;
+	  -ThermalExpansionCoeff; (default: 0.0)
+
+	Tasks:
+	* Each object can serve to multiple particles;
+	* Compute G from E,v;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+VariableProperty:
+	Properties:
+	* Name;
+	* DependentVariable;
+	* IndependentVariable;
+	* TableOfValuesXY;
+	* UpdateFrequency; (default: 1)
+	* Interval; (default: [0,inf])
+	
+	Tasks:
+	* Each object can serve to multiple particles (same as material);
+	* Method to return the dependent variable value, given the independent variable value - DVal = GetValue(IVal);
+	* Method to make a linear interpolation between the table values;
+	* Method to update the dependent variable:
+	  checks if its time to update (according to interval and frequency),
+	  gets a copy of the dependent variable using a switch between the options,
+	  updates the dependent variable value according to the table and to the independent variable (must have access to independent variable: temperature, time,...);
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+PrecribedCondition: (Super)
+	Properties:
+	* Type;
+	* Condition; (force,torque,heat_rate)
+	* Interval; (default: [0,inf])
+	
+	Tasks:
+	* Each object can serve to multiple particles (same as material);
+	* Main virtual method to check if condition is active according to interval and return the value of the condition;
+	
+PrecribedCondition_Uniform:
+	Properties:
+	* Value;
+	
+	Tasks:
+	* Implementation of the virtual method to return the uniform value;
+
+PrecribedCondition_Linear:
+	Properties:
+	* IndependentVariable; (time,temperature,etc)
+	* InitialValue;
+	* Slope;
+	
+	Tasks:
+	* Implementation of the virtual method to return the linear value (must have access to independent variable);
+	  y = a + bt -> t = independent variable
+
+PrecribedCondition_Oscillatory:
+	Properties:
+	* IndependentVariable; (time,temperature,etc)
+	* InitialValue;
+	* Amplitude;
+	* Phase; (default: 0.0)
+	* Period;
+	
+	Tasks:
+	* Implementation of the virtual method to return the oscillatory value (must have access to independent variable);
+
+PrecribedCondition_Table:
+	Properties:
+	* IndependentVariable; (time,temperature,etc)
+	* Table;
+	
+	Tasks:
+	* Implementation of the virtual method to return the table value (must have access to independent variable);
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Search: (Super)
+	Properties:
+	* Type;
+	* SearchFrequency; (default: 1)
+	* NeighbourDistance;
+	* PPInteractionTable; (2 columns for the IDs of the 1st and 2nd element of a particle-particle interaction, each row is an existing interaction)
+	* PWInteractionTable; (2 columns for the IDs of the 1st and 2nd element of a particle-wall, each row is an existing interaction)
+	
+	Tasks:
+	* Main virtual method to check if it is a search step according to the SearchFrequency, is so, call the algorithm;
+
+Search_SimpleLoop:
+	Tasks:
+	* Implementation of the virtual method to perform the algorithm:
+	  -Loop through all active particles in parallel;
+	  -Sub-loop through all other active particles with higher ID number and walls;
+	  -Check if there exist an Interact object for both elements (search in PPInteractionTable and PWInteractionTable):
+	    No:  If distance is smaller than NeighbourDistance, create a new Interact object for the binary interaction;
+	    Yes: If distance is greater than NeighbourDistance, delete object;
+	  -If object is to be created, add a handle to it in the list of interactions of the driver and both involved elements (also update PPInteractionTable and PWInteractionTable);
+	  -If object is to be deleted, remove the handle to it in the list of interactions of the driver and both involved elements (also update PPInteractionTable and PWInteractionTable);
+
+Search_RestrictedLoop:
+	Properties:
+	* SearchRadius;
+	* AutoUpdateFrequency; (needs a method to compute ompute the automatic update frequency of the search zone)
+	* SearchListUpdateFrequency;
+	
+	Tasks:
+	* Implementation of the virtual method to perform the algorithm:
+	  -Check if it is time to update the search list, if so, call method to do it (method similar to simple_loop):
+	   -> Loop through all active particles in parallel;
+	   -> Clean particle search list;
+	   -> Sub-loop through all other active particles and walls;
+	   -> Check if distance is smaller than SearchRadius (maximum of both particle), if so, add element to the list;
+
+	  -Check if it is time to perform the search, if so, call method to do it: (if list update has been performed, both can be done in the same loop)
+	   -> Loop through all active particles in parallel;
+	   -> Sub-loop through the particles of the search list with higher ID number, and active walls;
+	   -> Check if there exist an Interact object (search in PPInteractionTable and PWInteractionTable):
+	      No:  If distance is smaller than NeighbourDistance, create a new Interact object for the binary interaction;
+	      Yes: If distance is greater than NeighbourDistance, delete object;
+	   -> If object is to be created, add a handle to it in the list of interactions of the driver and both involved elements;
+	   -> If object is to be deleted, remove the handle to it in the list of interactions of the driver and both involved elements;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Particle: (Super,Disk)
+	Properties:
+	* Identification:
+	  -Handle to ModelParts objects;
+	
+	* Lifecycle:
+	  -Active;
+	  -Creation time;
+	  -Destruction time;
+	
+	* Geometric properties:
+	  -Moment of inertia;
+	  -SurfaceArea;
+	  -Volume;
+	
+	* Physical properties:
+	  -Handle to Material object;
+	  -Mass;
+	  -Weight;
+	  -ThermalInertia;
+	
+	* Variable properties:
+	  -Handles to VariableProperty objects;
+	
+	* Neighbours Interactions:
+	  -Handles to Interact objects;
+	  -Arrays of particles IDs in search list; (for Search_RestrictedLoop)
+	  -NeighbourDistance;
+	
+	* Prescribed conditions: (handles to PrecribedCondition objects)
+	  -PrescribedForce;
+	  -PrescribedTorque;
+	  -PrescribedHeatRate;
+	
+	* Global damping contribution:
+	  -GlobalViscousForce;
+	  -GlobalViscousTorque;
+	
+	* Total forcing terms:
+	  -TotalForce;
+	  -TotalTorque;
+	  -TotalHeatRate;
+	
+	* Current state:
+	  -TranslationalVelocity;
+	  -RotationalVelocity;
+	  -TranslationalAcceleration;
+	  -RotationalAcceleration;
+	  -Temperature;
+	
+	Task:
+	* Virtual method to compute geometric properties (inertia,SurfaceArea,volume,etc);
+	* Virtual method to compute physical properties (mass,weight,ThermalInertia,etc);
+	* Virtual method to sum up all interaction contribution to forces, torques, fluxes;
+	* Virtual method to update current state properties;
+	* Virtual method to integrate Newton and energy balance equations to obtain new kinematics (translational and rotational) and temperature;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Wall: (Super)
+	Properties:
+	* Identification:
+	  -Handle to ModelParts objects;
+	
+	* Lifecycle:
+	  -Active;
+	  -Creation time;
+	  -Destruction time;
+	
+	* Physical properties:
+	  -Handle to Material object;
+	
+	* Interactions:
+	  -Handles to Interact objects;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Interact:
+	Properties:
+	* Members: (interactions are computed considering the first object as reference)
+	  -Element1: Handle to interacting object 1;
+	  -Element2: Handle to interacting object 2;
+	
+	* Interaction models: (Handles to interaction model classes)
+	  -ContactKinematics;
+	  -ContactForceNormal;
+	  -ContactForceTangent;
+	  -ContactTorque;
+	  -ContactThermalConduction;
+	  -ContactAreaCorrectionMethod;
+	  -NonContactThermalConduction;
+	  -ThermalRadiation;
+	
+	* Contact information:
+	  -IsContact;
+	  -ImpactNormalVelocity;
+	  -ContactDuration;
+	  -ContactStartTime;
+	  -ContactStartStep;
+	  -ContactRadius;
+	  -ContactArea;
+	  -AdjustedContactArea;
+	
+	* Effective contact parameters:
+	  -EffectiveRadius;
+	  -EffectiveMass;
+	  -EffectiveYoungModulus;
+	  -EffectiveShearModulus;
+	  -EffectiveThermalConductivity;
+	
+	Tasks:
+	* Compute effective contact properties;
+	* Evaluate interaction results with the model objects;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+ContactKinematics: (Super,DiskDisk)
+	Properties:
+	* SurfaceDistance;
+	* NormalDirection;
+	* NormalRelativeVelocity;
+	* NormalOverlap;
+	* TangentDirection;
+	* TangentRelativeVelocity;
+	* TangentOverlap;
+	
+	Tasks:
+	* Methods to evaluate properties;
+
+ContactForceNormal: (Super)
+	Properties:
+	* NormalForce;
+	
+	Tasks:
+	* General virtual method to evaluate contact normal force;
+
+ContactForceNormal_DiskDisk_LinearViscoElastic:
+	Properties:
+	* ElasticForceValue;
+	* ViscousForceValue;
+	* StiffFormulation; (none,time,overlap,energy)
+	* StiffCoeffFactor;
+	* StiffCoeffValue;
+	* DampFormulation; (none,analytical)
+	* DampCoeffFactor;
+	* DampCoeffValue;
+	* RemoveArtificialCohesion;
+	
+	Tasks:
+	* Implementation of virtual method to evaluate contact normal force: Elastic+Viscous;
+	* Methods to compute stiffness with equivalency formulas: time, overlap, and energy;
+	* Method to compute damping with analytical formula;
+
+ContactForceNormal_DiskDisk_NonlinearViscoElastic:
+	Properties:
+	* ElasticForceFormulation;
+	* ElasticForceValue;
+	* ViscousForceFormulation;
+	* ViscousForceValue;
+	* DampFormulationTTI; (none,proposed)
+	* DampCoeffFactor;
+	* DampCoeffValue;
+	* RemoveArtificialCohesion;
+	
+	Tasks:
+	* Implementation of virtual method to evaluate contact normal force: Elastic+Viscous;
+	* Method to compute elastic force with Hertz formula;
+	* Methods to compute viscous force with formulas: TTI, KK;
+	* Method to compute damping for TTI with proposed formula;
+
+ContactForceNormal_DiskDisk_LinearElastoPlastic:
+	Properties:
+	* LoadingStiffFormulation; (none,time,overlap,energy)
+	* LoadingStiffCoeffFactor;
+	* LoadingStiffCoeffValue;
+	* UnloadingStiffFormulation; (none,uniform,variable)
+	* UnloadingStiffVariableParam;
+	* UnloadingStiffCoeffFactor;
+	* UnloadingStiffCoeffValue;
+	* MaxNormalForce;
+	
+	Tasks:
+	* Implementation of virtual method to evaluate contact normal force;
+	* Methods to compute loading stiffness with equivalency formulas: time, overlap, and energy;
+	* Methods to compute unloading stiffness with formulas: uniform, variable;
+
+ContactForceTangent: (Super)
+	Properties:
+	* TangentForce;
+	
+	Tasks:
+	* General virtual method to evaluate contact tangent force;
+
+ContactForceTangent_DiskDisk_Spring:
+	Properties:
+	* SpringCoeff;
+	
+	Tasks:
+	* Implementation of virtual method to evaluate contact tangent force;
+
+ContactForceTangent_DiskDisk_Dashpot:
+	Properties:
+	* DampCoeff;
+	
+	Tasks:
+	* Implementation of virtual method to evaluate contact tangent force;
+
+ContactForceTangent_DiskDisk_Slider:
+	Properties:
+	* FrictionCoeff;
+	
+	Tasks:
+	* Implementation of virtual method to evaluate contact tangent force;
+
+ContactForceTangent_DiskDisk_SpringSlider:
+	Properties:
+	* SpringCoeff;
+	* FrictionCoeff;
+	
+	Tasks:
+	* Implementation of virtual method to evaluate contact tangent force;
+
+ContactForceTangent_DiskDisk_DashpotSlider:
+	Properties:
+	* DampCoeff;
+	* FrictionCoeff;
+	
+	Tasks:
+	* Implementation of virtual method to evaluate contact tangent force;
+
+ContactForceTangent_DiskDisk_SpringDashpotSlider:
+	Properties:
+	* SpringCoeff;
+	* DampCoeff;
+	* FrictionCoeff;
+	
+	Tasks:
+	* Implementation of virtual method to evaluate contact tangent force;
+
+ContactTorque: (Super)
+	Properties:
+	* Torque;
+	
+	Tasks:
+	* General virtual method to evaluate contact torque;
+
+ContactTorque_DiskDisk:
+	Tasks:
+	* Implementation of virtual method to evaluate contact torque;
+	* Method to compute torque due to tangent force;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+ContactConduction: (Super)
+	Properties:
+	* ThermalConduction;
+	
+	Tasks:
+	* General virtual method to evaluate contact thermal conduction;
+
+ContactConduction_DiskDisk_ThermalPipe:
+	Properties:
+	* ...
+	
+	Tasks:
+	* Implementation of virtual method to evaluate contact thermal conduction;
+
+ContactConduction_DiskDisk_BOB:
+	Properties:
+	* ...
+	
+	Tasks:
+	* Implementation of virtual method to evaluate contact thermal conduction;
+
+NonContactConduction: (Super)
+	Properties:
+	* ThermalConduction;
+	
+	Tasks:
+	* General virtual method to evaluate noncontact thermal conduction;
+
+NonContactConduction_DiskDisk_VoronoiA:
+	Properties:
+	* ...
+	
+	Tasks:
+	* Implementation of virtual method to evaluate noncontact thermal conduction;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+ContactAreaCorrection: (Super)
+	Tasks:
+	* General virtual method to compute adjusted contact area;
+
+ContactAreaCorrection_ZYZ:
+	Properties:
+	* ...
+	
+	Tasks:
+	* Implementation of virtual method to compute adjusted contact area;
+
+ContactAreaCorrection_LMLB:
+	Properties:
+	* ...
+	
+	Tasks:
+	* Implementation of virtual method to compute adjusted contact area;
+
+ContactAreaCorrection_MPMH:
+	Properties:
+	* ...
+	
+	Tasks:
+	* Implementation of virtual method to compute adjusted contact area;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Results:
+Results history arrays: position, displacement, velocity, acceleration, temperature, flux, radius, properties, etc;
+Results to be stored for animation, graph and depict;
+	Properties:
+	* 
+	
+	Tasks:
+	* 
+
+Plot:
+	Subclasses: 2D/3D;
+
+	Properties:
+	* Handle to Result object;
+	* Results to be animated;
+	* Results to be graphed (with the particle IDs, if applicable);
+	* Results to be depicted (with the given time steps);
+	
+	Tasks:
+	* Animation - results in a given frequency of step or time (position, displacement, velocity, acceleration, temperature, flux, geometric and physical properties, etc);
+	* Graph - evolution of properties:
+	  -Particle results over time: position, displacement, velocity, acceleration, temperature, flux, geometric and physical properties, etc;
+	  -Total model results over time: number particles, number of interactions, contact forces, heat flux, etc;
+	* Plot of pictures of particle results in a certain time steps;
+
+Print:
+	* Export to text file in a given frequency of step or time (selected information);
+	* Export to other formats: Paraview, GiD;

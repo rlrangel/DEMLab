@@ -1,0 +1,48 @@
+GENERAL INFORMATION:
+
+To run a simulation, two input files are needed:
+ -ProjectParameters:
+  File with a .json extension, in which .
+  This 
+
+ -ModelParts:
+  
+
+========================================================================================================
+MODEL PARTS FILE:
+
+
+
+========================================================================================================
+PROPJECT PARAMETRS FILE:
+
+--------------------------------------------------------------------------------------------------------
+* ProblemData:
+
+"name":
+ Description: Identification name of the simulation;
+ Type: string;
+ Mandatory: Yes;
+ 
+"dimension":
+ Description: Dimension of the simulation, which can be 2D or 3D;
+ Type: integer;
+ Mandatory: Yes;
+ Options: 2,3;
+ 
+"model_parts_file":
+ Description: 
+ Type: string;
+ Mandatory: Yes;
+ 
+"analysis_type":
+ Description: 
+ Type: string;
+ Mandatory: Yes;
+ Options: "mechanical","thermal","thermo_mechanical";
+
+--------------------------------------------------------------------------------------------------------
+
+
+
+
