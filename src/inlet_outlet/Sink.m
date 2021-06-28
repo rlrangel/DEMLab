@@ -10,9 +10,9 @@ classdef Sink < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of sink shapes
-        RECTANGLE      = 1;
-        CIRCLE         = 2;
-        CONVEX_POLYGON = 3;
+        RECTANGLE = 1;
+        CIRCLE    = 2;
+        POLYGON   = 3;
     end
     
     %% Public properties

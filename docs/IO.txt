@@ -4,28 +4,7 @@ The geometric properties (e.g. Radius) are optional;
 If the geometric properties are not set here, it must be set through the GeometryProperties of the ProjectParameters file;
 If a particle is not set a geometric property, an error occurs;
 If a geometric property is re-set in the GeometryProperties of the ProjectParameters file, a warning is issued an the latest value is kept;
-To refer to all elements of particles or walls, use the keywords AllParticles and AllWalls (these names are reserved an cannot be set to any part);
 To refer to all parts, the keyword is AllParts (alse reserved);
-
-
-%PARTICLES.DISK
-num
-ID,X,Y,OrientationAngle,(Radius)
-
-%WALLS.LINE2D
-num
-ID,X1,Y1,X2,Y2
-
-%WALLS.CIRCLE
-num
-ID,X,Y,R
-
-%MODELPART
-NAME model_part_name
-PARTICLES num
-IDs
-WALLS num
-IDs
 
 ===================================================================================================
 ProjectParameters.json
@@ -45,13 +24,6 @@ CheckOverlaps will make search to a assure that the created particle will not ha
 	-Destructor: (multiple)
 		-> ModelPart: string;
 		-> DestructionTime: double;
-	-BoundingBox:
-		-> Shape: string; (box,sphere)
-		-> MinLimits (for box): [double,double,double];
-		-> MaxLimits (for box): [double,double,double];
-		-> Center (for sphere): [double,double,double];
-		-> Radius (for sphere): double;
-		-> Interval: [double,double]; (default: [0.0,inf])
 	-Sink: (multiple)
 		-> Shape: string; (box,sphere)
 		-> MinLimits (for box): [double,double,double];
@@ -74,20 +46,7 @@ CheckOverlaps will make search to a assure that the created particle will not ha
 
 * InitialConditions:
 Apply only to particles, not walls;
-An I.C. is applied when a particle is created, not necessarily in time 0;
 If an I.C. is applied twice to a particle, a warning is issued saying that the first one is kept;
-
-	InitialTranslationalVelocity:
-		-Value: [double,double,double]; (default: [0.0,0.0,0.0])
-		-ModelParts: [strings];
-		
-	InitialRotationalVelocity:
-		-Value: [double,double,double]; (default: [0.0,0.0,0.0])
-		-ModelParts: [strings];
-
-	InitialTemperature:
-		-Value: double; (default: 0.0)
-		-ModelParts: [strings];
 
 * FixedConditions:
 Multiple sets of each B.C. can be applied;

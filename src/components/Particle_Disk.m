@@ -14,11 +14,19 @@ classdef Particle_Disk < Particle
     methods
         function this = Particle_Disk()
             this = this@Particle(Particle.DISK);
+            this.applyDefaultProps();
         end
     end
     
     %% Public methods
     methods
-        
+        %------------------------------------------------------------------
+        function applyDefaultProps(this)
+            % Kinematic properties
+            this.veloc_trl = [0,0];
+            this.veloc_rot = 0;
+            this.accel_trl = [0,0];
+            this.accel_rot = 0;
+        end
     end
 end

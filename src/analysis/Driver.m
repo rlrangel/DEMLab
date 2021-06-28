@@ -31,6 +31,9 @@ classdef Driver < handle
         mparts    = [];   % vector of objects of the ModelPart class
         particles = [];   % vector of objects of the Particle class
         walls     = [];   % vector of objects of the Wall class
+        
+        % Model limits
+        bbox = [];   % object of BBox class
     end
     
     %% Constructor method

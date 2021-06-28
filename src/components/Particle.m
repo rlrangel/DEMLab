@@ -23,8 +23,13 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         radius = 0;
         
         % Current state
-        coord  = [];   % coordinates of centroid
-        orient = [];   % orientation angles
+        coord       = [];   % coordinates of centroid
+        orient      = [];   % orientation angles
+        veloc_trl   = [];   % translational velocity
+        veloc_rot   = [];   % rotational velocity
+        accel_trl   = [];   % translational acceleration
+        accel_rot   = [];   % rotational acceleration
+        temperature = 0;    % temperature
     end
     
     %% Constructor method
@@ -36,9 +41,16 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         end
     end
     
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = Particle_Disk;
+        end
+    end
+    
     %% Abstract methods
     methods (Abstract)
-        
+        %------------------------------------------------------------------
+        applyDefaultProps(this);
     end
     
     %% Public methods

@@ -4,5 +4,20 @@
 		"analysis_type"    : "mechanical",
 		"dimension"        : 2,
 		"model_parts_file" : "ModelParts.txt"
+	},
+	"BoundingBox": {
+		"shape"     : "rectangle",
+		"limit_min" : [0.0,0.0],
+		"limit_max" : [1.0,1.0],
+		"interval"  : [0.0,100.0]
+	},
+	"InitialCondition": {
+		"TranslationalVelocity":
+		[
+			{
+			"value"       : [0.0,0.0],
+			"model_parts" : []
+			}
+		]
 	}
 }

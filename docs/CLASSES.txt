@@ -44,7 +44,6 @@ Thermal analysis assumes that particle does not change position or kinematic var
 	  -Array of active walls IDs;
 	
 	* Model limits:
-	  -Handle to BBox object;
 	  -Handles to Sink objects;
 	
 	* Global conditions:
@@ -145,22 +144,8 @@ Modelpart:
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 BBox: (Super)
-	Properties:
-	* Type;
-	* Interval; (default: [0,inf])
-	
 	Tasks:
 	* Main virtual method to check if bbox is active according to interval and delete particle;
-
-BBox_Rectangle:
-	Properties:
-	* Xlimits;
-	* Ylimits;
-
-BBox_Circle:
-	Properties:
-	* Center;
-	* Radius;
 
 BBox_ConvexPolygon:
 	Properties:
@@ -373,13 +358,6 @@ Particle: (Super,Disk)
 	  -TotalForce;
 	  -TotalTorque;
 	  -TotalHeatRate;
-	
-	* Current state:
-	  -TranslationalVelocity;
-	  -RotationalVelocity;
-	  -TranslationalAcceleration;
-	  -RotationalAcceleration;
-	  -Temperature;
 	
 	Task:
 	* Virtual method to compute geometric properties (inertia,SurfaceArea,volume,etc);

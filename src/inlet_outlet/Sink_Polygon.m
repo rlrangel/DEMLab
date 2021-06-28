@@ -1,10 +1,10 @@
-%% BBox_ConvexPolygon class
+%% Sink_Polygon class
 %
 %% Description
 %
 %% Implementation
 %
-classdef BBox_ConvexPolygon < BBox
+classdef Sink_Polygon < Sink
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         
@@ -12,8 +12,8 @@ classdef BBox_ConvexPolygon < BBox
     
     %% Constructor method
     methods
-        function this = BBox_ConvexPolygon()
-            this = this@BBox(BBox.CONVEX_POLYGON);
+        function this = Sink_Polygon()
+            this = this@Sink(Sink.POLYGON);
         end
     end
     
