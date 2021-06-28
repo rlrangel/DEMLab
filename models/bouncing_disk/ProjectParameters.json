@@ -5,6 +5,17 @@
 		"dimension"        : 2,
 		"model_parts_file" : "ModelParts.txt"
 	},
+	"Solver": {
+		"auto_time_step"      : true,
+		"time_step"           : 0.1,
+		"final_time"          : 10,
+		"max_steps"           : 10,
+		"integr_scheme_trans" : "foward_euler",
+		"integr_scheme_rotat" : "foward_euler",
+		"integr_scheme_therm" : "foward_euler",
+		"parallelization"     : true,
+		"workers"             : 4
+	},
 	"BoundingBox": {
 		"shape"     : "rectangle",
 		"limit_min" : [0.0,0.0],
@@ -19,5 +30,20 @@
 			"value"       : 100.0,
 			"model_parts" : ["PARTICLES"]
 		}
+	},
+	"Material": {
+			"name"        : "mat",
+			"model_parts" : ["PARTICLES"],
+			"properties"  : {
+				"density"              : 0.0,
+				"young_modulus"        : 0.0,
+				"young_modulus_real"   : 0.0,
+				"shear_modulus"        : 0.0,
+				"poisson_ratio"        : 0.0,
+				"restitution_coeff"    : 0.0,
+				"thermal_conductivity" : 0.0,
+				"heat_capacity"        : 0.0,
+				"thermal_expansion"    : 0.0
+			}
 	}
 }

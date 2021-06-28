@@ -19,6 +19,9 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         % Identification
         type uint8  = uint8.empty;    % flag for type of wall
         id   uint32 = uint32.empty;   % identification number
+        
+        % Physical properties
+        material Material = Material.empty;   % object of the Material class
     end
     
     %% Constructor method

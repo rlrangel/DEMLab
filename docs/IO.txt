@@ -186,25 +186,9 @@ Global damping is the damping coeff that multiplies the velocity component to gi
 	GlobalDampingRotational: [double,double,double];
 
 * Materials: (multiple)
-All particle must have one assigned material, otherwise a warning/error is issued;
-Materials can be assigned to walls, to consider their Youg modulus, Shear modulus and Poison Ratio for computing the effective collision parameters;
 If no material is assigned to a wall, only the particle material is taken into account for computing the effective collision parameters;
-If a property required by a model is missing, an error is issued;
-Binary properties are set in the interaction models;
 The name of a VariableProperties can be set to any material property;
 Before analysis start, the value of a property must be set according to the VariableProperties;
-Check the maximum radius to search for neighbours according to all selected models;
-	-Name: string;
-	-ModelParts: [strings];
-	-Properties:
-		-> Density: double or VariableProperties;
-		-> YoungModulus: double or VariableProperties;
-		-> RealYoungModulus: double or VariableProperties;
-		-> ShearModulus: double or VariableProperties;
-		-> PoissonRation: double or VariableProperties;
-		-> NormalRestitutionCoeff: double or VariableProperties; (pass to mechanical model?)
-		-> ThermalConductivity: double or VariableProperties;
-		-> HeatCapacity: double or VariableProperties;
 
 * GeometricProperties: (multiple)
 Geometric properties are only assigned to particles;
@@ -221,6 +205,7 @@ Before analysis start, the value of a property must be set according to the Vari
 		-> (normal_random) MiddleValue: double;
 		
 * MechanicalInteractionModels: (multiple)
+Check the maximum radius to search for neighbours according to all selected models;
 	-Name: string;
 	-NormalContactForce:
 		-> Model: string;
@@ -299,16 +284,7 @@ A check must be made to make sure that the same property is not being set twice;
 
 * Solver:
 Automatic time step is calculated based on the formulas for critical time step of the mechanical and thermal problems, considering the limiting case;
-Analysis will stop when reaching FinalTime or MaxSteps;
-	-AutoTimeStep: true/false; (default: true)
-	-TimeStep: double;
-	-FinalTime: double;
-	-MaxSteps: int;
-	-TranslationalIntegrationScheme: string; (foward_euler)
 	-RotationalIntegrationScheme: string; (foward_euler,none)
-	-ThermalIntegrationScheme: string; (foward_euler)
-	-Parallelization: true/false; (default: true)
-	-NumberOfWorkers: int; (default: maximum avaliable)
 
 * Search:
 restricted_loop method: area around each particle to search for contacts - each particle stores the IDs of other particles within the radius (updated in a given frequency);

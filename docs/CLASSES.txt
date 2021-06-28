@@ -29,13 +29,11 @@ Thermal analysis assumes that particle does not change position or kinematic var
 	Properties:
 	* Model components: total numbers
 	  -Number of binary interactions;
-	  -Number of materials;
 	  -Number of variable properties;
 	  -Number of prescribed conditions;
 	
 	* Model components: handle to objects
 	  -Handles to Interact objects;
-	  -Handles to Material objects;
 	  -Handles to VariableProperty objects;
 	  -Handles to PrecribedCondition objects;
 	
@@ -49,26 +47,9 @@ Thermal analysis assumes that particle does not change position or kinematic var
 	* Global conditions:
 	  -GlobalDampingTranslational; (default: [])
 	  -GlobalDampingRotational; (default: [])
-	
-	* Parallelization:
-	  -Parallel; (default: true)
-	  -NumberOfWorkers; (default: max)
-	
+	  
 	* Neighbours search:
 	  -Handle to Search object;
-	
-	* Time integration: (handles to scheme objects)
-	  -TranslationalIntegrationScheme;
-	  -RotationalIntegrationScheme;
-	  -ThermalIntegrationScheme;
-	
-	* Time advancing:
-	  -AutoTimeStep; (default: true)
-	  -TimeStep;
-	  -MaxTime;
-	  -MaxSteps;
-	  -Step;
-	  -Time;
 	
 	Tasks: (for thermomechanical)
 	* Pre-precess (parallel loop through all elements):
@@ -181,26 +162,6 @@ Sink_ConvexPolygon:
 
 	Tasks:
 	* Implementation of the virtual method to delete particles inside the polygon (Matlab command);
-
-------------------------------------------------------------------------------------------------------------------------------------------------
-Material: (subclasses? Solid, Fluid)
-	Properties:
-	* Name;
-	* Mechanical properties:
-	  -Density;
-	  -YoungModulus;
-	  -RealYoungModulus; (default: YoungModulus)
-	  -ShearModulus;
-	  -PoissonRation;
-	  -NormalRestitutionCoeff;
-	* Thermal properties:
-	  -ThermalConductivity;
-	  -SpecificHeatCapacity;
-	  -ThermalExpansionCoeff; (default: 0.0)
-
-	Tasks:
-	* Each object can serve to multiple particles;
-	* Compute G from E,v;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 VariableProperty:
@@ -329,12 +290,6 @@ Particle: (Super,Disk)
 	  -Moment of inertia;
 	  -SurfaceArea;
 	  -Volume;
-	
-	* Physical properties:
-	  -Handle to Material object;
-	  -Mass;
-	  -Weight;
-	  -ThermalInertia;
 	
 	* Variable properties:
 	  -Handles to VariableProperty objects;

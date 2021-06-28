@@ -22,6 +22,12 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         % Geometric properties
         radius double = double.empty;
         
+        % Physical properties
+        material      Material = Material.empty;   % object of the Material class
+        mass          double   = double.empty;     % mass (density * volume)
+        weight        double   = double.empty;     % weight vector (mass * gravity)
+        therm_inertia double   = double.empty;     % thermal inertia (mass * heat_capacity)
+        
         % Current state
         coord       double = double.empty;   % coordinates of centroid
         orient      double = double.empty;   % orientation angles

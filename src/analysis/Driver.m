@@ -26,17 +26,28 @@ classdef Driver < handle
         n_mparts    uint32 = uint32.empty;   % number of model parts
         n_particles uint32 = uint32.empty;   % number of particles
         n_walls     uint32 = uint32.empty;   % number of walls
+        n_materials uint32 = uint32.empty;   % number of materials
         
         % Model components: handle to objects
         mparts    ModelPart = ModelPart.empty;   % vector of objects of the ModelPart class
         particles Particle  = Particle.empty;    % vector of objects of the Particle class
         walls     Wall      = Wall.empty;        % vector of objects of the Wall class
+        materials Material  = Material.empty;    % vector of objects of the Material class
         
         % Model limits
         bbox BBox = BBox.empty;   % object of BBox class
         
-        % Global conditions
-        gravity double = double.empty;   % vector of gravity value components
+        % Paralelization
+        parallel logical = logical.empty;   % flag for parallelization of simulation
+        workers  uint16  = uint16.empty;    % number of workers for parallelization
+        
+        % Time advancing
+        auto_step logical = logical.empty;   % flag for automatic time step
+        time_step double  = double.empty;    % time step value
+        max_time  double  = double.empty;    % maximum simulation time
+        max_step  uint32  = uint32.empty;    % maximum step value allowed
+        time      double  = double.empty;    % current simulation time
+        step      uint32  = uint32.empty;    % current simulation step
     end
     
     %% Constructor method
@@ -45,15 +56,13 @@ classdef Driver < handle
             if (nargin > 0)
                 this.type = type;
             end
-            this.n_mparts    = 0;
-            this.n_particles = 0;
-            this.n_walls     = 0;
         end
     end
     
     %% Abstract methods
     methods (Abstract)
-        
+        %------------------------------------------------------------------
+        applyDefaultProps(this);
     end
     
     %% Public methods
