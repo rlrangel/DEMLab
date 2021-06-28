@@ -47,10 +47,7 @@ Thermal analysis assumes that particle does not change position or kinematic var
 	* Global conditions:
 	  -GlobalDampingTranslational; (default: [])
 	  -GlobalDampingRotational; (default: [])
-	  
-	* Neighbours search:
-	  -Handle to Search object;
-	
+	  	
 	Tasks: (for thermomechanical)
 	* Pre-precess (parallel loop through all elements):
 	  -Consider time and step as zero to allow respecting the frequency requirements of some methods;
@@ -232,8 +229,6 @@ PrecribedCondition_Table:
 ------------------------------------------------------------------------------------------------------------------------------------------------
 Search: (Super)
 	Properties:
-	* Type;
-	* SearchFrequency; (default: 1)
 	* NeighbourDistance;
 	* PPInteractionTable; (2 columns for the IDs of the 1st and 2nd element of a particle-particle interaction, each row is an existing interaction)
 	* PWInteractionTable; (2 columns for the IDs of the 1st and 2nd element of a particle-wall, each row is an existing interaction)

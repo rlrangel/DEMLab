@@ -6,7 +6,7 @@
 %
 %% Implementation
 %
-classdef BBox < handle
+classdef BBox < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of bounding box shapes
@@ -27,6 +27,13 @@ classdef BBox < handle
             if (nargin > 0)
                 this.type = type;
             end
+        end
+    end
+    
+    %% Default subclass definition
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = BBox_Rectangle;
         end
     end
     

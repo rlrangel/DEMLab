@@ -41,6 +41,9 @@ classdef Driver < handle
         parallel logical = logical.empty;   % flag for parallelization of simulation
         workers  uint16  = uint16.empty;    % number of workers for parallelization
         
+        % Neighbours search
+        search Search = Search.empty;   % object of Search object
+        
         % Time advancing
         auto_step logical = logical.empty;   % flag for automatic time step
         time_step double  = double.empty;    % time step value

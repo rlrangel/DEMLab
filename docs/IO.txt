@@ -290,8 +290,6 @@ Automatic time step is calculated based on the formulas for critical time step o
 restricted_loop method: area around each particle to search for contacts - each particle stores the IDs of other particles within the radius (updated in a given frequency);
 Create Interaction objects only for larger particles IDs, so the loop can run in parallel for all particles;
 AutomaticUpdateFrequency computes a number of steps for updating the particles list inside the restricted area based on the maximum velocity of a particle in the model and the time it would take to enter the area a reach the neighbohood of a particle;
-	-SearchScheme: string; (simple_loop,restricted_loop)
-	-NeighbourSearchFrequency: int; (default: 1)
 	-NeighbourSearchRadius (for restricted_loop): double;
 	-AutoUpdateFrequency (for restricted_loop): true/false (default: true)
 	-SearchListUpdateFrequency (for restricted_loop): int; (default: 1)

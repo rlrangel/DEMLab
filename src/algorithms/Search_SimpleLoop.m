@@ -13,12 +13,16 @@ classdef Search_SimpleLoop < Search
     %% Constructor method
     methods
         function this = Search_SimpleLoop()
-            this = this@Search(Scheme.SIMPLE_LOOP);
+            this = this@Search(Search.SIMPLE_LOOP);
+            this.applyDefaultProps();
         end
     end
     
     %% Public methods
     methods
-        
+        %------------------------------------------------------------------
+        function applyDefaultProps(this)
+            this.freq = 1;
+        end
     end
 end

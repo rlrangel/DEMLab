@@ -44,6 +44,9 @@ classdef Read < handle
                 status = this.getSolverParam(json,drv);
             end
             if (status)
+                status = this.getSearch(json,drv);
+            end
+            if (status)
                 status = this.getBoundingBox(json,drv);
             end
             if (status)
@@ -648,6 +651,39 @@ classdef Read < handle
                     status = 0; return;
                 end
                 drv.workers = json.Solver.workers;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getSearch(this,json,drv)
+            status = 1;
+            if (~isfield(json,'Search'))
+                fprintf(2,'Missing data in project parameters file: Search.\n');
+                status = 0; return;
+            elseif (~isfield(json.Search,'scheme'))
+                fprintf(2,'Missing data in project parameters file: Search.scheme.\n');
+                status = 0; return;
+            end
+            
+            % Scheme
+            scheme = string(json.Search.scheme);
+            if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'simple_loop'))
+                fprintf(2,'Invalid data in project parameters file: Search.scheme.\n');
+                fprintf(2,'Available options: simple_loop.\n');
+                status = 0; return;
+            end
+            if (strcmp(scheme,'simple_loop'))
+                drv.search = Search_SimpleLoop();
+            end
+            
+            % Search frequency
+            if (isfield(json.Search,'search_frequency'))
+                if (~this.isDoubleArray(json.Search.search_frequency,1) || json.Search.search_frequency <= 0)
+                    fprintf(2,'Invalid data in project parameters file: Search.search_frequency.\n');
+                    fprintf(2,'It must be a positive integer.\n');
+                    status = 0; return;
+                end
+                drv.search.freq = json.Search.search_frequency;
             end
         end
         

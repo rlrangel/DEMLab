@@ -6,7 +6,7 @@
 %
 %% Implementation
 %
-classdef Search < handle
+classdef Search < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of search
@@ -15,7 +15,8 @@ classdef Search < handle
     
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        type int8 = uint8.empty;   % flag for type of search
+        type int8  = uint8.empty;   % flag for type of search
+        freq int32 = int32.empty;   % frequency of search (in steps)
     end
     
     %% Constructor method
@@ -24,12 +25,21 @@ classdef Search < handle
             if (nargin > 0)
                 this.type = type;
             end
+            
+        end
+    end
+    
+    %% Default subclass definition
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = Search_SimpleLopp;
         end
     end
     
     %% Abstract methods
     methods (Abstract)
-        
+        %------------------------------------------------------------------
+        applyDefaultProps(this);
     end
     
     %% Public methods

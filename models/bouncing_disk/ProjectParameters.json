@@ -16,6 +16,10 @@
 		"parallelization"     : true,
 		"workers"             : 4
 	},
+	"Search": {
+		"scheme"           : "simple_loop",
+		"search_frequency" : 10
+	},
 	"BoundingBox": {
 		"shape"     : "rectangle",
 		"limit_min" : [0.0,0.0],
