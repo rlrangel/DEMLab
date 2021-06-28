@@ -7,22 +7,20 @@
 classdef ModelPart < handle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        name         = [];   % identification name of model part
-        
-        n_particles  = 0;    % number of particles
-        n_walls      = 0;    % number of walls
-        
-        id_particles = [];   % vector of particles IDs
-        id_walls     = [];   % vector of walls IDs
-        
-        particles    = [];   % vector of objects of the Particle class
-        walls        = [];   % vector of objects of the Wall class
+        name         string   = string.empty;     % identification name of model part
+        n_particles  uint32   = uint32.empty;     % number of particles
+        n_walls      uint32   = uint32.empty;     % number of walls
+        id_particles uint32   = uint32.empty;     % vector of particles IDs
+        id_walls     uint32   = uint32.empty;     % vector of walls IDs
+        particles    Particle = Particle.empty;   % vector of objects of the Particle class
+        walls        Wall     = Wall.empty;       % vector of objects of the Wall class
     end
     
     %% Constructor method
     methods
         function this = ModelPart()
-            
+            this.n_particles = 0;
+            this.n_walls     = 0;
         end
     end
     

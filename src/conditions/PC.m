@@ -10,15 +10,15 @@ classdef PC < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of scheme
-        UNIFORM     = 1;
-        LINEAR      = 2;
-        OSCILLATORY = 3;
-        TABLE       = 4;
+        UNIFORM     = uint8(1);
+        LINEAR      = uint8(2);
+        OSCILLATORY = uint8(3);
+        TABLE       = uint8(4);
     end
     
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        type = 0;   % flag for type of prescribed condition
+        type uint8  = uint8.empty;   % flag for type of prescribed condition
     end
     
     %% Constructor method

@@ -4,11 +4,9 @@ The geometric properties (e.g. Radius) are optional;
 If the geometric properties are not set here, it must be set through the GeometryProperties of the ProjectParameters file;
 If a particle is not set a geometric property, an error occurs;
 If a geometric property is re-set in the GeometryProperties of the ProjectParameters file, a warning is issued an the latest value is kept;
-To refer to all parts, the keyword is AllParts (alse reserved);
 
 ===================================================================================================
 ProjectParameters.json
-Note: Always when a property is re-assigned to a particle, the last one is kept (a warning can be issued, if necessary);
 
 * CreationDestruction:
 Only one creator/destructor time is allowed per element, otherwise a warining is issued;
@@ -43,10 +41,6 @@ CheckOverlaps will make search to a assure that the created particle will not ha
 		-> CheckOverlaps: true/false; (default: true)
 		-> ModelPart: string;
 		-> Interval: [double,double]; (default: [0.0,inf])
-
-* InitialConditions:
-Apply only to particles, not walls;
-If an I.C. is applied twice to a particle, a warning is issued saying that the first one is kept;
 
 * FixedConditions:
 Multiple sets of each B.C. can be applied;
@@ -187,10 +181,7 @@ All P.C. can be have overlaped intervals for the same particles by summing them;
 			-TableOfValues: [];
 
 * GlobalConditions:
-Applied to all particles;
-If gravity is not set, weight is not considered as a force;
 Global damping is the damping coeff that multiplies the velocity component to give a global viscous force (in adition to the contact one);
-	Gravity: [double,double,double];
 	GlobalDampingTranslational: [double,double,double];
 	GlobalDampingRotational: [double,double,double];
 

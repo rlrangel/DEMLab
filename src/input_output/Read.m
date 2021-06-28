@@ -25,14 +25,14 @@ classdef Read < handle
             drv = [];
             
             % Parse json file
-            json_txt = char(fread(fid,inf)');
+            file_txt = char(fread(fid,inf)');
             fclose(fid);
-            if (isempty(json_txt))
+            if (isempty(file_txt))
                 fprintf(2,'Empty project parameters file.\n');
                 status = 0;
                 return;
             end
-            json = jsondecode(json_txt);
+            json = jsondecode(file_txt);
             
             % Feed simulation data
             if (status)
@@ -43,6 +43,9 @@ classdef Read < handle
             end
             if (status)
                 status = this.getBoundingBox(json,drv);
+            end
+            if (status)
+                status = this.getGlobalCondition(json,drv);
             end
             if (status)
                 status = this.getInitialCondition(json,drv);
@@ -100,11 +103,18 @@ classdef Read < handle
             end
             
             % Set problem name
-            drv.name = string(PD.name);
+            name = PD.name;
+            if (isempty(name) || (~isa(name,'string') && ~isa(name,'char')))
+                fprintf(2,'Invalid data in project parameters file: ProblemData.name.\n');
+                fprintf(2,'It must be a string with the name representing the simulation.\n');
+                status = 0;
+                return;
+            end
+            drv.name = name;
             
             % Set model dimension
             dim = PD.dimension;
-            if (~isnumeric(dim) || ~isa(dim,'double') || (dim ~= 2 && dim ~= 3))
+            if (length(dim) ~= 1 || ~isnumeric(dim) || ~isa(dim,'double') || (dim ~= 2 && dim ~= 3))
                 fprintf(2,'Invalid data in project parameters file: ProblemData.dimension.\n');
                 fprintf(2,'Available options: 2 or 3.\n');
                 status = 0;
@@ -113,7 +123,13 @@ classdef Read < handle
             drv.dimension = dim;
             
             % Get model parts file name
-            model_parts_file = string(PD.model_parts_file);
+            model_parts_file = PD.model_parts_file;
+            if (isempty(model_parts_file) || (~isa(model_parts_file,'string') && ~isa(model_parts_file,'char')))
+                fprintf(2,'Invalid data in project parameters file: ProblemData.model_parts_file.\n');
+                fprintf(2,'It must be a string with the model part file name.\n');
+                status = 0;
+                return;
+            end
         end
         
         %------------------------------------------------------------------
@@ -130,11 +146,6 @@ classdef Read < handle
                 return;
             end
             
-            % Set class of vectors with default sub-classes
-            drv.particles = Particle_Disk();
-            drv.walls     = Wall_Line2D();
-            drv.mparts    = ModelPart();
-            
             % Look for tag strings
             while (status == 1 && ~feof(fid))
                 line = deblank(fgetl(fid));
@@ -150,52 +161,25 @@ classdef Read < handle
                 end
             end
             fclose(fid);
+            if (status == 0)
+                return;
+            end
             
-            % Check input data
+            % Check ID numbering
             if (drv.n_particles == 0)
                 fprintf(2,"The must have at least one particle.\n");
                 status = 0;
                 return;
-            else
-                ids = zeros(drv.n_particles,1);
-                for i = 1:drv.n_particles
-                    id = drv.particles(i).id;
-                    if (any(ids==id))
-                        fprintf(2,"Invalid numbering of particles: IDs cannot be repeated.\n");
-                        status = 0;
-                        return;
-                    end
-                    ids(i) = id;
-                end
-                if (drv.n_particles ~= max(ids))
-                    fprintf(2,"Invalid numbering of particles: IDs cannot skip numbers.\n");
-                    status = 0;
-                    return;
-                end
+            elseif (drv.particles(drv.n_particles).id > drv.n_particles)
+                fprintf(2,"Invalid numbering of particles: IDs cannot skip numbers.\n");
+                status = 0;
+                return;
             end
             
-            if (drv.n_walls == 0)
-                drv.walls = [];
-            else
-                ids = zeros(drv.n_walls,1);
-                for i = 1:drv.n_walls
-                    id = drv.walls(i).id;
-                    if (any(ids==id))
-                        fprintf(2,"Invalid numbering of walls: IDs cannot be repeated.\n");
-                        status = 0;
-                        return;
-                    end
-                    ids(i) = id;
-                end
-                if (drv.n_walls ~= max(ids))
-                    fprintf(2,"Invalid numbering of walls: IDs cannot skip numbers.\n");
-                    status = 0;
-                    return;
-                end
-            end
-            
-            if (drv.n_mparts == 0)
-                drv.mparts = [];
+            if (drv.walls(drv.n_walls).id > drv.n_walls)
+                fprintf(2,"Invalid numbering of walls: IDs cannot skip numbers.\n");
+                status = 0;
+                return;
             end
         end
         
@@ -235,8 +219,8 @@ classdef Read < handle
                 % Read all values of current line
                 values = sscanf(line,'%f');
                 if (length(values) ~= 4 && length(values) ~= 5)
-                    fprintf(2,"Invalid data in model parts file: Number of PARTICLES.DISK parameters.\n");
-                    fprintf(2,"PARTICLES.DISK requires 5 parameters: ID, coord X, coord Y, orientation, radius (radius is optional in this file).\n");
+                    fprintf(2,"Invalid data in model parts file: Number of parameters of PARTICLES.DISK.\n");
+                    fprintf(2,"It requires 5 parameters: ID, coord X, coord Y, orientation, radius (radius is optional in this file).\n");
                     status = 0;
                     return;
                 end
@@ -289,6 +273,11 @@ classdef Read < handle
                 end
                 
                 % Store handle to particle object
+                if (id <= length(drv.particles) && ~isempty(drv.particles(id).id))
+                    fprintf(2,"Invalid numbering of particles: IDs cannot be repeated.\n");
+                    status = 0;
+                    return;
+                end
                 drv.particles(id) = particle;
             end
             
@@ -335,8 +324,8 @@ classdef Read < handle
                 % Read all values of current line
                 values = sscanf(line,'%f');
                 if (length(values) ~= 5)
-                    fprintf(2,"Invalid data in model parts file: Number of WALLS.LINE2D parameters.\n");
-                    fprintf(2,"WALLS.LINE2D requires 5 parameters: ID, coord X1, coord Y1, coord X2, coord Y2.\n");
+                    fprintf(2,"Invalid data in model parts file: Number of parameters of WALLS.LINE2D.\n");
+                    fprintf(2,"It requires 5 parameters: ID, coord X1, coord Y1, coord X2, coord Y2.\n");
                     status = 0;
                     return;
                 end
@@ -366,6 +355,11 @@ classdef Read < handle
                 wall.coord_end = coord(3:4)';
                 
                 % Store handle to wall object
+                if (id <= length(drv.walls) && ~isempty(drv.walls(id).id))
+                    fprintf(2,"Invalid numbering of walls: IDs cannot be repeated.\n");
+                    status = 0;
+                    return;
+                end
                 drv.walls(id) = wall;
             end
             
@@ -412,8 +406,8 @@ classdef Read < handle
                 % Read all values of current line
                 values = sscanf(line,'%f');
                 if (length(values) ~= 4)
-                    fprintf(2,"Invalid data in model parts file: Number of WALLS.CIRCLE parameters.\n");
-                    fprintf(2,"WALLS.CIRCLE requires 4 parameters: ID, center coord X, center coord Y, radius.\n");
+                    fprintf(2,"Invalid data in model parts file: Number of parameters of WALLS.CIRCLE.\n");
+                    fprintf(2,"It requires 4 parameters: ID, center coord X, center coord Y, radius.\n");
                     status = 0;
                     return;
                 end
@@ -452,6 +446,11 @@ classdef Read < handle
                 wall.radius = radius;
                 
                 % Store handle to wall object
+                if (id <= length(drv.walls) && ~isempty(drv.walls(id).id))
+                    fprintf(2,"Invalid numbering of walls: IDs cannot be repeated.\n");
+                    status = 0;
+                    return;
+                end
                 drv.walls(id) = wall;
             end
             
@@ -490,44 +489,44 @@ classdef Read < handle
             mp.name = line{2};
             
             % Model part components
-            line = deblank(fgetl(fid));
-            if (isempty(line) || isnumeric(line))
-                warning('off','backtrace');
-                warning("Model part %s is empty.",mp.name);
-                warning('on','backtrace');
-                return;
-            end
-            line = regexp(line,' ','split');
-            if (~ismember(line{1},reserved))
-                fprintf(2,"Invalid data in model parts file: MODELPART can contain only two fields after its name, PARTICLES and WALLS.\n");
-                status = 0;
-                return;
-            elseif (length(line) ~= 2 || isnan(str2double(line{2})) || floor(str2double(line{2})) ~= ceil(str2double(line{2})) || str2double(line{2}) < 0)
-                fprintf(2,"Invalid data in model parts file: Number of %s of MODELPART %s was not provided correctly.\n",line{1},mp.name);
-                status = 0;
-                return;
-            end
-            
-            % PARTICLES
-            if (strcmp(line{1},'PARTICLES'))
-                % Store number of particles
-                np = str2double(line{2});
-                mp.n_particles = np;
-                
-                % Get all particles IDs
-                [particles,count] = fscanf(fid,'%d');
-                if (count ~= np)
-                    fprintf(2,"Invalid data in model parts file: Number of PARTICLES of MODELPART %s is not consistent with the provided IDs.\n",mp.name);
+            c = 0;
+            while true
+                % Get title and total number of components
+                line = deblank(fgetl(fid));
+                if (isempty(line) || isnumeric(line))
+                    break;
+                end
+                line = regexp(line,' ','split');
+                if (~ismember(line{1},reserved))
+                    fprintf(2,"Invalid data in model parts file: MODELPART can contain only two fields after its name, PARTICLES and WALLS.\n");
+                    status = 0;
+                    return;
+                elseif (length(line) ~= 2 || isnan(str2double(line{2})) || floor(str2double(line{2})) ~= ceil(str2double(line{2})) || str2double(line{2}) < 0)
+                    fprintf(2,"Invalid data in model parts file: Number of %s of MODELPART %s was not provided correctly.\n",line{1},mp.name);
                     status = 0;
                     return;
                 end
                 
-                % Store particles IDs
-                mp.id_particles = particles';
-                
-                % Store handle to particle objects
-                if (np > 0)
-                    mp.particles = Particle_Disk();
+                % PARTICLES
+                if (strcmp(line{1},'PARTICLES'))
+                    c = c + 1;
+                    
+                    % Store number of particles
+                    np = str2double(line{2});
+                    mp.n_particles = np;
+
+                    % Get all particles IDs
+                    [particles,count] = fscanf(fid,'%d');
+                    if (count ~= np)
+                        fprintf(2,"Invalid data in model parts file: Number of PARTICLES of MODELPART %s is not consistent with the provided IDs.\n",mp.name);
+                        status = 0;
+                        return;
+                    end
+
+                    % Store particles IDs
+                    mp.id_particles = particles';
+
+                    % Store handle to particle objects
                     for i = 1:np
                         id = particles(i);
                         if (floor(id) ~= ceil(id) || id <=0 || id > length(drv.particles))
@@ -537,47 +536,27 @@ classdef Read < handle
                         end
                         mp.particles(i) = drv.particles(id);
                     end
-                end
-            end
-            if (feof(fid))
-                return;
-            end
-            
-            % WALLS
-            line = deblank(fgetl(fid));
-            if (isempty(line) || isnumeric(line))
-                return;
-            end
-            line = regexp(line,' ','split');
-            if (~ismember(line{1},reserved))
-                fprintf(2,"Invalid data in model parts file: MODELPART can contain only two fields after its name, PARTICLES and WALLS.\n");
-                status = 0;
-                return;
-            elseif (length(line) ~= 2 || isnan(str2double(line{2})) || floor(str2double(line{2})) ~= ceil(str2double(line{2})) || str2double(line{2}) < 0)
-                fprintf(2,"Invalid data in model parts file: Number of %s of MODELPART %s was not provided correctly.\n",line{1},mp.name);
-                status = 0;
-                return;
-            end
-            
-            if (strcmp(line{1},'WALLS'))
-                % Store number of walls
-                nw = str2double(line{2});
-                mp.n_walls = nw;
-                
-                % Get all walls IDs
-                [walls,count] = fscanf(fid,'%d');
-                if (count ~= nw)
-                    fprintf(2,"Invalid data in model parts file: Number of WALLS of MODELPART %s is not consistent with the provided IDs.\n",mp.name);
-                    status = 0;
-                    return;
-                end
-                
-                % Store walls IDs
-                mp.id_walls = walls';
-                
-                % Store handle to walls objects
-                if (nw > 0)
-                    mp.walls = Wall_Line2D();
+
+                % WALLS
+                elseif (strcmp(line{1},'WALLS'))
+                    c = c + 1;
+                    
+                    % Store number of walls
+                    nw = str2double(line{2});
+                    mp.n_walls = nw;
+
+                    % Get all walls IDs
+                    [walls,count] = fscanf(fid,'%d');
+                    if (count ~= nw)
+                        fprintf(2,"Invalid data in model parts file: Number of WALLS of MODELPART %s is not consistent with the provided IDs.\n",mp.name);
+                        status = 0;
+                        return;
+                    end
+
+                    % Store walls IDs
+                    mp.id_walls = walls';
+
+                    % Store handle to walls objects
                     for i = 1:nw
                         id = walls(i);
                         if (floor(id) ~= ceil(id) || id <=0 || id > length(drv.walls))
@@ -587,6 +566,10 @@ classdef Read < handle
                         end
                         mp.walls(i) = drv.walls(id);
                     end
+                end
+                
+                if (c == 2 || feof(fid))
+                    break;
                 end
             end
             
@@ -603,24 +586,24 @@ classdef Read < handle
             if (~isfield(json,'BoundingBox'))
                 return;
             end
-            BoundingBox = json.BoundingBox;
+            BB = json.BoundingBox;
             
             % Shape
-            if (~isfield(BoundingBox,'shape'))
+            if (~isfield(BB,'shape'))
                 fprintf(2,'Missing data in project parameters file: BoundingBox.shape.\n');
                 fprintf(2,'Available options: rectangle, circle.\n');
                 status = 0;
                 return;
             end
-            shape = string(BoundingBox.shape);
+            shape = string(BB.shape);
             
-            % Rectangle
+            % RECTANGLE
             if (strcmp(shape,'rectangle'))
                 warn = 0;
                 
                 % Minimum limits
-                if (isfield(BoundingBox,'limit_min'))
-                    limit_min = BoundingBox.limit_min;
+                if (isfield(BB,'limit_min'))
+                    limit_min = BB.limit_min;
                     if (length(limit_min) ~= 2 || ~isnumeric(limit_min))
                         fprintf(2,'Invalid data in project parameters file: BoundingBox.limit_min.\n');
                         fprintf(2,'It must be a pair of numeric values with X,Y coordinates of bottom-left corner.\n');
@@ -633,8 +616,8 @@ classdef Read < handle
                 end
                 
                 % Maximum limits
-                if (isfield(BoundingBox,'limit_max'))
-                    limit_max = BoundingBox.limit_max;
+                if (isfield(BB,'limit_max'))
+                    limit_max = BB.limit_max;
                     if (length(limit_max) ~= 2 || ~isnumeric(limit_max))
                         fprintf(2,'Invalid data in project parameters file: BoundingBox.limit_max.\n');
                         fprintf(2,'It must be a pair of numeric values with X,Y coordinates of top-right corner.\n');
@@ -670,15 +653,15 @@ classdef Read < handle
                 bbox.limit_max = limit_max';
                 drv.bbox = bbox;
                 
-            % Circle
+            % CIRCLE
             elseif (strcmp(shape,'circle'))
-                if (~isfield(BoundingBox,'center') || ~isfield(BoundingBox,'radius'))
+                if (~isfield(BB,'center') || ~isfield(BB,'radius'))
                     fprintf(2,'Invalid data in project parameters file: Missing BoundingBox.center and/or BoundingBox.radius.\n');
                     status = 0;
                     return;
                 end
-                center = BoundingBox.center;
-                radius = BoundingBox.radius;
+                center = BB.center;
+                radius = BB.radius;
                 
                 % Center
                 if (length(center) ~= 2 || ~isnumeric(center))
@@ -689,7 +672,7 @@ classdef Read < handle
                 end
                 
                 % Radius
-                if (~isnumeric(radius) || radius <= 0)
+                if (length(radius) ~= 1 || ~isnumeric(radius) || radius <= 0)
                     fprintf(2,'Invalid data in project parameters file: BoundingBox.radius.\n');
                     fprintf(2,'It must be a positive value.\n');
                     status = 0;
@@ -702,31 +685,6 @@ classdef Read < handle
                 bbox.radius = radius;
                 drv.bbox = bbox;
                 
-            % Polygon
-%             elseif (strcmp(BoundingBox.shape,'polygon'))
-%                 if (~isfield(BoundingBox,'coord_x') || ~isfield(BoundingBox,'coord_y'))
-%                     fprintf(2,'Invalid data in project parameters file: Missing X or Y coordinates of BoundingBox with polygon shape.\n');
-%                     status = 0;
-%                     return;
-%                 end
-%                 coord_x = BoundingBox.coord_x;
-%                 coord_y = BoundingBox.coord_y;
-%                 
-%                 % Check consistency
-%                 if (~isnumeric(coord_x) || ~isnumeric(coord_y) || length(coord_x) ~= length(coord_y))
-%                     fprintf(2,'Invalid data in project parameters file: BoundingBox.coord_x and BoundingBox.coord_y must be numeric vectors of same size.\n');
-%                     status = 0;
-%                     return;
-%                 end
-%                 
-%                 % Check if polygon is valid
-%                 
-%                 
-%                 % Create object and set properties
-%                 bbox = BBox_Polygon();
-%                 bbox.coord_x = coord_x;
-%                 bbox.coord_y = coord_y;
-%                 drv.bbox = bbox;
             else
                 fprintf(2,'Invalid data in project parameters file: BoundingBox.shape.\n');
                 fprintf(2,'Available options: rectangle, circle.\n');
@@ -735,8 +693,8 @@ classdef Read < handle
             end
             
             % Interval
-            if (isfield(BoundingBox,'interval'))
-                interval = BoundingBox.interval;
+            if (isfield(BB,'interval'))
+                interval = BB.interval;
                 if (length(interval) ~= 2 || ~isnumeric(interval) || interval(1) >= interval(2))
                     fprintf(2,'Invalid data in project parameters file: BoundingBox.interval.\n');
                     fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
@@ -748,21 +706,42 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
+        function status = getGlobalCondition(~,json,drv)
+            status = 1;
+            if (~isfield(json,'GlobalCondition'))
+                return;
+            end
+            GC = json.GlobalCondition;
+            
+            % Gravity
+            if (isfield(GC,'gravity'))
+                g = GC.gravity;
+                if (length(g) ~= 2 || ~isnumeric(g))
+                    fprintf(2,'Invalid data in project parameters file: GlobalCondition.gravity.\n');
+                    fprintf(2,'It must be a pair of numeric values with X,Y gravity acceleration components.\n');
+                    status = 0;
+                    return;
+                end
+                drv.gravity = g';
+            end
+        end
+        
+        %------------------------------------------------------------------
         function status = getInitialCondition(~,json,drv)
             status = 1;
             if (~isfield(json,'InitialCondition'))
                 return;
             end
-            InitialCondition = json.InitialCondition;
+            IC = json.InitialCondition;
             
-            % Translational velocity
-            if (isfield(InitialCondition,'TranslationalVelocity'))
-                TranslationalVelocity = InitialCondition.TranslationalVelocity;
+            % TRANSLATIONAL VELOCITY
+            if (isfield(IC,'TranslationalVelocity'))
+                TranslationalVelocity = IC.TranslationalVelocity;
                 
                 for i = 1:length(TranslationalVelocity)
                     TV = TranslationalVelocity(i);
                     if (~isfield(TV,'value') || ~isfield(TV,'model_parts'))
-                        fprintf(2,'Missing data in project parameters file: InitialCondition.TranslationalVelocity.value or InitialCondition.model_parts.\n');
+                        fprintf(2,'Missing data in project parameters file: InitialCondition.TranslationalVelocity must have value and model_parts.\n');
                         status = 0;
                         return;
                     end
@@ -779,8 +758,8 @@ classdef Read < handle
                     % Apply initial velocity to selected particles
                     model_parts = TV.model_parts;
                     for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~isa(name,'string'))
+                        name = model_parts{j};
+                        if (~isa(name,'string') && ~isa(name,'char'))
                             fprintf(2,'Invalid data in project parameters file: InitialCondition.TranslationalVelocity.model_parts.\n');
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0;
@@ -797,7 +776,9 @@ classdef Read < handle
                                 end
                             end
                             if (isempty(mp))
-                                % warning
+                                warning('off','backtrace');
+                                warning("Model part %s used in InitialCondition.TranslationalVelocity does not exist.",name);
+                                warning('on','backtrace');
                                 continue;
                             end
                             for k = 1:mp.n_particles
@@ -807,6 +788,117 @@ classdef Read < handle
                     end
                 end
             end
+            
+            % ROTATIONAL VELOCITY
+            if (isfield(IC,'RotationalVelocity'))
+                RotationalVelocity = IC.RotationalVelocity;
+                
+                for i = 1:length(RotationalVelocity)
+                    RV = RotationalVelocity(i);
+                    if (~isfield(RV,'value') || ~isfield(RV,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: InitialCondition.RotationalVelocity must have value and model_parts.\n');
+                        status = 0;
+                        return;
+                    end
+                    
+                    % Velocity value
+                    vel = RV.value;
+                    if (length(vel) ~= 1 || ~isnumeric(vel))
+                        fprintf(2,'Invalid data in project parameters file: InitialCondition.RotationalVelocity.value.\n');
+                        fprintf(2,'It must be a numeric value with rotational velocity.\n');
+                        status = 0;
+                        return;
+                    end
+                    
+                    % Apply initial velocity to selected particles
+                    model_parts = RV.model_parts;
+                    for j = 1:length(model_parts)
+                        name = model_parts{j};
+                        if (~isa(name,'string') && ~isa(name,'char'))
+                            fprintf(2,'Invalid data in project parameters file: InitialCondition.RotationalVelocity.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0;
+                            return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            for k = 1:drv.n_particles
+                                drv.particles(k).veloc_rot = vel;
+                            end
+                        else
+                            mp = [];
+                            for k = 1:drv.n_mparts
+                                if (strcmp(drv.mparts(k).name,name))
+                                    mp = drv.mparts(k);
+                                end
+                            end
+                            if (isempty(mp))
+                                warning('off','backtrace');
+                                warning("Model part %s used in InitialCondition.RotationalVelocity does not exist.",name);
+                                warning('on','backtrace');
+                                continue;
+                            end
+                            for k = 1:mp.n_particles
+                                mp.particles(k).veloc_rot = vel;
+                            end
+                        end
+                    end
+                end
+            end
+            
+            % TEMPERATURE
+            if (isfield(IC,'Temperature'))
+                Temperature = IC.Temperature;
+                
+                for i = 1:length(Temperature)
+                    T = Temperature(i);
+                    if (~isfield(T,'value') || ~isfield(T,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: InitialCondition.Temperature must have value and model_parts.\n');
+                        status = 0;
+                        return;
+                    end
+                    
+                    % Temperature value
+                    temp = T.value;
+                    if (length(temp) ~= 1 || ~isnumeric(temp))
+                        fprintf(2,'Invalid data in project parameters file: InitialCondition.Temperature.value.\n');
+                        fprintf(2,'It must be a numeric value with temperature.\n');
+                        status = 0;
+                        return;
+                    end
+                    
+                    % Apply initial temperature to selected particles
+                    model_parts = T.model_parts;
+                    for j = 1:length(model_parts)
+                        name = model_parts{j};
+                        if (~isa(name,'string') && ~isa(name,'char'))
+                            fprintf(2,'Invalid data in project parameters file: InitialCondition.Temperature.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0;
+                            return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            for k = 1:drv.n_particles
+                                drv.particles(k).temperature = temp;
+                            end
+                        else
+                            mp = [];
+                            for k = 1:drv.n_mparts
+                                if (strcmp(drv.mparts(k).name,name))
+                                    mp = drv.mparts(k);
+                                end
+                            end
+                            if (isempty(mp))
+                                warning('off','backtrace');
+                                warning("Model part %s used in InitialCondition.Temperature does not exist.",name);
+                                warning('on','backtrace');
+                                continue;
+                            end
+                            for k = 1:mp.n_particles
+                                mp.particles(k).temperature = temp;
+                            end
+                        end
+                    end
+                end
+            end
         end
+        
     end
 end

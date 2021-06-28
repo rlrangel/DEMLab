@@ -11,13 +11,13 @@
 		"limit_max" : [1.0,1.0],
 		"interval"  : [0.0,100.0]
 	},
+	"GlobalCondition": {
+		"gravity" : [0.0,-9.81]
+	},
 	"InitialCondition": {
-		"TranslationalVelocity":
-		[
-			{
-			"value"       : [0.0,0.0],
-			"model_parts" : []
-			}
-		]
+		"Temperature": {
+			"value"       : 100.0,
+			"model_parts" : ["PARTICLES"]
+		}
 	}
 }

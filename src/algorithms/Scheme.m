@@ -6,16 +6,16 @@
 %
 %% Implementation
 %
-classdef Scheme < handle & matlab.mixin.Heterogeneous
+classdef Scheme < handle
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of scheme
-        FOWARD_EULER = 1;
+        FOWARD_EULER = uint8(1);
     end
     
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        type = 0;   % flag for type of scheme
+        type int8 = uint8.empty;   % flag for type of scheme
     end
     
     %% Constructor method

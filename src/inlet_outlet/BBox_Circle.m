@@ -7,8 +7,8 @@
 classdef BBox_Circle < BBox
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        center = [];   % coordinates of center point
-        radius = [];   % radius
+        center double = double.empty;   % coordinates of center point
+        radius double = double.empty;   % radius
     end
     
     %% Constructor method

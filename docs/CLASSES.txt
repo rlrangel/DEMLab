@@ -47,7 +47,6 @@ Thermal analysis assumes that particle does not change position or kinematic var
 	  -Handles to Sink objects;
 	
 	* Global conditions:
-	  -Gravity; (default: [])
 	  -GlobalDampingTranslational; (default: [])
 	  -GlobalDampingRotational; (default: [])
 	

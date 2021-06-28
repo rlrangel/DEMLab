@@ -6,16 +6,16 @@
 %
 %% Implementation
 %
-classdef Search < handle & matlab.mixin.Heterogeneous
+classdef Search < handle
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of search
-        SIMPLE_LOOP = 1;
+        SIMPLE_LOOP = uint8(1);
     end
     
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        type = 0;   % flag for type of search
+        type int8 = uint8.empty;   % flag for type of search
     end
     
     %% Constructor method

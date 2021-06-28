@@ -7,8 +7,8 @@
 classdef BBox_Rectangle < BBox
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        limit_min = [];   % coordinates of minimum limits (bottom-left corner)
-        limit_max = [];   % coordinates of maximum limits (top-right corner)
+        limit_min double = double.empty;   % coordinates of minimum limits (bottom-left corner)
+        limit_max double = double.empty;   % coordinates of maximum limits (top-right corner)
     end
     
     %% Constructor method

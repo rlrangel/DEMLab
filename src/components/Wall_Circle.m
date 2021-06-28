@@ -8,8 +8,8 @@ classdef Wall_Circle < Wall
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Position
-        center = [];   % coordinates of center point
-        radius = 0;    % radius
+        center double = double.empty;   % coordinates of center point
+        radius double = double.empty;   % radius
     end
     
     %% Constructor method

@@ -7,7 +7,8 @@
 classdef Sink_Polygon < Sink
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        
+        coord_x double = double.empty;   % vector of X coodinates of polygon points
+        coord_y double = double.empty;   % vector of Y coodinates of polygon points
     end
     
     %% Constructor method

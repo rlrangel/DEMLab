@@ -6,19 +6,19 @@
 %
 %% Implementation
 %
-classdef BBox < handle & matlab.mixin.Heterogeneous
+classdef BBox < handle
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of bounding box shapes
-        RECTANGLE = 1;
-        CIRCLE    = 2;
-        POLYGON   = 3;
+        RECTANGLE = uint8(1);
+        CIRCLE    = uint8(2);
+        POLYGON   = uint8(3);
     end
     
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        type     = 0;    % flag for type of bounding box shape
-        interval = [];   % time interval of activation
+        type     uint8  = uint8.empty;    % flag for type of bounding box shape
+        interval double = double.empty;   % time interval of activation
     end
     
     %% Constructor method

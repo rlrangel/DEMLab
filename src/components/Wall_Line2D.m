@@ -8,8 +8,8 @@ classdef Wall_Line2D < Wall
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Position
-        coord_ini = [];   % coordinates of initial point
-        coord_end = [];   % coordinates of final point
+        coord_ini double = double.empty;   % coordinates of initial point
+        coord_end double = double.empty;   % coordinates of final point
     end
     
     %% Constructor method

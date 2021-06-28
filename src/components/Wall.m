@@ -10,15 +10,15 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of wall
-        LINE2D = 1;
-        CIRCLE = 2;
+        LINE2D = uint8(1);
+        CIRCLE = uint8(2);
     end
     
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Identification
-        type = 0;   % flag for type of wall
-        id   = 0;   % identification number
+        type uint8  = uint8.empty;    % flag for type of wall
+        id   uint32 = uint32.empty;   % identification number
     end
     
     %% Constructor method
@@ -27,6 +27,13 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
             if (nargin > 0)
                 this.type = type;
             end
+        end
+    end
+    
+    %% Default subclass definition
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = Wall_Line2D;
         end
     end
     

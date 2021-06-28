@@ -27,6 +27,9 @@ classdef Particle_Disk < Particle
             this.veloc_rot = 0;
             this.accel_trl = [0,0];
             this.accel_rot = 0;
+            
+            % Thermal properties
+            this.temperature = 0;
         end
     end
 end
