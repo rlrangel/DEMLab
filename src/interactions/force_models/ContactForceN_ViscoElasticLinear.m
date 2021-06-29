@@ -1,10 +1,10 @@
-%% ContactForceNormal_DiskDisk_LinearViscoElastic class
+%% ContactForceN_ViscoElasticLinear class
 %
 %% Description
 %
 %% Implementation
 %
-classdef ContactForceNormal_DiskDisk_LinearViscoElastic < ContactForceNormal
+classdef ContactForceN_ViscoElasticLinear < ContactForceN
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         stiff_formula   int8    = uint8.empty;     % flag for type of stiffness formulation
@@ -13,8 +13,8 @@ classdef ContactForceNormal_DiskDisk_LinearViscoElastic < ContactForceNormal
     
     %% Constructor method
     methods
-        function this = ContactForceNormal_DiskDisk_LinearViscoElastic()
-            this = this@ContactForceNormal(ContactForceNormal.DISK_DISK_VISCOELASTIC_LINEAR);
+        function this = ContactForceN_ViscoElasticLinear()
+            this = this@ContactForceN(ContactForceN.VISCOELASTIC_LINEAR);
             this.applyDefaultProps();
         end
     end

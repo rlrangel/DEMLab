@@ -1,4 +1,4 @@
-%% ContactForceTangent class
+%% ContactForceN class
 %
 %% Description
 %
@@ -6,11 +6,17 @@
 %
 %% Implementation
 %
-classdef ContactForceTangent < handle & matlab.mixin.Heterogeneous
+classdef ContactForceN < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of model
-        DISK_DISK_SPRING = uint8(1);
+        VISCOELASTIC_LINEAR = uint8(1);
+        
+        % Types of stiffness formulation
+        NONE    = uint8(1);
+        TIME    = uint8(2);
+        OVERLAP = uint8(3);
+        ENERGY  = uint8(4);
     end
     
     %% Public properties
@@ -21,7 +27,7 @@ classdef ContactForceTangent < handle & matlab.mixin.Heterogeneous
     
     %% Constructor method
     methods
-        function this = ContactForceTangent(type)
+        function this = ContactForceN(type)
             if (nargin > 0)
                 this.type = type;
             end
@@ -31,13 +37,14 @@ classdef ContactForceTangent < handle & matlab.mixin.Heterogeneous
     %% Default subclass definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
-            defaultObject = ContactForceTangent_DiskDisk_Spring;
+            defaultObject = ContactForceN_ViscoElasticLinear;
         end
     end
     
     %% Abstract methods
     methods (Abstract)
-        
+        %------------------------------------------------------------------
+        applyDefaultProps(this);
     end
     
     %% Public methods

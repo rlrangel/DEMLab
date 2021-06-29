@@ -31,7 +31,7 @@ classdef ContactConduction < handle & matlab.mixin.Heterogeneous
     %% Default subclass definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
-            defaultObject = ContactConduction_DiskDisk_BOB;
+            defaultObject = ContactConduction_BOB;
         end
     end
     

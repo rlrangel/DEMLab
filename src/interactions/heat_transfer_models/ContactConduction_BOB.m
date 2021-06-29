@@ -1,10 +1,10 @@
-%% ContactKinematics_DiskDisk class
+%% ContactConduction_BOB class
 %
 %% Description
 %
 %% Implementation
 %
-classdef ContactKinematics_DiskDisk < ContactKinematics
+classdef ContactConduction_BOB < ContactConduction
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         
@@ -12,8 +12,8 @@ classdef ContactKinematics_DiskDisk < ContactKinematics
     
     %% Constructor method
     methods
-        function this = ContactKinematics_DiskDisk()
-            this = this@ContactKinematics(ContactKinematics.DISK_DISK);
+        function this = ContactConduction_BOB()
+            this = this@ContactConduction(ContactConduction.BATCHELOR_OBRIEN);
         end
     end
     

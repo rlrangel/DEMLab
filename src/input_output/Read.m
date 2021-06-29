@@ -631,7 +631,7 @@ classdef Read < handle
                                 end
                             end
                             if (isempty(mp))
-                                this.warn("Model part %s used in InitialCondition.TranslationalVelocity does not exist.",name);
+                                this.warn("Nonexistent model part used in InitialCondition.TranslationalVelocity.");
                                 continue;
                             end
                             for k = 1:mp.n_particles
@@ -679,7 +679,7 @@ classdef Read < handle
                                 end
                             end
                             if (isempty(mp))
-                                this.warn("Model part %s used in InitialCondition.RotationalVelocity does not exist.",name);
+                                this.warn("Nonexistent model part used in InitialCondition.RotationalVelocity.");
                                 continue;
                             end
                             for k = 1:mp.n_particles
@@ -727,7 +727,7 @@ classdef Read < handle
                                 end
                             end
                             if (isempty(mp))
-                                this.warn("Model part %s used in InitialCondition.temperature does not exist.",name);
+                                this.warn("Nonexistent model part used in InitialCondition.temperature.");
                                 continue;
                             end
                             for k = 1:mp.n_particles
@@ -850,7 +850,7 @@ classdef Read < handle
                     fprintf(2,'Properties must be numerical values.\n');
                     status = 0; return;
                 elseif(msg > 0)
-                    this.warn("Unphysical property value was found for material %s.",mat.name);
+                    this.warn("Unphysical value was found for material property.");
                 end
                 
                 % Set material to selected model parts
@@ -877,7 +877,7 @@ classdef Read < handle
                             end
                         end
                         if (isempty(mp))
-                            this.warn("Model part %s used in Material %s does not exist.",mp_name,mat.name);
+                            this.warn("Unexistent model part used in Material.");
                             continue;
                         end
                         for k = 1:mp.n_particles
@@ -909,7 +909,7 @@ classdef Read < handle
                 drv.search.b_interact = Interact();
                 
                 % Contact kinematics model
-                drv.search.b_interact.contact_kinematics = ContactKinematics_DiskDisk();
+                drv.search.b_interact.contact_kinematics = ContactKinematics();
                 
                 % Contact normal force model
                 if (~this.interactContactForceNormal(json.InteractionModel,drv))
@@ -1313,7 +1313,7 @@ classdef Read < handle
             end
             
             if (mp.n_particles == 0 && mp.n_walls == 0)
-                this.warn("Model part %s is empty.",mp.name);
+                this.warn("Empty model part was created.");
             end
         end
     end
@@ -1401,9 +1401,9 @@ classdef Read < handle
                 status = 0; return;
             end
             
-            % Call sub-method for each type of model
+            % Create object
             if (strcmp(cc,'batchelor_obrien'))
-                drv.search.b_interact.contact_conduction = ContactConduction_DiskDisk_BOB();
+                drv.search.b_interact.contact_conduction = ContactConduction_BOB();
             end
         end
         
@@ -1412,25 +1412,25 @@ classdef Read < handle
             status = 1;
             
             % Create object
-            drv.search.b_interact.contact_force_normal = ContactForceNormal_DiskDisk_LinearViscoElastic();
+            drv.search.b_interact.contact_force_normal = ContactForceN_ViscoElasticLinear();
             
             % Stiffness formulation
             if (isfield(CFN,'stiff_coeff_formula'))
                 if (~this.isStringArray(CFN.stiff_coeff_formula,1) ||...
-                   (~strcmp(cfn,'time')    &&...
-                    ~strcmp(cfn,'overlap') &&...
-                    ~strcmp(cfn,'energy')))
+                   (~strcmp(CFN.stiff_coeff_formula,'time')        &&...
+                    ~strcmp(CFN.stiff_coeff_formula,'overlap')     &&...
+                    ~strcmp(CFN.stiff_coeff_formula,'energy')))
                     fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.stiff_coeff_formula.\n');
                     fprintf(2,'Available options: time, overlap, energy.\n');
                     status = 0; return;
                 end
-                if (strcmp(cfn,'time'))
+                if (strcmp(CFN.stiff_coeff_formula,'time'))
                     drv.search.b_interact.contact_force_normal.stiff_formula =...
                     drv.search.b_interact.contact_force_normal.TIME;
-                elseif (strcmp(cfn,'overlap'))
+                elseif (strcmp(CFN.stiff_coeff_formula,'overlap'))
                     drv.search.b_interact.contact_force_normal.stiff_formula =...
                     drv.search.b_interact.contact_force_normal.OVERLAP;
-                elseif (strcmp(cfn,'energy'))
+                elseif (strcmp(CFN.stiff_coeff_formula,'energy'))
                     drv.search.b_interact.contact_force_normal.stiff_formula =...
                     drv.search.b_interact.contact_force_normal.ENERGY;
                 end
@@ -1453,7 +1453,7 @@ classdef Read < handle
             status = 1;
             
             % Create object
-            drv.search.b_interact.contact_force_tangent = ContactForceTangent_DiskDisk_Spring();
+            drv.search.b_interact.contact_force_tangent = ContactForceT_Spring();
             
             % Spring coefficient
             if (isfield(CFN,'spring_coeff'))
@@ -1515,7 +1515,10 @@ classdef Read < handle
         
         %------------------------------------------------------------------
         function is = isStringArray(variable,size)
-            if (isempty(variable) || length(variable) ~= size || (~isa(variable,'string') && ~isa(variable,'char')))
+            if (isa(variable,'char'))
+                variable = string(variable);
+            end
+            if (isempty(variable) || length(variable) ~= size || (~isa(variable,'string')))
                 is = false;
             else
                 is = true;

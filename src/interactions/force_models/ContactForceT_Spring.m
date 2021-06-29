@@ -1,10 +1,10 @@
-%% ContactForceTangent_DiskDisk_Spring class
+%% ContactForceT_Spring class
 %
 %% Description
 %
 %% Implementation
 %
-classdef ContactForceTangent_DiskDisk_Spring < ContactForceTangent
+classdef ContactForceT_Spring < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         spring_coeff double = double.empty;   % spring coefficient value
@@ -12,8 +12,8 @@ classdef ContactForceTangent_DiskDisk_Spring < ContactForceTangent
     
     %% Constructor method
     methods
-        function this = ContactForceTangent_DiskDisk_Spring()
-            this = this@ContactForceTangent(ContactForceTangent.DISK_DISK_SPRING);
+        function this = ContactForceT_Spring()
+            this = this@ContactForceT(ContactForceT.SPRING);
         end
     end
     
