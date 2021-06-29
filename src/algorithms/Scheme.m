@@ -6,7 +6,7 @@
 %
 %% Implementation
 %
-classdef Scheme < handle
+classdef Scheme < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of scheme
@@ -24,6 +24,13 @@ classdef Scheme < handle
             if (nargin > 0)
                 this.type = type;
             end
+        end
+    end
+    
+    %% Default subclass definition
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = Search_FowardEuler;
         end
     end
     

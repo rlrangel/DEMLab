@@ -13,7 +13,7 @@ classdef ContactConduction_DiskDisk_BOB < ContactConduction
     %% Constructor method
     methods
         function this = ContactConduction_DiskDisk_BOB()
-            
+            this = this@ContactConduction(ContactConduction.BATCHELOR_OBRIEN);
         end
     end
     

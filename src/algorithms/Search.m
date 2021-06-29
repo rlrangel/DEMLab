@@ -15,9 +15,14 @@ classdef Search < handle & matlab.mixin.Heterogeneous
     
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        type            int8     = uint8.empty;      % flag for type of search
-        freq            int32    = int32.empty;      % frequency of search (in steps)
-        interact_common Interact = Interact.empty;   % base object of the Interact class common to all interactions
+        % Identification
+        type int8 = uint8.empty; % flag for type of search
+        
+        % Parameters
+        freq int32 = int32.empty; % frequency of search (in steps)
+        
+        % Base object for common interactions
+        b_interact Interact = Interact.empty;   % object of the Interact class for all interactions
     end
     
     %% Constructor method
@@ -26,7 +31,6 @@ classdef Search < handle & matlab.mixin.Heterogeneous
             if (nargin > 0)
                 this.type = type;
             end
-            
         end
     end
     

@@ -74,8 +74,9 @@ classdef Read < handle
             status = 1;
             % All particles have geometric property (radius for disk).
             % All particles have a material;
-            % Material properties required by the analysis/models;
             % All elements have an interaction model defined between them;
+            % Interaction models are consistent;
+            % Material properties required by the analysis/models;
         end
     end
     
@@ -101,7 +102,8 @@ classdef Read < handle
             
             % Create object of Driver class
             anl = string(PD.analysis_type);
-            if (~this.isStringArray(anl,1) || (~strcmp(anl,'mechanical') && ~strcmp(anl,'thermal') && ~strcmp(anl,'thermo_mechanical')))
+            if (~this.isStringArray(anl,1) ||...
+               (~strcmp(anl,'mechanical') && ~strcmp(anl,'thermal') && ~strcmp(anl,'thermo_mechanical')))
                 fprintf(2,'Invalid data in project parameters file: ProblemData.analysis_type.\n');
                 fprintf(2,'Available options: mechanical, thermal, thermo_mechanical.\n');
                 status = 0; return;
@@ -902,29 +904,42 @@ classdef Read < handle
             % Single case: Only 1 interaction model provided
             % (applied to the interaction between all elements)
             if (length(json.InteractionModel) == 1)
-                % Create common base interaction object
-                interact = Interact();
+                % Create base object for common interactions
+                % IT IS CONSIDERING ONLY DISK-DISK INTERACTIONS
+                drv.search.b_interact = Interact();
                 
-                % Kinematics
-                if (1)
-                    
+                % Contact kinematics model
+                drv.search.b_interact.contact_kinematics = ContactKinematics_DiskDisk();
+                
+                % Contact normal force model
+                if (~this.interactContactForceNormal(json.InteractionModel,drv))
+                    status = 0;
+                    return;
                 end
                 
+                % Contact tangent force model
+                if (~this.interactContactForceTangent(json.InteractionModel,drv))
+                    status = 0;
+                    return;
+                end
                 
-                % Set common interaction object as a property of search object
-                drv.search.interact_common = interact;
+                % Contact thermal conduction model
+                if (~this.interactContactConduction(json.InteractionModel,drv))
+                    status = 0;
+                    return;
+                end
             end
             
             % Multiple case:
             if (length(json.InteractionModel) > 1)
-                
+               % TODO 
             end
         end
         
         %------------------------------------------------------------------
         function status = getInteractionAssignment(this,json,drv)
             status = 1;
-            if (~isempty(drv.search.interact_common))
+            if (~isempty(drv.search.b_interact))
                 if (isfield(json,'InteractionAssignment'))
                     this.warn("Only one InteractionModel was created and will be applied to all interactions, so InteractionAssignment will be ignored.");
                 end
@@ -933,7 +948,6 @@ classdef Read < handle
                 fprintf(2,'Missing data in project parameters file: InteractionModel.\n');
                 status = 0; return;
             end
-            
         end
     end
     
@@ -1300,6 +1314,160 @@ classdef Read < handle
             
             if (mp.n_particles == 0 && mp.n_walls == 0)
                 this.warn("Model part %s is empty.",mp.name);
+            end
+        end
+    end
+    
+    %% Public methods: Interactions models
+    methods
+        %------------------------------------------------------------------
+        function status = interactContactForceNormal(this,IM,drv)
+            status = 1;
+            if (~isfield(IM,'contact_force_normal') && drv.type == drv.THERMAL)
+                return;
+            elseif (~isfield(IM,'contact_force_normal') &&...
+                   (drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL))
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.\n');
+                status = 0; return;
+            elseif (~isfield(IM.contact_force_normal,'model'))
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.model.\n');
+                status = 0; return;
+            end
+            cfn = string(IM.contact_force_normal.model);
+            if (~this.isStringArray(cfn,1) ||...
+               (~strcmp(cfn,'viscoelastic_linear')))
+                fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.model.\n');
+                fprintf(2,'Available options: viscoelastic_linear.\n');
+                status = 0; return;
+            end
+            
+            % Call sub-method for each type of model
+            if (strcmp(cfn,'viscoelastic_linear'))
+                if (~this.contactForceNormal_ViscoElasticLinear(IM.contact_force_normal,drv))
+                    status = 0;
+                    return;
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = interactContactForceTangent(this,IM,drv)
+            status = 1;
+            if (~isfield(IM,'contact_force_tangent') && drv.type == drv.THERMAL)
+                return;
+            elseif (~isfield(IM,'contact_force_tangent') &&...
+                   (drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL))
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.\n');
+                status = 0; return;
+            elseif (~isfield(IM.contact_force_normal,'model'))
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.model.\n');
+                status = 0; return;
+            end
+            cft = string(IM.contact_force_tangent.model);
+            if (~this.isStringArray(cft,1) ||...
+               (~strcmp(cft,'simple_spring')))
+                fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.model.\n');
+                fprintf(2,'Available options: simple_spring.\n');
+                status = 0; return;
+            end
+            
+            % Call sub-method for each type of model
+            if (strcmp(cft,'simple_spring'))
+                if (~this.contactForceTangent_SimpleSpring(IM.contact_force_tangent,drv))
+                    status = 0;
+                    return;
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = interactContactConduction(this,IM,drv)
+            status = 1;
+            if (~isfield(IM,'contact_conduction') && drv.type == drv.MECHANICAL)
+                return;
+            elseif (~isfield(IM,'contact_conduction') &&...
+                   (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL))
+                this.warn('No model for contact thermal conduction was identified. This heat transfer mechanism will not be considered.');
+                return;
+            elseif (~isfield(IM.contact_force_normal,'model'))
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_conduction.model.\n');
+                status = 0; return;
+            end
+            cc = string(IM.contact_conduction.model);
+            if (~this.isStringArray(cc,1) ||...
+               (~strcmp(cc,'batchelor_obrien')))
+                fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_conduction.model.\n');
+                fprintf(2,'Available options: batchelor_obrien.\n');
+                status = 0; return;
+            end
+            
+            % Call sub-method for each type of model
+            if (strcmp(cc,'batchelor_obrien'))
+                drv.search.b_interact.contact_conduction = ContactConduction_DiskDisk_BOB();
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = contactForceNormal_ViscoElasticLinear(this,CFN,drv)
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.contact_force_normal = ContactForceNormal_DiskDisk_LinearViscoElastic();
+            
+            % Stiffness formulation
+            if (isfield(CFN,'stiff_coeff_formula'))
+                if (~this.isStringArray(CFN.stiff_coeff_formula,1) ||...
+                   (~strcmp(cfn,'time')    &&...
+                    ~strcmp(cfn,'overlap') &&...
+                    ~strcmp(cfn,'energy')))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.stiff_coeff_formula.\n');
+                    fprintf(2,'Available options: time, overlap, energy.\n');
+                    status = 0; return;
+                end
+                if (strcmp(cfn,'time'))
+                    drv.search.b_interact.contact_force_normal.stiff_formula =...
+                    drv.search.b_interact.contact_force_normal.TIME;
+                elseif (strcmp(cfn,'overlap'))
+                    drv.search.b_interact.contact_force_normal.stiff_formula =...
+                    drv.search.b_interact.contact_force_normal.OVERLAP;
+                elseif (strcmp(cfn,'energy'))
+                    drv.search.b_interact.contact_force_normal.stiff_formula =...
+                    drv.search.b_interact.contact_force_normal.ENERGY;
+                end
+            end
+            
+            % Artificial cohesion
+            if (isfield(CFN,'remove_artificial_cohesion'))
+                if (~this.isLogicalArray(CFN.remove_artificial_cohesion,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.remove_artificial_cohesion.\n');
+                    fprintf(2,'It must be a boolean: true or false.\n');
+                    status = 0; return;
+                end
+                drv.search.b_interact.contact_force_normal.remove_cohesion =...
+                CFN.remove_artificial_cohesion;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = contactForceTangent_SimpleSpring(this,CFN,drv)
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.contact_force_tangent = ContactForceTangent_DiskDisk_Spring();
+            
+            % Spring coefficient
+            if (isfield(CFN,'spring_coeff'))
+                if (~this.isDoubleArray(CFN.spring_coeff,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.spring_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (CFN.spring_coeff <= 0)
+                    this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.spring_coeff');
+                end
+                drv.search.b_interact.contact_force_tangent.spring_coeff = CFN.spring_coeff;
+            else
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.spring_coeff.\n');
+                status = 0; return;
             end
         end
     end

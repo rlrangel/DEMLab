@@ -13,7 +13,7 @@ classdef ContactKinematics_DiskDisk < ContactKinematics
     %% Constructor method
     methods
         function this = ContactKinematics_DiskDisk()
-            
+            this = this@ContactKinematics(ContactKinematics.DISK_DISK);
         end
     end
     

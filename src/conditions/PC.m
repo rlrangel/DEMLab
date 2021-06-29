@@ -30,6 +30,13 @@ classdef PC < handle & matlab.mixin.Heterogeneous
         end
     end
     
+    %% Default subclass definition
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = PC_Uniform;
+        end
+    end
+    
     %% Abstract methods
     methods (Abstract)
         

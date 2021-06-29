@@ -328,13 +328,11 @@ ContactForceNormal_DiskDisk_LinearViscoElastic:
 	Properties:
 	* ElasticForceValue;
 	* ViscousForceValue;
-	* StiffFormulation; (none,time,overlap,energy)
 	* StiffCoeffFactor;
 	* StiffCoeffValue;
 	* DampFormulation; (none,analytical)
 	* DampCoeffFactor;
 	* DampCoeffValue;
-	* RemoveArtificialCohesion;
 	
 	Tasks:
 	* Implementation of virtual method to evaluate contact normal force: Elastic+Viscous;

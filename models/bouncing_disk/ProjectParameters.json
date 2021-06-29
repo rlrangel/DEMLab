@@ -57,15 +57,17 @@
 			}
 	},
 	"InteractionModel": {
-		"name" : "model_1",
-		"normal_contact_force": {
+		"contact_force_normal": {
 			"model"                      : "viscoelastic_linear",
 			"stiff_coeff_formula"        : "time",
 			"remove_artificial_cohesion" : true
 		},
-		"tangent_contact_force": {
+		"contact_force_tangent": {
 			"model"        : "simple_spring",
 			"spring_coeff" : 1000
+		},
+		"contact_conduction": {
+			"model"        : "batchelor_obrien"
 		}
 	}
 }
