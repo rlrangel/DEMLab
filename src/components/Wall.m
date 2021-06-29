@@ -22,6 +22,9 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         
         % Physical properties
         material Material = Material.empty;   % object of the Material class
+        
+        % Neighbours Interactions
+        interacts Interact  = Interact.empty;    % vector of objects of the Interact class
     end
     
     %% Constructor method

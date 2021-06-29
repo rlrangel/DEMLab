@@ -17,32 +17,19 @@ Master:
 	* Export results (from Export - for Paraview);
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
-Read:
-	Tasks:
-	* Check for data consistency and send warnings/erros;
-	* Use parallelization with maximum cores avaliable;
-
-------------------------------------------------------------------------------------------------------------------------------------------------
-Driver: (subclasses: Mechanical, Thermal, ThermoMechanical)
-Thermal analysis assumes that particle does not change position or kinematic variables - no search needed and larger time step allowed;
-
+Driver:
 	Properties:
 	* Model components: total numbers
-	  -Number of binary interactions;
 	  -Number of variable properties;
 	  -Number of prescribed conditions;
 	
 	* Model components: handle to objects
-	  -Handles to Interact objects;
 	  -Handles to VariableProperty objects;
 	  -Handles to PrecribedCondition objects;
 	
 	* Arrays of IDs:
 	  -Array of active particles IDs;
 	  -Array of active walls IDs;
-	
-	* Model limits:
-	  -Handles to Sink objects;
 	
 	* Global conditions:
 	  -GlobalDampingTranslational; (default: [])
@@ -113,52 +100,13 @@ Thermal analysis assumes that particle does not change position or kinematic var
 	* Compute max/min properties/states of particles (may be only free ones);
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
-Modelpart:
-	Tasks:
-	* Compute average properties of particles (may be only free ones): velocities,acceleration,mass,forces,temperature,etc;
-	* Compute total properties of particles (may be only free ones): forces,mass,etc;
-	* Compute max/min properties/states of particles (may be only free ones);
-
-------------------------------------------------------------------------------------------------------------------------------------------------
 BBox: (Super)
 	Tasks:
 	* Main virtual method to check if bbox is active according to interval and delete particle;
 
-BBox_ConvexPolygon:
-	Properties:
-	* TableOfPoints;
-
-------------------------------------------------------------------------------------------------------------------------------------------------
 Sink: (Super)
-	Properties:
-	* Type;
-	* Interval; (default: [0,inf])
-	
 	Tasks:
 	* Main virtual method to check if sink is active according to interval and delete particle;
-
-Sink_Rectangle:
-	Properties:
-	* Xlimits;
-	* Ylimits;
-
-	Tasks:
-	* Implementation of the virtual method to delete particles inside the rectangle;
-	
-Sink_Circle:
-	Properties:
-	* Center;
-	* Radius;
-
-	Tasks:
-	* Implementation of the virtual method to delete particles inside the circle;
-
-Sink_ConvexPolygon:
-	Properties:
-	* TableOfPoints;
-
-	Tasks:
-	* Implementation of the virtual method to delete particles inside the polygon (Matlab command);
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 VariableProperty:
@@ -290,7 +238,6 @@ Particle: (Super,Disk)
 	  -Handles to VariableProperty objects;
 	
 	* Neighbours Interactions:
-	  -Handles to Interact objects;
 	  -Arrays of particles IDs in search list; (for Search_RestrictedLoop)
 	  -NeighbourDistance;
 	
@@ -325,26 +272,12 @@ Wall: (Super)
 	  -Active;
 	  -Creation time;
 	  -Destruction time;
-	
-	* Physical properties:
-	  -Handle to Material object;
-	
-	* Interactions:
-	  -Handles to Interact objects;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 Interact:
 	Properties:
-	* Members: (interactions are computed considering the first object as reference)
-	  -Element1: Handle to interacting object 1;
-	  -Element2: Handle to interacting object 2;
-	
-	* Interaction models: (Handles to interaction model classes)
-	  -ContactKinematics;
-	  -ContactForceNormal;
-	  -ContactForceTangent;
+	* Interaction models:
 	  -ContactTorque;
-	  -ContactThermalConduction;
 	  -ContactAreaCorrectionMethod;
 	  -NonContactThermalConduction;
 	  -ThermalRadiation;
@@ -371,7 +304,7 @@ Interact:
 	* Evaluate interaction results with the model objects;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
-ContactKinematics: (Super,DiskDisk)
+ContactKinematics:
 	Properties:
 	* SurfaceDistance;
 	* NormalDirection;

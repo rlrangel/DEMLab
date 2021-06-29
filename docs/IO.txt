@@ -11,36 +11,12 @@ ProjectParameters.json
 * CreationDestruction:
 Only one creator/destructor time is allowed per element, otherwise a warining is issued;
 A warning is issued for inconsistent creation/destruction times (creation after it is deleted and vsvc);
-Bounding box deletes particles when the centroid is out of bounds;
-Sink deletes particles when the centroid is inbounds;
-Source creates particles in a given frequency (one particle at a given time), in a randon position/orientation inside the source line/area (with the conditions of the assigned model part);
-CheckOverlaps will make search to a assure that the created particle will not have an overlap, otherwise it is created in another position;
-
 	-Creator: (multiple)
 		-> ModelPart: string;
 		-> CreationTime: double;
 	-Destructor: (multiple)
 		-> ModelPart: string;
 		-> DestructionTime: double;
-	-Sink: (multiple)
-		-> Shape: string; (box,sphere)
-		-> MinLimits (for box): [double,double,double];
-		-> MaxLimits (for box): [double,double,double];
-		-> Center (for sphere): [double,double,double];
-		-> Radius (for sphere): double;
-		-> Interval: [double,double]; (default: [0.0,inf])
-	-Source: (multiple)
-		-> Shape: string; (line,box,sphere)
-		-> Point1 (for line): [double,double,double];
-		-> Point2 (for line): [double,double,double];
-		-> MinLimits (for box): [double,double,double];
-		-> MaxLimits (for box): [double,double,double];
-		-> Center (for sphere): [double,double,double];
-		-> Radius (for sphere): double;
-		-> GenerationRate: double;
-		-> CheckOverlaps: true/false; (default: true)
-		-> ModelPart: string;
-		-> Interval: [double,double]; (default: [0.0,inf])
 
 * FixedConditions:
 Multiple sets of each B.C. can be applied;
@@ -285,14 +261,6 @@ A check must be made to make sure that the same property is not being set twice;
 * Solver:
 Automatic time step is calculated based on the formulas for critical time step of the mechanical and thermal problems, considering the limiting case;
 	-RotationalIntegrationScheme: string; (foward_euler,none)
-
-* Search:
-restricted_loop method: area around each particle to search for contacts - each particle stores the IDs of other particles within the radius (updated in a given frequency);
-Create Interaction objects only for larger particles IDs, so the loop can run in parallel for all particles;
-AutomaticUpdateFrequency computes a number of steps for updating the particles list inside the restricted area based on the maximum velocity of a particle in the model and the time it would take to enter the area a reach the neighbohood of a particle;
-	-NeighbourSearchRadius (for restricted_loop): double;
-	-AutoUpdateFrequency (for restricted_loop): true/false (default: true)
-	-SearchListUpdateFrequency (for restricted_loop): int; (default: 1)
 
 * Results:
 OutputFrequency is used for all transient responses (animation,graph,paraview,text);

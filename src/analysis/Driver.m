@@ -26,16 +26,19 @@ classdef Driver < handle
         n_mparts    uint32 = uint32.empty;   % number of model parts
         n_particles uint32 = uint32.empty;   % number of particles
         n_walls     uint32 = uint32.empty;   % number of walls
+        n_interacts uint32 = uint32.empty;   % number of binary interactions
         n_materials uint32 = uint32.empty;   % number of materials
         
         % Model components: handle to objects
         mparts    ModelPart = ModelPart.empty;   % vector of objects of the ModelPart class
         particles Particle  = Particle.empty;    % vector of objects of the Particle class
         walls     Wall      = Wall.empty;        % vector of objects of the Wall class
+        interacts Interact  = Interact.empty;    % vector of objects of the Interact class
         materials Material  = Material.empty;    % vector of objects of the Material class
         
         % Model limits
         bbox BBox = BBox.empty;   % object of BBox class
+        sink Sink = Sink.empty;   % vector of objects of the Sink class
         
         % Paralelization
         parallel logical = logical.empty;   % flag for parallelization of simulation

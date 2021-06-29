@@ -30,12 +30,12 @@ classdef Master < handle
             
             % Get input file
             [file_name,file_path] = uigetfile('*.json','DEMLab - Input file','ProjectParameters');
+            file_fullname = fullfile(file_path,file_name);
             if (isequal(file_name,0))
                 fprintf("No file selected.\n");
                 fprintf("\nExiting program...\n");
                 return;
             end
-            file_fullname = fullfile(file_path,file_name);
             fprintf('File selected:\n%s\n\n',file_fullname)
             
             % Open input file
@@ -47,14 +47,23 @@ classdef Master < handle
             end
             
             % Read input file
+            read = Read();
             fprintf('Reading input file...\n');
-            [status,drv] = Read().execute(file_path,fid);
+            [status,drv] = read.execute(file_path,fid);
             if (~status)
                 fprintf("\nExiting program...\n");
                 return;
             end
             
-            % Print model information (Numb particles, etc)
+            % Check input data
+            fprintf('Checking consistency of input data...\n');
+            status = read.check(drv);
+            if (~status)
+                fprintf("\nExiting program...\n");
+                return;
+            end
+            
+            % Print model information (Num particles, etc)
             
             
             % Start parallelization

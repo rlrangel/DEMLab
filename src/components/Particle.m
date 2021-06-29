@@ -28,6 +28,9 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         weight        double   = double.empty;     % weight vector (mass * gravity)
         therm_inertia double   = double.empty;     % thermal inertia (mass * heat_capacity)
         
+        % Neighbours Interactions
+        interacts Interact  = Interact.empty;    % vector of objects of the Interact class
+        
         % Current state
         coord       double = double.empty;   % coordinates of centroid
         orient      double = double.empty;   % orientation angles

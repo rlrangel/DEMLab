@@ -30,6 +30,13 @@ classdef Sink < handle & matlab.mixin.Heterogeneous
         end
     end
     
+    %% Default subclass definition
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = Sink_Rectangle;
+        end
+    end
+    
     %% Abstract methods
     methods (Abstract)
         

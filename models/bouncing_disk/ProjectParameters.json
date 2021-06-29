@@ -26,11 +26,17 @@
 		"limit_max" : [1.0,1.0],
 		"interval"  : [0.0,100.0]
 	},
+	"Sink": {
+		"shape"     : "rectangle",
+		"limit_min" : [0.0,0.0],
+		"limit_max" : [1.0,1.0],
+		"interval"  : [0.0,100.0]
+	},
 	"GlobalCondition": {
 		"gravity" : [0.0,-9.81]
 	},
 	"InitialCondition": {
-		"Temperature": {
+		"temperature": {
 			"value"       : 100.0,
 			"model_parts" : ["PARTICLES"]
 		}
@@ -49,5 +55,17 @@
 				"heat_capacity"        : 0.0,
 				"thermal_expansion"    : 0.0
 			}
+	},
+	"InteractionModel": {
+		"name" : "model_1",
+		"normal_contact_force": {
+			"model"                      : "viscoelastic_linear",
+			"stiff_coeff_formula"        : "time",
+			"remove_artificial_cohesion" : true
+		},
+		"tangent_contact_force": {
+			"model"        : "simple_spring",
+			"spring_coeff" : 1000
+		}
 	}
 }

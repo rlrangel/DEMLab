@@ -17,7 +17,7 @@ classdef Read < handle
         end
     end
     
-    %% Public methods
+    %% Public methods: Main functions
     methods
         %------------------------------------------------------------------
         function [status,drv] = execute(this,path,fid)
@@ -50,6 +50,9 @@ classdef Read < handle
                 status = this.getBoundingBox(json,drv);
             end
             if (status)
+                status = this.getSink(json,drv);
+            end
+            if (status)
                 status = this.getGlobalCondition(json,drv);
             end
             if (status)
@@ -58,13 +61,26 @@ classdef Read < handle
             if (status)
                 status = this.getMaterial(json,drv);
             end
-            
-            % Final checks:
+            if (status)
+                status = this.getInteractionModel(json,drv);
+            end
+            if (status)
+                status = this.getInteractionAssignment(json,drv);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = check(this,drv)
+            status = 1;
             % All particles have geometric property (radius for disk).
             % All particles have a material;
             % Material properties required by the analysis/models;
+            % All elements have an interaction model defined between them;
         end
-        
+    end
+    
+    %% Public methods: Project parameters file
+    methods
         %------------------------------------------------------------------
         function [status,drv,model_parts_file] = getProblemData(this,json)
             status = 1;
@@ -172,6 +188,758 @@ classdef Read < handle
             end
         end
         
+        %------------------------------------------------------------------
+        function status = getSolverParam(this,json,drv)
+            status = 1;
+            if (~isfield(json,'Solver'))
+                fprintf(2,'Missing data in project parameters file: Solver.\n');
+                status = 0; return;
+            end
+            
+            % Automatic time step
+            if (isfield(json.Solver,'auto_time_step'))
+                if (~this.isLogicalArray(json.Solver.auto_time_step,1))
+                    fprintf(2,'Invalid data in project parameters file: Solver.auto_time_step.\n');
+                    fprintf(2,'It must be a boolean: true or false.\n');
+                    status = 0; return;
+                end
+                drv.auto_step = json.Solver.auto_time_step;
+            end
+            
+            % Time step
+            if (isfield(json.Solver,'time_step'))
+                if (~this.isDoubleArray(json.Solver.time_step,1) || json.Solver.time_step <= 0)
+                    fprintf(2,'Invalid data in project parameters file: Solver.time_step.\n');
+                    fprintf(2,'It must be a positive value.\n');
+                    status = 0; return;
+                end
+                drv.time_step = json.Solver.time_step;
+            else
+                fprintf(2,'Missing data in project parameters file: Solver.time_step.\n');
+                status = 0; return;
+            end
+            
+            % Final time
+            if (isfield(json.Solver,'final_time'))
+                if (~this.isDoubleArray(json.Solver.final_time,1) || json.Solver.final_time <= 0)
+                    fprintf(2,'Invalid data in project parameters file: Solver.final_time.\n');
+                    fprintf(2,'It must be a positive value.\n');
+                    status = 0; return;
+                end
+                drv.max_time = json.Solver.final_time;
+            elseif (~isfield(json.Solver,'max_steps'))
+                fprintf(2,'Missing data in project parameters file: Solver.final_time or Solver.max_steps.\n');
+                status = 0; return;
+            end
+            
+            % Maximum steps
+            if (isfield(json.Solver,'max_steps'))
+                if (~this.isIntArray(json.Solver.max_steps,1) || json.Solver.max_steps <= 0)
+                    fprintf(2,'Invalid data in project parameters file: Solver.max_steps.\n');
+                    fprintf(2,'It must be a positive integer.\n');
+                    status = 0; return;
+                end
+                drv.max_step = json.Solver.max_steps;
+            elseif (~isfield(json.Solver,'final_time'))
+                fprintf(2,'Missing data in project parameters file: Solver.final_time or Solver.max_steps.\n');
+                status = 0; return;
+            end
+            
+            % Time integration scheme: translational velocity
+            if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_trans'))
+                scheme = string(json.Solver.integr_scheme_trans);
+                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
+                    fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_trans.\n');
+                    fprintf(2,'Available options: foward_euler.\n');
+                    status = 0; return;
+                end
+                if (strcmp(scheme,'foward_euler'))
+                    drv.scheme_vtrl = Scheme_FowardEuler();
+                end
+            end
+            
+            % Time integration scheme: rotational velocity
+            if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_rotat'))
+                scheme = string(json.Solver.integr_scheme_rotat);
+                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
+                    fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_rotat.\n');
+                    fprintf(2,'Available options: foward_euler.\n');
+                    status = 0; return;
+                end
+                if (strcmp(scheme,'foward_euler'))
+                    drv.scheme_vrot = Scheme_FowardEuler();
+                end
+            end
+            
+            % Time integration scheme: temperature
+            if ((drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_therm'))
+                scheme = string(json.Solver.integr_scheme_therm);
+                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
+                    fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_therm.\n');
+                    fprintf(2,'Available options: foward_euler.\n');
+                    status = 0; return;
+                end
+                if (strcmp(scheme,'foward_euler'))
+                    drv.scheme_temp = Scheme_FowardEuler();
+                end
+            end
+            
+            % Paralelization
+            if (isfield(json.Solver,'parallelization'))
+                if (~this.isLogicalArray(json.Solver.parallelization,1))
+                    fprintf(2,'Invalid data in project parameters file: Solver.parallelization.\n');
+                    fprintf(2,'It must be a boolean: true or false.\n');
+                    status = 0; return;
+                end
+                drv.parallel = json.Solver.parallelization;
+            end
+            
+            % Number of workers
+            if (isfield(json.Solver,'workers'))
+                if (~this.isIntArray(json.Solver.workers,1) || json.Solver.workers <= 0)
+                    fprintf(2,'Invalid data in project parameters file: Solver.workers.\n');
+                    fprintf(2,'It must be a positive integer.\n');
+                    status = 0; return;
+                end
+                drv.workers = json.Solver.workers;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getSearch(this,json,drv)
+            status = 1;
+            if (~isfield(json,'Search'))
+                fprintf(2,'Missing data in project parameters file: Search.\n');
+                status = 0; return;
+            elseif (~isfield(json.Search,'scheme'))
+                fprintf(2,'Missing data in project parameters file: Search.scheme.\n');
+                status = 0; return;
+            end
+            
+            % Scheme
+            scheme = string(json.Search.scheme);
+            if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'simple_loop'))
+                fprintf(2,'Invalid data in project parameters file: Search.scheme.\n');
+                fprintf(2,'Available options: simple_loop.\n');
+                status = 0; return;
+            end
+            if (strcmp(scheme,'simple_loop'))
+                drv.search = Search_SimpleLoop();
+            end
+            
+            % Search frequency
+            if (isfield(json.Search,'search_frequency'))
+                if (~this.isDoubleArray(json.Search.search_frequency,1) || json.Search.search_frequency <= 0)
+                    fprintf(2,'Invalid data in project parameters file: Search.search_frequency.\n');
+                    fprintf(2,'It must be a positive integer.\n');
+                    status = 0; return;
+                end
+                drv.search.freq = json.Search.search_frequency;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getBoundingBox(this,json,drv)
+            status = 1;
+            if (~isfield(json,'BoundingBox'))
+                return;
+            end
+            BB = json.BoundingBox;
+            
+            % Shape
+            if (~isfield(BB,'shape'))
+                fprintf(2,'Missing data in project parameters file: BoundingBox.shape.\n');
+                fprintf(2,'Available options: rectangle, circle.\n');
+                status = 0; return;
+            end
+            shape = string(BB.shape);
+            if (~this.isStringArray(shape,1))
+                fprintf(2,'Invalid data in project parameters file: BoundingBox.shape.\n');
+                status = 0; return;
+            end
+            
+            % RECTANGLE
+            if (strcmp(shape,'rectangle'))
+                warn = 0;
+                
+                % Minimum limits
+                if (isfield(BB,'limit_min'))
+                    limit_min = BB.limit_min;
+                    if (~this.isDoubleArray(limit_min,2))
+                        fprintf(2,'Invalid data in project parameters file: BoundingBox.limit_min.\n');
+                        fprintf(2,'It must be a pair of numeric values with X,Y coordinates of bottom-left corner.\n');
+                        status = 0; return;
+                    end
+                else
+                    limit_min = [-inf;-inf];
+                    warn = warn + 1;
+                end
+                
+                % Maximum limits
+                if (isfield(BB,'limit_max'))
+                    limit_max = BB.limit_max;
+                    if (~this.isDoubleArray(limit_max,2))
+                        fprintf(2,'Invalid data in project parameters file: BoundingBox.limit_max.\n');
+                        fprintf(2,'It must be a pair of numeric values with X,Y coordinates of top-right corner.\n');
+                        status = 0; return;
+                    end
+                else
+                    limit_max = [inf;inf];
+                    warn = warn + 2;
+                end
+                
+                % Check consistency
+                if (warn == 1)
+                    this.warn("Minimum limits of bounding box were not provided. Infinite limits were assumed.");
+                elseif (warn == 2)
+                    this.warn("Maximum limits of bounding box were not provided. Infinite limits were assumed.");
+                elseif (warn == 3)
+                    this.warn("Maximum and minimum limits of bounding box were not provided. Bounding box will not be considered.");
+                    return;
+                end
+                if (limit_min(1) >= limit_max(1) || limit_min(2) >= limit_max(2))
+                    fprintf(2,'Invalid data in project parameters file: BoundingBox.limit_min or BoundingBox.limit_max.\n');
+                    fprintf(2,'Minimum coordinates must be smaller than the maximum ones.\n');
+                    status = 0;
+                    return;
+                end
+                
+                % Create object and set properties
+                bbox = BBox_Rectangle();
+                bbox.limit_min = limit_min';
+                bbox.limit_max = limit_max';
+                drv.bbox = bbox;
+                
+            % CIRCLE
+            elseif (strcmp(shape,'circle'))
+                if (~isfield(BB,'center') || ~isfield(BB,'radius'))
+                    fprintf(2,'Invalid data in project parameters file: Missing BoundingBox.center and/or BoundingBox.radius.\n');
+                    status = 0; return;
+                end
+                center = BB.center;
+                radius = BB.radius;
+                
+                % Center
+                if (~this.isDoubleArray(center,2))
+                    fprintf(2,'Invalid data in project parameters file: BoundingBox.center.\n');
+                    fprintf(2,'It must be a pair of numeric values with X,Y coordinates of center point.\n');
+                    status = 0; return;
+                end
+                
+                % Radius
+                if (~this.isDoubleArray(radius,1) || radius <= 0)
+                    fprintf(2,'Invalid data in project parameters file: BoundingBox.radius.\n');
+                    fprintf(2,'It must be a positive value.\n');
+                    status = 0; return;
+                end
+                
+                % Create object and set properties
+                bbox = BBox_Circle();
+                bbox.center = center';
+                bbox.radius = radius;
+                drv.bbox = bbox;
+                
+            else
+                fprintf(2,'Invalid data in project parameters file: BoundingBox.shape.\n');
+                fprintf(2,'Available options: rectangle, circle.\n');
+                status = 0; return;
+            end
+            
+            % Interval
+            if (isfield(BB,'interval'))
+                interval = BB.interval;
+                if (~this.isDoubleArray(interval,2) || interval(1) >= interval(2))
+                    fprintf(2,'Invalid data in project parameters file: BoundingBox.interval.\n');
+                    fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
+                    status = 0; return;
+                end
+                drv.bbox.interval = interval';
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getSink(this,json,drv)
+            status = 1;
+            if (~isfield(json,'Sink'))
+                return;
+            end
+            
+            for i = 1:length(json.Sink)
+                S = json.Sink(i);
+                
+                % Shape
+                if (~isfield(S,'shape'))
+                    fprintf(2,'Missing data in project parameters file: Sink.shape.\n');
+                    fprintf(2,'Available options: rectangle, circle.\n');
+                    status = 0; return;
+                end
+                shape = string(S.shape);
+                if (~this.isStringArray(shape,1))
+                    fprintf(2,'Invalid data in project parameters file: Sink.shape.\n');
+                    status = 0; return;
+                end
+                
+                % RECTANGLE
+                if (strcmp(shape,'rectangle'))
+                    if (~isfield(S,'limit_min') || ~isfield(S,'limit_max'))
+                        fprintf(2,'Invalid data in project parameters file: Missing Sink.limit_min and/or Sink.limit_max.\n');
+                        status = 0; return;
+                    end
+                    limit_min = S.limit_min;
+                    limit_max = S.limit_max;
+                    
+                    % Minimum limits
+                    if (~this.isDoubleArray(limit_min,2))
+                        fprintf(2,'Invalid data in project parameters file: Sink.limit_min.\n');
+                        fprintf(2,'It must be a pair of numeric values with X,Y coordinates of bottom-left corner.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Maximum limits
+                    if (~this.isDoubleArray(limit_max,2))
+                        fprintf(2,'Invalid data in project parameters file: Sink.limit_max.\n');
+                        fprintf(2,'It must be a pair of numeric values with X,Y coordinates of top-right corner.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Check consistency
+                    if (limit_min(1) >= limit_max(1) || limit_min(2) >= limit_max(2))
+                        fprintf(2,'Invalid data in project parameters file: Sink.limit_min or Sink.limit_max.\n');
+                        fprintf(2,'Minimum coordinates must be smaller than the maximum ones.\n');
+                        status = 0;
+                        return;
+                    end
+                    
+                    % Create object and set properties
+                    sink = Sink_Rectangle();
+                    sink.limit_min = limit_min';
+                    sink.limit_max = limit_max';
+                    drv.sink(i) = sink;
+                    
+                % CIRCLE
+                elseif (strcmp(shape,'circle'))
+                    if (~isfield(S,'center') || ~isfield(S,'radius'))
+                        fprintf(2,'Invalid data in project parameters file: Missing Sink.center and/or Sink.radius.\n');
+                        status = 0; return;
+                    end
+                    center = S.center;
+                    radius = S.radius;
+                    
+                    % Center
+                    if (~this.isDoubleArray(center,2))
+                        fprintf(2,'Invalid data in project parameters file: Sink.center.\n');
+                        fprintf(2,'It must be a pair of numeric values with X,Y coordinates of center point.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Radius
+                    if (~this.isDoubleArray(radius,1) || radius <= 0)
+                        fprintf(2,'Invalid data in project parameters file: Sink.radius.\n');
+                        fprintf(2,'It must be a positive value.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Create object and set properties
+                    sink = Sink_Circle();
+                    sink.center = center';
+                    sink.radius = radius;
+                    drv.sink(i) = sink;
+                    
+                else
+                    fprintf(2,'Invalid data in project parameters file: Sink.shape.\n');
+                    fprintf(2,'Available options: rectangle, circle.\n');
+                    status = 0; return;
+                end
+                
+                % Interval
+                if (isfield(S,'interval'))
+                    interval = S.interval;
+                    if (~this.isDoubleArray(interval,2) || interval(1) >= interval(2))
+                        fprintf(2,'Invalid data in project parameters file: Sink.interval.\n');
+                        fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
+                        status = 0; return;
+                    end
+                    drv.sink(i).interval = interval';
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getGlobalCondition(this,json,drv)
+            status = 1;
+            if (~isfield(json,'GlobalCondition'))
+                return;
+            end
+            GC = json.GlobalCondition;
+            
+            % Gravity
+            if (isfield(GC,'gravity'))
+                g = GC.gravity;
+                if (~this.isDoubleArray(g,2))
+                    fprintf(2,'Invalid data in project parameters file: GlobalCondition.gravity.\n');
+                    fprintf(2,'It must be a pair of numeric values with X,Y gravity acceleration components.\n');
+                    status = 0; return;
+                end
+                drv.gravity = g';
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getInitialCondition(this,json,drv)
+            status = 1;
+            if (~isfield(json,'InitialCondition'))
+                return;
+            end
+            IC = json.InitialCondition;
+            
+            % TRANSLATIONAL VELOCITY
+            if (isfield(IC,'TranslationalVelocity'))
+                for i = 1:length(IC.TranslationalVelocity)
+                    TV = IC.TranslationalVelocity(i);
+                    if (~isfield(TV,'value') || ~isfield(TV,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: InitialCondition.TranslationalVelocity must have value and model_parts.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Velocity value
+                    vel = TV.value;
+                    if (~this.isDoubleArray(vel,2))
+                        fprintf(2,'Invalid data in project parameters file: InitialCondition.TranslationalVelocity.value.\n');
+                        fprintf(2,'It must be a pair of numeric values with X,Y velocity components.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Apply initial velocity to selected particles
+                    model_parts = string(TV.model_parts);
+                    for j = 1:length(model_parts)
+                        name = model_parts(j);
+                        if (~this.isStringArray(name,1))
+                            fprintf(2,'Invalid data in project parameters file: InitialCondition.TranslationalVelocity.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0; return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            for k = 1:drv.n_particles
+                                drv.particles(k).veloc_trl = vel';
+                            end
+                        else
+                            mp = [];
+                            for k = 1:drv.n_mparts
+                                if (strcmp(drv.mparts(k).name,name))
+                                    mp = drv.mparts(k);
+                                end
+                            end
+                            if (isempty(mp))
+                                this.warn("Model part %s used in InitialCondition.TranslationalVelocity does not exist.",name);
+                                continue;
+                            end
+                            for k = 1:mp.n_particles
+                                mp.particles(k).veloc_trl = vel';
+                            end
+                        end
+                    end
+                end
+            end
+            
+            % ROTATIONAL VELOCITY
+            if (isfield(IC,'RotationalVelocity'))                
+                for i = 1:length(IC.RotationalVelocity)
+                    RV = IC.RotationalVelocity(i);
+                    if (~isfield(RV,'value') || ~isfield(RV,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: InitialCondition.RotationalVelocity must have value and model_parts.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Velocity value
+                    vel = RV.value;
+                    if (~this.isDoubleArray(vel,1))
+                        fprintf(2,'Invalid data in project parameters file: InitialCondition.RotationalVelocity.value.\n');
+                        fprintf(2,'It must be a numeric value with rotational velocity.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Apply initial velocity to selected particles
+                    model_parts = string(RV.model_parts);
+                    for j = 1:length(model_parts)
+                        name = model_parts(j);
+                        if (~this.isStringArray(name,1))
+                            fprintf(2,'Invalid data in project parameters file: InitialCondition.RotationalVelocity.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0; return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            for k = 1:drv.n_particles
+                                drv.particles(k).veloc_rot = vel;
+                            end
+                        else
+                            mp = [];
+                            for k = 1:drv.n_mparts
+                                if (strcmp(drv.mparts(k).name,name))
+                                    mp = drv.mparts(k);
+                                end
+                            end
+                            if (isempty(mp))
+                                this.warn("Model part %s used in InitialCondition.RotationalVelocity does not exist.",name);
+                                continue;
+                            end
+                            for k = 1:mp.n_particles
+                                mp.particles(k).veloc_rot = vel;
+                            end
+                        end
+                    end
+                end
+            end
+            
+            % TEMPERATURE
+            if (isfield(IC,'temperature'))
+                for i = 1:length(IC.temperature)
+                    T = IC.temperature(i);
+                    if (~isfield(T,'value') || ~isfield(T,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: InitialCondition.temperature must have value and model_parts.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Temperature value
+                    temp = T.value;
+                    if (~this.isDoubleArray(temp,1))
+                        fprintf(2,'Invalid data in project parameters file: InitialCondition.temperature.value.\n');
+                        fprintf(2,'It must be a numeric value with temperature.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Apply initial temperature to selected particles
+                    model_parts = string(T.model_parts);
+                    for j = 1:length(model_parts)
+                        name = model_parts(j);
+                        if (~this.isStringArray(name,1))
+                            fprintf(2,'Invalid data in project parameters file: InitialCondition.temperature.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0; return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            for k = 1:drv.n_particles
+                                drv.particles(k).temperature = temp;
+                            end
+                        else
+                            mp = [];
+                            for k = 1:drv.n_mparts
+                                if (strcmp(drv.mparts(k).name,name))
+                                    mp = drv.mparts(k);
+                                end
+                            end
+                            if (isempty(mp))
+                                this.warn("Model part %s used in InitialCondition.temperature does not exist.",name);
+                                continue;
+                            end
+                            for k = 1:mp.n_particles
+                                mp.particles(k).temperature = temp;
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getMaterial(this,json,drv)
+            status = 1;
+            if (~isfield(json,'Material'))
+                fprintf(2,'Missing data in project parameters file: Material.\n');
+                status = 0; return;
+            end
+            
+            for i = 1:length(json.Material)
+                M = json.Material(i);
+                if (~isfield(M,'name') || ~isfield(M,'model_parts') || ~isfield(M,'properties'))
+                    fprintf(2,'Missing data in project parameters file: Material must have name, model_parts and properties.\n');
+                    status = 0; return;
+                end
+                
+                % Create material object
+                mat = Material();
+                drv.n_materials = drv.n_materials + 1;
+                drv.materials = mat;
+                
+                % Name
+                name = string(M.name);
+                if (~this.isStringArray(name,1))
+                    fprintf(2,'Invalid data in project parameters file: Material.name.\n');
+                    fprintf(2,'It must be a string with the name representing the material.\n');
+                    status = 0; return;
+                end
+                mat.name = name;
+                
+                % Properties
+                prop = M.properties;
+                msg = 0; % controler for type of message
+                
+                if (isfield(prop,'density'))
+                    if (~this.isDoubleArray(prop.density,1))
+                        msg = -100;
+                    elseif (prop.density <= 0)
+                        msg = msg + 1;
+                    end
+                    mat.density = prop.density;
+                end
+                if (isfield(prop,'young_modulus'))
+                    if (~this.isDoubleArray(prop.young_modulus,1))
+                        msg = -100;
+                    elseif (prop.young_modulus <= 0)
+                        msg = msg + 1;
+                    end
+                    mat.young = prop.young_modulus;
+                end
+                if (isfield(prop,'young_modulus_real'))
+                    if (~this.isDoubleArray(prop.young_modulus_real,1))
+                        msg = -100;
+                    elseif (prop.young_modulus_real <= 0)
+                        msg = msg + 1;
+                    end
+                    mat.young_real = prop.young_modulus_real;
+                end
+                if (isfield(prop,'shear_modulus'))
+                    if (~this.isDoubleArray(prop.shear_modulus,1))
+                        msg = -100;
+                    elseif (prop.shear_modulus <= 0)
+                        msg = msg + 1;
+                    end
+                    mat.shear = prop.shear_modulus;
+                end
+                if (isfield(prop,'poisson_ratio'))
+                    if (~this.isDoubleArray(prop.poisson_ratio,1))
+                        msg = -100;
+                    elseif (prop.poisson_ratio < 0 || prop.poisson_ratio > 0.5)
+                        msg = msg + 1;
+                    end
+                    mat.poisson = prop.poisson_ratio;
+                end
+                if (isfield(prop,'restitution_coeff'))
+                    if (~this.isDoubleArray(prop.restitution_coeff,1))
+                        msg = -100;
+                    elseif (prop.restitution_coeff < 0 || prop.restitution_coeff > 1)
+                        msg = msg + 1;
+                    end
+                    mat.restitution = prop.restitution_coeff;
+                end
+                if (isfield(prop,'thermal_conductivity'))
+                    if (~this.isDoubleArray(prop.thermal_conductivity,1))
+                        msg = -100;
+                    elseif (prop.thermal_conductivity <= 0)
+                        msg = msg + 1;
+                    end
+                    mat.conduct = prop.thermal_conductivity;
+                end
+                if (isfield(prop,'heat_capacity'))
+                    if (~this.isDoubleArray(prop.heat_capacity,1))
+                        msg = -100;
+                    elseif (prop.heat_capacity <= 0)
+                        msg = msg + 1;
+                    end
+                    mat.capacity = prop.heat_capacity;
+                end
+                if (isfield(prop,'thermal_expansion'))
+                    if (~this.isDoubleArray(prop.thermal_expansion,1))
+                        msg = -100;
+                    elseif (prop.thermal_expansion <= 0)
+                        msg = msg + 1;
+                    end
+                    mat.expansion = prop.thermal_expansion;
+                end
+                
+                if (msg < 0)
+                    fprintf(2,'Invalid data in project parameters file: Material.properties.\n');
+                    fprintf(2,'Properties must be numerical values.\n');
+                    status = 0; return;
+                elseif(msg > 0)
+                    this.warn("Unphysical property value was found for material %s.",mat.name);
+                end
+                
+                % Set material to selected model parts
+                model_parts = string(M.model_parts);
+                for j = 1:length(model_parts)
+                    mp_name = model_parts(j);
+                    if (~this.isStringArray(mp_name,1))
+                        fprintf(2,'Invalid data in project parameters file: Material.model_parts.\n');
+                        fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                        status = 0; return;
+                    elseif (strcmp(mp_name,'PARTICLES'))
+                        for k = 1:drv.n_particles
+                            drv.particles(k).material = mat;
+                        end
+                    elseif (strcmp(mp_name,'WALLS'))
+                        for k = 1:drv.n_walls
+                            drv.walls(k).material = mat;
+                        end
+                    else
+                        mp = [];
+                        for k = 1:drv.n_mparts
+                            if (strcmp(drv.mparts(k).name,mp_name))
+                                mp = drv.mparts(k);
+                            end
+                        end
+                        if (isempty(mp))
+                            this.warn("Model part %s used in Material %s does not exist.",mp_name,mat.name);
+                            continue;
+                        end
+                        for k = 1:mp.n_particles
+                            mp.particles(k).material = mat;
+                        end
+                    end
+                end
+            end
+            
+            if (drv.n_materials == 0)
+                fprintf(2,'Invalid data in project parameters file: No valid material was found.\n');
+                status = 0; return;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getInteractionModel(this,json,drv)
+            status = 1;
+            if (~isfield(json,'InteractionModel') || isempty(json.InteractionModel))
+                fprintf(2,'Missing data in project parameters file: InteractionModel.\n');
+                status = 0; return;
+            end
+            
+            % Single case: Only 1 interaction model provided
+            % (applied to the interaction between all elements)
+            if (length(json.InteractionModel) == 1)
+                % Create common base interaction object
+                interact = Interact();
+                
+                % Kinematics
+                if (1)
+                    
+                end
+                
+                
+                % Set common interaction object as a property of search object
+                drv.search.interact_common = interact;
+            end
+            
+            % Multiple case:
+            if (length(json.InteractionModel) > 1)
+                
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getInteractionAssignment(this,json,drv)
+            status = 1;
+            if (~isempty(drv.search.interact_common))
+                if (isfield(json,'InteractionAssignment'))
+                    this.warn("Only one InteractionModel was created and will be applied to all interactions, so InteractionAssignment will be ignored.");
+                end
+                return;
+            elseif (~isfield(json,'InteractionAssignment'))
+                fprintf(2,'Missing data in project parameters file: InteractionModel.\n');
+                status = 0; return;
+            end
+            
+        end
+    end
+    
+    %% Public methods: Model parts file
+    methods
+                
         %------------------------------------------------------------------
         function status = readParticlesDisk(this,fid,drv)
             status = 1;
@@ -531,629 +1299,25 @@ classdef Read < handle
             end
             
             if (mp.n_particles == 0 && mp.n_walls == 0)
-                warning('off','backtrace');
-                warning("Model part %s is empty.",mp.name);
-                warning('on','backtrace');
-            end
-        end
-        
-        %------------------------------------------------------------------
-        function status = getSolverParam(this,json,drv)
-            status = 1;
-            if (~isfield(json,'Solver'))
-                fprintf(2,'Missing data in project parameters file: Solver.\n');
-                status = 0; return;
-            end
-            
-            % Automatic time step
-            if (isfield(json.Solver,'auto_time_step'))
-                if (~this.isLogicalArray(json.Solver.auto_time_step,1))
-                    fprintf(2,'Invalid data in project parameters file: Solver.auto_time_step.\n');
-                    fprintf(2,'It must be a boolean: true or false.\n');
-                    status = 0; return;
-                end
-                drv.auto_step = json.Solver.auto_time_step;
-            end
-            
-            % Time step
-            if (isfield(json.Solver,'time_step'))
-                if (~this.isDoubleArray(json.Solver.time_step,1) || json.Solver.time_step <= 0)
-                    fprintf(2,'Invalid data in project parameters file: Solver.time_step.\n');
-                    fprintf(2,'It must be a positive value.\n');
-                    status = 0; return;
-                end
-                drv.time_step = json.Solver.time_step;
-            else
-                fprintf(2,'Missing data in project parameters file: Solver.time_step.\n');
-                status = 0; return;
-            end
-            
-            % Final time
-            if (isfield(json.Solver,'final_time'))
-                if (~this.isDoubleArray(json.Solver.final_time,1) || json.Solver.final_time <= 0)
-                    fprintf(2,'Invalid data in project parameters file: Solver.final_time.\n');
-                    fprintf(2,'It must be a positive value.\n');
-                    status = 0; return;
-                end
-                drv.max_time = json.Solver.final_time;
-            elseif (~isfield(json.Solver,'max_steps'))
-                fprintf(2,'Missing data in project parameters file: Solver.final_time or Solver.max_steps.\n');
-                status = 0; return;
-            end
-            
-            % Maximum steps
-            if (isfield(json.Solver,'max_steps'))
-                if (~this.isIntArray(json.Solver.max_steps,1) || json.Solver.max_steps <= 0)
-                    fprintf(2,'Invalid data in project parameters file: Solver.max_steps.\n');
-                    fprintf(2,'It must be a positive integer.\n');
-                    status = 0; return;
-                end
-                drv.max_step = json.Solver.max_steps;
-            elseif (~isfield(json.Solver,'final_time'))
-                fprintf(2,'Missing data in project parameters file: Solver.final_time or Solver.max_steps.\n');
-                status = 0; return;
-            end
-            
-            % Time integration scheme: translational velocity
-            if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_trans'))
-                scheme = string(json.Solver.integr_scheme_trans);
-                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
-                    fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_trans.\n');
-                    fprintf(2,'Available options: foward_euler.\n');
-                    status = 0; return;
-                end
-                if (strcmp(scheme,'foward_euler'))
-                    drv.scheme_vtrl = Scheme_FowardEuler();
-                end
-            end
-            
-            % Time integration scheme: rotational velocity
-            if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_rotat'))
-                scheme = string(json.Solver.integr_scheme_rotat);
-                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
-                    fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_rotat.\n');
-                    fprintf(2,'Available options: foward_euler.\n');
-                    status = 0; return;
-                end
-                if (strcmp(scheme,'foward_euler'))
-                    drv.scheme_vrot = Scheme_FowardEuler();
-                end
-            end
-            
-            % Time integration scheme: temperature
-            if ((drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_therm'))
-                scheme = string(json.Solver.integr_scheme_therm);
-                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
-                    fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_therm.\n');
-                    fprintf(2,'Available options: foward_euler.\n');
-                    status = 0; return;
-                end
-                if (strcmp(scheme,'foward_euler'))
-                    drv.scheme_temp = Scheme_FowardEuler();
-                end
-            end
-            
-            % Paralelization
-            if (isfield(json.Solver,'parallelization'))
-                if (~this.isLogicalArray(json.Solver.parallelization,1))
-                    fprintf(2,'Invalid data in project parameters file: Solver.parallelization.\n');
-                    fprintf(2,'It must be a boolean: true or false.\n');
-                    status = 0; return;
-                end
-                drv.parallel = json.Solver.parallelization;
-            end
-            
-            % Number of workers
-            if (isfield(json.Solver,'workers'))
-                if (~this.isIntArray(json.Solver.workers,1) || json.Solver.workers <= 0)
-                    fprintf(2,'Invalid data in project parameters file: Solver.workers.\n');
-                    fprintf(2,'It must be a positive integer.\n');
-                    status = 0; return;
-                end
-                drv.workers = json.Solver.workers;
-            end
-        end
-        
-        %------------------------------------------------------------------
-        function status = getSearch(this,json,drv)
-            status = 1;
-            if (~isfield(json,'Search'))
-                fprintf(2,'Missing data in project parameters file: Search.\n');
-                status = 0; return;
-            elseif (~isfield(json.Search,'scheme'))
-                fprintf(2,'Missing data in project parameters file: Search.scheme.\n');
-                status = 0; return;
-            end
-            
-            % Scheme
-            scheme = string(json.Search.scheme);
-            if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'simple_loop'))
-                fprintf(2,'Invalid data in project parameters file: Search.scheme.\n');
-                fprintf(2,'Available options: simple_loop.\n');
-                status = 0; return;
-            end
-            if (strcmp(scheme,'simple_loop'))
-                drv.search = Search_SimpleLoop();
-            end
-            
-            % Search frequency
-            if (isfield(json.Search,'search_frequency'))
-                if (~this.isDoubleArray(json.Search.search_frequency,1) || json.Search.search_frequency <= 0)
-                    fprintf(2,'Invalid data in project parameters file: Search.search_frequency.\n');
-                    fprintf(2,'It must be a positive integer.\n');
-                    status = 0; return;
-                end
-                drv.search.freq = json.Search.search_frequency;
-            end
-        end
-        
-        %------------------------------------------------------------------
-        function status = getBoundingBox(this,json,drv)
-            status = 1;
-            if (~isfield(json,'BoundingBox'))
-                return;
-            end
-            BB = json.BoundingBox;
-            
-            % Shape
-            if (~isfield(BB,'shape'))
-                fprintf(2,'Missing data in project parameters file: BoundingBox.shape.\n');
-                fprintf(2,'Available options: rectangle, circle.\n');
-                status = 0; return;
-            end
-            shape = string(BB.shape);
-            if (~this.isStringArray(shape,1))
-                fprintf(2,'Invalid data in project parameters file: BoundingBox.shape.\n');
-                status = 0; return;
-            end
-            
-            % RECTANGLE
-            if (strcmp(shape,'rectangle'))
-                warn = 0;
-                
-                % Minimum limits
-                if (isfield(BB,'limit_min'))
-                    limit_min = BB.limit_min;
-                    if (~this.isDoubleArray(limit_min,2))
-                        fprintf(2,'Invalid data in project parameters file: BoundingBox.limit_min.\n');
-                        fprintf(2,'It must be a pair of numeric values with X,Y coordinates of bottom-left corner.\n');
-                        status = 0; return;
-                    end
-                else
-                    limit_min = [-inf;-inf];
-                    warn = warn + 1;
-                end
-                
-                % Maximum limits
-                if (isfield(BB,'limit_max'))
-                    limit_max = BB.limit_max;
-                    if (~this.isDoubleArray(limit_max,2))
-                        fprintf(2,'Invalid data in project parameters file: BoundingBox.limit_max.\n');
-                        fprintf(2,'It must be a pair of numeric values with X,Y coordinates of top-right corner.\n');
-                        status = 0; return;
-                    end
-                else
-                    limit_max = [inf;inf];
-                    warn = warn + 2;
-                end
-                
-                % Check consistency
-                warning('off','backtrace');
-                if (warn == 1)
-                    warning("Minimum limits of bounding box were not provided. Infinite limits were assumed.");
-                elseif (warn == 2)
-                    warning("Maximum limits of bounding box were not provided. Infinite limits were assumed.");
-                elseif (warn == 3)
-                    warning("Maximum and minimum limits of bounding box were not provided. Bounding box will not be considered.");
-                    return;
-                end
-                if (limit_min(1) >= limit_max(1) || limit_min(2) >= limit_max(2))
-                    fprintf(2,'Invalid data in project parameters file: BoundingBox.limit_min or BoundingBox.limit_max.\n');
-                    fprintf(2,'Minimum coordinates must be smaller than the maximum ones.\n');
-                    status = 0;
-                    return;
-                end
-                warning('on','backtrace');
-                
-                % Create object and set properties
-                bbox = BBox_Rectangle();
-                bbox.limit_min = limit_min';
-                bbox.limit_max = limit_max';
-                drv.bbox = bbox;
-                
-            % CIRCLE
-            elseif (strcmp(shape,'circle'))
-                if (~isfield(BB,'center') || ~isfield(BB,'radius'))
-                    fprintf(2,'Invalid data in project parameters file: Missing BoundingBox.center and/or BoundingBox.radius.\n');
-                    status = 0; return;
-                end
-                center = BB.center;
-                radius = BB.radius;
-                
-                % Center
-                if (~this.isDoubleArray(center,2))
-                    fprintf(2,'Invalid data in project parameters file: BoundingBox.center.\n');
-                    fprintf(2,'It must be a pair of numeric values with X,Y coordinates of center point.\n');
-                    status = 0; return;
-                end
-                
-                % Radius
-                if (~this.isDoubleArray(radius,1) || radius <= 0)
-                    fprintf(2,'Invalid data in project parameters file: BoundingBox.radius.\n');
-                    fprintf(2,'It must be a positive value.\n');
-                    status = 0; return;
-                end
-                
-                % Create object and set properties
-                bbox = BBox_Circle();
-                bbox.center = center';
-                bbox.radius = radius;
-                drv.bbox = bbox;
-                
-            else
-                fprintf(2,'Invalid data in project parameters file: BoundingBox.shape.\n');
-                fprintf(2,'Available options: rectangle, circle.\n');
-                status = 0; return;
-            end
-            
-            % Interval
-            if (isfield(BB,'interval'))
-                interval = BB.interval;
-                if (~this.isDoubleArray(interval,2) || interval(1) >= interval(2))
-                    fprintf(2,'Invalid data in project parameters file: BoundingBox.interval.\n');
-                    fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
-                    status = 0; return;
-                end
-                drv.bbox.interval = interval';
-            end
-        end
-        
-        %------------------------------------------------------------------
-        function status = getGlobalCondition(this,json,drv)
-            status = 1;
-            if (~isfield(json,'GlobalCondition'))
-                return;
-            end
-            GC = json.GlobalCondition;
-            
-            % Gravity
-            if (isfield(GC,'gravity'))
-                g = GC.gravity;
-                if (~this.isDoubleArray(g,2))
-                    fprintf(2,'Invalid data in project parameters file: GlobalCondition.gravity.\n');
-                    fprintf(2,'It must be a pair of numeric values with X,Y gravity acceleration components.\n');
-                    status = 0; return;
-                end
-                drv.gravity = g';
-            end
-        end
-        
-        %------------------------------------------------------------------
-        function status = getInitialCondition(this,json,drv)
-            status = 1;
-            if (~isfield(json,'InitialCondition'))
-                return;
-            end
-            IC = json.InitialCondition;
-            
-            % TRANSLATIONAL VELOCITY
-            if (isfield(IC,'TranslationalVelocity'))
-                TranslationalVelocity = IC.TranslationalVelocity;
-                
-                for i = 1:length(TranslationalVelocity)
-                    TV = TranslationalVelocity(i);
-                    if (~isfield(TV,'value') || ~isfield(TV,'model_parts'))
-                        fprintf(2,'Missing data in project parameters file: InitialCondition.TranslationalVelocity must have value and model_parts.\n');
-                        status = 0; return;
-                    end
-                    
-                    % Velocity value
-                    vel = TV.value;
-                    if (~this.isDoubleArray(vel,2))
-                        fprintf(2,'Invalid data in project parameters file: InitialCondition.TranslationalVelocity.value.\n');
-                        fprintf(2,'It must be a pair of numeric values with X,Y velocity components.\n');
-                        status = 0; return;
-                    end
-                    
-                    % Apply initial velocity to selected particles
-                    model_parts = string(TV.model_parts);
-                    for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
-                            fprintf(2,'Invalid data in project parameters file: InitialCondition.TranslationalVelocity.model_parts.\n');
-                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
-                            status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
-                            for k = 1:drv.n_particles
-                                drv.particles(k).veloc_trl = vel';
-                            end
-                        else
-                            mp = [];
-                            for k = 1:drv.n_mparts
-                                if (strcmp(drv.mparts(k).name,name))
-                                    mp = drv.mparts(k);
-                                end
-                            end
-                            if (isempty(mp))
-                                warning('off','backtrace');
-                                warning("Model part %s used in InitialCondition.TranslationalVelocity does not exist.",name);
-                                warning('on','backtrace');
-                                continue;
-                            end
-                            for k = 1:mp.n_particles
-                                mp.particles(k).veloc_trl = vel';
-                            end
-                        end
-                    end
-                end
-            end
-            
-            % ROTATIONAL VELOCITY
-            if (isfield(IC,'RotationalVelocity'))
-                RotationalVelocity = IC.RotationalVelocity;
-                
-                for i = 1:length(RotationalVelocity)
-                    RV = RotationalVelocity(i);
-                    if (~isfield(RV,'value') || ~isfield(RV,'model_parts'))
-                        fprintf(2,'Missing data in project parameters file: InitialCondition.RotationalVelocity must have value and model_parts.\n');
-                        status = 0; return;
-                    end
-                    
-                    % Velocity value
-                    vel = RV.value;
-                    if (~this.isDoubleArray(vel,1))
-                        fprintf(2,'Invalid data in project parameters file: InitialCondition.RotationalVelocity.value.\n');
-                        fprintf(2,'It must be a numeric value with rotational velocity.\n');
-                        status = 0; return;
-                    end
-                    
-                    % Apply initial velocity to selected particles
-                    model_parts = string(RV.model_parts);
-                    for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
-                            fprintf(2,'Invalid data in project parameters file: InitialCondition.RotationalVelocity.model_parts.\n');
-                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
-                            status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
-                            for k = 1:drv.n_particles
-                                drv.particles(k).veloc_rot = vel;
-                            end
-                        else
-                            mp = [];
-                            for k = 1:drv.n_mparts
-                                if (strcmp(drv.mparts(k).name,name))
-                                    mp = drv.mparts(k);
-                                end
-                            end
-                            if (isempty(mp))
-                                warning('off','backtrace');
-                                warning("Model part %s used in InitialCondition.RotationalVelocity does not exist.",name);
-                                warning('on','backtrace');
-                                continue;
-                            end
-                            for k = 1:mp.n_particles
-                                mp.particles(k).veloc_rot = vel;
-                            end
-                        end
-                    end
-                end
-            end
-            
-            % TEMPERATURE
-            if (isfield(IC,'Temperature'))
-                Temperature = IC.Temperature;
-                
-                for i = 1:length(Temperature)
-                    T = Temperature(i);
-                    if (~isfield(T,'value') || ~isfield(T,'model_parts'))
-                        fprintf(2,'Missing data in project parameters file: InitialCondition.Temperature must have value and model_parts.\n');
-                        status = 0; return;
-                    end
-                    
-                    % Temperature value
-                    temp = T.value;
-                    if (~this.isDoubleArray(temp,1))
-                        fprintf(2,'Invalid data in project parameters file: InitialCondition.Temperature.value.\n');
-                        fprintf(2,'It must be a numeric value with temperature.\n');
-                        status = 0; return;
-                    end
-                    
-                    % Apply initial temperature to selected particles
-                    model_parts = string(T.model_parts);
-                    for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
-                            fprintf(2,'Invalid data in project parameters file: InitialCondition.Temperature.model_parts.\n');
-                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
-                            status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
-                            for k = 1:drv.n_particles
-                                drv.particles(k).temperature = temp;
-                            end
-                        else
-                            mp = [];
-                            for k = 1:drv.n_mparts
-                                if (strcmp(drv.mparts(k).name,name))
-                                    mp = drv.mparts(k);
-                                end
-                            end
-                            if (isempty(mp))
-                                warning('off','backtrace');
-                                warning("Model part %s used in InitialCondition.Temperature does not exist.",name);
-                                warning('on','backtrace');
-                                continue;
-                            end
-                            for k = 1:mp.n_particles
-                                mp.particles(k).temperature = temp;
-                            end
-                        end
-                    end
-                end
-            end
-        end
-        
-        %------------------------------------------------------------------
-        function status = getMaterial(this,json,drv)
-            status = 1;
-            if (~isfield(json,'Material'))
-                fprintf(2,'Missing data in project parameters file: Material.\n');
-                status = 0; return;
-            end
-            
-            for i = 1:length(json.Material)
-                M = json.Material(i);
-                if (~isfield(M,'name') || ~isfield(M,'model_parts') || ~isfield(M,'properties'))
-                    fprintf(2,'Missing data in project parameters file: Material must have name, model_parts and properties.\n');
-                    status = 0; return;
-                end
-                
-                % Create material object
-                mat = Material();
-                drv.n_materials = drv.n_materials + 1;
-                drv.materials = mat;
-                
-                % Name
-                name = string(M.name);
-                if (~this.isStringArray(name,1))
-                    fprintf(2,'Invalid data in project parameters file: Material.name.\n');
-                    fprintf(2,'It must be a string with the name representing the material.\n');
-                    status = 0; return;
-                end
-                mat.name = name;
-                
-                % Properties
-                prop = M.properties;
-                msg = 0; % controler for type of message
-                
-                if (isfield(prop,'density'))
-                    if (~this.isDoubleArray(prop.density,1))
-                        msg = -100;
-                    elseif (prop.density <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.density = prop.density;
-                end
-                if (isfield(prop,'young_modulus'))
-                    if (~this.isDoubleArray(prop.young_modulus,1))
-                        msg = -100;
-                    elseif (prop.young_modulus <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.young = prop.young_modulus;
-                end
-                if (isfield(prop,'young_modulus_real'))
-                    if (~this.isDoubleArray(prop.young_modulus_real,1))
-                        msg = -100;
-                    elseif (prop.young_modulus_real <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.young_real = prop.young_modulus_real;
-                end
-                if (isfield(prop,'shear_modulus'))
-                    if (~this.isDoubleArray(prop.shear_modulus,1))
-                        msg = -100;
-                    elseif (prop.shear_modulus <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.shear = prop.shear_modulus;
-                end
-                if (isfield(prop,'poisson_ratio'))
-                    if (~this.isDoubleArray(prop.poisson_ratio,1))
-                        msg = -100;
-                    elseif (prop.poisson_ratio < 0 || prop.poisson_ratio > 0.5)
-                        msg = msg + 1;
-                    end
-                    mat.poisson = prop.poisson_ratio;
-                end
-                if (isfield(prop,'restitution_coeff'))
-                    if (~this.isDoubleArray(prop.restitution_coeff,1))
-                        msg = -100;
-                    elseif (prop.restitution_coeff < 0 || prop.restitution_coeff > 1)
-                        msg = msg + 1;
-                    end
-                    mat.restitution = prop.restitution_coeff;
-                end
-                if (isfield(prop,'thermal_conductivity'))
-                    if (~this.isDoubleArray(prop.thermal_conductivity,1))
-                        msg = -100;
-                    elseif (prop.thermal_conductivity <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.conduct = prop.thermal_conductivity;
-                end
-                if (isfield(prop,'heat_capacity'))
-                    if (~this.isDoubleArray(prop.heat_capacity,1))
-                        msg = -100;
-                    elseif (prop.heat_capacity <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.capacity = prop.heat_capacity;
-                end
-                if (isfield(prop,'thermal_expansion'))
-                    if (~this.isDoubleArray(prop.thermal_expansion,1))
-                        msg = -100;
-                    elseif (prop.thermal_expansion <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.expansion = prop.thermal_expansion;
-                end
-                
-                if (msg < 0)
-                    fprintf(2,'Invalid data in project parameters file: Material.properties.\n');
-                    fprintf(2,'Properties must be numerical values.\n');
-                    status = 0; return;
-                elseif(msg > 0)
-                    warning('off','backtrace');
-                    warning("Unphysical property value was found for material %s.",mat.name);
-                    warning('on','backtrace');
-                end
-                
-                % Set material to selected model parts
-                model_parts = string(M.model_parts);
-                for j = 1:length(model_parts)
-                    mp_name = model_parts(j);
-                    if (~this.isStringArray(mp_name,1))
-                        fprintf(2,'Invalid data in project parameters file: Material.model_parts.\n');
-                        fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
-                        status = 0; return;
-                    elseif (strcmp(mp_name,'PARTICLES'))
-                        for k = 1:drv.n_particles
-                            drv.particles(k).material = mat;
-                        end
-                    elseif (strcmp(mp_name,'WALLS'))
-                        for k = 1:drv.n_walls
-                            drv.walls(k).material = mat;
-                        end
-                    else
-                        mp = [];
-                        for k = 1:drv.n_mparts
-                            if (strcmp(drv.mparts(k).name,mp_name))
-                                mp = drv.mparts(k);
-                            end
-                        end
-                        if (isempty(mp))
-                            warning('off','backtrace');
-                            warning("Model part %s used in Material %s does not exist.",mp_name,mat.name);
-                            warning('on','backtrace');
-                            continue;
-                        end
-                        for k = 1:mp.n_particles
-                            mp.particles(k).material = mat;
-                        end
-                    end
-                end
-            end
-            
-            if (drv.n_materials == 0)
-                fprintf(2,'Invalid data in project parameters file: No valid material was found.\n');
-                status = 0; return;
+                this.warn("Model part %s is empty.",mp.name);
             end
         end
     end
     
-    %% Static methods
+    %% Public methods: Checks
+    methods
+        
+    end
+    
+    %% Static methods: Auxiliary
     methods (Static)
+        %------------------------------------------------------------------
+        function warn(str)
+            warning('off','backtrace');
+            warning(str);
+            warning('on','backtrace');
+        end
+        
         %------------------------------------------------------------------
         function is = isLogicalArray(variable,size)
             if (isempty(variable) || length(variable) ~= size || ~isa(variable,'logical'))
