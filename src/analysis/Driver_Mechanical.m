@@ -38,5 +38,10 @@ classdef Driver_Mechanical < Driver
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;
         end
+        
+        %------------------------------------------------------------------
+        function runAnalysis(this)
+            
+        end
     end
 end

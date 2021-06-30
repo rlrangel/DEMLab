@@ -33,5 +33,10 @@ classdef Driver_Thermal < Driver
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;
         end
+        
+        %------------------------------------------------------------------
+        function runAnalysis(this)
+            
+        end
     end
 end

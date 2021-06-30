@@ -6,7 +6,7 @@
 %
 %% Implementation
 %
-classdef ContactForceT < handle & matlab.mixin.Heterogeneous
+classdef ContactForceT < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of model

@@ -20,6 +20,17 @@ classdef BBox_Circle < BBox
     
     %% Public methods
     methods
-        
+        %------------------------------------------------------------------
+        function do = removeParticle(this,particle,time)
+            if (time < min(this.interval) || time > max(this.interval))
+                do = false;
+                return;
+            end
+            if (norm(particle.coord-this.center) > this.radius)
+                do = true;
+            else
+                do = false;
+            end
+        end
     end
 end

@@ -20,6 +20,18 @@ classdef BBox_Rectangle < BBox
     
     %% Public methods
     methods
-        
+        %------------------------------------------------------------------
+        function do = removeParticle(this,particle,time)
+            if (time < min(this.interval) || time > max(this.interval))
+                do = false;
+                return;
+            end
+            if (any(particle.coord < this.limit_min) ||...
+                any(particle.coord > this.limit_max))
+                do = true;
+            else
+                do = false;
+            end
+        end
     end
 end

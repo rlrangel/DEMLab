@@ -40,5 +40,17 @@ classdef Driver_ThermoMechanical < Driver
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;
         end
+        
+        %------------------------------------------------------------------
+        function runAnalysis(this)
+            while (this.time < this.max_time && this.step < this.max_step)
+                % Update time and step
+                this.time = this.time + this.time_step;
+                this.step = this.step + 1;
+                
+                % Interactions search
+                
+            end
+        end
     end
 end

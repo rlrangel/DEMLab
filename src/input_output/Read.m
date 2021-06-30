@@ -216,7 +216,7 @@ classdef Read < handle
                     status = 0; return;
                 end
                 drv.time_step = json.Solver.time_step;
-            else
+            elseif (~isfield(json.Solver,'auto_time_step'))
                 fprintf(2,'Missing data in project parameters file: Solver.time_step.\n');
                 status = 0; return;
             end
@@ -839,7 +839,7 @@ classdef Read < handle
                 if (isfield(prop,'thermal_expansion'))
                     if (~this.isDoubleArray(prop.thermal_expansion,1))
                         msg = -100;
-                    elseif (prop.thermal_expansion <= 0)
+                    elseif (prop.thermal_expansion < 0)
                         msg = msg + 1;
                     end
                     mat.expansion = prop.thermal_expansion;
@@ -1209,7 +1209,7 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = readModelParts(~,fid,drv)
+        function status = readModelParts(this,fid,drv)
             status = 1;
             
             % Create ModelPart object

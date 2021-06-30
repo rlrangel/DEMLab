@@ -19,7 +19,7 @@ classdef Search < handle & matlab.mixin.Heterogeneous
         type int8 = uint8.empty; % flag for type of search
         
         % Parameters
-        freq int32 = int32.empty; % frequency of search (in steps)
+        freq uint32 = uint32.empty; % frequency of search (in steps)
         
         % Base object for common interactions
         b_interact Interact = Interact.empty;   % object of the Interact class for all interactions
@@ -45,6 +45,9 @@ classdef Search < handle & matlab.mixin.Heterogeneous
     methods (Abstract)
         %------------------------------------------------------------------
         applyDefaultProps(this);
+        
+        %------------------------------------------------------------------
+        execute(this,drv);
     end
     
     %% Public methods

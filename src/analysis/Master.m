@@ -20,13 +20,9 @@ classdef Master < handle
     %% Public methods
     methods
         %------------------------------------------------------------------
-        function runAnalysis(~)
-            % Display header
-            fprintf('==================================================================\n');
-            fprintf('           DEMLab - Discrete Element Method Laboratory            \n');
-            fprintf('                     Version 1.0 - July 2021                      \n');
-            fprintf(' International Center for Numerical Methods in Engineering (CIMNE)\n');
-            fprintf('==================================================================\n\n');
+        function runSimulation(this)
+            % Print header
+            this.printHeader();
             
             % Get input file
             [file_name,file_path] = uigetfile('*.json','DEMLab - Input file','ProjectParameters');
@@ -56,25 +52,88 @@ classdef Master < handle
             end
             
             % Check input data
-            fprintf('Checking consistency of input data...\n');
+            fprintf('\nChecking consistency of input data...\n');
             status = read.check(drv);
             if (~status)
                 fprintf("\nExiting program...\n");
                 return;
             end
             
-            % Print model information (Num particles, etc)
-            
-            
             % Start parallelization
-            
+            this.startParallel(drv);
             
             % Pre-processs
             fprintf('\nPre-processing...\n');
+            if (~drv.preProcess())
+                fprintf("\nExiting program...\n");
+                return;
+            end
+            
+            % Print simulation information
+            this.printSimulationInfo(drv);
             
             % Execute analysis
-            % Print start infro...
+            fprintf('\nStarting analysis:\n');
+            fprintf('%s\n',datestr(now));
+            tic;
+            drv.runAnalysis();
             
+            % Print finished status
+            t = seconds(toc);
+            t.Format = 'hh:mm:ss.SS';
+            fprintf('\nAnalysis finished:\n');
+            fprintf('%s\n',datestr(now));
+            fprintf('Total time: %s\n',string(t));
+        end
+        
+        %------------------------------------------------------------------
+        function printHeader(~)
+            fprintf('==================================================================\n');
+            fprintf('           DEMLab - Discrete Element Method Laboratory            \n');
+            fprintf('                     Version 1.0 - July 2021                      \n');
+            fprintf(' International Center for Numerical Methods in Engineering (CIMNE)\n');
+            fprintf('==================================================================\n\n');
+        end
+        
+        %------------------------------------------------------------------
+        function printSimulationInfo(~,drv)
+            fprintf('\nSimulation ready:\n');
+            fprintf('Name.................: %s\n',drv.name);
+            if (drv.type == drv.MECHANICAL)
+                fprintf('Type.................: Mechanical\n');
+            elseif (drv.type == drv.THERMAL)
+                fprintf('Type.................: Thermal\n');
+            elseif (drv.type == drv.THERMO_MECHANICAL)
+                fprintf('Type.................: Thermo-mechanical\n');
+            end
+            fprintf('Number of particles..: %d\n',drv.n_particles);
+            fprintf('Time step............: %f\n',drv.time_step);
+            if (~isempty(drv.max_time))
+                fprintf('Final time...........: %f\n',drv.max_time);
+            end
+            if (~isempty(drv.max_step))     
+                fprintf('Maximum steps........: %d\n',drv.max_step);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function startParallel(~,drv)
+            p = gcp('nocreate');
+            if (drv.parallel)
+                if (isempty(p))
+                    fprintf('\n');
+                    parpool(drv.workers);
+                elseif (p.NumWorkers ~= drv.workers)
+                    fprintf('\n');
+                    delete(p)
+                    parpool(drv.workers);
+                end
+            elseif (~isempty(p))
+                fprintf('\n');
+                delete(p);
+            end
+            ps = parallel.Settings;
+            ps.Pool.AutoCreate = false;
         end
     end
 end

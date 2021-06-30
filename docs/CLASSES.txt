@@ -1,22 +1,3 @@
-->inputoutput classes
-Plot
-Plot_2D
-Plot_3D
-Graph
-Print
-Export
-Export_Paraview
-
-------------------------------------------------------------------------------------------------------------------------------------------------
-Master:
-	Tasks:
-	* Run solution loop (from Driver);
-	* Plot results (from Plot, Plot_2D, Plot_3D: for animation and pictures);
-	* Graph results (from Graph - for graph mode results);
-	* Print results (from Print);
-	* Export results (from Export - for Paraview);
-
-------------------------------------------------------------------------------------------------------------------------------------------------
 Driver:
 	Properties:
 	* Model components: total numbers
@@ -35,10 +16,8 @@ Driver:
 	  -GlobalDampingTranslational; (default: [])
 	  -GlobalDampingRotational; (default: [])
 	  	
-	Tasks: (for thermomechanical)
+	Tasks:
 	* Pre-precess (parallel loop through all elements):
-	  -Consider time and step as zero to allow respecting the frequency requirements of some methods;
-	  -Remove active particles initially not respecting bbox and sinks;
 	  -Build arrays of active particles/walls IDs; (may need to be updated if particles are removed/created or elements become active)
 	  -Set initial variable properties values of particles and walls;
 	  -Compute the NeighbourDistance according to the models assumed for the interactions (particle property): each model returns the required distance;
@@ -46,7 +25,7 @@ Driver:
 	  -Virtual method to compute automatic time step according to mechanical or thermal formula (may need to be updated if particles are removed/created);
 	  -Store initial states to results?;
 	
-	* Virtual method to run generic solution loop (check for time and steps limit):
+	* Virtual method to run generic solution loop:
 	  1) Interaction search:
 	     -Call method to perform the algorithm and create the binary Interact objects;
 	  
@@ -90,23 +69,6 @@ Driver:
 		 -Update particle properties that dependends on the basic physical and geometric properties: area/volume, weight, thermal inertia, etc;
 		 -Update also some interaction properties that depend on the modified physical and geometric properties of the particles;
 		  (in fact, some interaction properties are stored to avoid re-computation, but they must be re-computed when the basic physical and geometric properties are changed)
-	  
-	  12) Time advancing:
-	     -Increment step number;
-		 -Update time;
-	
-	* Compute average properties of particles (may be only free ones): velocities,acceleration,mass,forces,temperature,etc;
-	* Compute total properties of particles (may be only free ones): forces,mass,etc;
-	* Compute max/min properties/states of particles (may be only free ones);
-
-------------------------------------------------------------------------------------------------------------------------------------------------
-BBox: (Super)
-	Tasks:
-	* Main virtual method to check if bbox is active according to interval and delete particle;
-
-Sink: (Super)
-	Tasks:
-	* Main virtual method to check if sink is active according to interval and delete particle;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 VariableProperty:
@@ -175,49 +137,12 @@ PrecribedCondition_Table:
 	* Implementation of the virtual method to return the table value (must have access to independent variable);
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
-Search: (Super)
+Search:
 	Properties:
 	* NeighbourDistance;
 	* PPInteractionTable; (2 columns for the IDs of the 1st and 2nd element of a particle-particle interaction, each row is an existing interaction)
 	* PWInteractionTable; (2 columns for the IDs of the 1st and 2nd element of a particle-wall, each row is an existing interaction)
 	
-	Tasks:
-	* Main virtual method to check if it is a search step according to the SearchFrequency, is so, call the algorithm;
-
-Search_SimpleLoop:
-	Tasks:
-	* Implementation of the virtual method to perform the algorithm:
-	  -Loop through all active particles in parallel;
-	  -Sub-loop through all other active particles with higher ID number and walls;
-	  -Check if there exist an Interact object for both elements (search in PPInteractionTable and PWInteractionTable):
-	    No:  If distance is smaller than NeighbourDistance, create a new Interact object for the binary interaction;
-	    Yes: If distance is greater than NeighbourDistance, delete object;
-	  -If object is to be created, add a handle to it in the list of interactions of the driver and both involved elements (also update PPInteractionTable and PWInteractionTable);
-	  -If object is to be deleted, remove the handle to it in the list of interactions of the driver and both involved elements (also update PPInteractionTable and PWInteractionTable);
-
-Search_RestrictedLoop:
-	Properties:
-	* SearchRadius;
-	* AutoUpdateFrequency; (needs a method to compute ompute the automatic update frequency of the search zone)
-	* SearchListUpdateFrequency;
-	
-	Tasks:
-	* Implementation of the virtual method to perform the algorithm:
-	  -Check if it is time to update the search list, if so, call method to do it (method similar to simple_loop):
-	   -> Loop through all active particles in parallel;
-	   -> Clean particle search list;
-	   -> Sub-loop through all other active particles and walls;
-	   -> Check if distance is smaller than SearchRadius (maximum of both particle), if so, add element to the list;
-
-	  -Check if it is time to perform the search, if so, call method to do it: (if list update has been performed, both can be done in the same loop)
-	   -> Loop through all active particles in parallel;
-	   -> Sub-loop through the particles of the search list with higher ID number, and active walls;
-	   -> Check if there exist an Interact object (search in PPInteractionTable and PWInteractionTable):
-	      No:  If distance is smaller than NeighbourDistance, create a new Interact object for the binary interaction;
-	      Yes: If distance is greater than NeighbourDistance, delete object;
-	   -> If object is to be created, add a handle to it in the list of interactions of the driver and both involved elements;
-	   -> If object is to be deleted, remove the handle to it in the list of interactions of the driver and both involved elements;
-
 ------------------------------------------------------------------------------------------------------------------------------------------------
 Particle: (Super,Disk)
 	Properties:

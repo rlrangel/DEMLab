@@ -21,6 +21,9 @@ classdef Wall_Circle < Wall
     
     %% Public methods
     methods
-        
+        %------------------------------------------------------------------
+        function d = distanceFromParticle(this,particle)
+            d = norm(this.center-particle.coord) - this.radius - particles.radius;
+        end
     end
 end

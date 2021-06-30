@@ -4,7 +4,7 @@
 %
 %% Implementation
 %
-classdef ContactKinematics < handle
+classdef ContactKinematics
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         

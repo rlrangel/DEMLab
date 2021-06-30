@@ -10,6 +10,9 @@ classdef Wall_Line2D < Wall
         % Position
         coord_ini double = double.empty;   % coordinates of initial point
         coord_end double = double.empty;   % coordinates of final point
+        
+        % Geometric properties
+        len double = double.empty;   % length of line
     end
     
     %% Constructor method
@@ -21,6 +24,9 @@ classdef Wall_Line2D < Wall
     
     %% Public methods
     methods
-        
+        %------------------------------------------------------------------
+        function d = distanceFromParticle(this,particle)
+            
+        end
     end
 end

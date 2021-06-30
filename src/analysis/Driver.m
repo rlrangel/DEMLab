@@ -69,10 +69,55 @@ classdef Driver < handle
     methods (Abstract)
         %------------------------------------------------------------------
         applyDefaultProps(this);
+        
+        %------------------------------------------------------------------
+        runAnalysis(this);
     end
     
     %% Public methods
     methods
-        
+        function status = preProcess(this)
+            status = 1;
+            
+            % Initialize time and step
+            this.time = 0;
+            this.step = 0;
+            
+            % Initialize vetor with IDs of particles to be removed
+            remove = zeros(this.n_particles,1);
+            
+            % loop over all particles
+            for i = 1:this.n_particles
+                p = this.particles(i);
+                
+                % Remove particles not respecting bbox
+                if (~isempty(this.bbox))
+                    if (this.bbox.removeParticle(p,this.time))
+                        remove(p.id) = 1;
+                    end
+                end
+                
+                % Remove particles not respecting sinks
+                if (~isempty(this.sink))
+                    for j = 1:length(this.sink)
+                        if (this.sink(j).removeParticle(p,this.time))
+                            remove(p.id) = 1;
+                        end
+                    end
+                end
+            end
+            
+            % Remove particles
+            if (any(remove))
+                % TODO
+                % Check if there is still any particle
+                warning('off','backtrace');
+                warning('Particles not respecting bounding box or sinks limits were removed before analysis started.');
+                warning('on','backtrace');
+            end
+            
+            % Interaction search
+            this.search.execute(this);
+        end
     end
 end

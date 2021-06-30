@@ -39,7 +39,8 @@ classdef Sink < handle & matlab.mixin.Heterogeneous
     
     %% Abstract methods
     methods (Abstract)
-        
+        %------------------------------------------------------------------
+        do = removeParticle(this,particle,time);
     end
     
     %% Public methods

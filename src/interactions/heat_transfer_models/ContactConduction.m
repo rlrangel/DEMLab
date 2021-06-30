@@ -6,7 +6,7 @@
 %
 %% Implementation
 %
-classdef ContactConduction < handle & matlab.mixin.Heterogeneous
+classdef ContactConduction < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of model

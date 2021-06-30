@@ -4,7 +4,7 @@
 %
 %% Implementation
 %
-classdef Interact < handle
+classdef Interact < handle & matlab.mixin.Copyable
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Members
