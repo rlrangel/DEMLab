@@ -83,9 +83,6 @@ classdef Driver < handle
             this.time = 0;
             this.step = 0;
             
-            % Initialize vetor with IDs of particles to be removed
-            remove = zeros(this.n_particles,1);
-            
             % loop over all particles
             for i = 1:this.n_particles
                 p = this.particles(i);
@@ -93,7 +90,8 @@ classdef Driver < handle
                 % Remove particles not respecting bbox
                 if (~isempty(this.bbox))
                     if (this.bbox.removeParticle(p,this.time))
-                        remove(p.id) = 1;
+                        delete(p);
+                        continue;
                     end
                 end
                 
@@ -101,19 +99,32 @@ classdef Driver < handle
                 if (~isempty(this.sink))
                     for j = 1:length(this.sink)
                         if (this.sink(j).removeParticle(p,this.time))
-                            remove(p.id) = 1;
+                            delete(p);
+                            continue;
                         end
                     end
                 end
+                
+                % Compute properties
+                
             end
             
-            % Remove particles
-            if (any(remove))
-                % TODO
-                % Check if there is still any particle
-                warning('off','backtrace');
-                warning('Particles not respecting bounding box or sinks limits were removed before analysis started.');
-                warning('on','backtrace');
+            % Remove handle to deleted particles from global list
+            this.particles(~isvalid(this.particles)) = [];
+            this.n_particles = length(this.particles);
+            if (this.n_particles == 0)
+                fprintf(2,"The model has no particle.\n");
+                status = 0;
+                return;
+            end
+            
+            % Loop over all model parts
+            for i = 1:this.n_mparts
+                mp = this.mparts(i);
+                
+                % Remove handle to deleted particles
+                mp.particles(~isvalid(mp.particles)) = [];
+                mp.n_particles = length(mp.particles);
             end
             
             % Interaction search

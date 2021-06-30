@@ -22,7 +22,7 @@ classdef Sink_Rectangle < Sink
     methods
         %------------------------------------------------------------------
         function do = removeParticle(this,particle,time)
-            if (time < min(this.interval) || time > max(this.interval))
+            if (~this.isActive(time))
                 do = false;
                 return;
             end

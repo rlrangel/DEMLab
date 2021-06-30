@@ -45,6 +45,9 @@ classdef Sink < handle & matlab.mixin.Heterogeneous
     
     %% Public methods
     methods
-        
+        %------------------------------------------------------------------
+        function is = isActive(this,time)
+            is = isempty(this.interval) || (time > min(this.interval) && time < max(this.interval));
+        end
     end
 end

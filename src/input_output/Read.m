@@ -59,6 +59,9 @@ classdef Read < handle
                 status = this.getInitialCondition(json,drv);
             end
             if (status)
+                status = this.getPrescribedCondition(json,drv);
+            end
+            if (status)
                 status = this.getMaterial(json,drv);
             end
             if (status)
@@ -72,11 +75,18 @@ classdef Read < handle
         %------------------------------------------------------------------
         function status = check(this,drv)
             status = 1;
-            % All particles have geometric property (radius for disk).
-            % All particles have a material;
+            if (status)
+                status = this.checkDriver(drv);
+            end
+            if (status)
+                status = this.checkParticles(drv);
+            end
+            if (status)
+                status = this.checkWalls(drv);
+            end
+            
             % All elements have an interaction model defined between them;
             % Interaction models are consistent;
-            % Material properties required by the analysis/models;
         end
     end
     
@@ -107,8 +117,7 @@ classdef Read < handle
                 fprintf(2,'Invalid data in project parameters file: ProblemData.analysis_type.\n');
                 fprintf(2,'Available options: mechanical, thermal, thermo_mechanical.\n');
                 status = 0; return;
-            end
-            if (strcmp(anl,'mechanical'))
+            elseif (strcmp(anl,'mechanical'))
                 drv = Driver_Mechanical();
             elseif (strcmp(anl,'thermal'))
                 drv = Driver_Thermal();
@@ -127,9 +136,9 @@ classdef Read < handle
             
             % Dimension
             dim = PD.dimension;
-            if (~this.isDoubleArray(dim,1) || (dim ~= 2 && dim ~= 3))
+            if (~this.isDoubleArray(dim,1) || dim ~= 2)
                 fprintf(2,'Invalid data in project parameters file: ProblemData.dimension.\n');
-                fprintf(2,'Available options: 2 or 3.\n');
+                fprintf(2,'Available options: 2.\n');
                 status = 0; return;
             end
             drv.dimension = dim;
@@ -156,7 +165,7 @@ classdef Read < handle
                 status = 0; return;
             end
             
-            % Look for tag strings
+            % Look for tags
             while (status == 1 && ~feof(fid))
                 line = deblank(fgetl(fid));
                 switch line
@@ -175,18 +184,23 @@ classdef Read < handle
                 return;
             end
             
-            % Check ID numbering
+            % Checks
             if (drv.n_particles == 0)
-                fprintf(2,"The must have at least one particle.\n");
+                fprintf(2,"The model has no particle.\n");
                 status = 0; return;
             elseif (drv.particles(drv.n_particles).id > drv.n_particles)
                 fprintf(2,"Invalid numbering of particles: IDs cannot skip numbers.\n");
                 status = 0; return;
             end
-            
-            if (drv.walls(drv.n_walls).id > drv.n_walls)
+            if (drv.n_walls > 0 && drv.walls(drv.n_walls).id > drv.n_walls)
                 fprintf(2,"Invalid numbering of walls: IDs cannot skip numbers.\n");
                 status = 0; return;
+            end
+            for i = 1:drv.n_mparts
+                if (length(findobj(drv.mparts,'name',drv.mparts(i).name)) > 1)
+                    fprintf(2,'Invalid data in model parts file: Repeated model part name.\n');
+                    status = 0; return;
+                end
             end
         end
         
@@ -248,7 +262,7 @@ classdef Read < handle
             end
             
             % Time integration scheme: translational velocity
-            if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_trans'))
+            if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) && isfield(json.Solver,'integr_scheme_trans'))
                 scheme = string(json.Solver.integr_scheme_trans);
                 if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_trans.\n');
@@ -261,7 +275,7 @@ classdef Read < handle
             end
             
             % Time integration scheme: rotational velocity
-            if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_rotat'))
+            if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) && isfield(json.Solver,'integr_scheme_rotat'))
                 scheme = string(json.Solver.integr_scheme_rotat);
                 if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_rotat.\n');
@@ -274,7 +288,7 @@ classdef Read < handle
             end
             
             % Time integration scheme: temperature
-            if ((drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_therm'))
+            if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.THERMAL) && isfield(json.Solver,'integr_scheme_therm'))
                 scheme = string(json.Solver.integr_scheme_therm);
                 if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_therm.\n');
@@ -324,8 +338,7 @@ classdef Read < handle
                 fprintf(2,'Invalid data in project parameters file: Search.scheme.\n');
                 fprintf(2,'Available options: simple_loop.\n');
                 status = 0; return;
-            end
-            if (strcmp(scheme,'simple_loop'))
+            elseif (strcmp(scheme,'simple_loop'))
                 drv.search = Search_SimpleLoop();
             end
             
@@ -351,7 +364,7 @@ classdef Read < handle
             % Shape
             if (~isfield(BB,'shape'))
                 fprintf(2,'Missing data in project parameters file: BoundingBox.shape.\n');
-                fprintf(2,'Available options: rectangle, circle.\n');
+                fprintf(2,'Available options: rectangle, circle, polygon.\n');
                 status = 0; return;
             end
             shape = string(BB.shape);
@@ -441,9 +454,44 @@ classdef Read < handle
                 bbox.radius = radius;
                 drv.bbox = bbox;
                 
+            % POLYGON
+            elseif (strcmp(shape,'polygon'))
+                if (~isfield(BB,'points_x') || ~isfield(BB,'points_y'))
+                    fprintf(2,'Invalid data in project parameters file: Missing BoundingBox.points_x and/or BoundingBox.points_y.\n');
+                    status = 0; return;
+                end
+                x = BB.points_x;
+                y = BB.points_y;
+                
+                % points_x / points_y
+                if (~this.isDoubleArray(x,length(x)) || ~this.isDoubleArray(y,length(y)))
+                    fprintf(2,'Invalid data in project parameters file: BoundingBox.points_x and/or BoundingBox.points_y.\n');
+                    fprintf(2,'It must be a list of numeric values with the X or Y coordinates of polygon points.\n');
+                    status = 0; return;
+                elseif (length(x) ~= length(y))
+                    fprintf(2,'Invalid data in project parameters file: BoundingBox.\n');
+                    fprintf(2,'Lists of X and Y coordinates must have the same size.\n');
+                    status = 0; return;
+                end
+                
+                % Check for valid polygon
+                warning off MATLAB:polyshape:repairedBySimplify;
+                warning off MATLAB:polyshape:boolOperationFailed
+                p = polyshape(x,y);
+                if (p.NumRegions ~= 1)
+                    fprintf(2,'Invalid data in project parameters file: BoundingBox.\n');
+                    fprintf(2,'Inconsistent polygon shape.\n');
+                    status = 0; return;
+                end
+                
+                % Create object and set properties
+                bbox = BBox_Polygon();
+                bbox.coord_x = x';
+                bbox.coord_y = y';
+                drv.bbox = bbox;
             else
                 fprintf(2,'Invalid data in project parameters file: BoundingBox.shape.\n');
-                fprintf(2,'Available options: rectangle, circle.\n');
+                fprintf(2,'Available options: rectangle, circle, polygon.\n');
                 status = 0; return;
             end
             
@@ -472,7 +520,7 @@ classdef Read < handle
                 % Shape
                 if (~isfield(S,'shape'))
                     fprintf(2,'Missing data in project parameters file: Sink.shape.\n');
-                    fprintf(2,'Available options: rectangle, circle.\n');
+                    fprintf(2,'Available options: rectangle, circle, polygon.\n');
                     status = 0; return;
                 end
                 shape = string(S.shape);
@@ -547,9 +595,45 @@ classdef Read < handle
                     sink.radius = radius;
                     drv.sink(i) = sink;
                     
+                % POLYGON
+                elseif (strcmp(shape,'polygon'))
+                    if (~isfield(S,'points_x') || ~isfield(S,'points_y'))
+                        fprintf(2,'Invalid data in project parameters file: Missing Sink.points_x and/or Sink.points_y.\n');
+                        status = 0; return;
+                    end
+                    x = S.points_x;
+                    y = S.points_y;
+                    
+                    % points_x / points_y
+                    if (~this.isDoubleArray(x,length(x)) || ~this.isDoubleArray(y,length(y)))
+                        fprintf(2,'Invalid data in project parameters file: Sink.points_x and/or Sink.points_y.\n');
+                        fprintf(2,'It must be a list of numeric values with the X or Y coordinates of polygon points.\n');
+                        status = 0; return;
+                    elseif (length(x) ~= length(y))
+                        fprintf(2,'Invalid data in project parameters file: Sink.\n');
+                        fprintf(2,'Lists of X and Y coordinates must have the same size.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Check for valid polygon
+                    warning off MATLAB:polyshape:repairedBySimplify;
+                    warning off MATLAB:polyshape:boolOperationFailed
+                    p = polyshape(x,y);
+                    if (p.NumRegions ~= 1)
+                        fprintf(2,'Invalid data in project parameters file: Sink.\n');
+                        fprintf(2,'Inconsistent polygon shape.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Create object and set properties
+                    sink = Sink_Polygon();
+                    sink.coord_x = x';
+                    sink.coord_y = y';
+                    drv.sink = sink;
+                    
                 else
                     fprintf(2,'Invalid data in project parameters file: Sink.shape.\n');
-                    fprintf(2,'Available options: rectangle, circle.\n');
+                    fprintf(2,'Available options: rectangle, circle, polygon.\n');
                     status = 0; return;
                 end
                 
@@ -594,6 +678,16 @@ classdef Read < handle
             end
             IC = json.InitialCondition;
             
+            fields = fieldnames(IC);
+            for i = 1:length(fields)
+                f = string(fields(i));
+                if (~strcmp(f,'TranslationalVelocity') &&...
+                    ~strcmp(f,'RotationalVelocity')    &&...
+                    ~strcmp(f,'temperature'))
+                    this.warn('A nonexistent field was identified in InitialCondition. It will be ignored.');
+                end
+            end
+            
             % TRANSLATIONAL VELOCITY
             if (isfield(IC,'TranslationalVelocity'))
                 for i = 1:length(IC.TranslationalVelocity)
@@ -604,8 +698,8 @@ classdef Read < handle
                     end
                     
                     % Velocity value
-                    vel = TV.value;
-                    if (~this.isDoubleArray(vel,2))
+                    val = TV.value;
+                    if (~this.isDoubleArray(val,2))
                         fprintf(2,'Invalid data in project parameters file: InitialCondition.TranslationalVelocity.value.\n');
                         fprintf(2,'It must be a pair of numeric values with X,Y velocity components.\n');
                         status = 0; return;
@@ -620,23 +714,14 @@ classdef Read < handle
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
-                            for k = 1:drv.n_particles
-                                drv.particles(k).veloc_trl = vel';
-                            end
+                            [drv.particles.veloc_trl] = deal(val');
                         else
-                            mp = [];
-                            for k = 1:drv.n_mparts
-                                if (strcmp(drv.mparts(k).name,name))
-                                    mp = drv.mparts(k);
-                                end
-                            end
+                            mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
                                 this.warn("Nonexistent model part used in InitialCondition.TranslationalVelocity.");
                                 continue;
                             end
-                            for k = 1:mp.n_particles
-                                mp.particles(k).veloc_trl = vel';
-                            end
+                            [mp.particles.veloc_trl] = deal(val');
                         end
                     end
                 end
@@ -652,8 +737,8 @@ classdef Read < handle
                     end
                     
                     % Velocity value
-                    vel = RV.value;
-                    if (~this.isDoubleArray(vel,1))
+                    val = RV.value;
+                    if (~this.isDoubleArray(val,1))
                         fprintf(2,'Invalid data in project parameters file: InitialCondition.RotationalVelocity.value.\n');
                         fprintf(2,'It must be a numeric value with rotational velocity.\n');
                         status = 0; return;
@@ -668,23 +753,14 @@ classdef Read < handle
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
-                            for k = 1:drv.n_particles
-                                drv.particles(k).veloc_rot = vel;
-                            end
+                            [drv.particles.veloc_rot] = deal(val);
                         else
-                            mp = [];
-                            for k = 1:drv.n_mparts
-                                if (strcmp(drv.mparts(k).name,name))
-                                    mp = drv.mparts(k);
-                                end
-                            end
+                            mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
                                 this.warn("Nonexistent model part used in InitialCondition.RotationalVelocity.");
                                 continue;
                             end
-                            for k = 1:mp.n_particles
-                                mp.particles(k).veloc_rot = vel;
-                            end
+                            [mp.particles.veloc_rot] = deal(val);
                         end
                     end
                 end
@@ -700,8 +776,8 @@ classdef Read < handle
                     end
                     
                     % Temperature value
-                    temp = T.value;
-                    if (~this.isDoubleArray(temp,1))
+                    val = T.value;
+                    if (~this.isDoubleArray(val,1))
                         fprintf(2,'Invalid data in project parameters file: InitialCondition.temperature.value.\n');
                         fprintf(2,'It must be a numeric value with temperature.\n');
                         status = 0; return;
@@ -716,26 +792,120 @@ classdef Read < handle
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
-                            for k = 1:drv.n_particles
-                                drv.particles(k).temperature = temp;
-                            end
+                            [drv.particles.temperature] = deal(val);
                         else
-                            mp = [];
-                            for k = 1:drv.n_mparts
-                                if (strcmp(drv.mparts(k).name,name))
-                                    mp = drv.mparts(k);
-                                end
-                            end
+                            mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
                                 this.warn("Nonexistent model part used in InitialCondition.temperature.");
                                 continue;
                             end
-                            for k = 1:mp.n_particles
-                                mp.particles(k).temperature = temp;
-                            end
+                            [mp.particles.temperature] = deal(val);
                         end
                     end
                 end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getPrescribedCondition(this,json,drv)
+            status = 1;
+            if (~isfield(json,'PrescribedCondition'))
+                return;
+            end
+            PC = json.PrescribedCondition;
+            
+            fields = fieldnames(PC);
+            for i = 1:length(fields)
+                f = string(fields(i));
+                if (~strcmp(f,'Force')  &&...
+                    ~strcmp(f,'Torque') &&...
+                    ~strcmp(f,'Temperature'))
+                    this.warn('A nonexistent field was identified in PrescribedCondition. It will be ignored.');
+                end
+            end
+            
+            % FORCE
+            if (isfield(PC,'Force'))
+                for i = 1:length(PC.Force)
+                    F = PC.Force(i);
+                    if (~isfield(F,'type') || ~isfield(F,'independent_variable') || ~isfield(F,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: PrescribedCondition.Force must have type, independent_variable and model_parts.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Type
+                    type = string(F.type);
+                    if (~this.isStringArray(type,1))
+                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.Force.type.\n');
+                        status = 0; return;
+                    elseif (strcmp(type,'uniform'))
+                        % Force value
+                        if (~isfield(F,'value'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.Force.value.\n');
+                            status = 0; return;
+                        end
+                        val = F.value;
+                        if (~this.isDoubleArray(val,2))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.Force.value.\n');
+                            fprintf(2,'It must be a pair of numeric values with X,Y force components.\n');
+                            status = 0; return;
+                        end
+                        
+                        % Create object and set property
+                        force = PC_Uniform();
+                        force.
+                        
+                    elseif (strcmp(type,'linear'))
+                        % Create object
+                        force = PC_Linear();
+                        
+                        % Initial value and slope
+                        if (~isfield(F,'initial_value') || ~isfield(F,'slope'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.Force.initial_value and/or PrescribedCondition.Force.slope.\n');
+                            status = 0; return;
+                        end
+                        val   = F.initial_value;
+                        slope = F.slope;
+                        if (~this.isDoubleArray(val,2))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.Force.initial_value.\n');
+                            fprintf(2,'It must be a pair of numeric values with X,Y force components.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(slope,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.Force.slope.\n');
+                            fprintf(2,'It must be a numeric value with rate of change of force components.\n');
+                            status = 0; return;
+                        end
+                        
+                        % Column vectors!
+                        
+                    elseif (strcmp(type,'oscillatory'))
+                        % Create object
+                        force = PC_Oscilatory();
+                    elseif (strcmp(type,'table'))
+                        % Create object
+                        force = PC_Table();
+                        % Time and conditions values must be column vectors
+                    else
+                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.Force.type.\n');
+                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Independent variable
+                    % Interval
+                    % Model part
+                    % Set properties
+                    % Add to drv list and particles
+                end
+            end
+            
+            
+            % TORQUE
+            if (isfield(PC,'Torque'))
+            end
+            
+            % HEAT FLUX
+            if (isfield(PC,'HeatFlux'))
             end
         end
         
@@ -887,9 +1057,17 @@ classdef Read < handle
                 end
             end
             
+            % Checks
             if (drv.n_materials == 0)
                 fprintf(2,'Invalid data in project parameters file: No valid material was found.\n');
                 status = 0; return;
+            else
+                for i = 1:drv.n_materials
+                    if (length(findobj(drv.materials,'name',drv.materials(i).name)) > 1)
+                        fprintf(2,'Invalid data in project parameters file: Repeated material name.\n');
+                        status = 0; return;
+                    end
+                end
             end
         end
         
@@ -1265,9 +1443,6 @@ classdef Read < handle
                         status = 0; return;
                     end
 
-                    % Store particles IDs
-                    mp.id_particles = particles';
-
                     % Store handle to particle objects
                     for i = 1:np
                         id = particles(i);
@@ -1292,9 +1467,6 @@ classdef Read < handle
                         fprintf(2,"Invalid data in model parts file: Number of WALLS of MODELPART %s is not consistent with the provided IDs.\n",mp.name);
                         status = 0; return;
                     end
-
-                    % Store walls IDs
-                    mp.id_walls = walls';
 
                     % Store handle to walls objects
                     for i = 1:nw
@@ -1474,7 +1646,76 @@ classdef Read < handle
     
     %% Public methods: Checks
     methods
+        %------------------------------------------------------------------
+        function status = checkDriver(~,drv)
+            status = 1;
+            if (isempty(drv.search))
+                fprintf(2,"No search scheme was provided.");
+                status = 0; return;
+            end
+            if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) &&...
+                (isempty(drv.scheme_vtrl) || isempty(drv.scheme_vrot)))
+                fprintf(2,"No integration scheme for translational/rotational velocity was provided.");
+                status = 0; return;
+            end
+            if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.THERMAL) &&...
+                 isempty(drv.scheme_temp))
+                fprintf(2,"No integration scheme for temperature was provided.");
+                status = 0; return;
+            end
+            if (isempty(drv.time_step))
+                fprintf(2,"No time step was provided.");
+                status = 0; return;
+            end
+            if (isempty(drv.max_time) && isempty(drv.max_step))
+                fprintf(2,"No maximum time and steps were provided.");
+                status = 0; return;
+            end
+        end
         
+        %------------------------------------------------------------------
+        function status = checkParticles(~,drv)
+            status = 1;
+            for i = 1:drv.n_particles
+                p = drv.particles(i);
+                if (isempty(p.radius))
+                    fprintf(2,"No radius was provided to particle %d.",p.id);
+                    status = 0; return;
+                end
+                if (isempty(p.material))
+                    fprintf(2,"No material was provided to particle %d.",p.id);
+                    status = 0; return;
+                elseif (length(p.material) > 1)
+                    fprintf(2,"More than one material was provided to particle %d.",p.id);
+                    status = 0; return;
+                end
+                if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) &&...
+                    (isempty(p.material.density) ||...
+                     isempty(p.material.young)   ||...
+                     isempty(p.material.poisson) ||...
+                     isempty(p.material.restitution)))
+                    fprintf(2,"Missing mechanical properties of material %s.",p.material.name);
+                    status = 0; return;
+                elseif ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.THERMAL) &&...
+                        (isempty(p.material.conduct) ||...
+                         isempty(p.material.capacity)))
+                    fprintf(2,"Missing thermal properties of material %s.",p.material.name);
+                    status = 0; return;
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = checkWalls(~,drv)
+            status = 1;
+            for i = 1:drv.n_walls
+                w = drv.walls(i);
+                if (w.type == w.LINE2D && isequal(w.coord_ini,w.coord_end))
+                    fprintf(2,"Wall %d has no length.",w.id);
+                    status = 0; return;
+                end
+            end
+        end
     end
     
     %% Static methods: Auxiliary

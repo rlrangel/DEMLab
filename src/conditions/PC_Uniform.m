@@ -7,18 +7,27 @@
 classdef PC_Uniform < PC
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        
+        value double = double.empty;   % uniform value of prescribed condition
     end
     
     %% Constructor method
     methods
-        function this = PC_Uniform()
-            this = this@PC(PC.UNIFORM);
+        function this = PC_Uniform(condition)
+            this = this@PC(PC.UNIFORM,condition);
+            this.applyDefaultProps();
         end
     end
     
     %% Public methods
     methods
+        %------------------------------------------------------------------
+        function applyDefaultProps(~)
+            
+        end
         
+        %------------------------------------------------------------------
+        function val = getValue(this,~)
+            val = this.value;
+        end
     end
 end

@@ -22,13 +22,10 @@ classdef Particle_Disk < Particle
     methods
         %------------------------------------------------------------------
         function applyDefaultProps(this)
-            % Kinematic properties
-            this.veloc_trl = [0,0];
-            this.veloc_rot = 0;
-            this.accel_trl = [0,0];
-            this.accel_rot = 0;
-            
-            % Thermal properties
+            this.veloc_trl   = [0,0];
+            this.veloc_rot   = 0;
+            this.accel_trl   = [0,0];
+            this.accel_rot   = 0;
             this.temperature = 0;
         end
     end

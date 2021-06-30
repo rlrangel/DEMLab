@@ -90,53 +90,6 @@ VariableProperty:
 	  updates the dependent variable value according to the table and to the independent variable (must have access to independent variable: temperature, time,...);
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
-PrecribedCondition: (Super)
-	Properties:
-	* Type;
-	* Condition; (force,torque,heat_rate)
-	* Interval; (default: [0,inf])
-	
-	Tasks:
-	* Each object can serve to multiple particles (same as material);
-	* Main virtual method to check if condition is active according to interval and return the value of the condition;
-	
-PrecribedCondition_Uniform:
-	Properties:
-	* Value;
-	
-	Tasks:
-	* Implementation of the virtual method to return the uniform value;
-
-PrecribedCondition_Linear:
-	Properties:
-	* IndependentVariable; (time,temperature,etc)
-	* InitialValue;
-	* Slope;
-	
-	Tasks:
-	* Implementation of the virtual method to return the linear value (must have access to independent variable);
-	  y = a + bt -> t = independent variable
-
-PrecribedCondition_Oscillatory:
-	Properties:
-	* IndependentVariable; (time,temperature,etc)
-	* InitialValue;
-	* Amplitude;
-	* Phase; (default: 0.0)
-	* Period;
-	
-	Tasks:
-	* Implementation of the virtual method to return the oscillatory value (must have access to independent variable);
-
-PrecribedCondition_Table:
-	Properties:
-	* IndependentVariable; (time,temperature,etc)
-	* Table;
-	
-	Tasks:
-	* Implementation of the virtual method to return the table value (must have access to independent variable);
-
-------------------------------------------------------------------------------------------------------------------------------------------------
 Search:
 	Properties:
 	* NeighbourDistance;

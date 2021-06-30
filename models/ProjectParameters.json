@@ -21,9 +21,9 @@
 		"search_frequency" : 10
 	},
 	"BoundingBox": {
-		"shape"     : "rectangle",
-		"limit_min" : [0.0,0.0],
-		"limit_max" : [10.0,1.0],
+		"shape"     : "polygon",
+		"points_x" :  [0.0,1.0,1.0,0.0],
+		"points_y" :  [0.0,0.0,1.0,1.0],
 		"interval"  : [0.0,1.0]
 	},
 	"Sink": {

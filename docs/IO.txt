@@ -8,16 +8,6 @@ If a geometric property is re-set in the GeometryProperties of the ProjectParame
 ===================================================================================================
 ProjectParameters.json
 
-* CreationDestruction:
-Only one creator/destructor time is allowed per element, otherwise a warining is issued;
-A warning is issued for inconsistent creation/destruction times (creation after it is deleted and vsvc);
-	-Creator: (multiple)
-		-> ModelPart: string;
-		-> CreationTime: double;
-	-Destructor: (multiple)
-		-> ModelPart: string;
-		-> DestructionTime: double;
-
 * FixedConditions:
 Multiple sets of each B.C. can be applied;
 A warning is issued when any condition is applied to an element when it is not active (time when it is not created, already removed, etc);
@@ -94,24 +84,12 @@ The fixed motion starts from the position/orientation of elements at the beginni
 			-Period: double;
 
 * PrescribedConditions:
-Additional forces/torques/flux added to the others that are computed;
-Apply only to particles, not walls;
 Apply only to mechanically/thermally free particles;
-A warning is issued when any condition is applied to an element when it is not active (time when it is not created, already removed, etc);
 Multiple sets of each P.C. can be applied;
-All P.C. can be have overlaped intervals for the same particles by summing them;
-
+All P.C. can have overlaped intervals for the same particles by summing them;
 
 	PrescribedBodyForce:
-		-Type: string; (uniform,linear,oscillatory,table)
-		-IndependentVarialbe; (time,temperature,etc)
-		-Interval: [double,double];  (default: [0.0,inf])
 		-ModelParts: [strings];
-		Uniform parameters:
-			-Value: [double,double,double];
-		Linear parameters (F=at+b):
-			-Initial: [double,double,double];
-			-Slope: [double,double,double];
 		Oscillatory parameters:
 			-Initial: [double,double,double];
 			-Amplitude: [double,double,double];

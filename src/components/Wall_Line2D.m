@@ -26,7 +26,7 @@ classdef Wall_Line2D < Wall
     methods
         %------------------------------------------------------------------
         function d = distanceFromParticle(this,particle)
-            
+            d = 1;
         end
     end
 end

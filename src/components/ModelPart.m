@@ -10,8 +10,6 @@ classdef ModelPart < handle
         name         string   = string.empty;     % identification name of model part
         n_particles  uint32   = uint32.empty;     % number of particles
         n_walls      uint32   = uint32.empty;     % number of walls
-        id_particles uint32   = uint32.empty;     % vector of particles IDs
-        id_walls     uint32   = uint32.empty;     % vector of walls IDs
         particles    Particle = Particle.empty;   % vector of objects of the Particle class
         walls        Wall     = Wall.empty;       % vector of objects of the Wall class
     end

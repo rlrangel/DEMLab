@@ -65,7 +65,7 @@ classdef Search_SimpleLoop < Search
                         p1.interacts(end+1)  = interact;
                         p2.interacts(end+1)  = interact;
                         drv.interacts(end+1) = interact;
-                        drv.n_interacts      = drv.n_interacts + 1;
+                        
                     else
                         % Check distance
                         if (d < 0)
@@ -75,7 +75,6 @@ classdef Search_SimpleLoop < Search
                         % Remove handles from interacting particles
                         p1.interacts(p1.interacts==interact) = [];
                         p2.interacts(p2.interacts==interact) = [];
-                        drv.n_interacts = drv.n_interacts - 1;
                         
                         
                         % Delete interaction object
@@ -111,6 +110,7 @@ classdef Search_SimpleLoop < Search
             % Remove handle to deleted interactions from global list
             % (cannot be done inside the loop due to parallelization)
             drv.interacts(~isvalid(drv.interacts)) = [];
+            drv.n_interacts = length(drv.interacts);
         end
     end
 end

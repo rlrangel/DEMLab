@@ -32,19 +32,19 @@ classdef Master < handle
                 fprintf("\nExiting program...\n");
                 return;
             end
-            fprintf('File selected:\n%s\n\n',file_fullname)
+            fprintf('File selected:\n%s\n',file_fullname)
             
             % Open input file
             fid = fopen(file_fullname,'rt');
             if (fid < 0)
-                fprintf(2,"Error opening input file.\n");
+                fprintf(2,"\nError opening input file.\n");
                 fprintf("\nExiting program...\n");
                 return;
             end
             
             % Read input file
             read = Read();
-            fprintf('Reading input file...\n');
+            fprintf('\nReading input file...\n');
             [status,drv] = read.execute(file_path,fid);
             if (~status)
                 fprintf("\nExiting program...\n");
@@ -59,9 +59,6 @@ classdef Master < handle
                 return;
             end
             
-            % Start parallelization
-            this.startParallel(drv);
-            
             % Pre-processs
             fprintf('\nPre-processing...\n');
             if (~drv.preProcess())
@@ -72,6 +69,9 @@ classdef Master < handle
             % Print simulation information
             this.printSimulationInfo(drv);
             
+            % Start parallelization
+            this.startParallel(drv);
+            
             % Execute analysis
             fprintf('\nStarting analysis:\n');
             fprintf('%s\n',datestr(now));
@@ -79,11 +79,7 @@ classdef Master < handle
             drv.runAnalysis();
             
             % Print finished status
-            t = seconds(toc);
-            t.Format = 'hh:mm:ss.SS';
-            fprintf('\nAnalysis finished:\n');
-            fprintf('%s\n',datestr(now));
-            fprintf('Total time: %s\n',string(t));
+            this.printFinishedStatus();
         end
         
         %------------------------------------------------------------------
@@ -117,20 +113,32 @@ classdef Master < handle
         end
         
         %------------------------------------------------------------------
+        function printFinishedStatus(~)
+            t = seconds(toc);
+            t.Format = 'hh:mm:ss.SS';
+            fprintf('\nAnalysis finished:\n');
+            fprintf('%s\n',datestr(now));
+            fprintf('Total time: %s\n',string(t));
+        end
+        
+        %------------------------------------------------------------------
         function startParallel(~,drv)
             p = gcp('nocreate');
             if (drv.parallel)
                 if (isempty(p))
                     fprintf('\n');
                     parpool(drv.workers);
+                    fprintf('\n');
                 elseif (p.NumWorkers ~= drv.workers)
                     fprintf('\n');
                     delete(p)
                     parpool(drv.workers);
+                    fprintf('\n');
                 end
             elseif (~isempty(p))
                 fprintf('\n');
                 delete(p);
+                fprintf('\n');
             end
             ps = parallel.Settings;
             ps.Pool.AutoCreate = false;
