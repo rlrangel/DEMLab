@@ -12,8 +12,8 @@ classdef PC_Uniform < PC
     
     %% Constructor method
     methods
-        function this = PC_Uniform(condition)
-            this = this@PC(PC.UNIFORM,condition);
+        function this = PC_Uniform()
+            this = this@PC(PC.UNIFORM);
             this.applyDefaultProps();
         end
     end

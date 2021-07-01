@@ -41,6 +41,37 @@
 			"model_parts" : ["PARTICLES"]
 		}
 	},
+	"PrescribedCondition": {
+		"force": {
+			"type"          : "uniform",
+			"value        " : [10,10],
+			"model_parts"   : "PARTICLES",
+			"interval"      : [0,10]
+		},
+		"torque": {
+			"type"          : "table",
+			"interpolation" : "spline",
+			"model_parts"   : "PARTICLES",
+			"interval"      : [0,10],
+			"file"          : "table.txt"
+		},
+		"heat_flux": {
+			"type"          : "linear",
+			"interval"      : [0,10],
+			"initial_value" : 3,
+			"slope"         : 1,
+			"model_parts"   : "mp"
+		},
+		"heat_rate": {
+			"type"          : "oscillatory",
+			"interval"      : [0,10],
+			"base_value"    : 20,
+			"amplitude"     : 20,
+			"period"        : 20,
+			"shift"         : 20,
+			"model_parts"   : "PARTICLES"
+		}
+	},
 	"Material": {
 			"name"        : "mat",
 			"model_parts" : ["PARTICLES"],

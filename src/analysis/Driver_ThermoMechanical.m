@@ -33,6 +33,7 @@ classdef Driver_ThermoMechanical < Driver
             this.n_walls     = 0;
             this.n_interacts = 0;
             this.n_materials = 0;
+            this.n_prescond  = 0;
             this.scheme_vtrl = Scheme_FowardEuler();
             this.scheme_vrot = Scheme_FowardEuler();
             this.scheme_temp = Scheme_FowardEuler();

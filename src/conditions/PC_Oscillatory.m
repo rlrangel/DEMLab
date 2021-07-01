@@ -1,20 +1,22 @@
-%% PC_Linear class
+%% PC_Oscillatory class
 %
 %% Description
 %
 %% Implementation
 %
-classdef PC_Linear < PC
+classdef PC_Oscillatory < PC
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        init_value double = double.empty;   % initial value of prescribed condition when activated
-        slope      double = double.empty;   % rate of change of prescribed condition value
+        base_value double = double.empty;   % base value of prescribed condition for oscillation
+        amplitude  double = double.empty;   % amplitude of oscillation around base value
+        period     double = double.empty;   % period of oscillation
+        shift      double = double.empty;   % shift from initial point of oscillation (phase angle)
     end
     
     %% Constructor method
     methods
-        function this = PC_Linear()
-            this = this@PC(PC.LINEAR);
+        function this = PC_Oscillatory()
+            this = this@PC(PC.OSCILLATORY);
             this.applyDefaultProps();
         end
     end
@@ -23,7 +25,7 @@ classdef PC_Linear < PC
     methods
         %------------------------------------------------------------------
         function applyDefaultProps(this)
-            this.init_value = 0;
+            this.shift = 0;
         end
         
         %------------------------------------------------------------------
@@ -32,7 +34,7 @@ classdef PC_Linear < PC
             if (min_time < 0)
                 min_time = 0;
             end
-            val = deal(this.init_value) + this.slope * (time-min_time);
+            val = this.base_value + this.amplitude * sin(2*pi*(time-min_time)/this.period + this.shift);
         end
     end
 end

@@ -59,7 +59,7 @@ classdef Read < handle
                 status = this.getInitialCondition(json,drv);
             end
             if (status)
-                status = this.getPrescribedCondition(json,drv);
+                status = this.getPrescribedCondition(json,drv,path);
             end
             if (status)
                 status = this.getMaterial(json,drv);
@@ -160,8 +160,8 @@ classdef Read < handle
             fullname = fullfile(path,file);
             fid = fopen(fullname,'rt');
             if (fid < 0)
-                fprintf(2,"Error opening model parts file: %s\n", file);
-                fprintf(2,"It must have the same path of the project parameters file.\n");
+                fprintf(2,'Error opening model parts file: %s\n', file);
+                fprintf(2,'It must have the same path of the project parameters file.\n');
                 status = 0; return;
             end
             
@@ -186,14 +186,14 @@ classdef Read < handle
             
             % Checks
             if (drv.n_particles == 0)
-                fprintf(2,"The model has no particle.\n");
+                fprintf(2,'The model has no particle.\n');
                 status = 0; return;
             elseif (drv.particles(drv.n_particles).id > drv.n_particles)
-                fprintf(2,"Invalid numbering of particles: IDs cannot skip numbers.\n");
+                fprintf(2,'Invalid numbering of particles: IDs cannot skip numbers.\n');
                 status = 0; return;
             end
             if (drv.n_walls > 0 && drv.walls(drv.n_walls).id > drv.n_walls)
-                fprintf(2,"Invalid numbering of walls: IDs cannot skip numbers.\n");
+                fprintf(2,'Invalid numbering of walls: IDs cannot skip numbers.\n');
                 status = 0; return;
             end
             for i = 1:drv.n_mparts
@@ -405,11 +405,11 @@ classdef Read < handle
                 
                 % Check consistency
                 if (warn == 1)
-                    this.warn("Minimum limits of bounding box were not provided. Infinite limits were assumed.");
+                    this.warn('Minimum limits of bounding box were not provided. Infinite limits were assumed.');
                 elseif (warn == 2)
-                    this.warn("Maximum limits of bounding box were not provided. Infinite limits were assumed.");
+                    this.warn('Maximum limits of bounding box were not provided. Infinite limits were assumed.');
                 elseif (warn == 3)
-                    this.warn("Maximum and minimum limits of bounding box were not provided. Bounding box will not be considered.");
+                    this.warn('Maximum and minimum limits of bounding box were not provided. Bounding box will not be considered.');
                     return;
                 end
                 if (limit_min(1) >= limit_max(1) || limit_min(2) >= limit_max(2))
@@ -421,8 +421,8 @@ classdef Read < handle
                 
                 % Create object and set properties
                 bbox = BBox_Rectangle();
-                bbox.limit_min = limit_min';
-                bbox.limit_max = limit_max';
+                bbox.limit_min = limit_min;
+                bbox.limit_max = limit_max;
                 drv.bbox = bbox;
                 
             % CIRCLE
@@ -450,7 +450,7 @@ classdef Read < handle
                 
                 % Create object and set properties
                 bbox = BBox_Circle();
-                bbox.center = center';
+                bbox.center = center;
                 bbox.radius = radius;
                 drv.bbox = bbox;
                 
@@ -486,8 +486,8 @@ classdef Read < handle
                 
                 % Create object and set properties
                 bbox = BBox_Polygon();
-                bbox.coord_x = x';
-                bbox.coord_y = y';
+                bbox.coord_x = x;
+                bbox.coord_y = y;
                 drv.bbox = bbox;
             else
                 fprintf(2,'Invalid data in project parameters file: BoundingBox.shape.\n');
@@ -503,7 +503,7 @@ classdef Read < handle
                     fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
                     status = 0; return;
                 end
-                drv.bbox.interval = interval';
+                drv.bbox.interval = interval;
             end
         end
         
@@ -562,8 +562,8 @@ classdef Read < handle
                     
                     % Create object and set properties
                     sink = Sink_Rectangle();
-                    sink.limit_min = limit_min';
-                    sink.limit_max = limit_max';
+                    sink.limit_min = limit_min;
+                    sink.limit_max = limit_max;
                     drv.sink(i) = sink;
                     
                 % CIRCLE
@@ -591,7 +591,7 @@ classdef Read < handle
                     
                     % Create object and set properties
                     sink = Sink_Circle();
-                    sink.center = center';
+                    sink.center = center;
                     sink.radius = radius;
                     drv.sink(i) = sink;
                     
@@ -627,8 +627,8 @@ classdef Read < handle
                     
                     % Create object and set properties
                     sink = Sink_Polygon();
-                    sink.coord_x = x';
-                    sink.coord_y = y';
+                    sink.coord_x = x;
+                    sink.coord_y = y;
                     drv.sink = sink;
                     
                 else
@@ -645,7 +645,7 @@ classdef Read < handle
                         fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
                         status = 0; return;
                     end
-                    drv.sink(i).interval = interval';
+                    drv.sink(i).interval = interval;
                 end
             end
         end
@@ -666,7 +666,7 @@ classdef Read < handle
                     fprintf(2,'It must be a pair of numeric values with X,Y gravity acceleration components.\n');
                     status = 0; return;
                 end
-                drv.gravity = g';
+                drv.gravity = g;
             end
         end
         
@@ -714,14 +714,14 @@ classdef Read < handle
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
-                            [drv.particles.veloc_trl] = deal(val');
+                            [drv.particles.veloc_trl] = deal(val);
                         else
                             mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
-                                this.warn("Nonexistent model part used in InitialCondition.TranslationalVelocity.");
+                                this.warn('Nonexistent model part used in InitialCondition.TranslationalVelocity.');
                                 continue;
                             end
-                            [mp.particles.veloc_trl] = deal(val');
+                            [mp.particles.veloc_trl] = deal(val);
                         end
                     end
                 end
@@ -757,7 +757,7 @@ classdef Read < handle
                         else
                             mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
-                                this.warn("Nonexistent model part used in InitialCondition.RotationalVelocity.");
+                                this.warn('Nonexistent model part used in InitialCondition.RotationalVelocity.');
                                 continue;
                             end
                             [mp.particles.veloc_rot] = deal(val);
@@ -796,7 +796,7 @@ classdef Read < handle
                         else
                             mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
-                                this.warn("Nonexistent model part used in InitialCondition.temperature.");
+                                this.warn('Nonexistent model part used in InitialCondition.temperature.');
                                 continue;
                             end
                             [mp.particles.temperature] = deal(val);
@@ -807,7 +807,7 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = getPrescribedCondition(this,json,drv)
+        function status = getPrescribedCondition(this,json,drv,path)
             status = 1;
             if (~isfield(json,'PrescribedCondition'))
                 return;
@@ -817,95 +817,926 @@ classdef Read < handle
             fields = fieldnames(PC);
             for i = 1:length(fields)
                 f = string(fields(i));
-                if (~strcmp(f,'Force')  &&...
-                    ~strcmp(f,'Torque') &&...
-                    ~strcmp(f,'Temperature'))
+                if (~strcmp(f,'force')     &&...
+                    ~strcmp(f,'torque')    &&...
+                    ~strcmp(f,'heat_flux') &&...
+                    ~strcmp(f,'heat_rate'))
                     this.warn('A nonexistent field was identified in PrescribedCondition. It will be ignored.');
                 end
             end
+            % In the following, the types of conditions have very similar codes
             
             % FORCE
-            if (isfield(PC,'Force'))
-                for i = 1:length(PC.Force)
-                    F = PC.Force(i);
-                    if (~isfield(F,'type') || ~isfield(F,'independent_variable') || ~isfield(F,'model_parts'))
-                        fprintf(2,'Missing data in project parameters file: PrescribedCondition.Force must have type, independent_variable and model_parts.\n');
+            if (isfield(PC,'force'))
+                for i = 1:length(PC.force)
+                    F = PC.force(i);
+                    if (~isfield(F,'type') || ~isfield(F,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: PrescribedCondition.force must have type and model_parts.\n');
                         status = 0; return;
                     end
                     
                     % Type
                     type = string(F.type);
                     if (~this.isStringArray(type,1))
-                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.Force.type.\n');
+                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.type.\n');
                         status = 0; return;
+                        
                     elseif (strcmp(type,'uniform'))
-                        % Force value
+                        % Create object
+                        pc = PC_Uniform();
+                        
+                        % Value
                         if (~isfield(F,'value'))
-                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.Force.value.\n');
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.force.value.\n');
                             status = 0; return;
                         end
                         val = F.value;
                         if (~this.isDoubleArray(val,2))
-                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.Force.value.\n');
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.value.\n');
                             fprintf(2,'It must be a pair of numeric values with X,Y force components.\n');
                             status = 0; return;
                         end
-                        
-                        % Create object and set property
-                        force = PC_Uniform();
-                        force.
+                        pc.value = val;
                         
                     elseif (strcmp(type,'linear'))
                         % Create object
-                        force = PC_Linear();
+                        pc = PC_Linear();
                         
-                        % Initial value and slope
-                        if (~isfield(F,'initial_value') || ~isfield(F,'slope'))
-                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.Force.initial_value and/or PrescribedCondition.Force.slope.\n');
+                        % Initial value
+                        if (isfield(F,'initial_value'))
+                            val = F.initial_value;
+                            if (~this.isDoubleArray(val,2))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.initial_value.\n');
+                                fprintf(2,'It must be a pair of numeric values with X,Y force components.\n');
+                                status = 0; return;
+                            end
+                            pc.init_value = val;
+                        end
+                        
+                        % Slope
+                        if (~isfield(F,'slope'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.force.slope.\n');
                             status = 0; return;
                         end
-                        val   = F.initial_value;
                         slope = F.slope;
-                        if (~this.isDoubleArray(val,2))
-                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.Force.initial_value.\n');
-                            fprintf(2,'It must be a pair of numeric values with X,Y force components.\n');
-                            status = 0; return;
-                        elseif (~this.isDoubleArray(slope,1))
-                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.Force.slope.\n');
-                            fprintf(2,'It must be a numeric value with rate of change of force components.\n');
+                        if (~this.isDoubleArray(slope,2))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.slope.\n');
+                            fprintf(2,'It must be a pair of numeric values with X,Y components of change rate.\n');
                             status = 0; return;
                         end
-                        
-                        % Column vectors!
+                        pc.slope = slope;
                         
                     elseif (strcmp(type,'oscillatory'))
                         % Create object
-                        force = PC_Oscilatory();
+                        pc = PC_Oscillatory();
+                        
+                        % Base value, amplitude and period
+                        if (~isfield(F,'base_value') || ~isfield(F,'amplitude') || ~isfield(F,'period'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.force.\n');
+                            fprintf(2,'Oscillatory condition requires at least 3 fields: base_value, amplitude, period.\n');
+                            status = 0; return;
+                        end
+                        val       = F.base_value;
+                        amplitude = F.amplitude;
+                        period    = F.period;
+                        if (~this.isDoubleArray(val,2))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.base_value.\n');
+                            fprintf(2,'It must be a pair of numeric values with X,Y force components.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(amplitude,2) || any(amplitude < 0))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.amplitude.\n');
+                            fprintf(2,'It must be a pair of numeric values with X,Y force components.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(period,1) || period <= 0)
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.period.\n');
+                            fprintf(2,'It must be a positive value with the period of oscillation.\n');
+                            status = 0; return;
+                        end
+                        pc.base_value = val;
+                        pc.amplitude  = amplitude;
+                        pc.period     = period;
+                        
+                        % Shift
+                        if (isfield(F,'shift'))
+                            shift = F.shift;
+                            if (~this.isDoubleArray(shift,1))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.shift.\n');
+                                fprintf(2,'It must be a numeric value with the shift of the oscillation.\n');
+                                status = 0; return;
+                            end
+                            pc.shift = shift;
+                        end
+                        
                     elseif (strcmp(type,'table'))
                         % Create object
-                        force = PC_Table();
-                        % Time and conditions values must be column vectors
+                        pc = PC_Table();
+                        
+                        % Table values
+                        if (isfield(F,'values'))
+                            vals = F.values';
+                            if (~this.isDoubleArray(vals,length(vals)))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.values.\n');
+                                fprintf(2,'It must be a numeric table with the first row as the independent variable values and the others as the dependent variable values.\n');
+                                status = 0; return;
+                            end
+                        elseif (isfield(F,'file'))
+                            file = F.file;
+                            if (~this.isStringArray(file,1))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.file.\n');
+                                fprintf(2,'It must be a string with the values file name.\n');
+                                status = 0; return;
+                            end
+                            [status,vals] = this.readTable(fullfile(path,file),3);
+                            if (status == 0)
+                                return;
+                            end
+                        else
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.force.values or PrescribedCondition.force.file.\n');
+                            status = 0; return;
+                        end
+                        if (size(vals,1) < 2 || size(vals,2) ~= 3)
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.values.\n');
+                            fprintf(2,'It must contain 3 columns (one for the independent variable values and two for the X,Y force components), and at least 2 points.\n');
+                            status = 0; return;
+                        end
+                        pc.val_x = vals(:,1);
+                        pc.val_y = vals(:,2:3);
+                        
+                        % Interpolation method
+                        if (isfield(F,'interpolation'))
+                            interp = F.interpolation;
+                            if (~this.isStringArray(interp,1) ||...
+                               (~strcmp(interp,'linear') &&...
+                                ~strcmp(interp,'makima') &&...
+                                ~strcmp(interp,'cubic')  &&...
+                                ~strcmp(interp,'pchip')  &&...
+                                ~strcmp(interp,'spline')))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.interpolation.\n');
+                                fprintf(2,'It must be a string with the interpolation method: linear, makima, cubic, pchip or spline.\n');
+                                status = 0; return;
+                            elseif (strcmp(interp,'linear'))
+                                if (size(pc.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for linear interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_LINEAR;
+                            elseif (strcmp(interp,'makima'))
+                                if (size(pc.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for makima interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_MAKIMA;
+                            elseif (strcmp(interp,'cubic'))
+                                if (size(pc.val_x,1) < 3)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.values.\n');
+                                    fprintf(2,'It must contain at least 3 points for cubic interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_CUBIC;
+                            elseif (strcmp(interp,'pchip'))
+                                if (size(pc.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for pchip interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_PCHIP;
+                            elseif (strcmp(interp,'spline'))
+                                if (size(pc.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for spline interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_SPLINE;
+                            end
+                        end
                     else
-                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.Force.type.\n');
+                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.type.\n');
                         fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
                         status = 0; return;
                     end
                     
-                    % Independent variable
                     % Interval
-                    % Model part
-                    % Set properties
-                    % Add to drv list and particles
+                    if (isfield(F,'interval'))
+                        interval = F.interval;
+                        if (~this.isDoubleArray(interval,2) || interval(1) >= interval(2))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.interval.\n');
+                            fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
+                            status = 0; return;
+                        end
+                        pc.interval = interval;
+                    end
+                    
+                    % Add handle to prescribed condition to selected particles
+                    model_parts = string(F.model_parts);
+                    for j = 1:length(model_parts)
+                        name = model_parts(j);
+                        if (~this.isStringArray(name,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0; return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            [drv.particles.pc_forces] = deal(pc);
+                        else
+                            mp = findobj(drv.mparts,'name',name);
+                            if (isempty(mp))
+                                this.warn('Nonexistent model part used in PrescribedCondition.force.');
+                                continue;
+                            end
+                            [mp.particles.pc_forces] = deal(pc);
+                        end
+                    end
+                    
+                    % Add to global list in driver
+                    drv.prescond(end+1) = pc;
+                    drv.n_prescond = drv.n_prescond + 1;
                 end
             end
             
             
             % TORQUE
-            if (isfield(PC,'Torque'))
+            if (isfield(PC,'torque'))
+                for i = 1:length(PC.torque)
+                    T = PC.torque(i);
+                    if (~isfield(T,'type') || ~isfield(T,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: PrescribedCondition.torque must have type and model_parts.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Type
+                    type = string(T.type);
+                    if (~this.isStringArray(type,1))
+                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.type.\n');
+                        status = 0; return;
+                        
+                    elseif (strcmp(type,'uniform'))
+                        % Create object
+                        pc = PC_Uniform();
+                        
+                        % Value
+                        if (~isfield(T,'value'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.torque.value.\n');
+                            status = 0; return;
+                        end
+                        val = T.value;
+                        if (~this.isDoubleArray(val,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.value.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        end
+                        pc.value = val;
+                        
+                    elseif (strcmp(type,'linear'))
+                        % Create object
+                        pc = PC_Linear();
+                        
+                        % Initial value
+                        if (isfield(T,'initial_value'))
+                            val = T.initial_value;
+                            if (~this.isDoubleArray(val,1))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.initial_value.\n');
+                                fprintf(2,'It must be a numeric value.\n');
+                                status = 0; return;
+                            end
+                            pc.init_value = val;
+                        end
+                        
+                        % Slope
+                        if (~isfield(T,'slope'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.torque.slope.\n');
+                            status = 0; return;
+                        end
+                        slope = T.slope;
+                        if (~this.isDoubleArray(slope,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.slope.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        end
+                        pc.slope = slope;
+                        
+                    elseif (strcmp(type,'oscillatory'))
+                        % Create object
+                        pc = PC_Oscillatory();
+                        
+                        % Base value, amplitude and period
+                        if (~isfield(T,'base_value') || ~isfield(T,'amplitude') || ~isfield(T,'period'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.torque.\n');
+                            fprintf(2,'Oscillatory condition requires at least 3 fields: base_value, amplitude, period.\n');
+                            status = 0; return;
+                        end
+                        val       = T.base_value;
+                        amplitude = T.amplitude;
+                        period    = T.period;
+                        if (~this.isDoubleArray(val,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.base_value.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(amplitude,1) || amplitude < 0)
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.amplitude.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(period,1) || period <= 0)
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.period.\n');
+                            fprintf(2,'It must be a positive value with the period of oscillation.\n');
+                            status = 0; return;
+                        end
+                        pc.base_value = val;
+                        pc.amplitude  = amplitude;
+                        pc.period     = period;
+                        
+                        % Shift
+                        if (isfield(T,'shift'))
+                            shift = T.shift;
+                            if (~this.isDoubleArray(shift,1))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.shift.\n');
+                                fprintf(2,'It must be a numeric value with the shift of the oscillation.\n');
+                                status = 0; return;
+                            end
+                            pc.shift = shift;
+                        end
+                        
+                    elseif (strcmp(type,'table'))
+                        % Create object
+                        pc = PC_Table();
+                        
+                        % Table values
+                        if (isfield(T,'values'))
+                            vals = T.values';
+                            if (~this.isDoubleArray(vals,length(vals)))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.values.\n');
+                                fprintf(2,'It must be a numeric table with the first row as the independent variable values and the second as the dependent variable values.\n');
+                                status = 0; return;
+                            end
+                        elseif (isfield(T,'file'))
+                            file = T.file;
+                            if (~this.isStringArray(file,1))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.file.\n');
+                                fprintf(2,'It must be a string with the values file name.\n');
+                                status = 0; return;
+                            end
+                            [status,vals] = this.readTable(fullfile(path,file),2);
+                            if (status == 0)
+                                return;
+                            end
+                        else
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.torque.values or PrescribedCondition.torque.file.\n');
+                            status = 0; return;
+                        end
+                        if (size(vals,1) < 2 || size(vals,2) ~= 2)
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.values.\n');
+                            fprintf(2,'It must contain 2 columns (one for the independent variable values and another for the torque values), and at least 2 points.\n');
+                            status = 0; return;
+                        end
+                        pc.val_x = vals(:,1);
+                        pc.val_y = vals(:,2);
+                        
+                        % Interpolation method
+                        if (isfield(T,'interpolation'))
+                            interp = T.interpolation;
+                            if (~this.isStringArray(interp,1) ||...
+                               (~strcmp(interp,'linear') &&...
+                                ~strcmp(interp,'makima') &&...
+                                ~strcmp(interp,'cubic')  &&...
+                                ~strcmp(interp,'pchip')  &&...
+                                ~strcmp(interp,'spline')))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.interpolation.\n');
+                                fprintf(2,'It must be a string with the interpolation method: linear, makima, cubic, pchip or spline.\n');
+                                status = 0; return;
+                            elseif (strcmp(interp,'linear'))
+                                if (size(pc.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for linear interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_LINEAR;
+                            elseif (strcmp(interp,'makima'))
+                                if (size(pc.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for makima interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_MAKIMA;
+                            elseif (strcmp(interp,'cubic'))
+                                if (size(pc.val_x,1) < 3)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.values.\n');
+                                    fprintf(2,'It must contain at least 3 points for cubic interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_CUBIC;
+                            elseif (strcmp(interp,'pchip'))
+                                if (size(pc.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for pchip interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_PCHIP;
+                            elseif (strcmp(interp,'spline'))
+                                if (size(pc.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for spline interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_SPLINE;
+                            end
+                        end
+                    else
+                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.type.\n');
+                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Interval
+                    if (isfield(T,'interval'))
+                        interval = T.interval;
+                        if (~this.isDoubleArray(interval,2) || interval(1) >= interval(2))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.interval.\n');
+                            fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
+                            status = 0; return;
+                        end
+                        pc.interval = interval;
+                    end
+                    
+                    % Add handle to prescribed condition to selected particles
+                    model_parts = string(T.model_parts);
+                    for j = 1:length(model_parts)
+                        name = model_parts(j);
+                        if (~this.isStringArray(name,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0; return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            [drv.particles.pc_torques] = deal(pc);
+                        else
+                            mp = findobj(drv.mparts,'name',name);
+                            if (isempty(mp))
+                                this.warn('Nonexistent model part used in PrescribedCondition.torque.');
+                                continue;
+                            end
+                            [mp.particles.pc_torques] = deal(pc);
+                        end
+                    end
+                    
+                    % Add to global list in driver
+                    drv.prescond(end+1) = pc;
+                    drv.n_prescond = drv.n_prescond + 1;
+                end
             end
             
             % HEAT FLUX
-            if (isfield(PC,'HeatFlux'))
+            if (isfield(PC,'heat_flux'))
+                for i = 1:length(PC.heat_flux)
+                    HF = PC.heat_flux(i);
+                    if (~isfield(HF,'type') || ~isfield(HF,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: PrescribedCondition.heat_flux must have type and model_parts.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Type
+                    type = string(HF.type);
+                    if (~this.isStringArray(type,1))
+                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.type.\n');
+                        status = 0; return;
+                        
+                    elseif (strcmp(type,'uniform'))
+                        % Create object
+                        pc = PC_Uniform();
+                        
+                        % Value
+                        if (~isfield(HF,'value'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.heat_flux.value.\n');
+                            status = 0; return;
+                        end
+                        val = HF.value;
+                        if (~this.isDoubleArray(val,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.value.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        end
+                        pc.value = val;
+                        
+                    elseif (strcmp(type,'linear'))
+                        % Create object
+                        pc = PC_Linear();
+                        
+                        % Initial value
+                        if (isfield(HF,'initial_value'))
+                            val = HF.initial_value;
+                            if (~this.isDoubleArray(val,1))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.initial_value.\n');
+                                fprintf(2,'It must be a numeric value.\n');
+                                status = 0; return;
+                            end
+                            pc.init_value = val;
+                        end
+                        
+                        % Slope
+                        if (~isfield(HF,'slope'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.heat_flux.slope.\n');
+                            status = 0; return;
+                        end
+                        slope = HF.slope;
+                        if (~this.isDoubleArray(slope,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.slope.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        end
+                        pc.slope = slope;
+                        
+                    elseif (strcmp(type,'oscillatory'))
+                        % Create object
+                        pc = PC_Oscillatory();
+                        
+                        % Base value, amplitude and period
+                        if (~isfield(HF,'base_value') || ~isfield(HF,'amplitude') || ~isfield(HF,'period'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.heat_flux.\n');
+                            fprintf(2,'Oscillatory condition requires at least 3 fields: base_value, amplitude, period.\n');
+                            status = 0; return;
+                        end
+                        val       = HF.base_value;
+                        amplitude = HF.amplitude;
+                        period    = HF.period;
+                        if (~this.isDoubleArray(val,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.base_value.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(amplitude,1) || amplitude < 0)
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.amplitude.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(period,1) || period <= 0)
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.period.\n');
+                            fprintf(2,'It must be a positive value with the period of oscillation.\n');
+                            status = 0; return;
+                        end
+                        pc.base_value = val;
+                        pc.amplitude  = amplitude;
+                        pc.period     = period;
+                        
+                        % Shift
+                        if (isfield(HF,'shift'))
+                            shift = HF.shift;
+                            if (~this.isDoubleArray(shift,1))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.shift.\n');
+                                fprintf(2,'It must be a numeric value with the shift of the oscillation.\n');
+                                status = 0; return;
+                            end
+                            pc.shift = shift;
+                        end
+                        
+                    elseif (strcmp(type,'table'))
+                        % Create object
+                        pc = PC_Table();
+                        
+                        % Table values
+                        if (isfield(HF,'values'))
+                            vals = HF.values';
+                            if (~this.isDoubleArray(vals,length(vals)))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.values.\n');
+                                fprintf(2,'It must be a numeric table with the first row as the independent variable values and the second as the dependent variable values.\n');
+                                status = 0; return;
+                            end
+                        elseif (isfield(HF,'file'))
+                            file = HF.file;
+                            if (~this.isStringArray(file,1))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.file.\n');
+                                fprintf(2,'It must be a string with the values file name.\n');
+                                status = 0; return;
+                            end
+                            [status,vals] = this.readTable(fullfile(path,file),2);
+                            if (status == 0)
+                                return;
+                            end
+                        else
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.heat_flux.values or PrescribedCondition.heat_flux.file.\n');
+                            status = 0; return;
+                        end
+                        if (size(vals,1) < 2 || size(vals,2) ~= 2)
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.values.\n');
+                            fprintf(2,'It must contain 2 columns (one for the independent variable values and another for the heat flux values), and at least 2 points.\n');
+                            status = 0; return;
+                        end
+                        pc.val_x = vals(:,1);
+                        pc.val_y = vals(:,2);
+                        
+                        % Interpolation method
+                        if (isfield(HF,'interpolation'))
+                            interp = HF.interpolation;
+                            if (~this.isStringArray(interp,1) ||...
+                               (~strcmp(interp,'linear') &&...
+                                ~strcmp(interp,'makima') &&...
+                                ~strcmp(interp,'cubic')  &&...
+                                ~strcmp(interp,'pchip')  &&...
+                                ~strcmp(interp,'spline')))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.interpolation.\n');
+                                fprintf(2,'It must be a string with the interpolation method: linear, makima, cubic, pchip or spline.\n');
+                                status = 0; return;
+                            elseif (strcmp(interp,'linear'))
+                                if (size(pc.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for linear interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_LINEAR;
+                            elseif (strcmp(interp,'makima'))
+                                if (size(pc.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for makima interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_MAKIMA;
+                            elseif (strcmp(interp,'cubic'))
+                                if (size(pc.val_x,1) < 3)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.values.\n');
+                                    fprintf(2,'It must contain at least 3 points for cubic interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_CUBIC;
+                            elseif (strcmp(interp,'pchip'))
+                                if (size(pc.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for pchip interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_PCHIP;
+                            elseif (strcmp(interp,'spline'))
+                                if (size(pc.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for spline interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_SPLINE;
+                            end
+                        end
+                    else
+                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.type.\n');
+                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Interval
+                    if (isfield(HF,'interval'))
+                        interval = HF.interval;
+                        if (~this.isDoubleArray(interval,2) || interval(1) >= interval(2))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.interval.\n');
+                            fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
+                            status = 0; return;
+                        end
+                        pc.interval = interval;
+                    end
+                    
+                    % Add handle to prescribed condition to selected particles
+                    model_parts = string(HF.model_parts);
+                    for j = 1:length(model_parts)
+                        name = model_parts(j);
+                        if (~this.isStringArray(name,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0; return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            [drv.particles.pc_heatfluxes] = deal(pc);
+                        else
+                            mp = findobj(drv.mparts,'name',name);
+                            if (isempty(mp))
+                                this.warn('Nonexistent model part used in PrescribedCondition.heat_flux.');
+                                continue;
+                            end
+                            [mp.particles.pc_heatfluxes] = deal(pc);
+                        end
+                    end
+                    
+                    % Add to global list in driver
+                    drv.prescond(end+1) = pc;
+                    drv.n_prescond = drv.n_prescond + 1;
+                end
+            end
+            
+            % HEAT RATE
+            if (isfield(PC,'heat_rate'))
+                for i = 1:length(PC.heat_rate)
+                    HF = PC.heat_rate(i);
+                    if (~isfield(HF,'type') || ~isfield(HF,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: PrescribedCondition.heat_rate must have type and model_parts.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Type
+                    type = string(HF.type);
+                    if (~this.isStringArray(type,1))
+                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.type.\n');
+                        status = 0; return;
+                        
+                    elseif (strcmp(type,'uniform'))
+                        % Create object
+                        pc = PC_Uniform();
+                        
+                        % Value
+                        if (~isfield(HF,'value'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.heat_rate.value.\n');
+                            status = 0; return;
+                        end
+                        val = HF.value;
+                        if (~this.isDoubleArray(val,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.value.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        end
+                        pc.value = val;
+                        
+                    elseif (strcmp(type,'linear'))
+                        % Create object
+                        pc = PC_Linear();
+                        
+                        % Initial value
+                        if (isfield(HF,'initial_value'))
+                            val = HF.initial_value;
+                            if (~this.isDoubleArray(val,1))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.initial_value.\n');
+                                fprintf(2,'It must be a numeric value.\n');
+                                status = 0; return;
+                            end
+                            pc.init_value = val;
+                        end
+                        
+                        % Slope
+                        if (~isfield(HF,'slope'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.heat_rate.slope.\n');
+                            status = 0; return;
+                        end
+                        slope = HF.slope;
+                        if (~this.isDoubleArray(slope,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.slope.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        end
+                        pc.slope = slope;
+                        
+                    elseif (strcmp(type,'oscillatory'))
+                        % Create object
+                        pc = PC_Oscillatory();
+                        
+                        % Base value, amplitude and period
+                        if (~isfield(HF,'base_value') || ~isfield(HF,'amplitude') || ~isfield(HF,'period'))
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.heat_rate.\n');
+                            fprintf(2,'Oscillatory condition requires at least 3 fields: base_value, amplitude, period.\n');
+                            status = 0; return;
+                        end
+                        val       = HF.base_value;
+                        amplitude = HF.amplitude;
+                        period    = HF.period;
+                        if (~this.isDoubleArray(val,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.base_value.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(amplitude,1) || amplitude < 0)
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.amplitude.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(period,1) || period <= 0)
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.period.\n');
+                            fprintf(2,'It must be a positive value with the period of oscillation.\n');
+                            status = 0; return;
+                        end
+                        pc.base_value = val;
+                        pc.amplitude  = amplitude;
+                        pc.period     = period;
+                        
+                        % Shift
+                        if (isfield(HF,'shift'))
+                            shift = HF.shift;
+                            if (~this.isDoubleArray(shift,1))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.shift.\n');
+                                fprintf(2,'It must be a numeric value with the shift of the oscillation.\n');
+                                status = 0; return;
+                            end
+                            pc.shift = shift;
+                        end
+                        
+                    elseif (strcmp(type,'table'))
+                        % Create object
+                        pc = PC_Table();
+                        
+                        % Table values
+                        if (isfield(HF,'values'))
+                            vals = HF.values';
+                            if (~this.isDoubleArray(vals,length(vals)))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.values.\n');
+                                fprintf(2,'It must be a numeric table with the first row as the independent variable values and the second as the dependent variable values.\n');
+                                status = 0; return;
+                            end
+                        elseif (isfield(HF,'file'))
+                            file = HF.file;
+                            if (~this.isStringArray(file,1))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.file.\n');
+                                fprintf(2,'It must be a string with the values file name.\n');
+                                status = 0; return;
+                            end
+                            [status,vals] = this.readTable(fullfile(path,file),2);
+                            if (status == 0)
+                                return;
+                            end
+                        else
+                            fprintf(2,'Missing data in project parameters file: PrescribedCondition.heat_rate.values or PrescribedCondition.heat_rate.file.\n');
+                            status = 0; return;
+                        end
+                        if (size(vals,1) < 2 || size(vals,2) ~= 2)
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.values.\n');
+                            fprintf(2,'It must contain 2 columns (one for the independent variable values and another for the heat rate values), and at least 2 points.\n');
+                            status = 0; return;
+                        end
+                        pc.val_x = vals(:,1);
+                        pc.val_y = vals(:,2);
+                        
+                        % Interpolation method
+                        if (isfield(HF,'interpolation'))
+                            interp = HF.interpolation;
+                            if (~this.isStringArray(interp,1) ||...
+                               (~strcmp(interp,'linear') &&...
+                                ~strcmp(interp,'makima') &&...
+                                ~strcmp(interp,'cubic')  &&...
+                                ~strcmp(interp,'pchip')  &&...
+                                ~strcmp(interp,'spline')))
+                                fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.interpolation.\n');
+                                fprintf(2,'It must be a string with the interpolation method: linear, makima, cubic, pchip or spline.\n');
+                                status = 0; return;
+                            elseif (strcmp(interp,'linear'))
+                                if (size(pc.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for linear interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_LINEAR;
+                            elseif (strcmp(interp,'makima'))
+                                if (size(pc.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for makima interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_MAKIMA;
+                            elseif (strcmp(interp,'cubic'))
+                                if (size(pc.val_x,1) < 3)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.values.\n');
+                                    fprintf(2,'It must contain at least 3 points for cubic interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_CUBIC;
+                            elseif (strcmp(interp,'pchip'))
+                                if (size(pc.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for pchip interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_PCHIP;
+                            elseif (strcmp(interp,'spline'))
+                                if (size(pc.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for spline interpolation.\n');
+                                    status = 0; return;
+                                end
+                                pc.interp = pc.INTERP_SPLINE;
+                            end
+                        end
+                    else
+                        fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.type.\n');
+                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Interval
+                    if (isfield(HF,'interval'))
+                        interval = HF.interval;
+                        if (~this.isDoubleArray(interval,2) || interval(1) >= interval(2))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.interval.\n');
+                            fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
+                            status = 0; return;
+                        end
+                        pc.interval = interval;
+                    end
+                    
+                    % Add handle to prescribed condition to selected particles
+                    model_parts = string(HF.model_parts);
+                    for j = 1:length(model_parts)
+                        name = model_parts(j);
+                        if (~this.isStringArray(name,1))
+                            fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0; return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            [drv.particles.pc_heatrates] = deal(pc);
+                        else
+                            mp = findobj(drv.mparts,'name',name);
+                            if (isempty(mp))
+                                this.warn('Nonexistent model part used in PrescribedCondition.heat_rate.');
+                                continue;
+                            end
+                            [mp.particles.pc_heatrates] = deal(pc);
+                        end
+                    end
+                    
+                    % Add to global list in driver
+                    drv.prescond(end+1) = pc;
+                    drv.n_prescond = drv.n_prescond + 1;
+                end
             end
         end
         
@@ -1020,7 +1851,7 @@ classdef Read < handle
                     fprintf(2,'Properties must be numerical values.\n');
                     status = 0; return;
                 elseif(msg > 0)
-                    this.warn("Unphysical value was found for material property.");
+                    this.warn('Unphysical value was found for material property.');
                 end
                 
                 % Set material to selected model parts
@@ -1032,27 +1863,17 @@ classdef Read < handle
                         fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                         status = 0; return;
                     elseif (strcmp(mp_name,'PARTICLES'))
-                        for k = 1:drv.n_particles
-                            drv.particles(k).material = mat;
-                        end
+                        [drv.particles.material] = deal(mat);
                     elseif (strcmp(mp_name,'WALLS'))
-                        for k = 1:drv.n_walls
-                            drv.walls(k).material = mat;
-                        end
+                        [drv.walls.material] = deal(mat);
                     else
-                        mp = [];
-                        for k = 1:drv.n_mparts
-                            if (strcmp(drv.mparts(k).name,mp_name))
-                                mp = drv.mparts(k);
-                            end
-                        end
+                        mp = findobj(drv.mparts,'name',name);
                         if (isempty(mp))
-                            this.warn("Unexistent model part used in Material.");
+                            this.warn('Nonexistent model part used in Material.');
                             continue;
                         end
-                        for k = 1:mp.n_particles
-                            mp.particles(k).material = mat;
-                        end
+                        [mp.material.material] = deal(mat);
+                        [mp.material.walls]    = deal(mat);
                     end
                 end
             end
@@ -1119,7 +1940,7 @@ classdef Read < handle
             status = 1;
             if (~isempty(drv.search.b_interact))
                 if (isfield(json,'InteractionAssignment'))
-                    this.warn("Only one InteractionModel was created and will be applied to all interactions, so InteractionAssignment will be ignored.");
+                    this.warn('Only one InteractionModel was created and will be applied to all interactions, so InteractionAssignment will be ignored.');
                 end
                 return;
             elseif (~isfield(json,'InteractionAssignment'))
@@ -1131,21 +1952,20 @@ classdef Read < handle
     
     %% Public methods: Model parts file
     methods
-                
         %------------------------------------------------------------------
         function status = readParticlesDisk(this,fid,drv)
             status = 1;
             
             if (drv.dimension == 3)
-                fprintf(2,"Invalid data: PARTICLES.DISK is only allowed in 2D models.\n");
+                fprintf(2,'Invalid data: PARTICLES.DISK is only allowed in 2D models.\n');
                 status = 0; return;
             end
             
             % Total number of disk particles
             n = fscanf(fid,'%d',1);
             if (~this.isIntArray(n,1) || n < 0)
-                fprintf(2,"Invalid data in model parts file: Total number of PARTICLES.DISK.\n");
-                fprintf(2,"It must be a positive integer.\n");
+                fprintf(2,'Invalid data in model parts file: Total number of PARTICLES.DISK.\n');
+                fprintf(2,'It must be a positive integer.\n');
                 status = 0; return;
             end
             
@@ -1166,32 +1986,32 @@ classdef Read < handle
                 % Read all values of current line
                 values = sscanf(line,'%f');
                 if (length(values) ~= 4 && length(values) ~= 5)
-                    fprintf(2,"Invalid data in model parts file: Number of parameters of PARTICLES.DISK.\n");
-                    fprintf(2,"It requires 5 parameters: ID, coord X, coord Y, orientation, radius (radius is optional in this file).\n");
+                    fprintf(2,'Invalid data in model parts file: Number of parameters of PARTICLES.DISK.\n');
+                    fprintf(2,'It requires 5 parameters: ID, coord X, coord Y, orientation, radius (radius is optional in this file).\n');
                     status = 0; return;
                 end
                 
                 % ID number
                 id = values(1);
                 if (~this.isIntArray(id,1) || id <= 0)
-                    fprintf(2,"Invalid data in model parts file: ID number of PARTICLES.DISK.\n");
-                    fprintf(2,"It must be a positive integer.\n");
+                    fprintf(2,'Invalid data in model parts file: ID number of PARTICLES.DISK.\n');
+                    fprintf(2,'It must be a positive integer.\n');
                     status = 0; return;
                 end
                 
                 % Coordinates
                 coord = values(2:3);
                 if (~this.isDoubleArray(coord,2))
-                    fprintf(2,"Invalid data in model parts file: Coordinates of PARTICLES.DISK with ID %d.\n",id);
-                    fprintf(2,"It must be a pair of numeric values.\n");
+                    fprintf(2,'Invalid data in model parts file: Coordinates of PARTICLES.DISK with ID %d.\n',id);
+                    fprintf(2,'It must be a pair of numeric values.\n');
                     status = 0; return;
                 end
                 
                 % Orientation angle
                 orient = values(4);
                 if (~this.isDoubleArray(orient,1))
-                    fprintf(2,"Invalid data in model parts file: Orientation of PARTICLES.DISK with ID %d.\n",id);
-                    fprintf(2,"It must be a numeric value.\n");
+                    fprintf(2,'Invalid data in model parts file: Orientation of PARTICLES.DISK with ID %d.\n',id);
+                    fprintf(2,'It must be a numeric value.\n');
                     status = 0; return;
                 end
                 
@@ -1199,8 +2019,8 @@ classdef Read < handle
                 if (length(values) == 5)
                     radius = values(5);
                     if (~this.isDoubleArray(radius,1) || radius <= 0)
-                        fprintf(2,"Invalid data in model parts file: Radius of PARTICLES.DISK with ID %d.\n",id);
-                        fprintf(2,"It must be a positive value.\n");
+                        fprintf(2,'Invalid data in model parts file: Radius of PARTICLES.DISK with ID %d.\n',id);
+                        fprintf(2,'It must be a positive value.\n');
                         status = 0; return;
                     end
                 end
@@ -1208,7 +2028,7 @@ classdef Read < handle
                 % Create new particle object
                 particle        = Particle_Disk();
                 particle.id     = id;
-                particle.coord  = coord';
+                particle.coord  = coord;
                 particle.orient = orient;
                 if (length(values) == 5)
                     particle.radius = radius;
@@ -1216,14 +2036,14 @@ classdef Read < handle
                 
                 % Store handle to particle object
                 if (id <= length(drv.particles) && ~isempty(drv.particles(id).id))
-                    fprintf(2,"Invalid numbering of particles: IDs cannot be repeated.\n");
+                    fprintf(2,'Invalid numbering of particles: IDs cannot be repeated.\n');
                     status = 0; return;
                 end
                 drv.particles(id) = particle;
             end
             
             if (i < n)
-                fprintf(2,"Invalid data in model parts file: Total number of PARTICLES.DISK is incompatible with provided data.\n");
+                fprintf(2,'Invalid data in model parts file: Total number of PARTICLES.DISK is incompatible with provided data.\n');
                 status = 0; return;
             end
         end
@@ -1233,15 +2053,15 @@ classdef Read < handle
             status = 1;
             
             if (drv.dimension == 3)
-                fprintf(2,"Invalid data: WALLS.LINE2D is only allowed in 2D models.\n");
+                fprintf(2,'Invalid data: WALLS.LINE2D is only allowed in 2D models.\n');
                 status = 0; return;
             end
             
             % Total number of line2D walls
             n = fscanf(fid,'%d',1);
             if (~this.isIntArray(n,1) || n < 0)
-                fprintf(2,"Invalid data in model parts file: Total number of WALLS.LINE2D.\n");
-                fprintf(2,"It must be a positive integer.\n");
+                fprintf(2,'Invalid data in model parts file: Total number of WALLS.LINE2D.\n');
+                fprintf(2,'It must be a positive integer.\n');
                 status = 0; return;
             end
             
@@ -1262,43 +2082,43 @@ classdef Read < handle
                 % Read all values of current line
                 values = sscanf(line,'%f');
                 if (length(values) ~= 5)
-                    fprintf(2,"Invalid data in model parts file: Number of parameters of WALLS.LINE2D.\n");
-                    fprintf(2,"It requires 5 parameters: ID, coord X1, coord Y1, coord X2, coord Y2.\n");
+                    fprintf(2,'Invalid data in model parts file: Number of parameters of WALLS.LINE2D.\n');
+                    fprintf(2,'It requires 5 parameters: ID, coord X1, coord Y1, coord X2, coord Y2.\n');
                     status = 0; return;
                 end
                 
                 % ID number
                 id = values(1);
                 if (~this.isIntArray(id,1) || id <= 0)
-                    fprintf(2,"Invalid data in model parts file: ID number of WALLS.LINE2D.\n");
-                    fprintf(2,"It must be a positive integer.\n");
+                    fprintf(2,'Invalid data in model parts file: ID number of WALLS.LINE2D.\n');
+                    fprintf(2,'It must be a positive integer.\n');
                     status = 0; return;
                 end
                 
                 % Coordinates
                 coord = values(2:5);
                 if (~this.isDoubleArray(coord,4))
-                    fprintf(2,"Invalid data in model parts file: Coordinates of WALLS.LINE2D with ID %d.\n",id);
-                    fprintf(2,"It must be two pairs of numeric values: X1,Y1,X2,Y2.\n");
+                    fprintf(2,'Invalid data in model parts file: Coordinates of WALLS.LINE2D with ID %d.\n',id);
+                    fprintf(2,'It must be two pairs of numeric values: X1,Y1,X2,Y2.\n');
                     status = 0; return;
                 end
                 
                 % Create new wall object
                 wall           = Wall_Line2D();
                 wall.id        = id;
-                wall.coord_ini = coord(1:2)';
-                wall.coord_end = coord(3:4)';
+                wall.coord_ini = coord(1:2);
+                wall.coord_end = coord(3:4);
                 
                 % Store handle to wall object
                 if (id <= length(drv.walls) && ~isempty(drv.walls(id).id))
-                    fprintf(2,"Invalid numbering of walls: IDs cannot be repeated.\n");
+                    fprintf(2,'Invalid numbering of walls: IDs cannot be repeated.\n');
                     status = 0; return;
                 end
                 drv.walls(id) = wall;
             end
             
             if (i < n)
-                fprintf(2,"Invalid data in model parts file: Total number of WALLS.LINE2D is incompatible with provided data.\n");
+                fprintf(2,'Invalid data in model parts file: Total number of WALLS.LINE2D is incompatible with provided data.\n');
                 status = 0; return;
             end
         end
@@ -1308,15 +2128,15 @@ classdef Read < handle
             status = 1;
             
             if (drv.dimension == 3)
-                fprintf(2,"Invalid data: WALLS.CIRCLE is only allowed in 2D models.\n");
+                fprintf(2,'Invalid data: WALLS.CIRCLE is only allowed in 2D models.\n');
                 status = 0; return;
             end
             
             % Total number of circle walls
             n = fscanf(fid,'%d',1);
             if (~this.isIntArray(n,1) || n < 0)
-                fprintf(2,"Invalid data in model parts file: Total number of WALLS.CIRCLE.\n");
-                fprintf(2,"It must be a positive integer.\n");
+                fprintf(2,'Invalid data in model parts file: Total number of WALLS.CIRCLE.\n');
+                fprintf(2,'It must be a positive integer.\n');
                 status = 0; return;
             end
             
@@ -1337,51 +2157,51 @@ classdef Read < handle
                 % Read all values of current line
                 values = sscanf(line,'%f');
                 if (length(values) ~= 4)
-                    fprintf(2,"Invalid data in model parts file: Number of parameters of WALLS.CIRCLE.\n");
-                    fprintf(2,"It requires 4 parameters: ID, center coord X, center coord Y, radius.\n");
+                    fprintf(2,'Invalid data in model parts file: Number of parameters of WALLS.CIRCLE.\n');
+                    fprintf(2,'It requires 4 parameters: ID, center coord X, center coord Y, radius.\n');
                     status = 0; return;
                 end
                 
                 % ID number
                 id = values(1);
                 if (~this.isIntArray(id,1) || id <= 0)
-                    fprintf(2,"Invalid data in model parts file: ID number of WALLS.CIRCLE.\n");
-                    fprintf(2,"It must be a positive integer.\n");
+                    fprintf(2,'Invalid data in model parts file: ID number of WALLS.CIRCLE.\n');
+                    fprintf(2,'It must be a positive integer.\n');
                     status = 0; return;
                 end
                 
                 % Coordinates
                 coord = values(2:3);
                 if (~this.isDoubleArray(coord,2))
-                    fprintf(2,"Invalid data in model parts file: Center coordinates of WALLS.CIRCLE with ID %d.\n",id);
-                    fprintf(2,"It must be a pair of numeric values: X,Y.\n");
+                    fprintf(2,'Invalid data in model parts file: Center coordinates of WALLS.CIRCLE with ID %d.\n',id);
+                    fprintf(2,'It must be a pair of numeric values: X,Y.\n');
                     status = 0; return;
                 end
                 
                 % Radius
                 radius = values(4);
                 if (~this.isDoubleArray(radius,1) || radius <= 0)
-                    fprintf(2,"Invalid data in model parts file: Radius of WALLS.CIRCLE with ID %d.\n",id);
-                    fprintf(2,"It must be a positive value.\n");
+                    fprintf(2,'Invalid data in model parts file: Radius of WALLS.CIRCLE with ID %d.\n',id);
+                    fprintf(2,'It must be a positive value.\n');
                     status = 0; return;
                 end
                 
                 % Create new wall object
                 wall        = Wall_Circle();
                 wall.id     = id;
-                wall.center = coord';
+                wall.center = coord;
                 wall.radius = radius;
                 
                 % Store handle to wall object
                 if (id <= length(drv.walls) && ~isempty(drv.walls(id).id))
-                    fprintf(2,"Invalid numbering of walls: IDs cannot be repeated.\n");
+                    fprintf(2,'Invalid numbering of walls: IDs cannot be repeated.\n');
                     status = 0; return;
                 end
                 drv.walls(id) = wall;
             end
             
             if (i < n)
-                fprintf(2,"Invalid data in model parts file: Total number of WALLS.CIRCLE is incompatible with provided data.\n");
+                fprintf(2,'Invalid data in model parts file: Total number of WALLS.CIRCLE is incompatible with provided data.\n');
                 status = 0; return;
             end
         end
@@ -1396,17 +2216,17 @@ classdef Read < handle
             drv.mparts(drv.n_mparts) = mp;
             
             % List of reserved names
-            reserved = ["PARTICLES","WALLS"];
+            reserved = ['PARTICLES','WALLS'];
             
             % Model part name
             line = deblank(fgetl(fid));
             if (isempty(line) || isnumeric(line))
-                fprintf(2,"Invalid data in model parts file: NAME of MODELPART was not provided or is invalid.\n");
+                fprintf(2,'Invalid data in model parts file: NAME of MODELPART was not provided or is invalid.\n');
                 status = 0; return;
             end
             line = regexp(line,' ','split');
             if (length(line) ~= 2 || ~strcmp(line{1},'NAME') || ismember(line{2},reserved))
-                fprintf(2,"Invalid data in model parts file: NAME of MODELPART was not provided or is invalid.\n");
+                fprintf(2,'Invalid data in model parts file: NAME of MODELPART was not provided or is invalid.\n');
                 status = 0; return;
             end
             mp.name = line{2};
@@ -1421,10 +2241,10 @@ classdef Read < handle
                 end
                 line = regexp(line,' ','split');
                 if (~ismember(line{1},reserved))
-                    fprintf(2,"Invalid data in model parts file: MODELPART can contain only two fields after its name, PARTICLES and WALLS.\n");
+                    fprintf(2,'Invalid data in model parts file: MODELPART can contain only two fields after its name, PARTICLES and WALLS.\n');
                     status = 0; return;
                 elseif (length(line) ~= 2 || isnan(str2double(line{2})) || floor(str2double(line{2})) ~= ceil(str2double(line{2})) || str2double(line{2}) < 0)
-                    fprintf(2,"Invalid data in model parts file: Number of %s of MODELPART %s was not provided correctly.\n",line{1},mp.name);
+                    fprintf(2,'Invalid data in model parts file: Number of %s of MODELPART %s was not provided correctly.\n',line{1},mp.name);
                     status = 0; return;
                 end
                 
@@ -1439,7 +2259,7 @@ classdef Read < handle
                     % Get all particles IDs
                     [particles,count] = fscanf(fid,'%d');
                     if (count ~= np)
-                        fprintf(2,"Invalid data in model parts file: Number of PARTICLES of MODELPART %s is not consistent with the provided IDs.\n",mp.name);
+                        fprintf(2,'Invalid data in model parts file: Number of PARTICLES of MODELPART %s is not consistent with the provided IDs.\n',mp.name);
                         status = 0; return;
                     end
 
@@ -1447,7 +2267,7 @@ classdef Read < handle
                     for i = 1:np
                         id = particles(i);
                         if (floor(id) ~= ceil(id) || id <=0 || id > length(drv.particles))
-                            fprintf(2,"Invalid data in model parts file: PARTICLES IDs of MODELPART %s is not consistent with existing particles.\n",mp.name);
+                            fprintf(2,'Invalid data in model parts file: PARTICLES IDs of MODELPART %s is not consistent with existing particles.\n',mp.name);
                             status = 0; return;
                         end
                         mp.particles(i) = drv.particles(id);
@@ -1464,7 +2284,7 @@ classdef Read < handle
                     % Get all walls IDs
                     [walls,count] = fscanf(fid,'%d');
                     if (count ~= nw)
-                        fprintf(2,"Invalid data in model parts file: Number of WALLS of MODELPART %s is not consistent with the provided IDs.\n",mp.name);
+                        fprintf(2,'Invalid data in model parts file: Number of WALLS of MODELPART %s is not consistent with the provided IDs.\n',mp.name);
                         status = 0; return;
                     end
 
@@ -1472,7 +2292,7 @@ classdef Read < handle
                     for i = 1:nw
                         id = walls(i);
                         if (floor(id) ~= ceil(id) || id <=0 || id > length(drv.walls))
-                            fprintf(2,"Invalid data in model parts file: WALLS IDs of MODELPART %s is not consistent with existing walls.\n",mp.name);
+                            fprintf(2,'Invalid data in model parts file: WALLS IDs of MODELPART %s is not consistent with existing walls.\n',mp.name);
                             status = 0; return;
                         end
                         mp.walls(i) = drv.walls(id);
@@ -1485,7 +2305,7 @@ classdef Read < handle
             end
             
             if (mp.n_particles == 0 && mp.n_walls == 0)
-                this.warn("Empty model part was created.");
+                this.warn('Empty model part was created.');
             end
         end
     end
@@ -1650,25 +2470,25 @@ classdef Read < handle
         function status = checkDriver(~,drv)
             status = 1;
             if (isempty(drv.search))
-                fprintf(2,"No search scheme was provided.");
+                fprintf(2,'No search scheme was provided.');
                 status = 0; return;
             end
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) &&...
                 (isempty(drv.scheme_vtrl) || isempty(drv.scheme_vrot)))
-                fprintf(2,"No integration scheme for translational/rotational velocity was provided.");
+                fprintf(2,'No integration scheme for translational/rotational velocity was provided.');
                 status = 0; return;
             end
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.THERMAL) &&...
                  isempty(drv.scheme_temp))
-                fprintf(2,"No integration scheme for temperature was provided.");
+                fprintf(2,'No integration scheme for temperature was provided.');
                 status = 0; return;
             end
             if (isempty(drv.time_step))
-                fprintf(2,"No time step was provided.");
+                fprintf(2,'No time step was provided.');
                 status = 0; return;
             end
             if (isempty(drv.max_time) && isempty(drv.max_step))
-                fprintf(2,"No maximum time and steps were provided.");
+                fprintf(2,'No maximum time and steps were provided.');
                 status = 0; return;
             end
         end
@@ -1679,14 +2499,14 @@ classdef Read < handle
             for i = 1:drv.n_particles
                 p = drv.particles(i);
                 if (isempty(p.radius))
-                    fprintf(2,"No radius was provided to particle %d.",p.id);
+                    fprintf(2,'No radius was provided to particle %d.',p.id);
                     status = 0; return;
                 end
                 if (isempty(p.material))
-                    fprintf(2,"No material was provided to particle %d.",p.id);
+                    fprintf(2,'No material was provided to particle %d.',p.id);
                     status = 0; return;
                 elseif (length(p.material) > 1)
-                    fprintf(2,"More than one material was provided to particle %d.",p.id);
+                    fprintf(2,'More than one material was provided to particle %d.',p.id);
                     status = 0; return;
                 end
                 if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) &&...
@@ -1694,12 +2514,12 @@ classdef Read < handle
                      isempty(p.material.young)   ||...
                      isempty(p.material.poisson) ||...
                      isempty(p.material.restitution)))
-                    fprintf(2,"Missing mechanical properties of material %s.",p.material.name);
+                    fprintf(2,'Missing mechanical properties of material %s.',p.material.name);
                     status = 0; return;
                 elseif ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.THERMAL) &&...
                         (isempty(p.material.conduct) ||...
                          isempty(p.material.capacity)))
-                    fprintf(2,"Missing thermal properties of material %s.",p.material.name);
+                    fprintf(2,'Missing thermal properties of material %s.',p.material.name);
                     status = 0; return;
                 end
             end
@@ -1711,7 +2531,7 @@ classdef Read < handle
             for i = 1:drv.n_walls
                 w = drv.walls(i);
                 if (w.type == w.LINE2D && isequal(w.coord_ini,w.coord_end))
-                    fprintf(2,"Wall %d has no length.",w.id);
+                    fprintf(2,'Wall %d has no length.',w.id);
                     status = 0; return;
                 end
             end
@@ -1764,6 +2584,19 @@ classdef Read < handle
             else
                 is = true;
             end
+        end
+        
+        %------------------------------------------------------------------
+        function [status,vals] = readTable(file,col)
+            fid = fopen(file,'rt');
+            if (fid < 0)
+                fprintf(2,'Error opening values file.\n');
+                fprintf(2,'It must have the same path of the project parameters file.\n');
+                status = 0; return;
+            end
+            vals = fscanf(fid,'%f',[col Inf])';
+            fclose(fid);
+            status = 1;
         end
     end
 end

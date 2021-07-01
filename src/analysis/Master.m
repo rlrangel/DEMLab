@@ -28,8 +28,8 @@ classdef Master < handle
             [file_name,file_path] = uigetfile('*.json','DEMLab - Input file','ProjectParameters');
             file_fullname = fullfile(file_path,file_name);
             if (isequal(file_name,0))
-                fprintf("No file selected.\n");
-                fprintf("\nExiting program...\n");
+                fprintf('No file selected.\n');
+                fprintf('\nExiting program...\n');
                 return;
             end
             fprintf('File selected:\n%s\n',file_fullname)
@@ -37,8 +37,8 @@ classdef Master < handle
             % Open input file
             fid = fopen(file_fullname,'rt');
             if (fid < 0)
-                fprintf(2,"\nError opening input file.\n");
-                fprintf("\nExiting program...\n");
+                fprintf(2,'\nError opening input file.\n');
+                fprintf('\nExiting program...\n');
                 return;
             end
             
@@ -47,7 +47,7 @@ classdef Master < handle
             fprintf('\nReading input file...\n');
             [status,drv] = read.execute(file_path,fid);
             if (~status)
-                fprintf("\nExiting program...\n");
+                fprintf('\nExiting program...\n');
                 return;
             end
             
@@ -55,14 +55,14 @@ classdef Master < handle
             fprintf('\nChecking consistency of input data...\n');
             status = read.check(drv);
             if (~status)
-                fprintf("\nExiting program...\n");
+                fprintf('\nExiting program...\n');
                 return;
             end
             
             % Pre-processs
             fprintf('\nPre-processing...\n');
             if (~drv.preProcess())
-                fprintf("\nExiting program...\n");
+                fprintf('\nExiting program...\n');
                 return;
             end
             

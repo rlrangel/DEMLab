@@ -9,13 +9,13 @@ classdef PC_Table < PC
     properties (SetAccess = public, GetAccess = public)
         val_x  double = double.empty;   % independente variable (time) values
         val_y  double = double.empty;   % prescribed condition values
-        method uint8  = uint8.empty;    % flag for interpolation method
+        interp uint8  = uint8.empty;    % flag for interpolation method
     end
     
     %% Constructor method
     methods
-        function this = PC_Table(condition)
-            this = this@PC(PC.TABLE,condition);
+        function this = PC_Table()
+            this = this@PC(PC.TABLE);
             this.applyDefaultProps();
         end
     end
@@ -24,12 +24,12 @@ classdef PC_Table < PC
     methods
         %------------------------------------------------------------------
         function applyDefaultProps(this)
-            this.method = this.INTERP_LINEAR;
+            this.interp = this.INTERP_LINEAR;
         end
         
         %------------------------------------------------------------------
         function val = getValue(this,time)
-            switch this.method
+            switch this.interp
                 case this.INTERP_LINEAR
                     val = interp1(this.val_x,this.val_y,time,'linear');
                 case this.INTERP_MAKIMA

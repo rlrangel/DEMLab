@@ -28,6 +28,7 @@ classdef Driver < handle
         n_walls     uint32 = uint32.empty;   % number of walls
         n_interacts uint32 = uint32.empty;   % number of binary interactions
         n_materials uint32 = uint32.empty;   % number of materials
+        n_prescond  uint32 = uint32.empty;   % number of prescribed conditions
         
         % Model components: handle to objects
         mparts    ModelPart = ModelPart.empty;   % vector of objects of the ModelPart class
@@ -35,6 +36,7 @@ classdef Driver < handle
         walls     Wall      = Wall.empty;        % vector of objects of the Wall class
         interacts Interact  = Interact.empty;    % vector of objects of the Interact class
         materials Material  = Material.empty;    % vector of objects of the Material class
+        prescond  PC        = PC.empty;          % vector of objects of the PC class
         
         % Model limits
         bbox BBox = BBox.empty;   % object of BBox class
@@ -113,7 +115,7 @@ classdef Driver < handle
             this.particles(~isvalid(this.particles)) = [];
             this.n_particles = length(this.particles);
             if (this.n_particles == 0)
-                fprintf(2,"The model has no particle.\n");
+                fprintf(2,'The model has no particle.\n');
                 status = 0;
                 return;
             end

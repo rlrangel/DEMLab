@@ -1,20 +1,8 @@
 Driver:
 	Properties:
-	* Model components: total numbers
-	  -Number of variable properties;
-	  -Number of prescribed conditions;
-	
-	* Model components: handle to objects
-	  -Handles to VariableProperty objects;
-	  -Handles to PrecribedCondition objects;
-	
 	* Arrays of IDs:
 	  -Array of active particles IDs;
 	  -Array of active walls IDs;
-	
-	* Global conditions:
-	  -GlobalDampingTranslational; (default: [])
-	  -GlobalDampingRotational; (default: [])
 	  	
 	Tasks:
 	* Pre-precess (parallel loop through all elements):
@@ -102,31 +90,9 @@ Particle: (Super,Disk)
 	* Identification:
 	  -Handle to ModelParts objects;
 	
-	* Lifecycle:
-	  -Active;
-	  -Creation time;
-	  -Destruction time;
-	
-	* Geometric properties:
-	  -Moment of inertia;
-	  -SurfaceArea;
-	  -Volume;
-	
-	* Variable properties:
-	  -Handles to VariableProperty objects;
-	
 	* Neighbours Interactions:
 	  -Arrays of particles IDs in search list; (for Search_RestrictedLoop)
 	  -NeighbourDistance;
-	
-	* Prescribed conditions: (handles to PrecribedCondition objects)
-	  -PrescribedForce;
-	  -PrescribedTorque;
-	  -PrescribedHeatRate;
-	
-	* Global damping contribution:
-	  -GlobalViscousForce;
-	  -GlobalViscousTorque;
 	
 	* Total forcing terms:
 	  -TotalForce;

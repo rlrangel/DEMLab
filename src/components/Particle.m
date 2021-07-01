@@ -20,13 +20,22 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         id   uint32 = uint32.empty;   % identification number
         
         % Geometric properties
-        radius double = double.empty;
+        radius   double = double.empty;
+        minertia double = double.empty;
+        surface  double = double.empty;
+        volume   double = double.empty;
         
         % Physical properties
         material      Material = Material.empty;   % object of the Material class
         mass          double   = double.empty;     % mass (density * volume)
         weight        double   = double.empty;     % weight vector (mass * gravity)
         therm_inertia double   = double.empty;     % thermal inertia (mass * heat_capacity)
+        
+        % Prescribed conditions (vectors of objects of the PC class)
+        pc_forces     PC = PC.empty;
+        pc_torques    PC = PC.empty;
+        pc_heatfluxes PC = PC.empty;
+        pc_heatrates  PC = PC.empty;
         
         % Neighbours Interactions
         interacts Interact  = Interact.empty;    % vector of objects of the Interact class
