@@ -21,15 +21,15 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         
         % Geometric properties
         radius   double = double.empty;
-        minertia double = double.empty;
         surface  double = double.empty;
         volume   double = double.empty;
+        minertia double = double.empty;
         
         % Physical properties
-        material      Material = Material.empty;   % object of the Material class
-        mass          double   = double.empty;     % mass (density * volume)
-        weight        double   = double.empty;     % weight vector (mass * gravity)
-        therm_inertia double   = double.empty;     % thermal inertia (mass * heat_capacity)
+        material Material = Material.empty;   % object of the Material class
+        mass     double   = double.empty;     % mass (density * volume)
+        weight   double   = double.empty;     % weight vector (mass * gravity)
+        tinertia double   = double.empty;     % thermal inertia (mass * heat_capacity)
         
         % Prescribed conditions (vectors of objects of the PC class)
         pc_forces     PC = PC.empty;
@@ -70,10 +70,32 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
     methods (Abstract)
         %------------------------------------------------------------------
         applyDefaultProps(this);
+        
+        %------------------------------------------------------------------
+        setSurface(this);
+        
+        %------------------------------------------------------------------
+        setVolume(this);
+        
+        %------------------------------------------------------------------
+        setMInertia(this);
     end
     
     %% Public methods
     methods
+        %------------------------------------------------------------------
+        function setMass(this)
+            this.mass = this.volume * this.material.density;
+        end
         
+        %------------------------------------------------------------------
+        function setWeight(this,g)
+            this.weight = this.mass * g;
+        end
+        
+        %------------------------------------------------------------------
+        function setTInertia(this)
+            this.tinertia = this.mass * this.material.hcapacity;
+        end
     end
 end

@@ -41,6 +41,17 @@ classdef Driver_Mechanical < Driver
         end
         
         %------------------------------------------------------------------
+        function setParticleProps(this,particle)
+            particle.setSurface();
+            particle.setVolume();
+            particle.setMass();
+            particle.setMInertia();
+            if (~isempty(this.gravity))
+                particle.setWeight(this.gravity);
+            end
+        end
+        
+        %------------------------------------------------------------------
         function runAnalysis(this)
             
         end

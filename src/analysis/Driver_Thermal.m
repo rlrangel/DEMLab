@@ -36,6 +36,14 @@ classdef Driver_Thermal < Driver
         end
         
         %------------------------------------------------------------------
+        function setParticleProps(~,particle)
+            particle.setSurface();
+            particle.setVolume();
+            particle.setMass();
+            particle.setTInertia();
+        end
+        
+        %------------------------------------------------------------------
         function runAnalysis(this)
             
         end

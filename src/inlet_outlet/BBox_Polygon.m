@@ -26,11 +26,7 @@ classdef BBox_Polygon < BBox
                 do = false;
                 return;
             end
-            if (inpolygon(particle.coord(1),particle.coord(2),this.coord_x,this.coord_y))
-                do = true;
-            else
-                do = false;
-            end
+            do = (inpolygon(particle.coord(1),particle.coord(2),this.coord_x,this.coord_y));
         end
     end
 end

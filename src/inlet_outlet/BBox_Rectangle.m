@@ -26,12 +26,8 @@ classdef BBox_Rectangle < BBox
                 do = false;
                 return;
             end
-            if (any(particle.coord < this.limit_min) ||...
-                any(particle.coord > this.limit_max))
-                do = true;
-            else
-                do = false;
-            end
+            do = (any(particle.coord > this.limit_min) &&...
+                  any(particle.coord < this.limit_max));
         end
     end
 end

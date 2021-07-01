@@ -73,11 +73,15 @@ classdef Driver < handle
         applyDefaultProps(this);
         
         %------------------------------------------------------------------
+        setParticleProps(this,particle);
+        
+        %------------------------------------------------------------------
         runAnalysis(this);
     end
     
     %% Public methods
     methods
+        %------------------------------------------------------------------
         function status = preProcess(this)
             status = 1;
             
@@ -107,8 +111,8 @@ classdef Driver < handle
                     end
                 end
                 
-                % Compute properties
-                
+                % Set basic properties
+                this.setParticleProps(p);
             end
             
             % Remove handle to deleted particles from global list
@@ -129,7 +133,7 @@ classdef Driver < handle
                 mp.n_particles = length(mp.particles);
             end
             
-            % Interaction search
+            % Interactions search
             this.search.execute(this);
         end
     end

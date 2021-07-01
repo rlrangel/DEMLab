@@ -5,12 +5,10 @@ Driver:
 	  -Array of active walls IDs;
 	  	
 	Tasks:
-	* Pre-precess (parallel loop through all elements):
+	* Pre-precess:
 	  -Build arrays of active particles/walls IDs; (may need to be updated if particles are removed/created or elements become active)
-	  -Set initial variable properties values of particles and walls;
 	  -Compute the NeighbourDistance according to the models assumed for the interactions (particle property): each model returns the required distance;
 	   (also needs to update NeighbourDistance when particles are created/deleted)
-	  -Virtual method to compute automatic time step according to mechanical or thermal formula (may need to be updated if particles are removed/created);
 	  -Store initial states to results?;
 	
 	* Virtual method to run generic solution loop:
@@ -59,25 +57,6 @@ Driver:
 		  (in fact, some interaction properties are stored to avoid re-computation, but they must be re-computed when the basic physical and geometric properties are changed)
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
-VariableProperty:
-	Properties:
-	* Name;
-	* DependentVariable;
-	* IndependentVariable;
-	* TableOfValuesXY;
-	* UpdateFrequency; (default: 1)
-	* Interval; (default: [0,inf])
-	
-	Tasks:
-	* Each object can serve to multiple particles (same as material);
-	* Method to return the dependent variable value, given the independent variable value - DVal = GetValue(IVal);
-	* Method to make a linear interpolation between the table values;
-	* Method to update the dependent variable:
-	  checks if its time to update (according to interval and frequency),
-	  gets a copy of the dependent variable using a switch between the options,
-	  updates the dependent variable value according to the table and to the independent variable (must have access to independent variable: temperature, time,...);
-
-------------------------------------------------------------------------------------------------------------------------------------------------
 Search:
 	Properties:
 	* NeighbourDistance;
@@ -107,25 +86,8 @@ Particle: (Super,Disk)
 	* Virtual method to integrate Newton and energy balance equations to obtain new kinematics (translational and rotational) and temperature;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
-Wall: (Super)
-	Properties:
-	* Identification:
-	  -Handle to ModelParts objects;
-	
-	* Lifecycle:
-	  -Active;
-	  -Creation time;
-	  -Destruction time;
-
-------------------------------------------------------------------------------------------------------------------------------------------------
 Interact:
 	Properties:
-	* Interaction models:
-	  -ContactTorque;
-	  -ContactAreaCorrectionMethod;
-	  -NonContactThermalConduction;
-	  -ThermalRadiation;
-	
 	* Contact information:
 	  -IsContact;
 	  -ImpactNormalVelocity;
@@ -136,15 +98,7 @@ Interact:
 	  -ContactArea;
 	  -AdjustedContactArea;
 	
-	* Effective contact parameters:
-	  -EffectiveRadius;
-	  -EffectiveMass;
-	  -EffectiveYoungModulus;
-	  -EffectiveShearModulus;
-	  -EffectiveThermalConductivity;
-	
 	Tasks:
-	* Compute effective contact properties;
 	* Evaluate interaction results with the model objects;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------

@@ -58,7 +58,7 @@ classdef PC < handle & matlab.mixin.Heterogeneous
     methods
         %------------------------------------------------------------------
         function is = isActive(this,time)
-            is = isempty(this.interval) || (time > min(this.interval) && time < max(this.interval));
+            is = isempty(this.interval) || (time >= min(this.interval) && time <= max(this.interval));
         end
     end
 end

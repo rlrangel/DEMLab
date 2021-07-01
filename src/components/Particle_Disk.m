@@ -28,5 +28,20 @@ classdef Particle_Disk < Particle
             this.accel_rot   = 0;
             this.temperature = 0;
         end
+        
+        %------------------------------------------------------------------
+        function setSurface(this)
+            this.surface = 4 * pi * this.radius^2;
+        end
+        
+        %------------------------------------------------------------------
+        function setVolume(this)
+            this.volume = 4 * pi * this.radius^3/3;
+        end
+        
+        %------------------------------------------------------------------
+        function setMInertia(this)
+            this.minertia = 2 * this.mass * this.radius^2/5;
+        end
     end
 end

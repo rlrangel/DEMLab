@@ -79,6 +79,9 @@ classdef Read < handle
                 status = this.checkDriver(drv);
             end
             if (status)
+                status = this.checkMaterials(drv);
+            end
+            if (status)
                 status = this.checkParticles(drv);
             end
             if (status)
@@ -1835,7 +1838,7 @@ classdef Read < handle
                     elseif (prop.heat_capacity <= 0)
                         msg = msg + 1;
                     end
-                    mat.capacity = prop.heat_capacity;
+                    mat.hcapacity = prop.heat_capacity;
                 end
                 if (isfield(prop,'thermal_expansion'))
                     if (~this.isDoubleArray(prop.thermal_expansion,1))
@@ -1904,25 +1907,18 @@ classdef Read < handle
             % (applied to the interaction between all elements)
             if (length(json.InteractionModel) == 1)
                 % Create base object for common interactions
-                % IT IS CONSIDERING ONLY DISK-DISK INTERACTIONS
+                % IT IS CONSIDERING ONLY DISK-DISK INTERACTIONS!
                 drv.search.b_interact = Interact();
                 
-                % Contact kinematics model
-                drv.search.b_interact.contact_kinematics = ContactKinematics();
-                
-                % Contact normal force model
+                % Interaction models
                 if (~this.interactContactForceNormal(json.InteractionModel,drv))
                     status = 0;
                     return;
                 end
-                
-                % Contact tangent force model
                 if (~this.interactContactForceTangent(json.InteractionModel,drv))
                     status = 0;
                     return;
                 end
-                
-                % Contact thermal conduction model
                 if (~this.interactContactConduction(json.InteractionModel,drv))
                     status = 0;
                     return;
@@ -1931,7 +1927,8 @@ classdef Read < handle
             
             % Multiple case:
             if (length(json.InteractionModel) > 1)
-               % TODO 
+                fprintf(2,'Multiple interaction models not yet available.\n');
+                status = 0; return;
             end
         end
         
@@ -2108,6 +2105,7 @@ classdef Read < handle
                 wall.id        = id;
                 wall.coord_ini = coord(1:2);
                 wall.coord_end = coord(3:4);
+                wall.len       = norm(wall.coord_end-wall.coord_ini);
                 
                 % Store handle to wall object
                 if (id <= length(drv.walls) && ~isempty(drv.walls(id).id))
@@ -2216,7 +2214,7 @@ classdef Read < handle
             drv.mparts(drv.n_mparts) = mp;
             
             % List of reserved names
-            reserved = ['PARTICLES','WALLS'];
+            reserved = ["PARTICLES","WALLS"];
             
             % Model part name
             line = deblank(fgetl(fid));
@@ -2224,12 +2222,12 @@ classdef Read < handle
                 fprintf(2,'Invalid data in model parts file: NAME of MODELPART was not provided or is invalid.\n');
                 status = 0; return;
             end
-            line = regexp(line,' ','split');
-            if (length(line) ~= 2 || ~strcmp(line{1},'NAME') || ismember(line{2},reserved))
+            line = string(regexp(line,' ','split'));
+            if (length(line) ~= 2 || ~strcmp(line(1),'NAME') || ismember(line(2),reserved))
                 fprintf(2,'Invalid data in model parts file: NAME of MODELPART was not provided or is invalid.\n');
                 status = 0; return;
             end
-            mp.name = line{2};
+            mp.name = line(2);
             
             % Model part components
             c = 0;
@@ -2239,21 +2237,21 @@ classdef Read < handle
                 if (isempty(line) || isnumeric(line))
                     break;
                 end
-                line = regexp(line,' ','split');
-                if (~ismember(line{1},reserved))
+                line = string(regexp(line,' ','split'));
+                if (~ismember(line(1),reserved))
                     fprintf(2,'Invalid data in model parts file: MODELPART can contain only two fields after its name, PARTICLES and WALLS.\n');
                     status = 0; return;
-                elseif (length(line) ~= 2 || isnan(str2double(line{2})) || floor(str2double(line{2})) ~= ceil(str2double(line{2})) || str2double(line{2}) < 0)
-                    fprintf(2,'Invalid data in model parts file: Number of %s of MODELPART %s was not provided correctly.\n',line{1},mp.name);
+                elseif (length(line) ~= 2 || isnan(str2double(line(2))) || floor(str2double(line(2))) ~= ceil(str2double(line(2))) || str2double(line(2)) < 0)
+                    fprintf(2,'Invalid data in model parts file: Number of %s of MODELPART %s was not provided correctly.\n',line(1),mp.name);
                     status = 0; return;
                 end
                 
                 % PARTICLES
-                if (strcmp(line{1},'PARTICLES'))
+                if (strcmp(line(1),'PARTICLES'))
                     c = c + 1;
                     
                     % Store number of particles
-                    np = str2double(line{2});
+                    np = str2double(line(2));
                     mp.n_particles = np;
 
                     % Get all particles IDs
@@ -2274,11 +2272,11 @@ classdef Read < handle
                     end
 
                 % WALLS
-                elseif (strcmp(line{1},'WALLS'))
+                elseif (strcmp(line(1),'WALLS'))
                     c = c + 1;
                     
                     % Store number of walls
-                    nw = str2double(line{2});
+                    nw = str2double(line(2));
                     mp.n_walls = nw;
 
                     % Get all walls IDs
@@ -2494,6 +2492,35 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
+        function status = checkMaterials(this,drv)
+            status = 1;
+            for i = 1:drv.n_materials
+                m = drv.materials(i);
+                if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) &&...
+                    (isempty(m.density) ||...
+                     isempty(m.young)   ||...
+                     isempty(m.poisson) ||...
+                     isempty(m.restitution)))
+                    fprintf(2,'Missing mechanical properties of material %s.',m.name);
+                    status = 0; return;
+                elseif ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.THERMAL) &&...
+                        (isempty(m.density) ||...
+                         isempty(m.conduct) ||...
+                         isempty(m.hcapacity)))
+                    fprintf(2,'Missing thermal properties of material %s.',m.name);
+                    status = 0; return;
+                end
+                shear_from_poisson = m.young / (2 + 2*m.poisson);
+                if (isempty(m.shear))
+                    m.shear = shear_from_poisson;
+                elseif (m.shear ~= shear_from_poisson)
+                    this.warn('Provided shear modulus is not physically consistent with Young modulus and Poisson ratio.');
+                end
+                % young_real needed when area correction is used
+            end
+        end
+        
+        %------------------------------------------------------------------
         function status = checkParticles(~,drv)
             status = 1;
             for i = 1:drv.n_particles
@@ -2507,19 +2534,6 @@ classdef Read < handle
                     status = 0; return;
                 elseif (length(p.material) > 1)
                     fprintf(2,'More than one material was provided to particle %d.',p.id);
-                    status = 0; return;
-                end
-                if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) &&...
-                    (isempty(p.material.density) ||...
-                     isempty(p.material.young)   ||...
-                     isempty(p.material.poisson) ||...
-                     isempty(p.material.restitution)))
-                    fprintf(2,'Missing mechanical properties of material %s.',p.material.name);
-                    status = 0; return;
-                elseif ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.THERMAL) &&...
-                        (isempty(p.material.conduct) ||...
-                         isempty(p.material.capacity)))
-                    fprintf(2,'Missing thermal properties of material %s.',p.material.name);
                     status = 0; return;
                 end
             end

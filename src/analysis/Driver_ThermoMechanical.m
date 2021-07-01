@@ -43,6 +43,18 @@ classdef Driver_ThermoMechanical < Driver
         end
         
         %------------------------------------------------------------------
+        function setParticleProps(this,particle)
+            particle.setSurface();
+            particle.setVolume();
+            particle.setMass();
+            particle.setMInertia();
+            particle.setTInertia();
+            if (~isempty(this.gravity))
+                particle.setWeight(this.gravity);
+            end
+        end
+        
+        %------------------------------------------------------------------
         function runAnalysis(this)
             while (this.time < this.max_time && this.step < this.max_step)
                 % Update time and step
@@ -50,6 +62,20 @@ classdef Driver_ThermoMechanical < Driver
                 this.step = this.step + 1;
                 
                 % Interactions search
+                if (this.step ~= 1)
+                    this.search.execute(this);
+                end
+                
+                % Loop over interactions
+                for i = 1:this.n_interacts
+                    interact = this.interacts(i);
+                    interact.contact_kinematics.evalRelPosVel(interact);
+                end
+                
+                % Loop over particles
+                for i = 1:this.n_particles
+                    
+                end
                 
             end
         end

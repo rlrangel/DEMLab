@@ -26,11 +26,7 @@ classdef BBox_Circle < BBox
                 do = false;
                 return;
             end
-            if (norm(particle.coord-this.center) > this.radius)
-                do = true;
-            else
-                do = false;
-            end
+            do = (norm(particle.coord-this.center) > this.radius);
         end
     end
 end
