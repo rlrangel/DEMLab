@@ -37,7 +37,8 @@ classdef ContactForceT < matlab.mixin.Heterogeneous
     
     %% Abstract methods
     methods (Abstract)
-        
+        %------------------------------------------------------------------
+        evalForces(this,interact);
     end
     
     %% Public methods
