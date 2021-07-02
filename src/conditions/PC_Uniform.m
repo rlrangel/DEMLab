@@ -18,7 +18,7 @@ classdef PC_Uniform < PC
         end
     end
     
-    %% Public methods
+    %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
         function applyDefaultProps(~)

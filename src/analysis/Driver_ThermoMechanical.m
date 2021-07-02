@@ -24,7 +24,7 @@ classdef Driver_ThermoMechanical < Driver
         end
     end
     
-    %% Public methods
+    %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
         function applyDefaultProps(this)
@@ -69,7 +69,9 @@ classdef Driver_ThermoMechanical < Driver
                 % Loop over interactions
                 for i = 1:this.n_interacts
                     interact = this.interacts(i);
-                    interact.contact_kinematics.evalRelPosVel(interact);
+                    interact.bin_kinematics.evalRelPosVel(interact,this.time_step);
+                    interact.contact_force_normal.evalForces(interact);
+                    interact.contact_force_tangent.evalForces(interact);
                 end
                 
                 % Loop over particles

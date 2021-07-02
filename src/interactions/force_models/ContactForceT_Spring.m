@@ -17,8 +17,13 @@ classdef ContactForceT_Spring < ContactForceT
         end
     end
     
-    %% Public methods
+    %% Public methods: implementation of superclass declarations
     methods
-        
+        %------------------------------------------------------------------
+        function evalForces(this,interact)
+            kt = this.spring_coeff;
+            ovlp_t = interact.bin_kinematics.ovlp_t;
+            F = kt * ovlp_t;
+        end
     end
 end

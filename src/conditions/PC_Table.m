@@ -20,7 +20,7 @@ classdef PC_Table < PC
         end
     end
     
-    %% Public methods
+    %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
         function applyDefaultProps(this)

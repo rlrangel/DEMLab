@@ -1,4 +1,4 @@
-%% BBox class
+%% BBox (Bounding box) class
 %
 %% Description
 %

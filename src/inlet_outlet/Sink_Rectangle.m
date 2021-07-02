@@ -18,7 +18,7 @@ classdef Sink_Rectangle < Sink
         end
     end
     
-    %% Public methods
+    %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
         function do = removeParticle(this,particle,time)

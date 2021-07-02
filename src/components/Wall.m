@@ -45,8 +45,7 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
     
     %% Abstract methods
     methods (Abstract)
-        %------------------------------------------------------------------
-        d = distanceFromParticle(this,particle);
+        
     end
     
     %% Public methods

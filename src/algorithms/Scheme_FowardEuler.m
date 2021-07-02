@@ -17,7 +17,7 @@ classdef Scheme_FowardEuler < Scheme
         end
     end
     
-    %% Public methods
+    %% Public methods: implementation of superclass declarations
     methods
         
     end

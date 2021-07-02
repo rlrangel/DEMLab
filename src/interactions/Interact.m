@@ -17,7 +17,7 @@ classdef Interact < handle & matlab.mixin.Copyable
         eff_young  double = double.empty;
         
         % Interaction models
-        contact_kinematics    ContactKinematics = ContactKinematics.empty;
+        bin_kinematics        BinKinematics     = BinKinematics.empty;
         contact_force_normal  ContactForceN     = ContactForceN.empty;
         contact_force_tangent ContactForceT     = ContactForceT.empty;
         contact_conduction    ContactConduction = ContactConduction.empty;

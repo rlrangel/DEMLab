@@ -1,4 +1,4 @@
-%% ContactForceN class
+%% ContactForceN (Normal Contact Force) class
 %
 %% Description
 %

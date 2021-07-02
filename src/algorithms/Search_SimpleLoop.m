@@ -18,7 +18,7 @@ classdef Search_SimpleLoop < Search
         end
     end
     
-    %% Public methods
+    %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
         function applyDefaultProps(this)
@@ -42,22 +42,14 @@ classdef Search_SimpleLoop < Search
                         continue;
                     end
                     
-                    % Distance between surfaces
-                    d = norm(p1.coord-p2.coord) - p1.radius - p2.radius;
-                    
                     % Check for existing interaction
                     interact = intersect(p1.interacts,p2.interacts);
                     if (isempty(interact))
-                        % Check distance
-                        if (d >= 0)
-                            continue;
-                        end
-                        
-                        % Create new particle-particle interaction
+                        % Create new particle-particle interaction if needed
                         this.createInteractPP(drv,p1,p2);
                     else
                         % Check distance
-                        if (d < 0)
+                        if (interact.bin_kinematics.distBtwSurf(p1,p2) < 0)
                             continue;
                         end
                         
@@ -74,22 +66,14 @@ classdef Search_SimpleLoop < Search
                 for j = 1:drv.n_walls
                     w = drv.walls(j);
                     
-                    % Distance between particle surface and wall
-                    d = w.distanceFromParticle(p1);
-                    
                     % Check for existing interaction
                     interact = intersect(p1.interacts,w.interacts);
                     if (isempty(interact))
-                        % Check distance
-                        if (d >= 0)
-                            continue;
-                        end
-                        
-                        % Create new particle-wall interaction
+                        % Create new particle-wall interaction if needed
                         this.createInteractPW(drv,p1,w);
                     else
                         % Check distance
-                        if (d < 0)
+                        if (interact.bin_kinematics.distBtwSurf(p1,w) < 0)
                             continue;
                         end
                         
@@ -110,18 +94,23 @@ classdef Search_SimpleLoop < Search
         
         %------------------------------------------------------------------
         function createInteractPP(this,drv,p1,p2)
+            % Create binary kinematics object to check distance
+            kin = BinKinematics_PP();
+            if (kin.distBtwSurf(p1,p2) >= 0)
+                delete(kin);
+                return;
+            end
+            
             % Create new object by copying base object
             interact = copy(this.b_interact);
             
-            % Set handles to interecting elements
+            % Set handles to interecting elements and kinematics model
             interact.elem1 = p1;
             interact.elem2 = p2;
-            
-            % Create contact kinematics model
-            interact.contact_kinematics = ContactKinematics_PP();
+            interact.bin_kinematics = kin;
             
             % Set effective contact parameters
-            interact.contact_kinematics.setEffParams(interact);
+            interact.bin_kinematics.setEffParams(interact);
             
             % Add handle of new object to both elements and global list
             p1.interacts(end+1)  = interact;
@@ -131,18 +120,28 @@ classdef Search_SimpleLoop < Search
         
         %------------------------------------------------------------------
         function createInteractPW(this,drv,p,w)
+            % Create binary kinematics object to check distance
+            switch w.type
+                case w.LINE2D
+                    kin = BinKinematics_Wlin();
+                case w.CIRCLE
+                    kin = BinKinematics_Wcirc();
+            end
+            if (kin.distBtwSurf(p,w) >= 0)
+                delete(kin);
+                return;
+            end
+            
             % Create new object by copying base object
             interact = copy(this.b_interact);
             
-            % Set handles to interecting elements
+            % Set handles to interecting elements and kinematics model
             interact.elem1 = p;
             interact.elem2 = w;
-            
-            % Create contact kinematics model
-            interact.contact_kinematics = ContactKinematics_PW();
+            interact.bin_kinematics = kin;
             
             % Set effective contact parameters
-            interact.contact_kinematics.setEffParams(interact);
+            interact.bin_kinematics.setEffParams(interact);
             
             % Add handle of new object to both elements and global list
             p.interacts(end+1)   = interact;

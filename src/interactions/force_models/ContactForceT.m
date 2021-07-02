@@ -1,4 +1,4 @@
-%% ContactForceT class
+%% ContactForceT (Tangential Contact Force) class
 %
 %% Description
 %

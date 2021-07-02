@@ -17,7 +17,7 @@ classdef ContactConduction_BOB < ContactConduction
         end
     end
     
-    %% Public methods
+    %% Public methods: implementation of superclass declarations
     methods
         
     end

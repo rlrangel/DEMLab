@@ -19,11 +19,8 @@ classdef Wall_Circle < Wall
         end
     end
     
-    %% Public methods
+    %% Public methods: implementation of superclass declarations
     methods
-        %------------------------------------------------------------------
-        function d = distanceFromParticle(this,particle)
-            d = norm(this.center-particle.coord) - this.radius - particles.radius;
-        end
+        
     end
 end
