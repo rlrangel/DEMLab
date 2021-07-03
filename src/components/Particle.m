@@ -45,14 +45,17 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         torque    double = double.empty;
         heat_rate double = double.empty;
         
-        % Current state
-        coord       double = double.empty;   % coordinates of centroid
-        orient      double = double.empty;   % orientation angles
-        veloc_trl   double = double.empty;   % translational velocity
-        veloc_rot   double = double.empty;   % rotational velocity
-        accel_trl   double = double.empty;   % translational acceleration
-        accel_rot   double = double.empty;   % rotational acceleration
+        % Current mechanical state
+        coord     double = double.empty;   % coordinates of centroid
+        orient    double = double.empty;   % orientation angles
+        veloc_trl double = double.empty;   % translational velocity
+        veloc_rot double = double.empty;   % rotational velocity
+        accel_trl double = double.empty;   % translational acceleration
+        accel_rot double = double.empty;   % rotational acceleration
+        
+        % Current thermal state
         temperature double = double.empty;   % temperature
+        temp_change double = double.empty;   % temperature rate of change
     end
     
     %% Constructor method
@@ -145,6 +148,21 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
                     this.heat_rate = this.heat_rate + this.pc_heatrates(i).getValue(time);
                 end
             end
+        end
+        
+        %------------------------------------------------------------------
+        function computeAccelTrl(this)
+            this.accel_trl = this.force / this.mass;
+        end
+        
+        %------------------------------------------------------------------
+        function computeAccelRot(this)
+            this.accel_rot = this.torque / this.minertia;
+        end
+        
+        %------------------------------------------------------------------
+        function computeTempChange(this)
+            this.temp_change = this.heat_rate / this.tinertia;
         end
     end
 end

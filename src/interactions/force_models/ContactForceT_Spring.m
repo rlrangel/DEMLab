@@ -26,7 +26,11 @@ classdef ContactForceT_Spring < ContactForceT
         
         %------------------------------------------------------------------
         function evalForce(this,interact)
-            this.total_force = this.spring_coeff * interact.kinematics.ovlp_t;
+            % Force modulus (elastic contribution only)
+            f = this.spring_coeff * interact.kinematics.ovlp_t;
+            
+            % Total normal force vector (against deformation)
+            this.total_force = -f * interact.kinematics.dir_t;
         end
     end
 end

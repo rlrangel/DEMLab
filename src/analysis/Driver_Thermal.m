@@ -29,7 +29,7 @@ classdef Driver_Thermal < Driver
             this.n_interacts = 0;
             this.n_materials = 0;
             this.n_prescond  = 0;
-            this.scheme_temp = Scheme_FowardEuler();
+            this.scheme_temp = Scheme_ForwardEuler();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;

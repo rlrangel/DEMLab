@@ -1,10 +1,10 @@
-%% Scheme_FowardEuler class
+%% Scheme_ForwardEuler class
 %
 %% Description
 %
 %% Implementation
 %
-classdef Scheme_FowardEuler < Scheme
+classdef Scheme_ForwardEuler < Scheme
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         
@@ -12,8 +12,8 @@ classdef Scheme_FowardEuler < Scheme
     
     %% Constructor method
     methods
-        function this = Scheme_FowardEuler()
-            this = this@Scheme(Scheme.FOWARD_EULER);
+        function this = Scheme_ForwardEuler()
+            this = this@Scheme(Scheme.FORWARD_EULER);
         end
     end
     

@@ -267,39 +267,39 @@ classdef Read < handle
             % Time integration scheme: translational velocity
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) && isfield(json.Solver,'integr_scheme_trans'))
                 scheme = string(json.Solver.integr_scheme_trans);
-                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
+                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'forward_euler'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_trans.\n');
-                    fprintf(2,'Available options: foward_euler.\n');
+                    fprintf(2,'Available options: forward_euler.\n');
                     status = 0; return;
                 end
-                if (strcmp(scheme,'foward_euler'))
-                    drv.scheme_vtrl = Scheme_FowardEuler();
+                if (strcmp(scheme,'forward_euler'))
+                    drv.scheme_vtrl = Scheme_ForwardEuler();
                 end
             end
             
             % Time integration scheme: rotational velocity
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) && isfield(json.Solver,'integr_scheme_rotat'))
                 scheme = string(json.Solver.integr_scheme_rotat);
-                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
+                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'forward_euler'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_rotat.\n');
-                    fprintf(2,'Available options: foward_euler.\n');
+                    fprintf(2,'Available options: forward_euler.\n');
                     status = 0; return;
                 end
-                if (strcmp(scheme,'foward_euler'))
-                    drv.scheme_vrot = Scheme_FowardEuler();
+                if (strcmp(scheme,'forward_euler'))
+                    drv.scheme_vrot = Scheme_ForwardEuler();
                 end
             end
             
             % Time integration scheme: temperature
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.THERMAL) && isfield(json.Solver,'integr_scheme_therm'))
                 scheme = string(json.Solver.integr_scheme_therm);
-                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'foward_euler'))
+                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'forward_euler'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_therm.\n');
-                    fprintf(2,'Available options: foward_euler.\n');
+                    fprintf(2,'Available options: forward_euler.\n');
                     status = 0; return;
                 end
-                if (strcmp(scheme,'foward_euler'))
-                    drv.scheme_temp = Scheme_FowardEuler();
+                if (strcmp(scheme,'forward_euler'))
+                    drv.scheme_temp = Scheme_ForwardEuler();
                 end
             end
             
@@ -1828,14 +1828,6 @@ classdef Read < handle
                     end
                     mat.poisson = prop.poisson_ratio;
                 end
-                if (isfield(prop,'restitution_coeff'))
-                    if (~this.isDoubleArray(prop.restitution_coeff,1))
-                        msg = -100;
-                    elseif (prop.restitution_coeff < 0 || prop.restitution_coeff > 1)
-                        msg = msg + 1;
-                    end
-                    mat.restitution = prop.restitution_coeff;
-                end
                 if (isfield(prop,'thermal_conductivity'))
                     if (~this.isDoubleArray(prop.thermal_conductivity,1))
                         msg = -100;
@@ -2331,25 +2323,42 @@ classdef Read < handle
                    (drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL))
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.\n');
                 status = 0; return;
-            elseif (~isfield(IM.contact_force_normal,'model'))
+            end
+            
+            % Model parameters
+            if (~isfield(IM.contact_force_normal,'model'))
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.model.\n');
                 status = 0; return;
             end
-            cfn = string(IM.contact_force_normal.model);
-            if (~this.isStringArray(cfn,1) ||...
-               (~strcmp(cfn,'viscoelastic_linear')))
+            model = string(IM.contact_force_normal.model);
+            if (~this.isStringArray(model,1) ||...
+               (~strcmp(model,'viscoelastic_linear')))
                 fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.model.\n');
                 fprintf(2,'Available options: viscoelastic_linear.\n');
                 status = 0; return;
             end
             
             % Call sub-method for each type of model
-            if (strcmp(cfn,'viscoelastic_linear'))
+            if (strcmp(model,'viscoelastic_linear'))
                 if (~this.contactForceNormal_ViscoElasticLinear(IM.contact_force_normal,drv))
                     status = 0;
                     return;
                 end
             end
+            
+            % Coefficient of restitution
+            if (~isfield(IM.contact_force_normal,'restitution_coeff'))
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.restitution_coeff.\n');
+                status = 0; return;
+            end
+            rest = IM.contact_force_normal.restitution_coeff;
+            if (~this.isDoubleArray(rest,1))
+                fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.restitution_coeff.\n');
+                fprintf(2,'It must be a numeric value.\n');
+            elseif (rest < 0 || rest > 1)
+                this.warn('Unphysical value was found for InteractionModel.contact_force_normal.restitution_coeff.');
+            end
+            drv.search.b_interact.contact_force_norm.restitution = rest;
         end
         
         %------------------------------------------------------------------
@@ -2361,20 +2370,23 @@ classdef Read < handle
                    (drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL))
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.\n');
                 status = 0; return;
-            elseif (~isfield(IM.contact_force_normal,'model'))
+            end
+            
+            % Model parameters
+            if (~isfield(IM.contact_force_normal,'model'))
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.model.\n');
                 status = 0; return;
             end
-            cft = string(IM.contact_force_tangent.model);
-            if (~this.isStringArray(cft,1) ||...
-               (~strcmp(cft,'simple_spring')))
+            model = string(IM.contact_force_tangent.model);
+            if (~this.isStringArray(model,1) ||...
+               (~strcmp(model,'simple_spring')))
                 fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.model.\n');
                 fprintf(2,'Available options: simple_spring.\n');
                 status = 0; return;
             end
             
             % Call sub-method for each type of model
-            if (strcmp(cft,'simple_spring'))
+            if (strcmp(model,'simple_spring'))
                 if (~this.contactForceTangent_SimpleSpring(IM.contact_force_tangent,drv))
                     status = 0;
                     return;
@@ -2391,20 +2403,23 @@ classdef Read < handle
                    (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL))
                 this.warn('No model for contact thermal conduction was identified. This heat transfer mechanism will not be considered.');
                 return;
-            elseif (~isfield(IM.contact_force_normal,'model'))
+            end
+            
+            % Model parameters
+            if (~isfield(IM.contact_force_normal,'model'))
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_conduction.model.\n');
                 status = 0; return;
             end
-            cc = string(IM.contact_conduction.model);
-            if (~this.isStringArray(cc,1) ||...
-               (~strcmp(cc,'batchelor_obrien')))
+            model = string(IM.contact_conduction.model);
+            if (~this.isStringArray(model,1) ||...
+               (~strcmp(model,'batchelor_obrien')))
                 fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_conduction.model.\n');
                 fprintf(2,'Available options: batchelor_obrien.\n');
                 status = 0; return;
             end
             
             % Create object
-            if (strcmp(cc,'batchelor_obrien'))
+            if (strcmp(model,'batchelor_obrien'))
                 drv.search.b_interact.contact_conduction = ContactConduction_BOB();
             end
         end

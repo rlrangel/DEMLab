@@ -96,5 +96,53 @@ classdef BinKinematics_PP < BinKinematics
             this.contact_radius = sqrt(R2);
             this.contact_area = pi * R2;
         end
+        
+        %------------------------------------------------------------------
+        function addContactForceToParticles(~,interact)
+            p1 = interact.elem1;
+            p2 = interact.elem2;
+            
+            % Total contact force from normal and tangential components
+            total_force = interact.contact_force_norm.total_force +...
+                          interact.contact_force_tang.total_force;
+            
+            % Add total contact force to particles considering appropriate sign
+            p1.force = p1.force + total_force;
+            p1.force = p2.force - total_force;
+        end
+        
+        %------------------------------------------------------------------
+        function addContactTorqueToParticles(this,interact)
+            p1 = interact.elem1;
+            p2 = interact.elem2;
+            
+            % Tangential force vector for each particle
+            ft1 =  interact.contact_force_tang.total_force;
+            ft2 = -ft1;
+            
+            % Lever arm for each particle
+            lever1 =  (p1.radius-this.ovlp_n/2) * this.dir_n;
+            lever2 = -(p2.radius-this.ovlp_n/2) * this.dir_n;
+            
+            % Contact torque from tangential force (3D due to cross-product)
+            torque1 = cross(lever1,ft1);
+            torque2 = cross(lever2,ft2);
+            torque1 = torque1(3);
+            torque2 = torque2(3);
+            
+            % Add contact torque to particles considering appropriate sign
+            p1.torque = p1.torque + torque1;
+            p2.torque = p2.torque + torque2;
+        end
+        
+        %------------------------------------------------------------------
+        function addContactConductionToParticles(~,interact)
+            p1 = interact.elem1;
+            p2 = interact.elem2;
+            
+            % Add contact conduction heat rate to particles considering appropriate sign
+            p1.heat_rate = p1.heat_rate + interact.contact_conduction.total_hrate;
+            p1.heat_rate = p2.heat_rate - interact.contact_conduction.total_hrate;
+        end
     end
 end

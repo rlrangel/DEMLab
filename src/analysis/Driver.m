@@ -99,48 +99,64 @@ classdef Driver < handle
             for i = 1:this.n_particles
                 p = this.particles(i);
                 
-                % Remove particles not respecting bbox
-                if (~isempty(this.bbox))
-                    if (this.bbox.removeParticle(p,this.time))
-                        delete(p);
-                        continue;
-                    end
-                end
-                
-                % Remove particles not respecting sinks
-                if (~isempty(this.sink))
-                    for j = 1:length(this.sink)
-                        if (this.sink(j).removeParticle(p,this.time))
-                            delete(p);
-                            continue;
-                        end
-                    end
+                % Remove particles not respecting bbox and sinks
+                if (this.removeParticle(p))
+                    continue;
                 end
                 
                 % Set basic properties
                 this.setParticleProps(p);
             end
             
-            % Remove handle to deleted particles from global list
-            this.particles(~isvalid(this.particles)) = [];
-            this.n_particles = length(this.particles);
+            % Erase handles to removed particles from global list and model parts
+            this.eraseHandlesToRemovedParticle();
             if (this.n_particles == 0)
                 fprintf(2,'The model has no particle.\n');
                 status = 0;
                 return;
             end
             
-            % Loop over all model parts
+            % Interactions search
+            this.search.execute(this);
+        end
+        
+        %------------------------------------------------------------------
+        function do = removeParticle(this,p)
+            do = false;
+            
+            % Remove particles not respecting bbox
+            if (~isempty(this.bbox))
+                if (this.bbox.removeParticle(p,this.time))
+                    delete(p);
+                    do = true;
+                    return;
+                end
+            end
+            
+            % Remove particles not respecting sinks
+            if (~isempty(this.sink))
+                for j = 1:length(this.sink)
+                    if (this.sink(j).removeParticle(p,this.time))
+                        delete(p);
+                        do = true;
+                        return;
+                    end
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function eraseHandlesToRemovedParticle(this)
+            % Erase handles from global list
+            this.particles(~isvalid(this.particles)) = [];
+            this.n_particles = length(this.particles);
+            
+            % Erase handles from model parts
             for i = 1:this.n_mparts
                 mp = this.mparts(i);
-                
-                % Remove handle to deleted particles
                 mp.particles(~isvalid(mp.particles)) = [];
                 mp.n_particles = length(mp.particles);
             end
-            
-            % Interactions search
-            this.search.execute(this);
         end
     end
 end

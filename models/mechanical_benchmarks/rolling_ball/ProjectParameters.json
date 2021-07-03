@@ -81,6 +81,7 @@
 				"young_modulus_real"   : 1000.0,
 				"shear_modulus"        : 1000.0,
 				"poisson_ratio"        : 0.3,
+				"restitution_coeff"    : 0.5,
 				"thermal_conductivity" : 1000.0,
 				"heat_capacity"        : 1000.0,
 				"thermal_expansion"    : 0.0
@@ -89,7 +90,6 @@
 	"InteractionModel": {
 		"contact_force_normal": {
 			"model"                      : "viscoelastic_linear",
-			"restitution_coeff"          : 0.5,
 			"stiff_coeff_formula"        : "time",
 			"remove_artificial_cohesion" : true
 		},

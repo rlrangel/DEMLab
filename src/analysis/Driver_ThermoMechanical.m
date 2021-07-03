@@ -34,9 +34,9 @@ classdef Driver_ThermoMechanical < Driver
             this.n_interacts = 0;
             this.n_materials = 0;
             this.n_prescond  = 0;
-            this.scheme_vtrl = Scheme_FowardEuler();
-            this.scheme_vrot = Scheme_FowardEuler();
-            this.scheme_temp = Scheme_FowardEuler();
+            this.scheme_vtrl = Scheme_ForwardEuler();
+            this.scheme_vrot = Scheme_ForwardEuler();
+            this.scheme_temp = Scheme_ForwardEuler();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;
@@ -102,11 +102,8 @@ classdef Driver_ThermoMechanical < Driver
                     
                     % Set initial contact parameters
                     if (~int.kinematics.is_contact)
-                        int.kinematics.is_contact = true;
-                        
-                        % Save collision information
-                        int.kinematics.contact_start = time;
-                        int.kinematics.v0_n = int.kinematics.vel_n;
+                        % Initialize contact
+                        int.kinematics.setCollisionParams(time);
                         
                         % Initialize interaction parameters values
                         int.contact_force_norm.setParameters(int);
@@ -122,13 +119,23 @@ classdef Driver_ThermoMechanical < Driver
                     int.contact_force_tang.evalForce(int);
                     int.contact_conduction.evalHeatRate(int);
                     
-                    % Convert vector components to global system
-                    % coeff of restitution
+                    % Add interaction results to particles
+                    int.kinematics.addContactForceToParticles(int);
+                    int.kinematics.addContactTorqueToParticles(int);
+                    int.kinematics.addContactConductionToParticles(int);
                     
-                elseif (int.kinematics.is_contact)
+                % Evaluate noncontact interactions
+                else
                     % Finalize contact
-                    int.kinematics.is_contact = false;
+                    if (int.kinematics.is_contact)
+                        int.kinematics.setEndParams();
+                    end
                 end
+                
+                % Try to add inividual particle forces here for both interacting particles,
+                % and set a flag with the step it has been added to avoid
+                % do it again...
+                % Also the integration?
             end
         end
         
@@ -137,29 +144,11 @@ classdef Driver_ThermoMechanical < Driver
             % Properties accessed in parallel loop
             particles = this.particles;
             time      = this.time;
+            removed   = false;
             
             % Loop over all particles
             parfor i = 1:this.n_particles
                 p = particles(i);
-                
-                % Add interactions results (MOVE TO INTERACTIONS LOOP ?!?!)
-                for j = i:length(p.interacts)
-                    int = p.interacts(j);
-                    
-                    % Determine sign
-                    if (isequal(p,int.elem1))
-                        sign = 1;
-                    else
-                        sign = -1;
-                    end
-                    
-                    % Add contact interaction results
-                    if (int.is_contact)
-                        p.force     = sign * int.contact_force_norm.total_force;
-                        p.torque    = sign * int.contact_force_tang.total_force;
-                        p.heat_rate = sign * int.contact_conduction.total_hrate;
-                    end
-                end
                 
                 % Add global conditions
                 p.addWeight();
@@ -170,11 +159,25 @@ classdef Driver_ThermoMechanical < Driver
                 p.addPCHeatFlux(time);
                 p.addPCHeatRate(time);
                 
+                % Evaluate Newton and energy balance equations
+                p.computeAccelTrl();
+                p.computeAccelRot();
+                p.computeTempChange();
+                
                 % Numerical integration
+                %p.temperature = this.scheme_temp.getNextTemp(p);
                 
                 
-                
-                
+                % Remove particles not respecting bbox and sinks
+                if (this.removeParticle(p))
+                    removed = true;
+                end
+            end
+            
+            % Erase handles to removed particles from global list and model parts
+            % !!!!!!!!!!!! also, remove interactions with removed particles !!!!!!!!!!!!
+            if (removed)
+                this.eraseHandlesToRemovedParticle;
             end
         end
     end

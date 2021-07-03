@@ -80,6 +80,10 @@ classdef Master < handle
             
             % Print finished status
             this.printFinishedStatus();
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % TEMPORARY SIMPLE PLOTS FOR VALIDATION OF BENCHMARKS
+            
         end
         
         %------------------------------------------------------------------

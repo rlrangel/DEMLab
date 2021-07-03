@@ -33,8 +33,8 @@ classdef Driver_Mechanical < Driver
             this.n_interacts = 0;
             this.n_materials = 0;
             this.n_prescond  = 0;
-            this.scheme_vtrl = Scheme_FowardEuler();
-            this.scheme_vrot = Scheme_FowardEuler();
+            this.scheme_vtrl = Scheme_ForwardEuler();
+            this.scheme_vrot = Scheme_ForwardEuler();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;

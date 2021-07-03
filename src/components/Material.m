@@ -11,12 +11,11 @@ classdef Material < handle
         name string = string.empty;   % identification name of model part
         
         % Mechanical properties
-        density     double = double.empty;
-        young       double = double.empty;
-        young_real  double = double.empty;
-        shear       double = double.empty;
-        poisson     double = double.empty;
-        restitution double = double.empty;
+        density    double = double.empty;
+        young      double = double.empty;
+        young_real double = double.empty;
+        shear      double = double.empty;
+        poisson    double = double.empty;
         
         % Thermal properties
         conduct   double = double.empty;

@@ -27,12 +27,15 @@ classdef Particle_Disk < Particle
             this.torque      = 0;
             this.heat_rate   = 0;
             
-            % State variables
+            % Mechanical state variables
             this.veloc_trl   = [0,0];
             this.veloc_rot   = 0;
             this.accel_trl   = [0,0];
             this.accel_rot   = 0;
+            
+            % Thermal state variables
             this.temperature = 0;
+            this.temp_change = 0;
         end
         
         %------------------------------------------------------------------

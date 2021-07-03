@@ -71,10 +71,30 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         setContactArea(this,interact);
+        
+        %------------------------------------------------------------------
+        addContactForceToParticles(this,interact);
+        
+        %------------------------------------------------------------------
+        addContactTorqueToParticles(this,interact);
+        
+        %------------------------------------------------------------------
+        addContactConductionToParticles(this,interact);
     end
     
     %% Public methods
     methods
+        %------------------------------------------------------------------
+        function setCollisionParams(this,time)
+            this.is_contact    = true;
+            this.contact_start = time;
+            this.v0_n          = this.vel_n;
+        end
         
+        %------------------------------------------------------------------
+        function setEndParams(this)
+            this.is_contact = false;
+            this.ovlp_t     = 0;
+        end
     end
 end

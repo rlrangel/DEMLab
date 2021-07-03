@@ -113,9 +113,9 @@ classdef Search_SimpleLoop < Search
             interact.elem2 = p2;
             interact.kinematics = kin;
             
-            % Set parameters
+            % Set kinematics parameters
             interact.kinematics.setEffParams(interact);
-            interact.kinematics.is_contact = false;
+            interact.kinematics.setEndParams();
             
             % Add handle of new object to both elements and global list
             p1.interacts(end+1)  = interact;
@@ -148,9 +148,9 @@ classdef Search_SimpleLoop < Search
             interact.elem2 = w;
             interact.kinematics = kin;
             
-            % Set parameters
+            % Set kinematics parameters
             interact.kinematics.setEffParams(interact);
-            interact.kinematics.is_contact = false;
+            interact.kinematics.setEndParams();
             
             % Add handle of new object to both elements and global list
             p.interacts(end+1)   = interact;

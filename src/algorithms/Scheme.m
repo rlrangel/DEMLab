@@ -10,7 +10,7 @@ classdef Scheme < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of scheme
-        FOWARD_EULER = uint8(1);
+        FORWARD_EULER = uint8(1);
     end
     
     %% Public properties
@@ -30,7 +30,7 @@ classdef Scheme < handle & matlab.mixin.Heterogeneous
     %% Default subclass definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
-            defaultObject = Search_FowardEuler;
+            defaultObject = Search_ForwardEuler;
         end
     end
     

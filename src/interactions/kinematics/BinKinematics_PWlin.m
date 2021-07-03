@@ -108,5 +108,38 @@ classdef BinKinematics_PWlin < BinKinematics
             this.contact_radius = sqrt(R2);
             this.contact_area = pi * R2;
         end
+        
+        %------------------------------------------------------------------
+        function addContactForceToParticles(~,interact)
+            p = interact.elem1;
+            
+            % Total contact force from normal and tangential components
+            total_force = interact.contact_force_norm.total_force +...
+                          interact.contact_force_tang.total_force;
+            
+            % Add total contact force to particle considering appropriate sign
+            p.force = p.force + total_force;
+        end
+        
+        %------------------------------------------------------------------
+        function addContactTorqueToParticles(this,interact)
+            p = interact.elem1;
+            
+            % Lever arm
+            lever = (p.radius-this.ovlp_n/2) * this.dir_n;
+            
+            % Contact torque from tangential force (3D due to cross-product)
+            torque = cross(lever,interact.contact_force_tang.total_force);
+            
+            % Add contact torque to particle
+            p.torque = p.torque + torque(3);
+        end
+        
+        %------------------------------------------------------------------
+        function addContactConductionToParticles(~,interact)
+            % Add contact conduction heat rate to particle considering appropriate sign
+            p = interact.elem1;
+            p.heat_rate = p.heat_rate + interact.contact_conduction.total_hrate;
+        end
     end
 end
