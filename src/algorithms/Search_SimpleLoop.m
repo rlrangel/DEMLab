@@ -22,7 +22,9 @@ classdef Search_SimpleLoop < Search
     methods
         %------------------------------------------------------------------
         function applyDefaultProps(this)
-            this.freq = 1;
+            this.freq     = 1;
+            this.done     = false;
+            this.max_dist = 0;
         end
         
         %------------------------------------------------------------------
@@ -30,6 +32,7 @@ classdef Search_SimpleLoop < Search
             if (mod(drv.step,this.freq) ~= 0)
                 return;
             end
+            this.done = true;
             
             % Outer loop over reference particles
             for i = 1:drv.n_particles
@@ -48,17 +51,16 @@ classdef Search_SimpleLoop < Search
                         % Create new particle-particle interaction if needed
                         this.createInteractPP(drv,p1,p2);
                     else
-                        % Check distance
-                        if (interact.bin_kinematics.distBtwSurf(p1,p2) < 0)
-                            continue;
+                        % Compute and check separation between elements
+                        interact.kinematics.setRelPos(p1,p2);
+                        if (interact.kinematics.separ >= this.max_dist)
+                            % Remove handles from interacting elements
+                            p1.interacts(p1.interacts==interact) = [];
+                            p2.interacts(p2.interacts==interact) = [];
+                            
+                            % Delete interaction object
+                            delete(interact);
                         end
-                        
-                        % Remove handles from interacting elements
-                        p1.interacts(p1.interacts==interact) = [];
-                        p2.interacts(p2.interacts==interact) = [];    
-                        
-                        % Delete interaction object
-                        delete(interact);
                     end
                 end
                 
@@ -72,17 +74,16 @@ classdef Search_SimpleLoop < Search
                         % Create new particle-wall interaction if needed
                         this.createInteractPW(drv,p1,w);
                     else
-                        % Check distance
-                        if (interact.bin_kinematics.distBtwSurf(p1,w) < 0)
-                            continue;
+                        % Compute and check separation between elements
+                        interact.kinematics.setRelPos(p,w);
+                        if (interact.kinematics.separ >= this.max_dist)
+                            % Remove handles from interacting elements
+                            p1.interacts(p1.interacts==interact) = [];
+                            w.interacts(w.interacts==interact)   = [];    
+
+                            % Delete interaction object
+                            delete(interact);
                         end
-                        
-                        % Remove handles from interacting elements
-                        p1.interacts(p1.interacts==interact) = [];
-                        w.interacts(w.interacts==interact)   = [];    
-                        
-                        % Delete interaction object
-                        delete(interact);
                     end
                 end
             end
@@ -94,9 +95,12 @@ classdef Search_SimpleLoop < Search
         
         %------------------------------------------------------------------
         function createInteractPP(this,drv,p1,p2)
-            % Create binary kinematics object to check distance
+            % Create binary kinematics object
             kin = BinKinematics_PP();
-            if (kin.distBtwSurf(p1,p2) >= 0)
+            
+            % Compute and check separation between elements
+            kin.setRelPos(p1,p2);
+            if (kin.separ >= this.max_dist)
                 delete(kin);
                 return;
             end
@@ -107,10 +111,11 @@ classdef Search_SimpleLoop < Search
             % Set handles to interecting elements and kinematics model
             interact.elem1 = p1;
             interact.elem2 = p2;
-            interact.bin_kinematics = kin;
+            interact.kinematics = kin;
             
-            % Set effective contact parameters
-            interact.bin_kinematics.setEffParams(interact);
+            % Set parameters
+            interact.kinematics.setEffParams(interact);
+            interact.kinematics.is_contact = false;
             
             % Add handle of new object to both elements and global list
             p1.interacts(end+1)  = interact;
@@ -120,14 +125,17 @@ classdef Search_SimpleLoop < Search
         
         %------------------------------------------------------------------
         function createInteractPW(this,drv,p,w)
-            % Create binary kinematics object to check distance
+            % Create binary kinematics object
             switch w.type
                 case w.LINE2D
                     kin = BinKinematics_Wlin();
                 case w.CIRCLE
                     kin = BinKinematics_Wcirc();
             end
-            if (kin.distBtwSurf(p,w) >= 0)
+            
+            % Compute and check separation between elements
+            kin.setRelPos(p,w);
+            if (kin.separ >= this.max_dist)
                 delete(kin);
                 return;
             end
@@ -138,10 +146,11 @@ classdef Search_SimpleLoop < Search
             % Set handles to interecting elements and kinematics model
             interact.elem1 = p;
             interact.elem2 = w;
-            interact.bin_kinematics = kin;
+            interact.kinematics = kin;
             
-            % Set effective contact parameters
-            interact.bin_kinematics.setEffParams(interact);
+            % Set parameters
+            interact.kinematics.setEffParams(interact);
+            interact.kinematics.is_contact = false;
             
             % Add handle of new object to both elements and global list
             p.interacts(end+1)   = interact;

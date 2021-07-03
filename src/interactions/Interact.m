@@ -12,15 +12,16 @@ classdef Interact < handle & matlab.mixin.Copyable
         elem2;   % object of the second interaction element
         
         % Effective contact parameters
-        eff_radius double = double.empty;
-        eff_mass   double = double.empty;
-        eff_young  double = double.empty;
+        eff_radius  double = double.empty;
+        eff_mass    double = double.empty;
+        eff_young   double = double.empty;
+        eff_conduct double = double.empty;
         
         % Interaction models
-        bin_kinematics        BinKinematics     = BinKinematics.empty;
-        contact_force_normal  ContactForceN     = ContactForceN.empty;
-        contact_force_tangent ContactForceT     = ContactForceT.empty;
-        contact_conduction    ContactConduction = ContactConduction.empty;
+        kinematics          BinKinematics     = BinKinematics.empty;
+        contact_force_norm  ContactForceN     = ContactForceN.empty;
+        contact_force_tang  ContactForceT     = ContactForceT.empty;
+        contact_conduction  ContactConduction = ContactConduction.empty;
     end
     
     %% Constructor method

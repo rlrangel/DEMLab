@@ -33,23 +33,25 @@ classdef BinKinematics_PWcirc < BinKinematics
             else
                 interact.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
             end
+            if (~isempty(mp.conduct))
+                interact.eff_conduct = mp.conduct;
+            end
         end
         
         %------------------------------------------------------------------
-        function [d,n] = distBtwSurf(~,p,w)
-            n = w.center - p.coord;
-            d = norm(n) - w.radius - p.radius;
+        function setRelPos(this,p,w)
+            this.dir   = w.center - p.coord;
+            this.dist  = norm(this.dir);
+            this.separ = this.dist - p.radius - w.radius;
         end
         
         %------------------------------------------------------------------
-        function evalRelPosVel(this,interact,time_step)
+        function evalOverlaps(this,interact,time_step)
             p = interact.elem1;
-            w = interact.elem2;
             
             % Normal overlap and unit vector
-            [d,n] = this.distBtwSurf(p,w);
-            this.ovlp_n = -d;
-            this.dir_n  = n;
+            this.ovlp_n = -this.separ;
+            this.dir_n  =  this.dir / this.dist;
             
             % Position of contact point relative to particle centroid
             c = (p.radius - this.ovlp_n) * this.dir_n;
@@ -75,6 +77,21 @@ classdef BinKinematics_PWcirc < BinKinematics
             
             % Tangential overlap
             this.ovlp_t = this.ovlp_t + this.vel_t * time_step;
+        end
+        
+        %------------------------------------------------------------------
+        function setContactArea(this,interact)
+            % Needed properties
+            d    = this.dist;
+            r1   = interact.elem1.radius;
+            r2   = interact.elem2.radius;
+            r1_2 = r1 * r1;
+            r2_2 = r2 * r2;
+            
+            % Contact radius and area
+            R2 = r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2;
+            this.contact_radius = sqrt(R2);
+            this.contact_area = pi * R2;
         end
     end
 end

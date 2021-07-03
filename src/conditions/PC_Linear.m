@@ -28,11 +28,7 @@ classdef PC_Linear < PC
         
         %------------------------------------------------------------------
         function val = getValue(this,time)
-            min_time = min(this.interval);
-            if (min_time < 0)
-                min_time = 0;
-            end
-            val = deal(this.init_value) + this.slope * (time-min_time);
+            val = deal(this.init_value) + this.slope * (time-this.init_time);
         end
     end
 end

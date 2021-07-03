@@ -18,19 +18,28 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Identification
-        type int8 = uint8.empty; % flag for type of binary kinematics
+        type int8 = uint8.empty;   % flag for type of binary kinematics
         
-        % Unit direction vectors (normal and tangential)
-        dir_n double = double.empty;
-        dir_t double = double.empty;
+        % Relative position
+        dir   double = double.empty;   % direction between centroids
+        dist  double = double.empty;   % distance between centroids
+        separ double = double.empty;   % separation between surfaces
         
-        % Overlaps (normal and tangential)
-        ovlp_n double = double.empty;
-        ovlp_t double = double.empty;
+        % Overlap parameters
+        dir_n      double  = double.empty;    % unit direction vector (normal)
+        dir_t      double  = double.empty;    % unit direction vector (tangent)
+        ovlp_n     double  = double.empty;    % overlap (normal)
+        ovlp_t     double  = double.empty;    % overlap (tangent)
+        vel_n      double  = double.empty;    % overlap rate of change (normal)
+        vel_t      double  = double.empty;    % overlap rate of change (tangent)
         
-        % Overlap rates of change (normal and tangential)
-        vel_n double = double.empty;
-        vel_t double = double.empty;
+        % Contact parameters
+        is_contact     logical = logical.empty;   % flag for contact interaction
+        v0_n           double  = double.empty;    % initial (impact) normal velocity
+        contact_start  double  = double.empty;    % starting time
+        contact_time   double  = double.empty;    % duration since starting time
+        contact_radius double  = double.empty;    % contact area radius
+        contact_area   double  = double.empty;    % area
     end
     
     %% Constructor method
@@ -55,10 +64,13 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
         setEffParams(this,interact);
         
         %------------------------------------------------------------------
-        [d,n] = distBtwSurf(this,e1,e2);
+        setRelPos(this,e1,e2);
         
         %------------------------------------------------------------------
-        evalRelPosVel(this,interact,time_step);
+        evalOverlaps(this,interact,time_step);
+        
+        %------------------------------------------------------------------
+        setContactArea(this,interact);
     end
     
     %% Public methods

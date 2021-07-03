@@ -7,8 +7,13 @@
 classdef ContactForceN_ViscoElasticLinear < ContactForceN
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
+        % Formulation options
         stiff_formula   int8    = uint8.empty;     % flag for type of stiffness formulation
         remove_cohesion logical = logical.empty;   % flag for removing artificial cohesion
+        
+        % Constant parameters
+        stiff double = double.empty;   % spring stiffness coefficient
+        damp  double = double.empty;   % damping coefficient
     end
     
     %% Constructor method
@@ -28,34 +33,48 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
         end
         
         %------------------------------------------------------------------
-        function evalForces(this,interact)
+        function setParameters(this,interact)
             % Needed properties
-            %effective mass / radius / young
-            %restitution coefficient (interaction property!)
-            %impact velocity
-            %normal direction
-            %normal overlap
-            %normal overlap rate of change
+            r    = interact.eff_radius;
+            m    = interact.eff_mass;
+            y    = interact.eff_young;
+            v0   = interact.kinematics.v0_n;
+            e    = this.restitution;
+            beta = pi/ln(e);
             
             % Spring stiffness coefficient
             switch this.stiff_formula
                 case this.TIME
-                    k = ;
+                    this.stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+1/beta^2);
                 case this.OVERLAP
-                    k = ;
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5) * exp(-atan(beta)/beta)^2;
                 case this.ENERGY
-                    k = ;
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5);
             end
             
             % Damping coefficient
-            d = ;
+            this.damp = sqrt(4*m*this.stiff/(1+beta^2));
+        end
+        
+        %------------------------------------------------------------------
+        function evalForce(this,interact)
+            % Needed properties
+            dir  = interact.kinematics.dir_n;
+            ovlp = interact.kinematics.ovlp_n;
+            vel  = interact.kinematics.vel_n;
+            k    = this.stiff;
+            d    = this.damp;
             
-            % Compute elastic and viscous forces
-            Fel = k * ovlp_n;
-            Fvis = d * vel_n;
+            % Force modulus (elastic and viscous contributions)
+            f = k * ovlp + d * vel;
             
-            % Compute and store total force
-            F = -(Fel + Fvis) * dir_n;
+            % Remove artificial cohesion
+            if (this.remove_cohesion && f < 0)
+                f = 0;
+            end
+            
+            % Total normal force vector (against deformation and velocity)
+            this.total_force = -f * dir;
         end
     end
 end

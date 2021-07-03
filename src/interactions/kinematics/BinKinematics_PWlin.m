@@ -33,10 +33,13 @@ classdef BinKinematics_PWlin < BinKinematics
             else
                 interact.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
             end
+            if (~isempty(mp.conduct))
+                interact.eff_conduct = mp.conduct;
+            end
         end
         
         %------------------------------------------------------------------
-        function [d,n] = distBtwSurf(~,p,w)
+        function setRelPos(this,p,w)
             % Needed properties
             P = p.coord;
             A = w.coord_ini;
@@ -48,26 +51,25 @@ classdef BinKinematics_PWlin < BinKinematics
             
             % Normal direction from particle to wall
             if (t <= 0)
-                n = A-P;
+                this.dir = A-P;
             elseif (t >= 1)
-                n = B-P;
+                this.dir = B-P;
             else
-                n = (A + t * M) - P;
+                this.dir = (A + t * M) - P;
             end
             
             % Distance between particle surface and line segment
-            d = norm(n) - particle.radius;
+            this.dist  = norm(this.dir);
+            this.separ =  this.dist - particle.radius;
         end
         
         %------------------------------------------------------------------
-        function evalRelPosVel(this,interact,time_step)
+        function evalOverlaps(this,interact,time_step)
             p = interact.elem1;
-            w = interact.elem2;
             
             % Normal overlap and unit vector
-            [d,n] = this.distBtwSurf(p,w);
-            this.ovlp_n = -d;
-            this.dir_n  = n;
+            this.ovlp_n = -this.separ;
+            this.dir_n  =  this.dir / this.dist;
             
             % Position of contact point relative to particle centroid
             c = (p.radius - this.ovlp_n) * this.dir_n;
@@ -93,6 +95,18 @@ classdef BinKinematics_PWlin < BinKinematics
             
             % Tangential overlap
             this.ovlp_t = this.ovlp_t + this.vel_t * time_step;
+        end
+        
+        %------------------------------------------------------------------
+        function setContactArea(this,interact)
+            % Needed properties
+            r = interact.elem1.radius;
+            ovlp = this.ovlp_n;
+            
+            % Contact radius and area
+            R2 = ovlp*(1+2*r);
+            this.contact_radius = sqrt(R2);
+            this.contact_area = pi * R2;
         end
     end
 end

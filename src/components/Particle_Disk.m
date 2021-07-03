@@ -22,6 +22,12 @@ classdef Particle_Disk < Particle
     methods
         %------------------------------------------------------------------
         function applyDefaultProps(this)
+            % Forcing terms
+            this.force       = [0,0];
+            this.torque      = 0;
+            this.heat_rate   = 0;
+            
+            % State variables
             this.veloc_trl   = [0,0];
             this.veloc_rot   = 0;
             this.accel_trl   = [0,0];

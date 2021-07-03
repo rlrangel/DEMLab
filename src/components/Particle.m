@@ -31,14 +31,19 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         weight   double   = double.empty;     % weight vector (mass * gravity)
         tinertia double   = double.empty;     % thermal inertia (mass * heat_capacity)
         
+        % Neighbours Interactions
+        interacts Interact  = Interact.empty;    % vector of objects of the Interact class
+        
         % Prescribed conditions (vectors of objects of the PC class)
         pc_forces     PC = PC.empty;
         pc_torques    PC = PC.empty;
         pc_heatfluxes PC = PC.empty;
         pc_heatrates  PC = PC.empty;
         
-        % Neighbours Interactions
-        interacts Interact  = Interact.empty;    % vector of objects of the Interact class
+        % Total forcing terms
+        force     double = double.empty;
+        torque    double = double.empty;
+        heat_rate double = double.empty;
         
         % Current state
         coord       double = double.empty;   % coordinates of centroid
@@ -96,6 +101,50 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         %------------------------------------------------------------------
         function setTInertia(this)
             this.tinertia = this.mass * this.material.hcapacity;
+        end
+        
+        %------------------------------------------------------------------
+        function addWeight(this)
+            if (~isempty(this.weight))
+                this.force = this.force + this.weight;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function addPCForce(this,time)
+            for i = 1:length(this.pc_forces)
+                if (this.pc_forces(i).isActive(time))
+                    this.force = this.force + this.pc_forces(i).getValue(time);
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function addPCTorque(this,time)
+            for i = 1:length(this.pc_torques)
+                if (this.pc_torques(i).isActive(time))
+                    this.torque = this.torque + this.pc_torques(i).getValue(time);
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function addPCHeatFlux(this,time)
+            for i = 1:length(this.pc_heatfluxes)
+                if (this.pc_heatfluxes(i).isActive(time))
+                    hr = this.pc_heatfluxes(i).getValue(time) * this.surface;
+                    this.heat_rate = this.heat_rate + hr;
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function addPCHeatRate(this,time)
+            for i = 1:length(this.pc_heatrates)
+                if (this.pc_heatrates(i).isActive(time))
+                    this.heat_rate = this.heat_rate + this.pc_heatrates(i).getValue(time);
+                end
+            end
         end
     end
 end

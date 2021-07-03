@@ -16,7 +16,10 @@ classdef ContactForceT < matlab.mixin.Heterogeneous
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Identification
-        type int8 = uint8.empty; % flag for type of model
+        type int8 = uint8.empty;   % flag for type of model
+        
+        % Force results
+        total_force double = double.empty;   % resulting force vector
     end
     
     %% Constructor method
@@ -38,7 +41,10 @@ classdef ContactForceT < matlab.mixin.Heterogeneous
     %% Abstract methods
     methods (Abstract)
         %------------------------------------------------------------------
-        evalForces(this,interact);
+        setParameters(this,interact);
+        
+        %------------------------------------------------------------------
+        evalForce(this,interact);
     end
     
     %% Public methods

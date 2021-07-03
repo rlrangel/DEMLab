@@ -1,0 +1,104 @@
+{
+	"ProblemData": {
+		"name"             : "Testing",
+		"analysis_type"    : "thermo_mechanical",
+		"dimension"        : 2,
+		"model_parts_file" : "ModelParts.txt"
+	},
+	"Solver": {
+		"auto_time_step"      : false,
+		"time_step"           : 0.001,
+		"final_time"          : 1,
+		"max_steps"           : 100000,
+		"integr_scheme_trans" : "foward_euler",
+		"integr_scheme_rotat" : "foward_euler",
+		"integr_scheme_therm" : "foward_euler",
+		"parallelization"     : false,
+		"workers"             : 4
+	},
+	"Search": {
+		"scheme"           : "simple_loop",
+		"search_frequency" : 10
+	},
+	"BoundingBox": {
+		"shape"     : "polygon",
+		"points_x" :  [0.0,10.0,10.0,0.0],
+		"points_y" :  [0.0,0.0,10.0,10.0],
+		"interval"  : [0.0,1.0]
+	},
+	"Sink": {
+		"shape"     : "rectangle",
+		"limit_min" : [0.0,0.0],
+		"limit_max" : [1.0,1.0],
+		"interval"  : [0.0,100.0]
+	},
+	"GlobalCondition": {
+		"gravity" : [0.0,-9.81]
+	},
+	"InitialCondition": {
+		"temperature": {
+			"value"       : 100.0,
+			"model_parts" : ["PARTICLES"]
+		}
+	},
+	"PrescribedCondition": {
+		"force": {
+			"type"          : "uniform",
+			"value        " : [10,10],
+			"model_parts"   : "PARTICLES",
+			"interval"      : [0,10]
+		},
+		"torque": {
+			"type"          : "table",
+			"interpolation" : "spline",
+			"model_parts"   : "PARTICLES",
+			"interval"      : [0,10],
+			"file"          : "table.txt"
+		},
+		"heat_flux": {
+			"type"          : "linear",
+			"interval"      : [0,10],
+			"initial_value" : 3,
+			"slope"         : 1,
+			"model_parts"   : "mp"
+		},
+		"heat_rate": {
+			"type"          : "oscillatory",
+			"interval"      : [0,10],
+			"base_value"    : 20,
+			"amplitude"     : 20,
+			"period"        : 20,
+			"shift"         : 20,
+			"model_parts"   : "PARTICLES"
+		}
+	},
+	"Material": {
+			"name"        : "mat",
+			"model_parts" : ["PARTICLES"],
+			"properties"  : {
+				"density"              : 1000.0,
+				"young_modulus"        : 1000.0,
+				"young_modulus_real"   : 1000.0,
+				"shear_modulus"        : 1000.0,
+				"poisson_ratio"        : 0.3,
+				"restitution_coeff"    : 0.5,
+				"thermal_conductivity" : 1000.0,
+				"heat_capacity"        : 1000.0,
+				"thermal_expansion"    : 0.0
+			}
+	},
+	"InteractionModel": {
+		"contact_force_normal": {
+			"model"                      : "viscoelastic_linear",
+			"stiff_coeff_formula"        : "time",
+			"remove_artificial_cohesion" : true
+		},
+		"contact_force_tangent": {
+			"model"        : "simple_spring",
+			"spring_coeff" : 1000
+		},
+		"contact_conduction": {
+			"model"        : "batchelor_obrien"
+		}
+	}
+}

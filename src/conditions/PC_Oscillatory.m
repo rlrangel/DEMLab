@@ -30,11 +30,7 @@ classdef PC_Oscillatory < PC
         
         %------------------------------------------------------------------
         function val = getValue(this,time)
-            min_time = min(this.interval);
-            if (min_time < 0)
-                min_time = 0;
-            end
-            val = this.base_value + this.amplitude * sin(2*pi*(time-min_time)/this.period + this.shift);
+            val = this.base_value + this.amplitude * sin(2*pi*(time-this.init_time)/this.period + this.shift);
         end
     end
 end

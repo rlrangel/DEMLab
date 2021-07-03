@@ -16,10 +16,12 @@ classdef Search < handle & matlab.mixin.Heterogeneous
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Identification
-        type int8 = uint8.empty; % flag for type of search
+        type int8    = uint8.empty;     % flag for type of search
+        done logical = logical.empty;   % flag for identifying if search has been done in a time step
         
         % Parameters
-        freq uint32 = uint32.empty; % frequency of search (in steps)
+        freq     uint32 = uint32.empty;   % frequency of search (in steps)
+        max_dist double = uint32.empty;   % threshold neighbour distance (exclusive) to create an interaction
         
         % Base object for common interactions
         b_interact Interact = Interact.empty;   % object of the Interact class for all interactions

@@ -1028,7 +1028,10 @@ classdef Read < handle
                             fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
                             status = 0; return;
                         end
-                        pc.interval = interval;
+                        pc.interval  = interval;
+                        pc.init_time = min(0,min(interval));
+                    else
+                        pc.init_time = 0;
                     end
                     
                     % Add handle to prescribed condition to selected particles
@@ -1257,7 +1260,10 @@ classdef Read < handle
                             fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
                             status = 0; return;
                         end
-                        pc.interval = interval;
+                        pc.interval  = interval;
+                        pc.init_time = min(0,min(interval));
+                    else
+                        pc.init_time = 0;
                     end
                     
                     % Add handle to prescribed condition to selected particles
@@ -1485,7 +1491,10 @@ classdef Read < handle
                             fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
                             status = 0; return;
                         end
-                        pc.interval = interval;
+                        pc.interval  = interval;
+                        pc.init_time = min(0,min(interval));
+                    else
+                        pc.init_time = 0;
                     end
                     
                     % Add handle to prescribed condition to selected particles
@@ -1713,7 +1722,10 @@ classdef Read < handle
                             fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
                             status = 0; return;
                         end
-                        pc.interval = interval;
+                        pc.interval  = interval;
+                        pc.init_time = min(0,min(interval));
+                    else
+                        pc.init_time = 0;
                     end
                     
                     % Add handle to prescribed condition to selected particles
@@ -2402,7 +2414,7 @@ classdef Read < handle
             status = 1;
             
             % Create object
-            drv.search.b_interact.contact_force_normal = ContactForceN_ViscoElasticLinear();
+            drv.search.b_interact.contact_force_norm = ContactForceN_ViscoElasticLinear();
             
             % Stiffness formulation
             if (isfield(CFN,'stiff_coeff_formula'))
@@ -2415,14 +2427,14 @@ classdef Read < handle
                     status = 0; return;
                 end
                 if (strcmp(CFN.stiff_coeff_formula,'time'))
-                    drv.search.b_interact.contact_force_normal.stiff_formula =...
-                    drv.search.b_interact.contact_force_normal.TIME;
+                    drv.search.b_interact.contact_force_norm.stiff_formula =...
+                    drv.search.b_interact.contact_force_norm.TIME;
                 elseif (strcmp(CFN.stiff_coeff_formula,'overlap'))
-                    drv.search.b_interact.contact_force_normal.stiff_formula =...
-                    drv.search.b_interact.contact_force_normal.OVERLAP;
+                    drv.search.b_interact.contact_force_norm.stiff_formula =...
+                    drv.search.b_interact.contact_force_norm.OVERLAP;
                 elseif (strcmp(CFN.stiff_coeff_formula,'energy'))
-                    drv.search.b_interact.contact_force_normal.stiff_formula =...
-                    drv.search.b_interact.contact_force_normal.ENERGY;
+                    drv.search.b_interact.contact_force_norm.stiff_formula =...
+                    drv.search.b_interact.contact_force_norm.ENERGY;
                 end
             end
             
@@ -2433,7 +2445,7 @@ classdef Read < handle
                     fprintf(2,'It must be a boolean: true or false.\n');
                     status = 0; return;
                 end
-                drv.search.b_interact.contact_force_normal.remove_cohesion =...
+                drv.search.b_interact.contact_force_norm.remove_cohesion =...
                 CFN.remove_artificial_cohesion;
             end
         end
@@ -2443,7 +2455,7 @@ classdef Read < handle
             status = 1;
             
             % Create object
-            drv.search.b_interact.contact_force_tangent = ContactForceT_Spring();
+            drv.search.b_interact.contact_force_tang = ContactForceT_Spring();
             
             % Spring coefficient
             if (isfield(CFN,'spring_coeff'))
@@ -2454,7 +2466,7 @@ classdef Read < handle
                 elseif (CFN.spring_coeff <= 0)
                     this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.spring_coeff');
                 end
-                drv.search.b_interact.contact_force_tangent.spring_coeff = CFN.spring_coeff;
+                drv.search.b_interact.contact_force_tang.spring_coeff = CFN.spring_coeff;
             else
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.spring_coeff.\n');
                 status = 0; return;

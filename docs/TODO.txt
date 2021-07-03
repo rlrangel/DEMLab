@@ -30,3 +30,6 @@ IDEAS
 -Open a result file to show it, instead of doing the analysis;
 -Automatic separate model into a high/slow dynamic models parts in order to use different time steps and integration schemes in each one;
 -Export: GiD format;
+
+-Create an interaction for all elements before analysis starts (more memory but more efficient loop);
+-Evaluate interactions on th same loop of the particles;
