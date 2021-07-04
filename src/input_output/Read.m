@@ -267,39 +267,54 @@ classdef Read < handle
             % Time integration scheme: translational velocity
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) && isfield(json.Solver,'integr_scheme_trans'))
                 scheme = string(json.Solver.integr_scheme_trans);
-                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'forward_euler'))
+                if (~this.isStringArray(scheme,1)    ||...
+                    ~strcmp(scheme,'forward_euler')  ||...
+                    ~strcmp(scheme,'modified_euler') ||...
+                    ~strcmp(scheme,'taylor2'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_trans.\n');
                     fprintf(2,'Available options: forward_euler.\n');
                     status = 0; return;
                 end
                 if (strcmp(scheme,'forward_euler'))
-                    drv.scheme_vtrl = Scheme_ForwardEuler();
+                    drv.scheme_trl = Scheme_EulerForward();
+                elseif (strcmp(scheme,'modified_euler'))
+                    drv.scheme_trl = Scheme_EulerMod();
+                elseif (strcmp(scheme,'taylor_2'))
+                    drv.scheme_trl = Scheme_Taylor2();
                 end
             end
             
             % Time integration scheme: rotational velocity
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) && isfield(json.Solver,'integr_scheme_rotat'))
                 scheme = string(json.Solver.integr_scheme_rotat);
-                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'forward_euler'))
+                if (~this.isStringArray(scheme,1)    ||...
+                    ~strcmp(scheme,'forward_euler')  ||...
+                    ~strcmp(scheme,'modified_euler') ||...
+                    ~strcmp(scheme,'taylor2'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_rotat.\n');
-                    fprintf(2,'Available options: forward_euler.\n');
+                    fprintf(2,'Available options: forward_euler, modified_euler, taylor_2.\n');
                     status = 0; return;
                 end
                 if (strcmp(scheme,'forward_euler'))
-                    drv.scheme_vrot = Scheme_ForwardEuler();
+                    drv.scheme_rot = Scheme_EulerForward();
+                elseif (strcmp(scheme,'modified_euler'))
+                    drv.scheme_rot = Scheme_EulerMod();
+                elseif (strcmp(scheme,'taylor_2'))
+                    drv.scheme_rot = Scheme_Taylor2();
                 end
             end
             
             % Time integration scheme: temperature
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.THERMAL) && isfield(json.Solver,'integr_scheme_therm'))
                 scheme = string(json.Solver.integr_scheme_therm);
-                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'forward_euler'))
+                if (~this.isStringArray(scheme,1) ||...
+                    ~strcmp(scheme,'forward_euler'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_therm.\n');
-                    fprintf(2,'Available options: forward_euler.\n');
+                    fprintf(2,'Available options: forward_euler, modified_euler, taylor_2.\n');
                     status = 0; return;
                 end
                 if (strcmp(scheme,'forward_euler'))
-                    drv.scheme_temp = Scheme_ForwardEuler();
+                    drv.scheme_temp = Scheme_EulerForward();
                 end
             end
             
@@ -2499,8 +2514,8 @@ classdef Read < handle
                 status = 0; return;
             end
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) &&...
-                (isempty(drv.scheme_vtrl) || isempty(drv.scheme_vrot)))
-                fprintf(2,'No integration scheme for translational/rotational velocity was provided.');
+                (isempty(drv.scheme_trl) || isempty(drv.scheme_rot)))
+                fprintf(2,'No integration scheme for translation/rotation was provided.');
                 status = 0; return;
             end
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.THERMAL) &&...

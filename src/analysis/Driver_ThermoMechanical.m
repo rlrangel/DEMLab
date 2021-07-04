@@ -11,8 +11,8 @@ classdef Driver_ThermoMechanical < Driver
         gravity double = double.empty;   % vector of gravity value components
         
         % Time integration
-        scheme_vtrl Scheme = Scheme.empty;   % object of the Scheme class for translational velocity
-        scheme_vrot Scheme = Scheme.empty;   % object of the Scheme class for rotational velocity
+        scheme_trl  Scheme = Scheme.empty;   % object of the Scheme class for translation
+        scheme_rot  Scheme = Scheme.empty;   % object of the Scheme class for rotation
         scheme_temp Scheme = Scheme.empty;   % object of the Scheme class for temperature
     end
     
@@ -34,9 +34,9 @@ classdef Driver_ThermoMechanical < Driver
             this.n_interacts = 0;
             this.n_materials = 0;
             this.n_prescond  = 0;
-            this.scheme_vtrl = Scheme_ForwardEuler();
-            this.scheme_vrot = Scheme_ForwardEuler();
-            this.scheme_temp = Scheme_ForwardEuler();
+            this.scheme_trl  = Scheme_EulerForward();
+            this.scheme_rot  = Scheme_EulerForward();
+            this.scheme_temp = Scheme_EulerForward();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;
@@ -69,9 +69,6 @@ classdef Driver_ThermoMechanical < Driver
                 % Loop over all interactions and particles
                 this.interactionLoop();
                 this.particleLoop();
-                
-                % Adjustments before next step
-                this.search.done = false;
             end
         end
         
@@ -131,12 +128,13 @@ classdef Driver_ThermoMechanical < Driver
                         int.kinematics.setEndParams();
                     end
                 end
-                
-                % Try to add inividual particle forces here for both interacting particles,
-                % and set a flag with the step it has been added to avoid
-                % do it again...
-                % Also the integration?
+                % Try to evaluate both interacting particles here,
+                % and set a flag(the time step) to avoid doing it again
+                % Also do the integration of these particles.
             end
+            
+            % Adjustments before next step
+            this.search.done = false;
         end
         
         %------------------------------------------------------------------
@@ -144,6 +142,7 @@ classdef Driver_ThermoMechanical < Driver
             % Properties accessed in parallel loop
             particles = this.particles;
             time      = this.time;
+            time_step = this.time_step;
             removed   = false;
             
             % Loop over all particles
@@ -165,8 +164,9 @@ classdef Driver_ThermoMechanical < Driver
                 p.computeTempChange();
                 
                 % Numerical integration
-                %p.temperature = this.scheme_temp.getNextTemp(p);
-                
+                this.scheme_trl.updatePosition(p,time_step);
+                this.scheme_rot.updateOrientation(p,time_step);
+                this.scheme_temp.updateTemperature(p,time_step);
                 
                 % Remove particles not respecting bbox and sinks
                 if (this.removeParticle(p))
@@ -175,7 +175,6 @@ classdef Driver_ThermoMechanical < Driver
             end
             
             % Erase handles to removed particles from global list and model parts
-            % !!!!!!!!!!!! also, remove interactions with removed particles !!!!!!!!!!!!
             if (removed)
                 this.eraseHandlesToRemovedParticle;
             end

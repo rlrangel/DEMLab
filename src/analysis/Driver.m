@@ -127,6 +127,12 @@ classdef Driver < handle
             % Remove particles not respecting bbox
             if (~isempty(this.bbox))
                 if (this.bbox.removeParticle(p,this.time))
+                    % Remove interactions containing particle
+                    delete(p.interacts);
+                    this.interacts(~isvalid(this.interacts)) = [];
+                    this.n_interacts = length(this.interacts);
+                    
+                    % Remove particle
                     delete(p);
                     do = true;
                     return;
@@ -137,6 +143,12 @@ classdef Driver < handle
             if (~isempty(this.sink))
                 for j = 1:length(this.sink)
                     if (this.sink(j).removeParticle(p,this.time))
+                        % Remove interactions containing particle
+                        delete(p.interacts);
+                        this.interacts(~isvalid(this.interacts)) = [];
+                        this.n_interacts = length(this.interacts);
+                        
+                        % Remove particle
                         delete(p);
                         do = true;
                         return;
