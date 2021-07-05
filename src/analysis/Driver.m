@@ -226,19 +226,19 @@ classdef Driver < handle
         
         %------------------------------------------------------------------
         function posProcess(this)
-            % Create animations
-            if (~isempty(this.animates))
-                fprintf('\nCreating animations...\n');
-                for i = 1:length(this.animates)
-                    this.animates(i).execute(this);
-                end
-            end
-            
             % Create graphs
             if (~isempty(this.graphs))
                 fprintf('\nCreating graphs...\n');
                 for i = 1:length(this.graphs)
                     this.graphs(i).execute(this);
+                end
+            end
+            
+            % Create animations
+            if (~isempty(this.animates))
+                fprintf('\nCreating animations...\n');
+                for i = 1:length(this.animates)
+                    this.animates(i).execute(this);
                 end
             end
         end

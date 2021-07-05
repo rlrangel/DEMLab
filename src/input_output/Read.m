@@ -74,10 +74,10 @@ classdef Read < handle
                 status = this.getOutput(json,drv);
             end
             if (status)
-                status = this.getGraph(json,drv);
+                status = this.getGraph(json,drv,path);
             end
             if (status)
-                status = this.getAnimation(json,drv);
+                status = this.getAnimation(json,drv,path);
             end
         end
         
@@ -148,7 +148,7 @@ classdef Read < handle
             
             % Dimension
             dim = PD.dimension;
-            if (~this.isDoubleArray(dim,1) || dim ~= 2)
+            if (~this.isIntArray(dim,1) || dim ~= 2)
                 fprintf(2,'Invalid data in project parameters file: ProblemData.dimension.\n');
                 fprintf(2,'Available options: 2.\n');
                 status = 0; return;
@@ -2005,7 +2005,7 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = getGraph(this,json,drv)
+        function status = getGraph(this,json,drv,path)
             status = 1;
             if (~isfield(json,'Graph'))
                 return;
@@ -2018,6 +2018,9 @@ classdef Read < handle
                 gra = Graph();
                 drv.graphs(i) = gra;
                 
+                % Set example path to save images
+                gra.path = path;
+                
                 % Title
                 if (isfield(GRA,'title'))
                     title = string(GRA.title);
@@ -2026,7 +2029,10 @@ classdef Read < handle
                         fprintf(2,'It must be a string with the title of the graph.\n');
                         status = 0; return;
                     end
-                    gra.title = title;
+                    gra.gtitle = title;
+                else
+                    fprintf(2,'Missing data in project parameters file: Graph.title.\n');
+                    status = 0; return;
                 end
                 
                 % Array of possible results
@@ -2065,7 +2071,13 @@ classdef Read < handle
                 end
                 
                 % Set X axis data
-                if (strcmp(X,'radius'))
+                if (strcmp(X,'time'))
+                    gra.res_x = drv.result.TIME;
+                    drv.result.has_time = true;
+                elseif (strcmp(X,'step'))
+                    gra.res_x = drv.result.STEP;
+                    drv.result.has_step = true;
+                elseif (strcmp(X,'radius'))
                     gra.res_x = drv.result.RADIUS;
                     drv.result.has_radius = true;
                 elseif (strcmp(X,'force_modulus'))
@@ -2122,7 +2134,13 @@ classdef Read < handle
                 end
                 
                 % Set Y axis data
-                if (strcmp(Y,'radius'))
+                if (strcmp(Y,'time'))
+                    gra.res_y = drv.result.TIME;
+                    drv.result.has_time = true;
+                elseif (strcmp(Y,'step'))
+                    gra.res_y = drv.result.STEP;
+                    drv.result.has_step = true;
+                elseif (strcmp(Y,'radius'))
                     gra.res_y = drv.result.RADIUS;
                     drv.result.has_radius = true;
                 elseif (strcmp(Y,'force_modulus'))
@@ -2205,10 +2223,40 @@ classdef Read < handle
                         end
                         
                         % Particle X
-                        
+                        if (isfield(CUR,'particle_x'))
+                            if (~ismember(X,global_results))
+                                particle_x = CUR.particle_x;
+                                if (~this.isIntArray(particle_x,1) || particle_x <= 0 || particle_x > drv.n_particles)
+                                    fprintf(2,'Invalid data in project parameters file: Graph.curve.particle_x.\n');
+                                    fprintf(2,'It must be a positive integer corresponding to a valid particle ID.\n');
+                                    status = 0; return;
+                                end
+                                gra.px(j) = particle_x;
+                            else
+                                this.warn('Graph.curve.particle_x was provided to a curve whose X-axis data is not a particle result. It will be ignored.');
+                            end
+                        elseif (~ismember(X,global_results))
+                            fprintf(2,'Missing data in project parameters file: Graph.curve.particle_x.\n');
+                            status = 0; return;
+                        end
                         
                         % Particle Y
-                        
+                        if (isfield(CUR,'particle_y'))
+                            if (~ismember(Y,global_results))
+                                particle_y = CUR.particle_y;
+                                if (~this.isIntArray(particle_y,1) || particle_y <= 0 || particle_y > drv.n_particles)
+                                    fprintf(2,'Invalid data in project parameters file: Graph.curve.particle_y.\n');
+                                    fprintf(2,'It must be a positive integer corresponding to a valid particle ID.\n');
+                                    status = 0; return;
+                                end
+                                gra.py(j) = particle_y;
+                            else
+                                this.warn('Graph.curve.particle_y was provided to a curve whose Y-axis data is not a particle result. It will be ignored.');
+                            end
+                        elseif (~ismember(Y,global_results))
+                            fprintf(2,'Missing data in project parameters file: Graph.curve.particle_y.\n');
+                            status = 0; return;
+                        end
                     end
                 else
                     this.warn('A graph with no curve was identified');
@@ -2218,7 +2266,7 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = getAnimation(this,json,drv)
+        function status = getAnimation(this,json,drv,path)
             status = 1;
             if (~isfield(json,'Animation'))
                 return;
@@ -2231,6 +2279,9 @@ classdef Read < handle
                 anm = Animate();
                 drv.animates(i) = anm;
                 
+                % Set model path to save animations
+                anm.path = path;
+                
                 % Title
                 if (isfield(ANM,'title'))
                     title = string(ANM.title);
@@ -2239,7 +2290,10 @@ classdef Read < handle
                         fprintf(2,'It must be a string with the title of the animation.\n');
                         status = 0; return;
                     end
-                    anm.title = title;
+                    anm.atitle = title;
+                else
+                    fprintf(2,'Missing data in project parameters file: Animation.title.\n');
+                    status = 0; return;
                 end
                 
                 % Plot particles IDs
@@ -2331,10 +2385,11 @@ classdef Read < handle
                     drv.result.has_heat_rate = true;
                 end
                 
-                % Time vector and coordinates are needed in all result types
+                % Time vector, coordinates and radius are needed in all result types
                 drv.result.has_time    = true;
                 drv.result.has_coord_x = true;
                 drv.result.has_coord_y = true;
+                drv.result.has_radius  = true;
             end
         end
     end
