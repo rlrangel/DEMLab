@@ -45,5 +45,9 @@
 	"Output": {
 		"progress_print" : 1,
 		"number_output"  : 100
+	},
+	"Animation": {
+		"title"  : "Motion",
+		"result" : "motion"
 	}
 }

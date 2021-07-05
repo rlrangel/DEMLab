@@ -1,8 +1,6 @@
 * Results:
 OutputFrequency is used for all transient responses (animation,graph,paraview,text);
 TextFile is created in individual files in a new folder;
-	-OutputFrequencyStep: int;
-	-OutputFrequencYTime: double;
 	-MatlabAnimation:
 		-> Title: string;
 		-> Result(fill color): string; (none-just motion,position,orientation,velocity,acceleration,temperature)

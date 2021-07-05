@@ -127,8 +127,10 @@ classdef Driver < handle
             end
             
             % Initialize output control variables
-            this.tprog = this.nprog * this.max_time / 100;
-            this.tout  = this.max_time / this.nout;
+            this.nprog = this.nprog * this.max_time / 100;
+            this.nout  = this.max_time / this.nout;
+            this.tprog = this.nprog;
+            this.tout  = this.nout;
         end
         
         %------------------------------------------------------------------
@@ -188,15 +190,17 @@ classdef Driver < handle
         function printProgress(this)
             if (this.time >= this.tprog)
                 fprintf('\n%.1f%%: time %.2f, step %d',100*this.tprog/this.max_time,this.time,this.step);
-                this.tprog = this.tprog + this.nprog * this.max_time / 100;
+                this.tprog = this.tprog + this.nprog;
             end
         end
         
         %------------------------------------------------------------------
-        function storeResults(this)
+        function do = storeResults(this)
             if (this.time >= this.tout)
-                %this.result.methodName();
-                this.tout = this.tout + this.max_time / this.nout;
+                do = true;
+                this.tout = this.tout + this.nout;
+            else
+                do = false;
             end
         end
     end

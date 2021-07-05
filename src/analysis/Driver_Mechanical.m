@@ -70,9 +70,8 @@ classdef Driver_Mechanical < Driver
                 this.interactionLoop();
                 this.particleLoop();
                 
-                % Print progress and store results
+                % Print progress
                 this.printProgress();
-                this.storeResults();
             end
         end
     end
@@ -144,7 +143,10 @@ classdef Driver_Mechanical < Driver
             particles = this.particles;
             time      = this.time;
             time_step = this.time_step;
-            removed   = false;
+            
+            % Initialize flags
+            removed = false;
+            store   = this.storeResults();
             
             % Loop over all particles
             for i = 1:this.n_particles
@@ -168,6 +170,11 @@ classdef Driver_Mechanical < Driver
                 % Remove particles not respecting bbox and sinks
                 if (this.removeParticle(p))
                     removed = true;
+                end
+                
+                % Store results
+                if (store)
+                    
                 end
                 
                 % Reset forcing terms for next step

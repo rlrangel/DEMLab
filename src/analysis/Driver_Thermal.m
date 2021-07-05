@@ -56,9 +56,8 @@ classdef Driver_Thermal < Driver
                 this.interactionLoop();
                 this.particleLoop();
                 
-                % Print progress and store results
+                % Print progress
                 this.printProgress();
-                this.storeResults();
             end
         end
     end
@@ -100,6 +99,9 @@ classdef Driver_Thermal < Driver
             time      = this.time;
             time_step = this.time_step;
             
+            % Initialize flags
+            store = this.storeResults();
+            
             % Loop over all particles
             parfor i = 1:this.n_particles
                 p = particles(i);
@@ -113,6 +115,11 @@ classdef Driver_Thermal < Driver
                 
                 % Numerical integration
                 this.scheme_temp.updateTemperature(p,time_step);
+                
+                % Store results
+                if (store)
+                    
+                end
                 
                 % Reset forcing terms for next step
                 p.resetForcingTerms();

@@ -10,9 +10,6 @@ Driver:
 	Tasks:
 	* Pre-precess:
 	  -Store initial states to results?;
-	
-	* Process:
-	  7) Store results: check if it is time;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 Results:

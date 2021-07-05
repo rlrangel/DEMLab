@@ -1990,7 +1990,7 @@ classdef Read < handle
             % Number of outputs
             if (isfield(OUT,'number_output'))
                 nout = OUT.number_output;
-                if (~this.isIntArray(nout,1) || nout < 0)
+                if (~this.isIntArray(nout,1) || nout <= 0)
                     fprintf(2,'Invalid data in project parameters file: Output.number_output.\n');
                     fprintf(2,'It must be a positive integer.\n');
                     status = 0; return;
