@@ -8,7 +8,7 @@ classdef Material < handle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Indentification
-        name string = string.empty;   % identification name of model part
+        name string = string.empty;
         
         % Mechanical properties
         density    double = double.empty;

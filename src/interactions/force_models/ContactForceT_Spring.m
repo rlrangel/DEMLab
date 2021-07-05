@@ -20,17 +20,17 @@ classdef ContactForceT_Spring < ContactForceT
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function setParameters(~,~)
+        function this = setParameters(this,~)
             
         end
         
         %------------------------------------------------------------------
-        function evalForce(this,interact)
+        function this = evalForce(this,int)
             % Force modulus (elastic contribution only)
-            f = this.spring_coeff * interact.kinematics.ovlp_t;
+            f = this.spring_coeff * int.kinemat.ovlp_t;
             
             % Total normal force vector (against deformation)
-            this.total_force = -f * interact.kinematics.dir_t;
+            this.total_force = -f * int.kinemat.dir_t;
         end
     end
 end

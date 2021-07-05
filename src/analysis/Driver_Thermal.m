@@ -8,21 +8,21 @@ classdef Driver_Thermal < Driver
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Time integration
-        scheme_temp Scheme = Scheme.empty;   % object of the Scheme class for temperature
+        scheme_temp Scheme = Scheme.empty;   % handle to object of Scheme class for temperature integration
     end
     
     %% Constructor method
     methods
         function this = Driver_Thermal()
             this = this@Driver(Driver.THERMAL);
-            this.applyDefaultProps();
+            this.setDefaultProps();
         end
     end
     
     %% Public methods
     methods
         %------------------------------------------------------------------
-        function applyDefaultProps(this)
+        function setDefaultProps(this)
             this.n_mparts    = 0;
             this.n_particles = 0;
             this.n_walls     = 0;
@@ -33,14 +33,16 @@ classdef Driver_Thermal < Driver
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;
+            this.print       = 0.01;
+            this.progr       = this.print;
         end
         
         %------------------------------------------------------------------
-        function setParticleProps(~,particle)
-            particle.setSurface();
-            particle.setVolume();
-            particle.setMass();
-            particle.setTInertia();
+        function setParticleProps(~,p)
+            p.setSurface();
+            p.setVolume();
+            p.setMass();
+            p.setTInertia();
         end
         
         %------------------------------------------------------------------
@@ -53,9 +55,15 @@ classdef Driver_Thermal < Driver
                 % Loop over all interactions and particles
                 this.interactionLoop();
                 this.particleLoop();
+                
+                % Print progress
+                this.printProgress();
             end
         end
-        
+    end
+    
+   %% Public methods: Subclass specifics
+    methods
         %------------------------------------------------------------------
         function interactionLoop(this)
             % Properties accessed in parallel loop
@@ -67,19 +75,19 @@ classdef Driver_Thermal < Driver
                 int = interacts(i);
                 
                 % Evaluate contact interactions
-                if (int.kinematics.separ < 0)
+                if (int.kinemat.separ < 0)
                     % Constant parameters needed to be set only once
                     if (step == 1)
-                        int.contact_conduction.setParameters(int);
-                        int.kinematics.setContactArea(int);
-                        int.kinematics.is_contact = true;
-                        int.kinematics.dir_n      =  int.kinematics.dir / int.kinematics.dist;
-                        int.kinematics.ovlp_n     = -int.kinematics.separ;
+                        int.cconduc = int.cconduc.setParameters(int);
+                        int.kinemat = int.kinemat.setContactArea(int);
+                        int.kinemat.is_contact = true;
+                        int.kinemat.dir_n  =  int.kinemat.dir / int.kinemat.dist;
+                        int.kinemat.ovlp_n = -int.kinemat.separ;
                     end
                     
-                    % Evaluate heat transfer and add results to particles
-                    int.contact_conduction.evalHeatRate(int);
-                    int.kinematics.addContactConductionToParticles(int);
+                    % Compute interaction results and add to particles
+                    int.cconduc = int.cconduc.evalHeatRate(int);
+                    int.kinemat.addContactConductionToParticles(int);
                 end
             end
         end
@@ -99,11 +107,14 @@ classdef Driver_Thermal < Driver
                 p.addPCHeatFlux(time);
                 p.addPCHeatRate(time);
                 
-                % Evaluate Newton and energy balance equations
+                % Evaluate equation of energy balance
                 p.computeTempChange();
                 
                 % Numerical integration
                 this.scheme_temp.updateTemperature(p,time_step);
+                
+                % Reset forcing terms for next step
+                p.resetForcingTerms();
             end
         end
     end

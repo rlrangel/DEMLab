@@ -21,10 +21,10 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         id   uint32 = uint32.empty;   % identification number
         
         % Physical properties
-        material Material = Material.empty;   % object of the Material class
+        material Material = Material.empty;   % handle to object of Material class
         
         % Neighbours Interactions
-        interacts Interact  = Interact.empty;    % vector of objects of the Interact class
+        interacts Interact = Interact.empty;    % handles to objects of Interact class
     end
     
     %% Constructor method

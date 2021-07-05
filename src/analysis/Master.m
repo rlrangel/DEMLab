@@ -20,17 +20,21 @@ classdef Master < handle
     %% Public methods
     methods
         %------------------------------------------------------------------
-        function runSimulation(this)
+        function runSimulation(this,file_fullname)
             % Print header
             this.printHeader();
             
-            % Get input file
-            [file_name,file_path] = uigetfile('*.json','DEMLab - Input file','ProjectParameters');
-            file_fullname = fullfile(file_path,file_name);
-            if (isequal(file_name,0))
-                fprintf('No file selected.\n');
-                fprintf('\nExiting program...\n');
-                return;
+            % Get input file name and path
+            if (isempty(file_fullname))
+                [file_name,file_path] = uigetfile('*.json','DEMLab - Input file','ProjectParameters');
+                file_fullname = fullfile(file_path,file_name);
+                if (isequal(file_name,0))
+                    fprintf('No file selected.\n');
+                    fprintf('\nExiting program...\n');
+                    return;
+                end
+            else
+                file_path = fileparts(file_fullname);
             end
             fprintf('File selected:\n%s\n',file_fullname)
             
@@ -120,7 +124,7 @@ classdef Master < handle
         function printFinishedStatus(~)
             t = seconds(toc);
             t.Format = 'hh:mm:ss.SS';
-            fprintf('\nAnalysis finished:\n');
+            fprintf('\n\nAnalysis finished:\n');
             fprintf('%s\n',datestr(now));
             fprintf('Total time: %s\n',string(t));
         end

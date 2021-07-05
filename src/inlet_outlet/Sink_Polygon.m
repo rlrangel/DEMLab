@@ -21,12 +21,12 @@ classdef Sink_Polygon < Sink
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function do = removeParticle(this,particle,time)
+        function do = removeParticle(this,p,time)
             if (~this.isActive(time))
                 do = false;
                 return;
             end
-            do = (inpolygon(particle.coord(1),particle.coord(2),this.coord_x,this.coord_y));
+            do = (inpolygon(p.coord(1),p.coord(2),this.coord_x,this.coord_y));
         end
     end
 end

@@ -21,13 +21,12 @@ classdef BBox_Rectangle < BBox
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function do = removeParticle(this,particle,time)
+        function do = removeParticle(this,p,time)
             if (~this.isActive(time))
                 do = false;
                 return;
             end
-            do = (any(particle.coord > this.limit_min) &&...
-                  any(particle.coord < this.limit_max));
+            do = (any(p.coord > this.limit_min) && any(p.coord < this.limit_max));
         end
     end
 end

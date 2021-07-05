@@ -153,6 +153,18 @@ classdef Read < handle
                 fprintf(2,'It must be a string with the model part file name.\n');
                 status = 0; return;
             end
+            
+            % Progress print frequency
+            if (isfield(PD,'progress_print'))
+                print = PD.progress_print;
+                if (~this.isDoubleArray(print,1) || print <= 0 || print > 100)
+                    fprintf(2,'Invalid data in project parameters file: ProblemData.progress_print.\n');
+                    fprintf(2,'It must be a numerica value between 0.0 and 100.0.\n');
+                    status = 0; return;
+                end
+                drv.print = print/100;
+                drv.progr = print/100;
+            end
         end
         
         %------------------------------------------------------------------
@@ -267,9 +279,9 @@ classdef Read < handle
             % Time integration scheme: translational velocity
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) && isfield(json.Solver,'integr_scheme_trans'))
                 scheme = string(json.Solver.integr_scheme_trans);
-                if (~this.isStringArray(scheme,1)    ||...
-                    ~strcmp(scheme,'forward_euler')  ||...
-                    ~strcmp(scheme,'modified_euler') ||...
+                if (~this.isStringArray(scheme,1) ||...
+                    ~strcmp(scheme,'forward_euler')  &&...
+                    ~strcmp(scheme,'modified_euler') &&...
                     ~strcmp(scheme,'taylor2'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_trans.\n');
                     fprintf(2,'Available options: forward_euler.\n');
@@ -287,9 +299,9 @@ classdef Read < handle
             % Time integration scheme: rotational velocity
             if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) && isfield(json.Solver,'integr_scheme_rotat'))
                 scheme = string(json.Solver.integr_scheme_rotat);
-                if (~this.isStringArray(scheme,1)    ||...
-                    ~strcmp(scheme,'forward_euler')  ||...
-                    ~strcmp(scheme,'modified_euler') ||...
+                if (~this.isStringArray(scheme,1) ||...
+                    ~strcmp(scheme,'forward_euler')  &&...
+                    ~strcmp(scheme,'modified_euler') &&...
                     ~strcmp(scheme,'taylor2'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_rotat.\n');
                     fprintf(2,'Available options: forward_euler, modified_euler, taylor_2.\n');
@@ -2373,7 +2385,7 @@ classdef Read < handle
             elseif (rest < 0 || rest > 1)
                 this.warn('Unphysical value was found for InteractionModel.contact_force_normal.restitution_coeff.');
             end
-            drv.search.b_interact.contact_force_norm.restitution = rest;
+            drv.search.b_interact.cforcen.restitution = rest;
         end
         
         %------------------------------------------------------------------
@@ -2435,7 +2447,7 @@ classdef Read < handle
             
             % Create object
             if (strcmp(model,'batchelor_obrien'))
-                drv.search.b_interact.contact_conduction = ContactConduction_BOB();
+                drv.search.b_interact.cconduc = ContactConduction_BOB();
             end
         end
         
@@ -2444,7 +2456,7 @@ classdef Read < handle
             status = 1;
             
             % Create object
-            drv.search.b_interact.contact_force_norm = ContactForceN_ViscoElasticLinear();
+            drv.search.b_interact.cforcen = ContactForceN_ViscoElasticLinear();
             
             % Stiffness formulation
             if (isfield(CFN,'stiff_coeff_formula'))
@@ -2457,14 +2469,14 @@ classdef Read < handle
                     status = 0; return;
                 end
                 if (strcmp(CFN.stiff_coeff_formula,'time'))
-                    drv.search.b_interact.contact_force_norm.stiff_formula =...
-                    drv.search.b_interact.contact_force_norm.TIME;
+                    drv.search.b_interact.cforcen.stiff_formula =...
+                    drv.search.b_interact.cforcen.TIME;
                 elseif (strcmp(CFN.stiff_coeff_formula,'overlap'))
-                    drv.search.b_interact.contact_force_norm.stiff_formula =...
-                    drv.search.b_interact.contact_force_norm.OVERLAP;
+                    drv.search.b_interact.cforcen.stiff_formula =...
+                    drv.search.b_interact.cforcen.OVERLAP;
                 elseif (strcmp(CFN.stiff_coeff_formula,'energy'))
-                    drv.search.b_interact.contact_force_norm.stiff_formula =...
-                    drv.search.b_interact.contact_force_norm.ENERGY;
+                    drv.search.b_interact.cforcen.stiff_formula =...
+                    drv.search.b_interact.cforcen.ENERGY;
                 end
             end
             
@@ -2475,8 +2487,7 @@ classdef Read < handle
                     fprintf(2,'It must be a boolean: true or false.\n');
                     status = 0; return;
                 end
-                drv.search.b_interact.contact_force_norm.remove_cohesion =...
-                CFN.remove_artificial_cohesion;
+                drv.search.b_interact.cforcen.remove_cohesion = CFN.remove_artificial_cohesion;
             end
         end
         
@@ -2485,7 +2496,7 @@ classdef Read < handle
             status = 1;
             
             % Create object
-            drv.search.b_interact.contact_force_tang = ContactForceT_Spring();
+            drv.search.b_interact.cforcet = ContactForceT_Spring();
             
             % Spring coefficient
             if (isfield(CFN,'spring_coeff'))
@@ -2496,7 +2507,7 @@ classdef Read < handle
                 elseif (CFN.spring_coeff <= 0)
                     this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.spring_coeff');
                 end
-                drv.search.b_interact.contact_force_tang.spring_coeff = CFN.spring_coeff;
+                drv.search.b_interact.cforcet.spring_coeff = CFN.spring_coeff;
             else
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.spring_coeff.\n');
                 status = 0; return;
@@ -2541,8 +2552,7 @@ classdef Read < handle
                 if ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.MECHANICAL) &&...
                     (isempty(m.density) ||...
                      isempty(m.young)   ||...
-                     isempty(m.poisson) ||...
-                     isempty(m.restitution)))
+                     isempty(m.poisson)))
                     fprintf(2,'Missing mechanical properties of material %s.',m.name);
                     status = 0; return;
                 elseif ((drv.type == drv.THERMO_MECHANICAL || drv.type == drv.THERMAL) &&...

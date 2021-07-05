@@ -20,27 +20,27 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
     methods
         function this = ContactForceN_ViscoElasticLinear()
             this = this@ContactForceN(ContactForceN.VISCOELASTIC_LINEAR);
-            this.applyDefaultProps();
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function applyDefaultProps(this)
+        function this = setDefaultProps(this)
             this.stiff_formula   = this.ENERGY;
             this.remove_cohesion = true;
         end
         
         %------------------------------------------------------------------
-        function setParameters(this,interact)
+        function this = setParameters(this,int)
             % Needed properties
-            r    = interact.eff_radius;
-            m    = interact.eff_mass;
-            y    = interact.eff_young;
-            v0   = interact.kinematics.v0_n;
+            r    = int.eff_radius;
+            m    = int.eff_mass;
+            y    = int.eff_young;
+            v0   = int.kinemat.v0_n;
             e    = this.restitution;
-            beta = pi/ln(e);
+            beta = pi/log(e);
             
             % Spring stiffness coefficient
             switch this.stiff_formula
@@ -57,11 +57,11 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
         end
         
         %------------------------------------------------------------------
-        function evalForce(this,interact)
+        function this = evalForce(this,int)
             % Needed properties
-            dir  = interact.kinematics.dir_n;
-            ovlp = interact.kinematics.ovlp_n;
-            vel  = interact.kinematics.vel_n;
+            dir  = int.kinemat.dir_n;
+            ovlp = int.kinemat.ovlp_n;
+            vel  = int.kinemat.vel_n;
             k    = this.stiff;
             d    = this.damp;
             
@@ -69,7 +69,7 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
             f = k * ovlp + d * vel;
             
             % Remove artificial cohesion
-            if (this.remove_cohesion && f < 0)
+            if (f < 0 && this.remove_cohesion)
                 f = 0;
             end
             

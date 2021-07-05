@@ -14,14 +14,14 @@ classdef Search_SimpleLoop < Search
     methods
         function this = Search_SimpleLoop()
             this = this@Search(Search.SIMPLE_LOOP);
-            this.applyDefaultProps();
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function applyDefaultProps(this)
+        function setDefaultProps(this)
             this.freq     = 1;
             this.done     = false;
             this.max_dist = 0;
@@ -46,20 +46,20 @@ classdef Search_SimpleLoop < Search
                     end
                     
                     % Check for existing interaction
-                    interact = intersect(p1.interacts,p2.interacts);
-                    if (isempty(interact))
+                    int = intersect(p1.interacts,p2.interacts);
+                    if (isempty(int))
                         % Create new particle-particle interaction if needed
                         this.createInteractPP(drv,p1,p2);
                     else
                         % Compute and check separation between elements
-                        interact.kinematics.setRelPos(p1,p2);
-                        if (interact.kinematics.separ >= this.max_dist)
+                        int.kinemat = int.kinemat.setRelPos(p1,p2);
+                        if (int.kinemat.separ >= this.max_dist)
                             % Remove handles from interacting elements
-                            p1.interacts(p1.interacts==interact) = [];
-                            p2.interacts(p2.interacts==interact) = [];
+                            p1.interacts(p1.interacts==int) = [];
+                            p2.interacts(p2.interacts==int) = [];
                             
                             % Delete interaction object
-                            delete(interact);
+                            delete(int);
                         end
                     end
                 end
@@ -69,20 +69,20 @@ classdef Search_SimpleLoop < Search
                     w = drv.walls(j);
                     
                     % Check for existing interaction
-                    interact = intersect(p1.interacts,w.interacts);
-                    if (isempty(interact))
+                    int = intersect(p1.interacts,w.interacts);
+                    if (isempty(int))
                         % Create new particle-wall interaction if needed
                         this.createInteractPW(drv,p1,w);
                     else
                         % Compute and check separation between elements
-                        interact.kinematics.setRelPos(p,w);
-                        if (interact.kinematics.separ >= this.max_dist)
+                        int.kinemat = int.kinemat.setRelPos(p1,w);
+                        if (int.kinemat.separ >= this.max_dist)
                             % Remove handles from interacting elements
-                            p1.interacts(p1.interacts==interact) = [];
-                            w.interacts(w.interacts==interact)   = [];    
+                            p1.interacts(p1.interacts==int) = [];
+                            w.interacts(w.interacts==int)   = [];    
 
                             % Delete interaction object
-                            delete(interact);
+                            delete(int);
                         end
                     end
                 end
@@ -92,35 +92,37 @@ classdef Search_SimpleLoop < Search
             drv.interacts(~isvalid(drv.interacts)) = [];
             drv.n_interacts = length(drv.interacts);
         end
-        
+    end
+    
+    %% Public methods: Subclass specifics
+    methods
         %------------------------------------------------------------------
         function createInteractPP(this,drv,p1,p2)
             % Create binary kinematics object
             kin = BinKinematics_PP();
             
             % Compute and check separation between elements
-            kin.setRelPos(p1,p2);
+            kin = kin.setRelPos(p1,p2);
             if (kin.separ >= this.max_dist)
-                delete(kin);
                 return;
             end
             
             % Create new object by copying base object
-            interact = copy(this.b_interact);
+            int = copy(this.b_interact);
             
             % Set handles to interecting elements and kinematics model
-            interact.elem1 = p1;
-            interact.elem2 = p2;
-            interact.kinematics = kin;
+            int.elem1   = p1;
+            int.elem2   = p2;
+            int.kinemat = kin;
             
             % Set kinematics parameters
-            interact.kinematics.setEffParams(interact);
-            interact.kinematics.setEndParams();
+            int.kinemat.setEffParams(int);
+            int.kinemat = int.kinemat.setEndParams();
             
             % Add handle of new object to both elements and global list
-            p1.interacts(end+1)  = interact;
-            p2.interacts(end+1)  = interact;
-            drv.interacts(end+1) = interact;
+            p1.interacts(end+1)  = int;
+            p2.interacts(end+1)  = int;
+            drv.interacts(end+1) = int;
         end
         
         %------------------------------------------------------------------
@@ -128,34 +130,33 @@ classdef Search_SimpleLoop < Search
             % Create binary kinematics object
             switch w.type
                 case w.LINE2D
-                    kin = BinKinematics_Wlin();
+                    kin = BinKinematics_PWlin();
                 case w.CIRCLE
-                    kin = BinKinematics_Wcirc();
+                    kin = BinKinematics_PWcirc();
             end
             
             % Compute and check separation between elements
-            kin.setRelPos(p,w);
+            kin = kin.setRelPos(p,w);
             if (kin.separ >= this.max_dist)
-                delete(kin);
                 return;
             end
             
             % Create new object by copying base object
-            interact = copy(this.b_interact);
+            int = copy(this.b_interact);
             
             % Set handles to interecting elements and kinematics model
-            interact.elem1 = p;
-            interact.elem2 = w;
-            interact.kinematics = kin;
+            int.elem1   = p;
+            int.elem2   = w;
+            int.kinemat = kin;
             
             % Set kinematics parameters
-            interact.kinematics.setEffParams(interact);
-            interact.kinematics.setEndParams();
+            int.kinemat.setEffParams(int);
+            int.kinemat = int.kinemat.setEndParams();
             
             % Add handle of new object to both elements and global list
-            p.interacts(end+1)   = interact;
-            w.interacts(end+1)   = interact;
-            drv.interacts(end+1) = interact;
+            p.interacts(end+1)   = int;
+            w.interacts(end+1)   = int;
+            drv.interacts(end+1) = int;
         end
     end
 end

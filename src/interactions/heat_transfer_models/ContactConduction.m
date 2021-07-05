@@ -41,10 +41,10 @@ classdef ContactConduction < matlab.mixin.Heterogeneous
     %% Abstract methods
     methods (Abstract)
         %------------------------------------------------------------------
-        setParameters(this,interact);
+        this = setParameters(this,interact);
         
         %------------------------------------------------------------------
-        evalHeatRate(this,interact);
+        this = evalHeatRate(this,interact);
     end
     
     %% Public methods

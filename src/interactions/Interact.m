@@ -8,8 +8,8 @@ classdef Interact < handle & matlab.mixin.Copyable
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Members
-        elem1;   % object of the first interaction element (defines the sign convection)
-        elem2;   % object of the second interaction element
+        elem1;   % handle to object of the 1st interaction element (defines the sign convection)
+        elem2;   % handle to object of the 2nd interaction element
         
         % Effective contact parameters
         eff_radius  double = double.empty;
@@ -17,11 +17,11 @@ classdef Interact < handle & matlab.mixin.Copyable
         eff_young   double = double.empty;
         eff_conduct double = double.empty;
         
-        % Interaction models
-        kinematics          BinKinematics     = BinKinematics.empty;
-        contact_force_norm  ContactForceN     = ContactForceN.empty;
-        contact_force_tang  ContactForceT     = ContactForceT.empty;
-        contact_conduction  ContactConduction = ContactConduction.empty;
+        % Interaction models (value class objects)
+        kinemat BinKinematics     = BinKinematics.empty;       % general kinematics
+        cforcen ContactForceN     = ContactForceN.empty;       % contact force normal
+        cforcet ContactForceT     = ContactForceT.empty;       % contact force tangent
+        cconduc ContactConduction = ContactConduction.empty;   % contact thermal conduction
     end
     
     %% Constructor method

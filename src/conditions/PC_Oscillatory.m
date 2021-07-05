@@ -17,14 +17,14 @@ classdef PC_Oscillatory < PC
     methods
         function this = PC_Oscillatory()
             this = this@PC(PC.OSCILLATORY);
-            this.applyDefaultProps();
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function applyDefaultProps(this)
+        function setDefaultProps(this)
             this.shift = 0;
         end
         

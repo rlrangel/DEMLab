@@ -15,14 +15,14 @@ classdef PC_Linear < PC
     methods
         function this = PC_Linear()
             this = this@PC(PC.LINEAR);
-            this.applyDefaultProps();
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function applyDefaultProps(this)
+        function setDefaultProps(this)
             this.init_value = 0;
         end
         

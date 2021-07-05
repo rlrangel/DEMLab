@@ -16,14 +16,14 @@ classdef PC_Table < PC
     methods
         function this = PC_Table()
             this = this@PC(PC.TABLE);
-            this.applyDefaultProps();
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function applyDefaultProps(this)
+        function setDefaultProps(this)
             this.interp = this.INTERP_LINEAR;
         end
         

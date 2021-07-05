@@ -38,13 +38,13 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
         v0_n           double  = double.empty;    % initial (impact) normal velocity
         contact_start  double  = double.empty;    % starting time
         contact_time   double  = double.empty;    % duration since starting time
-        contact_radius double  = double.empty;    % contact area radius
-        contact_area   double  = double.empty;    % area
+        contact_radius double  = double.empty;    % contact radius
+        contact_area   double  = double.empty;    % contact area
     end
     
     %% Constructor method
     methods
-        function this = BinKinematics()
+        function this = BinKinematics(type)
             if (nargin > 0)
                 this.type = type;
             end
@@ -64,13 +64,13 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
         setEffParams(this,interact);
         
         %------------------------------------------------------------------
-        setRelPos(this,e1,e2);
+        this = setRelPos(this,element1,element2);
         
         %------------------------------------------------------------------
-        evalOverlaps(this,interact,time_step);
+        this = setOverlaps(this,interact,time_step);
         
         %------------------------------------------------------------------
-        setContactArea(this,interact);
+        this = setContactArea(this,interact);
         
         %------------------------------------------------------------------
         addContactForceToParticles(this,interact);
@@ -85,14 +85,14 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
     %% Public methods
     methods
         %------------------------------------------------------------------
-        function setCollisionParams(this,time)
+        function this = setCollisionParams(this,time)
             this.is_contact    = true;
             this.contact_start = time;
             this.v0_n          = this.vel_n;
         end
         
         %------------------------------------------------------------------
-        function setEndParams(this)
+        function this = setEndParams(this)
             this.is_contact = false;
             this.ovlp_t     = 0;
         end

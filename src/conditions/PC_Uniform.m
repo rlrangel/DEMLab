@@ -14,14 +14,14 @@ classdef PC_Uniform < PC
     methods
         function this = PC_Uniform()
             this = this@PC(PC.UNIFORM);
-            this.applyDefaultProps();
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function applyDefaultProps(~)
+        function setDefaultProps(~)
             
         end
         

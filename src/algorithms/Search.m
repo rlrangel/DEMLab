@@ -24,7 +24,7 @@ classdef Search < handle & matlab.mixin.Heterogeneous
         max_dist double = uint32.empty;   % threshold neighbour distance (exclusive) to create an interaction
         
         % Base object for common interactions
-        b_interact Interact = Interact.empty;   % object of the Interact class for all interactions
+        b_interact Interact = Interact.empty;   % handle to object of Interact class for all interactions
     end
     
     %% Constructor method
@@ -46,7 +46,7 @@ classdef Search < handle & matlab.mixin.Heterogeneous
     %% Abstract methods
     methods (Abstract)
         %------------------------------------------------------------------
-        applyDefaultProps(this);
+        setDefaultProps(this);
         
         %------------------------------------------------------------------
         execute(this,drv);

@@ -21,6 +21,8 @@ classdef Driver < handle
         name      string = string.empty;   % problem name
         type      uint8  = uint8.empty;    % flag for type of analysis
         dimension uint8  = uint8.empty;    % model dimension
+        print     double = double.empty;   % progress print frequency
+        progr     double = double.empty;   % next progress print
         
         % Model components: total numbers
         n_mparts    uint32 = uint32.empty;   % number of model parts
@@ -31,23 +33,23 @@ classdef Driver < handle
         n_prescond  uint32 = uint32.empty;   % number of prescribed conditions
         
         % Model components: handle to objects
-        mparts    ModelPart = ModelPart.empty;   % vector of objects of the ModelPart class
-        particles Particle  = Particle.empty;    % vector of objects of the Particle class
-        walls     Wall      = Wall.empty;        % vector of objects of the Wall class
-        interacts Interact  = Interact.empty;    % vector of objects of the Interact class
-        materials Material  = Material.empty;    % vector of objects of the Material class
-        prescond  PC        = PC.empty;          % vector of objects of the PC class
+        mparts    ModelPart = ModelPart.empty;   % handles to objects of ModelPart class
+        particles Particle  = Particle.empty;    % handles to objects of Particle class
+        walls     Wall      = Wall.empty;        % handles to objects of Wall class
+        interacts Interact  = Interact.empty;    % handles to objects of Interact class
+        materials Material  = Material.empty;    % handles to objects of Material class
+        prescond  PC        = PC.empty;          % handles to objects of PC class
         
         % Model limits
-        bbox BBox = BBox.empty;   % object of BBox class
-        sink Sink = Sink.empty;   % vector of objects of the Sink class
+        bbox BBox = BBox.empty;   % handle to object of BBox class
+        sink Sink = Sink.empty;   % handles to objects of Sink class
         
         % Paralelization
         parallel logical = logical.empty;   % flag for parallelization of simulation
         workers  uint16  = uint16.empty;    % number of workers for parallelization
         
         % Neighbours search
-        search Search = Search.empty;   % object of Search object
+        search Search = Search.empty;   % handle to object of Search class
         
         % Time advancing
         auto_step logical = logical.empty;   % flag for automatic time step
@@ -70,23 +72,26 @@ classdef Driver < handle
     %% Abstract methods
     methods (Abstract)
         %------------------------------------------------------------------
-        applyDefaultProps(this);
+        setDefaultProps(this);
         
         %------------------------------------------------------------------
         setParticleProps(this,particle);
         
         %------------------------------------------------------------------
         runAnalysis(this);
-        
-        %------------------------------------------------------------------
-        interactionLoop(this);
-        
-        %------------------------------------------------------------------
-        particleLoop(this);
     end
     
     %% Public methods
     methods
+        %------------------------------------------------------------------
+        function printProgress(this)
+            if (this.time >= this.progr * this.max_time)
+                
+                fprintf('\n%.1f%%: time %.2f, step %d',100*this.progr,this.time,this.step);
+                this.progr = this.progr + this.print;
+            end
+        end
+        
         %------------------------------------------------------------------
         function status = preProcess(this)
             status = 1;
@@ -127,14 +132,16 @@ classdef Driver < handle
             % Remove particles not respecting bbox
             if (~isempty(this.bbox))
                 if (this.bbox.removeParticle(p,this.time))
-                    % Remove interactions containing particle
+                    do = true;
+                    
+                    % Remove particle and its interactions
                     delete(p.interacts);
+                    delete(p);
+                    
+                    % Erase handles from global list of interactions
                     this.interacts(~isvalid(this.interacts)) = [];
                     this.n_interacts = length(this.interacts);
                     
-                    % Remove particle
-                    delete(p);
-                    do = true;
                     return;
                 end
             end
@@ -143,14 +150,16 @@ classdef Driver < handle
             if (~isempty(this.sink))
                 for j = 1:length(this.sink)
                     if (this.sink(j).removeParticle(p,this.time))
-                        % Remove interactions containing particle
+                        do = true;
+                        
+                        % Remove particle and its interactions
                         delete(p.interacts);
+                        delete(p);
+                        
+                        % Erase handles from global list of interactions
                         this.interacts(~isvalid(this.interacts)) = [];
                         this.n_interacts = length(this.interacts);
                         
-                        % Remove particle
-                        delete(p);
-                        do = true;
                         return;
                     end
                 end

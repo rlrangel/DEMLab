@@ -14,28 +14,35 @@ classdef Particle_Disk < Particle
     methods
         function this = Particle_Disk()
             this = this@Particle(Particle.DISK);
-            this.applyDefaultProps();
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function applyDefaultProps(this)
+        function setDefaultProps(this)
             % Forcing terms
-            this.force       = [0,0];
-            this.torque      = 0;
-            this.heat_rate   = 0;
+            this.force     = [0;0];
+            this.torque    = 0;
+            this.heat_rate = 0;
             
             % Mechanical state variables
-            this.veloc_trl   = [0,0];
-            this.veloc_rot   = 0;
-            this.accel_trl   = [0,0];
-            this.accel_rot   = 0;
+            this.veloc_trl = [0;0];
+            this.veloc_rot = 0;
+            this.accel_trl = [0;0];
+            this.accel_rot = 0;
             
             % Thermal state variables
             this.temperature = 0;
             this.temp_change = 0;
+        end
+        
+        %------------------------------------------------------------------
+        function resetForcingTerms(this)
+            this.force     = [0;0];
+            this.torque    = 0;
+            this.heat_rate = 0;
         end
         
         %------------------------------------------------------------------

@@ -49,7 +49,7 @@ classdef PC < handle & matlab.mixin.Heterogeneous
     %% Abstract methods
     methods (Abstract)
         %------------------------------------------------------------------
-        applyDefaultProps(this);
+        setDefaultProps(this);
         
         %------------------------------------------------------------------
         val = getValue(this,time);

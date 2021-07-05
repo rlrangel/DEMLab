@@ -20,15 +20,15 @@ classdef ContactConduction_BOB < ContactConduction
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function setParameters(~,~)
+        function this = setParameters(this,~)
             
         end
         
         %------------------------------------------------------------------
-        function evalHeatRate(this,interact)
-            t1 = interact.elem1.temperature;
-            t2 = interact.elem2.temperature;
-            this.total_hrate = 4 * interact.eff_conduct * interact.kinematics.contact_radius * (t2-t1);
+        function this = evalHeatRate(this,int)
+            t1 = int.elem1.temperature;
+            t2 = int.elem2.temperature;
+            this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius * (t2-t1);
         end
     end
 end

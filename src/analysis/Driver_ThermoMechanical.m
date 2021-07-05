@@ -8,26 +8,26 @@ classdef Driver_ThermoMechanical < Driver
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Global conditions
-        gravity double = double.empty;   % vector of gravity value components
+        gravity double = double.empty;   % vector of gravity components value
         
         % Time integration
-        scheme_trl  Scheme = Scheme.empty;   % object of the Scheme class for translation
-        scheme_rot  Scheme = Scheme.empty;   % object of the Scheme class for rotation
-        scheme_temp Scheme = Scheme.empty;   % object of the Scheme class for temperature
+        scheme_trl  Scheme = Scheme.empty;   % handle to object of Scheme class for translation integration
+        scheme_rot  Scheme = Scheme.empty;   % handle to object of Scheme class for rotation integration
+        scheme_temp Scheme = Scheme.empty;   % handle to object of Scheme class for temperature integration
     end
     
     %% Constructor method
     methods
         function this = Driver_ThermoMechanical()
             this = this@Driver(Driver.THERMO_MECHANICAL);
-            this.applyDefaultProps();
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function applyDefaultProps(this)
+        function setDefaultProps(this)
             this.n_mparts    = 0;
             this.n_particles = 0;
             this.n_walls     = 0;
@@ -40,17 +40,20 @@ classdef Driver_ThermoMechanical < Driver
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;
+            this.print       = 0.01;
+            this.progr       = this.print;
         end
         
         %------------------------------------------------------------------
-        function setParticleProps(this,particle)
-            particle.setSurface();
-            particle.setVolume();
-            particle.setMass();
-            particle.setMInertia();
-            particle.setTInertia();
+        function setParticleProps(this,p)
+            p.setSurface();
+            p.setVolume();
+            p.setMass();
+            p.setMInertia();
+            p.setTInertia();
             if (~isempty(this.gravity))
-                particle.setWeight(this.gravity);
+                p.setWeight(this.gravity);
+                p.addWeight();
             end
         end
         
@@ -69,9 +72,15 @@ classdef Driver_ThermoMechanical < Driver
                 % Loop over all interactions and particles
                 this.interactionLoop();
                 this.particleLoop();
+                
+                % Print progress
+                this.printProgress();
             end
         end
+    end
         
+   %% Public methods: Subclass specifics
+    methods
         %------------------------------------------------------------------
         function interactionLoop(this)
             % Properties accessed in parallel loop
@@ -86,51 +95,48 @@ classdef Driver_ThermoMechanical < Driver
                 
                 % Update relative position (if not already done in search)
                 if (~done_search)
-                    int.kinematics.setRelPos(int.elem1,int.elem2);
+                    int.kinemat = int.kinemat.setRelPos(int.elem1,int.elem2);
                 end
                 
                 % Evaluate contact interactions
-                if (int.kinematics.separ < 0)
+                if (int.kinemat.separ < 0)
                     % Update overlap parameters
-                    int.kinematics.evalOverlaps(int,time_step);
+                    int.kinemat = int.kinemat.setOverlaps(int,time_step);
                     
                     % Update contact area
-                    int.kinematics.setContactArea(int);
+                    int.kinemat = int.kinemat.setContactArea(int);
                     
                     % Set initial contact parameters
-                    if (~int.kinematics.is_contact)
+                    if (~int.kinemat.is_contact)
                         % Initialize contact
-                        int.kinematics.setCollisionParams(time);
+                        int.kinemat = int.kinemat.setCollisionParams(time);
                         
                         % Initialize interaction parameters values
-                        int.contact_force_norm.setParameters(int);
-                        int.contact_force_tang.setParameters(int);
-                        int.contact_conduction.setParameters(int);
+                        int.cforcen = int.cforcen.setParameters(int);
+                        int.cforcet = int.cforcet.setParameters(int);
+                        int.cconduc = int.cconduc.setParameters(int);
                     end
                     
                     % Update contact duration
-                    int.kinematics.contact_time = time - int.kinematics.contact_start;
+                    int.kinemat.contact_time = time - int.kinemat.contact_start;
                     
-                    % Evaluate forces, torques and heat transfer
-                    int.contact_force_norm.evalForce(int);
-                    int.contact_force_tang.evalForce(int);
-                    int.contact_conduction.evalHeatRate(int);
+                    % Compute interaction results
+                    int.cforcen = int.cforcen.evalForce(int);
+                    int.cforcet = int.cforcet.evalForce(int);
+                    int.cconduc = int.cconduc.evalHeatRate(int);
                     
                     % Add interaction results to particles
-                    int.kinematics.addContactForceToParticles(int);
-                    int.kinematics.addContactTorqueToParticles(int);
-                    int.kinematics.addContactConductionToParticles(int);
+                    int.kinemat.addContactForceToParticles(int);
+                    int.kinemat.addContactTorqueToParticles(int);
+                    int.kinemat.addContactConductionToParticles(int);
                     
                 % Evaluate noncontact interactions
                 else
                     % Finalize contact
-                    if (int.kinematics.is_contact)
-                        int.kinematics.setEndParams();
+                    if (int.kinemat.is_contact)
+                        int.kinemat = int.kinemat.setEndParams();
                     end
                 end
-                % Try to evaluate both interacting particles here,
-                % and set a flag(the time step) to avoid doing it again
-                % Also do the integration of these particles.
             end
             
             % Adjustments before next step
@@ -158,7 +164,7 @@ classdef Driver_ThermoMechanical < Driver
                 p.addPCHeatFlux(time);
                 p.addPCHeatRate(time);
                 
-                % Evaluate Newton and energy balance equations
+                % Evaluate equations of motion and energy balance
                 p.computeAccelTrl();
                 p.computeAccelRot();
                 p.computeTempChange();
@@ -172,6 +178,9 @@ classdef Driver_ThermoMechanical < Driver
                 if (this.removeParticle(p))
                     removed = true;
                 end
+                
+                % Reset forcing terms for next step
+                p.resetForcingTerms();
             end
             
             % Erase handles to removed particles from global list and model parts

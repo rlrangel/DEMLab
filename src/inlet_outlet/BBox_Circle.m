@@ -21,12 +21,12 @@ classdef BBox_Circle < BBox
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function do = removeParticle(this,particle,time)
+        function do = removeParticle(this,p,time)
             if (~this.isActive(time))
                 do = false;
                 return;
             end
-            do = (norm(particle.coord-this.center) > this.radius);
+            do = (norm(p.coord-this.center) > this.radius);
         end
     end
 end

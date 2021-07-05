@@ -1,4 +1,4 @@
-%% BinKinematics_PWcirc class
+%% BinKinematics_PWcirc (Particle-Circle Wall) class
 %
 %% Description
 %
@@ -20,34 +20,34 @@ classdef BinKinematics_PWcirc < BinKinematics
     %% Public methods: implementation of superclass declarations
     methods
         %------------------------------------------------------------------
-        function setEffParams(~,interact)
-            p  = interact.elem1;
-            w  = interact.elem2;
+        function setEffParams(~,int)
+            p  = int.elem1;
+            w  = int.elem2;
             mp = p.material;
             mw = w.material;
             
-            interact.eff_radius = p.radius;
-            interact.eff_mass   = p.mass;
+            int.eff_radius = p.radius;
+            int.eff_mass   = p.mass;
             if (isempty(mw))
-                interact.eff_young = mp.young / (1 - mp.poisson^2);
+                int.eff_young = mp.young / (1 - mp.poisson^2);
             else
-                interact.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
+                int.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
             end
             if (~isempty(mp.conduct))
-                interact.eff_conduct = mp.conduct;
+                int.eff_conduct = mp.conduct;
             end
         end
         
         %------------------------------------------------------------------
-        function setRelPos(this,p,w)
+        function this = setRelPos(this,p,w)
             this.dir   = w.center - p.coord;
             this.dist  = norm(this.dir);
             this.separ = this.dist - p.radius - w.radius;
         end
         
         %------------------------------------------------------------------
-        function evalOverlaps(this,interact,time_step)
-            p = interact.elem1;
+        function this = setOverlaps(this,int,dt)
+            p = int.elem1;
             
             % Normal overlap and unit vector
             this.ovlp_n = -this.separ;
@@ -70,21 +70,25 @@ classdef BinKinematics_PWcirc < BinKinematics
             vt = vr - vn;
             
             % Tangential unit vector
-            this.dir_t = vt / norm(vt);
+            if (any(vt))
+                this.dir_t = vt / norm(vt);
+            else
+                this.dir_t = [0;0];
+            end
             
             % Tangential overlap rate of change
             this.vel_t = dot(vr,this.dir_t);
             
             % Tangential overlap
-            this.ovlp_t = this.ovlp_t + this.vel_t * time_step;
+            this.ovlp_t = this.ovlp_t + this.vel_t * dt;
         end
         
         %------------------------------------------------------------------
-        function setContactArea(this,interact)
+        function this = setContactArea(this,int)
             % Needed properties
             d    = this.dist;
-            r1   = interact.elem1.radius;
-            r2   = interact.elem2.radius;
+            r1   = int.elem1.radius;
+            r2   = int.elem2.radius;
             r1_2 = r1 * r1;
             r2_2 = r2 * r2;
             
@@ -95,36 +99,36 @@ classdef BinKinematics_PWcirc < BinKinematics
         end
         
         %------------------------------------------------------------------
-        function addContactForceToParticles(~,interact)
-            p = interact.elem1;
+        function addContactForceToParticles(~,int)
+            p = int.elem1;
             
             % Total contact force from normal and tangential components
-            total_force = interact.contact_force_norm.total_force +...
-                          interact.contact_force_tang.total_force;
+            total_force = int.cforcen.total_force + int.cforcet.total_force;
             
             % Add total contact force to particle considering appropriate sign
             p.force = p.force + total_force;
         end
         
         %------------------------------------------------------------------
-        function addContactTorqueToParticles(this,interact)
-            p = interact.elem1;
+        function addContactTorqueToParticles(this,int)
+            p = int.elem1;
+            f = int.cforcet.total_force;
             
             % Lever arm
-            lever = (p.radius-this.ovlp_n/2) * this.dir_n;
+            l = (p.radius-this.ovlp_n/2) * this.dir_n;
             
             % Contact torque from tangential force (3D due to cross-product)
-            torque = cross(lever,interact.contact_force_tang.total_force);
+            torque = cross([l(1);l(2);0],[f(1);f(2);0]);
             
             % Add contact torque to particle
             p.torque = p.torque + torque(3);
         end
         
         %------------------------------------------------------------------
-        function addContactConductionToParticles(~,interact)
+        function addContactConductionToParticles(~,int)
             % Add contact conduction heat rate to particle considering appropriate sign
-            p = interact.elem1;
-            p.heat_rate = p.heat_rate + interact.contact_conduction.total_hrate;
+            p = int.elem1;
+            p.heat_rate = p.heat_rate + int.cconduc.total_hrate;
         end
     end
 end
