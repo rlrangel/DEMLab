@@ -38,6 +38,7 @@ classdef Driver_Mechanical < Driver
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;
+            this.result      = Result();
             this.nprog       = 1;
             this.nout        = 500;
         end
@@ -50,7 +51,6 @@ classdef Driver_Mechanical < Driver
             p.setMInertia();
             if (~isempty(this.gravity))
                 p.setWeight(this.gravity);
-                p.addWeight();
             end
         end
         
@@ -148,6 +148,11 @@ classdef Driver_Mechanical < Driver
             removed = false;
             store   = this.storeResults();
             
+            % Store current time and step to result arrays
+            if (store)
+                this.result.storeGlobalParams(this);
+            end
+            
             % Loop over all particles
             for i = 1:this.n_particles
                 p = particles(i);
@@ -174,7 +179,9 @@ classdef Driver_Mechanical < Driver
                 
                 % Store results
                 if (store)
-                    
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticlePosition(p);
+                    this.result.storeParticleMotion(p);
                 end
                 
                 % Reset forcing terms for next step

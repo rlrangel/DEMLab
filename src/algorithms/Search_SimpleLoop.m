@@ -96,8 +96,10 @@ classdef Search_SimpleLoop < Search
             % Remove handle to deleted interactions from global list
             if (removed)
                 drv.interacts(~isvalid(drv.interacts)) = [];
-                drv.n_interacts = length(drv.interacts);
             end
+            
+            % Update total number of interactions
+            drv.n_interacts = length(drv.interacts);
         end
     end
     

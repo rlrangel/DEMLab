@@ -18,7 +18,7 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Identification
-        type int8 = uint8.empty;   % flag for type of binary kinematics
+        type uint8 = uint8.empty;   % flag for type of binary kinematics
         
         % Relative position
         dir   double = double.empty;   % direction between centroids

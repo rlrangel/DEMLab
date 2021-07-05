@@ -16,7 +16,7 @@ classdef ContactConduction < matlab.mixin.Heterogeneous
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Identification
-        type int8 = uint8.empty;   % flag for type of model
+        type uint8 = uint8.empty;   % flag for type of model
         
         % Heat rate results
         total_hrate double = double.empty;   % resulting heat rate

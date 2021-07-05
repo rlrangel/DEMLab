@@ -57,11 +57,16 @@ classdef Driver < handle
         time      double  = double.empty;    % current simulation time
         step      uint32  = uint32.empty;    % current simulation step
         
-        % Output
+        % Output control
         nprog double = double.empty;   % progress print frequency (% of total time)
         nout  double = double.empty;   % number of outputs
         tprog double = double.empty;   % next time for printing progress
         tout  double = double.empty;   % next time for storing results
+        
+        % Output generation
+        result   Result  = Result.empty;    % handle to object of Result class
+        graphs   Graph   = Graph.empty;     % handles to objects of Graph class
+        animates Animate = Animate.empty;   % handles to objects of Animate class
     end
     
     %% Constructor method
@@ -119,11 +124,25 @@ classdef Driver < handle
             % Interactions search
             this.search.execute(this);
             
-            % Compute limit ending time
+            % Compute ending time
             if (isempty(this.max_time))
                 this.max_time = this.max_step * this.time_step;
             elseif (~isempty(this.max_step))
                 this.max_time = min(this.max_time,this.max_step*this.time_step);
+            end
+            
+            % Initialize result arrays
+            this.result.initialize(this);
+            
+            % Add initial conditions to result arrays
+            this.result.storeGlobalParams(this);
+            for i = 1:this.n_particles
+                p = this.particles(i);
+                this.result.storeParticleProp(p);
+                this.result.storeParticleForce(p);
+                this.result.storeParticlePosition(p);
+                this.result.storeParticleMotion(p);
+                this.result.storeParticleThermal(p);
             end
             
             % Initialize output control variables
@@ -199,8 +218,28 @@ classdef Driver < handle
             if (this.time >= this.tout)
                 do = true;
                 this.tout = this.tout + this.nout;
+                this.result.updateIndex();
             else
                 do = false;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function posProcess(this)
+            % Create animations
+            if (~isempty(this.animates))
+                fprintf('\nCreating animations...\n');
+                for i = 1:length(this.animates)
+                    this.animates(i).execute(this);
+                end
+            end
+            
+            % Create graphs
+            if (~isempty(this.graphs))
+                fprintf('\nCreating graphs...\n');
+                for i = 1:length(this.graphs)
+                    this.graphs(i).execute(this);
+                end
             end
         end
     end

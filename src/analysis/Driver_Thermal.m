@@ -33,6 +33,7 @@ classdef Driver_Thermal < Driver
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;
+            this.result      = Result();
             this.nprog       = 1;
             this.nout        = 500;
         end
@@ -71,7 +72,7 @@ classdef Driver_Thermal < Driver
             step = this.step;
             
             % Loop over all interactions
-            parfor i = 1:this.n_interacts
+            for i = 1:this.n_interacts
                 int = interacts(i);
                 
                 % Evaluate contact interactions
@@ -102,8 +103,13 @@ classdef Driver_Thermal < Driver
             % Initialize flags
             store = this.storeResults();
             
+            % Store current time and step to result arrays
+            if (store)
+                this.result.storeGlobalParams(this);
+            end
+            
             % Loop over all particles
-            parfor i = 1:this.n_particles
+            for i = 1:this.n_particles
                 p = particles(i);
                 
                 % Add prescribed conditions
@@ -118,7 +124,8 @@ classdef Driver_Thermal < Driver
                 
                 % Store results
                 if (store)
-                    
+                    this.result.storeParticlePosition(p);
+                    this.result.storeParticleThermal(p);
                 end
                 
                 % Reset forcing terms for next step

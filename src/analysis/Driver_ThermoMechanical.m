@@ -40,6 +40,7 @@ classdef Driver_ThermoMechanical < Driver
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;
+            this.result      = Result();
             this.nprog       = 1;
             this.nout        = 500;
         end
@@ -53,7 +54,6 @@ classdef Driver_ThermoMechanical < Driver
             p.setTInertia();
             if (~isempty(this.gravity))
                 p.setWeight(this.gravity);
-                p.addWeight();
             end
         end
         
@@ -90,7 +90,7 @@ classdef Driver_ThermoMechanical < Driver
             done_search = this.search.done;
             
             % Loop over all interactions
-            parfor i = 1:this.n_interacts
+            for i = 1:this.n_interacts
                 int = interacts(i);
                 
                 % Update relative position (if not already done in search)
@@ -154,8 +154,13 @@ classdef Driver_ThermoMechanical < Driver
             removed = false;
             store   = this.storeResults();
             
+            % Store current time and step to result arrays
+            if (store)
+                this.result.storeGlobalParams(this);
+            end
+            
             % Loop over all particles
-            parfor i = 1:this.n_particles
+            for i = 1:this.n_particles
                 p = particles(i);
                 
                 % Add global conditions
@@ -184,7 +189,9 @@ classdef Driver_ThermoMechanical < Driver
                 
                 % Store results
                 if (store)
-                    
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticlePosition(p);
+                    this.result.storeParticleMotion(p);
                 end
                 
                 % Reset forcing terms for next step

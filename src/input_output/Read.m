@@ -73,6 +73,12 @@ classdef Read < handle
             if (status)
                 status = this.getOutput(json,drv);
             end
+            if (status)
+                status = this.getGraph(json,drv);
+            end
+            if (status)
+                status = this.getAnimation(json,drv);
+            end
         end
         
         %------------------------------------------------------------------
@@ -1078,7 +1084,6 @@ classdef Read < handle
                 end
             end
             
-            
             % TORQUE
             if (isfield(PC,'torque'))
                 for i = 1:length(PC.torque)
@@ -1791,7 +1796,7 @@ classdef Read < handle
                 % Create material object
                 mat = Material();
                 drv.n_materials = drv.n_materials + 1;
-                drv.materials = mat;
+                drv.materials(drv.n_materials) = mat;
                 
                 % Name
                 name = string(M.name);
@@ -1996,6 +2001,340 @@ classdef Read < handle
                     status = 0; return;
                 end
                 drv.nout = nout;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getGraph(this,json,drv)
+            status = 1;
+            if (~isfield(json,'Graph'))
+                return;
+            end
+            
+            for i = 1:length(json.Graph)
+                GRA = json.Graph(i);
+                
+                % Create graph object
+                gra = Graph();
+                drv.graphs(i) = gra;
+                
+                % Title
+                if (isfield(GRA,'title'))
+                    title = string(GRA.title);
+                    if (~this.isStringArray(title,1))
+                        fprintf(2,'Invalid data in project parameters file: Graph.title.\n');
+                        fprintf(2,'It must be a string with the title of the graph.\n');
+                        status = 0; return;
+                    end
+                    gra.title = title;
+                end
+                
+                % Array of possible results
+                global_results = ["time","step"];
+                results_mech   = ["radius",...
+                                  "force_modulus","force_x","force_y","torque",...
+                                  "coordinate_x","coordinate_y","orientation",...
+                                  "velocity_modulus","velocity_x","velocity_y","velocity_rot",...
+                                  "acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
+                results_therm  = ["heat_rate","temperature"];
+                
+                % Check and get axes data
+                if (~isfield(GRA,'axis_x'))
+                    fprintf(2,'Missing data in project parameters file: Graph.axis_x.\n');
+                    status = 0; return;
+                elseif (~isfield(GRA,'axis_y'))
+                    fprintf(2,'Missing data in project parameters file: Graph.axis_y.\n');
+                    status = 0; return;
+                end
+                X = string(GRA.axis_x);
+                Y = string(GRA.axis_y);
+                if (~this.isStringArray(X,1)        ||...
+                       (~ismember(X,global_results) &&...
+                        ~ismember(X,results_mech)   &&...
+                        ~ismember(X,results_therm)))
+                    fprintf(2,'Invalid data in project parameters file: Graph.axis_x.\n');
+                    fprintf(2,'Available result options can be checked in the documentation.\n')
+                    status = 0; return;
+                elseif (~this.isStringArray(Y,1)    ||...
+                       (~ismember(Y,global_results) &&...
+                        ~ismember(Y,results_mech)   &&...
+                        ~ismember(Y,results_therm)))
+                    fprintf(2,'Invalid data in project parameters file: Graph.axis_y.\n');
+                    fprintf(2,'Available result options can be checked in the documentation.\n')
+                    status = 0; return;
+                end
+                
+                % Set X axis data
+                if (strcmp(X,'radius'))
+                    gra.res_x = drv.result.RADIUS;
+                    drv.result.has_radius = true;
+                elseif (strcmp(X,'force_modulus'))
+                    gra.res_x = drv.result.FORCE_MOD;
+                    drv.result.has_force_mod = true;
+                elseif (strcmp(X,'force_x'))
+                    gra.res_x = drv.result.FORCE_X;
+                    drv.result.has_force_x = true;
+                elseif (strcmp(X,'force_y'))
+                    gra.res_x = drv.result.FORCE_Y;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(X,'torque'))
+                    gra.res_x = drv.result.TORQUE;
+                    drv.result.has_torque = true;
+                elseif (strcmp(X,'coordinate_x'))
+                    gra.res_x = drv.result.COORDINATE_X;
+                    drv.result.has_coord_x = true;
+                elseif (strcmp(X,'coordinate_y'))
+                    gra.res_x = drv.result.COORDINATE_Y;
+                    drv.result.has_coord_y = true;
+                elseif (strcmp(X,'orientation'))
+                    gra.res_x = drv.result.ORIENTATION;
+                    drv.result.has_orientation = true;
+                elseif (strcmp(X,'velocity_modulus'))
+                    gra.res_x = drv.result.VELOCITY_MOD;
+                    drv.result.has_velocity_mod = true;
+                elseif (strcmp(X,'velocity_x'))
+                    gra.res_x = drv.result.VELOCITY_X;
+                    drv.result.has_velocity_x = true;
+                elseif (strcmp(X,'velocity_y'))
+                    gra.res_x = drv.result.VELOCITY_Y;
+                    drv.result.has_velocity_y = true;
+                elseif (strcmp(X,'velocity_rot'))
+                    gra.res_x = drv.result.VELOCITY_ROT;
+                    drv.result.has_velocity_rot = true;
+                elseif (strcmp(X,'acceleration_modulus'))
+                    gra.res_x = drv.result.ACCELERATION_MOD;
+                    drv.result.has_acceleration_mod = true;
+                elseif (strcmp(X,'acceleration_x'))
+                    gra.res_x = drv.result.ACCELERATION_X;
+                    drv.result.has_acceleration_x = true;
+                elseif (strcmp(X,'acceleration_y'))
+                    gra.res_x = drv.result.ACCELERATION_Y;
+                    drv.result.has_acceleration_y = true;
+                elseif (strcmp(X,'acceleration_rot'))
+                    gra.res_x = drv.result.ACCELERATION_ROT;
+                    drv.result.has_acceleration_rot = true;
+                elseif (strcmp(X,'temperature'))
+                    gra.res_x = drv.result.TEMPERATURE;
+                    drv.result.has_temperature = true;
+                elseif (strcmp(X,'heat_rate'))
+                    gra.res_x = drv.result.HEAT_RATE;
+                    drv.result.has_heat_rate = true;
+                end
+                
+                % Set Y axis data
+                if (strcmp(Y,'radius'))
+                    gra.res_y = drv.result.RADIUS;
+                    drv.result.has_radius = true;
+                elseif (strcmp(Y,'force_modulus'))
+                    gra.res_y = drv.result.FORCE_MOD;
+                    drv.result.has_force_mod = true;
+                elseif (strcmp(Y,'force_x'))
+                    gra.res_y = drv.result.FORCE_X;
+                    drv.result.has_force_x = true;
+                elseif (strcmp(Y,'force_y'))
+                    gra.res_y = drv.result.FORCE_Y;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(Y,'torque'))
+                    gra.res_y = drv.result.TORQUE;
+                    drv.result.has_torque = true;
+                elseif (strcmp(Y,'coordinate_x'))
+                    gra.res_y = drv.result.COORDINATE_X;
+                    drv.result.has_coord_x = true;
+                elseif (strcmp(Y,'coordinate_y'))
+                    gra.res_y = drv.result.COORDINATE_Y;
+                    drv.result.has_coord_y = true;
+                elseif (strcmp(Y,'orientation'))
+                    gra.res_y = drv.result.ORIENTATION;
+                    drv.result.has_orientation = true;
+                elseif (strcmp(Y,'velocity_modulus'))
+                    gra.res_y = drv.result.VELOCITY_MOD;
+                    drv.result.has_velocity_mod = true;
+                elseif (strcmp(Y,'velocity_x'))
+                    gra.res_y = drv.result.VELOCITY_X;
+                    drv.result.has_velocity_x = true;
+                elseif (strcmp(Y,'velocity_y'))
+                    gra.res_y = drv.result.VELOCITY_Y;
+                    drv.result.has_velocity_y = true;
+                elseif (strcmp(Y,'velocity_rot'))
+                    gra.res_y = drv.result.VELOCITY_ROT;
+                    drv.result.has_velocity_rot = true;
+                elseif (strcmp(Y,'acceleration_modulus'))
+                    gra.res_y = drv.result.ACCELERATION_MOD;
+                    drv.result.has_acceleration_mod = true;
+                elseif (strcmp(Y,'acceleration_x'))
+                    gra.res_y = drv.result.ACCELERATION_X;
+                    drv.result.has_acceleration_x = true;
+                elseif (strcmp(Y,'acceleration_y'))
+                    gra.res_y = drv.result.ACCELERATION_Y;
+                    drv.result.has_acceleration_y = true;
+                elseif (strcmp(Y,'acceleration_rot'))
+                    gra.res_y = drv.result.ACCELERATION_ROT;
+                    drv.result.has_acceleration_rot = true;
+                elseif (strcmp(Y,'temperature'))
+                    gra.res_y = drv.result.TEMPERATURE;
+                    drv.result.has_temperature = true;
+                elseif (strcmp(Y,'heat_rate'))
+                    gra.res_y = drv.result.HEAT_RATE;
+                    drv.result.has_heat_rate = true;
+                end
+                
+                % Curves
+                if (isfield(GRA,'curve'))
+                    % Initialize arrays of curve properties
+                    nc = length(GRA.curve);
+                    gra.n_curves = nc;
+                    gra.names    = strings(nc,1);
+                    gra.px       = zeros(nc,1);
+                    gra.py       = zeros(nc,1);
+                    
+                    for j = 1:nc
+                        CUR = GRA.curve(j);
+                        
+                        % Name
+                        if (isfield(CUR,'name'))
+                            name = string(CUR.name);
+                            if (~this.isStringArray(name,1))
+                                fprintf(2,'Invalid data in project parameters file: Graph.curve.name.\n');
+                                fprintf(2,'It must be a string with the name of the curve.\n');
+                                status = 0; return;
+                            end
+                            gra.names(j) = name;
+                        else
+                            fprintf(2,'Missing data in project parameters file: Graph.curve.name.\n');
+                            status = 0; return;
+                        end
+                        
+                        % Particle X
+                        
+                        
+                        % Particle Y
+                        
+                    end
+                else
+                    this.warn('A graph with no curve was identified');
+                    gra.n_curves = 0;
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getAnimation(this,json,drv)
+            status = 1;
+            if (~isfield(json,'Animation'))
+                return;
+            end
+            
+            for i = 1:length(json.Animation)
+                ANM = json.Animation(i);
+                
+                % Create animation object
+                anm = Animate();
+                drv.animates(i) = anm;
+                
+                % Title
+                if (isfield(ANM,'title'))
+                    title = string(ANM.title);
+                    if (~this.isStringArray(title,1))
+                        fprintf(2,'Invalid data in project parameters file: Animation.title.\n');
+                        fprintf(2,'It must be a string with the title of the animation.\n');
+                        status = 0; return;
+                    end
+                    anm.title = title;
+                end
+                
+                % Plot particles IDs
+                if (isfield(ANM,'particle_ids'))
+                    pids = ANM.particle_ids;
+                    if (~this.isLogicalArray(pids,1))
+                        fprintf(2,'Invalid data in project parameters file: Animation.particle_ids.\n');
+                        fprintf(2,'It must be a boolean: true or false.\n');
+                        status = 0; return;
+                    end
+                    anm.pids = pids;
+                end
+                
+                % Array of possible results
+                results_mech  = ["radius",...
+                                 "force_modulus","force_x","force_y","torque",...
+                                 "coordinate_x","coordinate_y","orientation",...
+                                 "motion","velocity_modulus","velocity_x","velocity_y","velocity_rot",...
+                                 "acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
+                results_therm = ["heat_rate","temperature"];
+                
+                % Result type
+                if (~isfield(ANM,'result'))
+                    fprintf(2,'Missing data in project parameters file: Animation.result.\n');
+                    status = 0; return;
+                end
+                result = string(ANM.result);
+                if (~this.isStringArray(result,1) ||...
+                   (~ismember(result,results_mech) && ~ismember(result,results_therm)))
+                    fprintf(2,'Invalid data in project parameters file: Animation.result.\n');
+                    fprintf(2,'Available result options can be checked in the documentation.\n');
+                    status = 0; return;
+                elseif (strcmp(result,'radius'))
+                    anm.res_type = drv.result.RADIUS;
+                    drv.result.has_radius = true;
+                elseif (strcmp(result,'force_modulus'))
+                    anm.res_type = drv.result.FORCE_MOD;
+                    drv.result.has_force_mod = true;
+                elseif (strcmp(result,'force_x'))
+                    anm.res_type = drv.result.FORCE_X;
+                    drv.result.has_force_x = true;
+                elseif (strcmp(result,'force_y'))
+                    anm.res_type = drv.result.FORCE_Y;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(result,'torque'))
+                    anm.res_type = drv.result.TORQUE;
+                    drv.result.has_torque = true;
+                elseif (strcmp(result,'coordinate_x'))
+                    anm.res_type = drv.result.COORDINATE_X;
+                    drv.result.has_coord_x = true;
+                elseif (strcmp(result,'coordinate_y'))
+                    anm.res_type = drv.result.COORDINATE_Y;
+                    drv.result.has_coord_y = true;
+                elseif (strcmp(result,'orientation'))
+                    anm.res_type = drv.result.ORIENTATION;
+                    drv.result.has_orientation = true;
+                elseif (strcmp(result,'motion'))
+                    anm.res_type = drv.result.MOTION;
+                    drv.result.has_orientation = true;
+                elseif (strcmp(result,'velocity_modulus'))
+                    anm.res_type = drv.result.VELOCITY_MOD;
+                    drv.result.has_velocity_mod = true;
+                elseif (strcmp(result,'velocity_x'))
+                    anm.res_type = drv.result.VELOCITY_X;
+                    drv.result.has_velocity_x = true;
+                elseif (strcmp(result,'velocity_y'))
+                    anm.res_type = drv.result.VELOCITY_Y;
+                    drv.result.has_velocity_y = true;
+                elseif (strcmp(result,'velocity_rot'))
+                    anm.res_type = drv.result.VELOCITY_ROT;
+                    drv.result.has_velocity_rot = true;
+                elseif (strcmp(result,'acceleration_modulus'))
+                    anm.res_type = drv.result.ACCELERATION_MOD;
+                    drv.result.has_acceleration_mod = true;
+                elseif (strcmp(result,'acceleration_x'))
+                    anm.res_type = drv.result.ACCELERATION_X;
+                    drv.result.has_acceleration_x = true;
+                elseif (strcmp(result,'acceleration_y'))
+                    anm.res_type = drv.result.ACCELERATION_Y;
+                    drv.result.has_acceleration_y = true;
+                elseif (strcmp(result,'acceleration_rot'))
+                    anm.res_type = drv.result.ACCELERATION_ROT;
+                    drv.result.has_acceleration_rot = true;
+                elseif (strcmp(result,'temperature'))
+                    anm.res_type = drv.result.TEMPERATURE;
+                    drv.result.has_temperature = true;
+                elseif (strcmp(result,'heat_rate'))
+                    anm.res_type = drv.result.HEAT_RATE;
+                    drv.result.has_heat_rate = true;
+                end
+                
+                % Time vector and coordinates are needed in all result types
+                drv.result.has_time    = true;
+                drv.result.has_coord_x = true;
+                drv.result.has_coord_y = true;
             end
         end
     end

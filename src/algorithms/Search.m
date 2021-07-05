@@ -16,7 +16,7 @@ classdef Search < handle & matlab.mixin.Heterogeneous
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Identification
-        type int8    = uint8.empty;     % flag for type of search
+        type uint8   = uint8.empty;     % flag for type of search
         done logical = logical.empty;   % flag for identifying if search has been done in a time step
         
         % Parameters

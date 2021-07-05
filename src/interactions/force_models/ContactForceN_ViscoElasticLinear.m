@@ -8,7 +8,7 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Formulation options
-        stiff_formula   int8    = uint8.empty;     % flag for type of stiffness formulation
+        stiff_formula   uint8   = uint8.empty;     % flag for type of stiffness formulation
         remove_cohesion logical = logical.empty;   % flag for removing artificial cohesion
         
         % Constant parameters

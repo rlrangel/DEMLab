@@ -85,8 +85,9 @@ classdef Master < handle
             % Print finished status
             this.printFinishedStatus();
             
-            % 
-            
+            % Pos-process
+            drv.posProcess()
+            fprintf('\nFinished!\n');
         end
         
         %------------------------------------------------------------------

@@ -17,7 +17,7 @@ classdef Scheme < handle & matlab.mixin.Heterogeneous
     
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        type int8 = uint8.empty;   % flag for type of scheme
+        type uint8 = uint8.empty;   % flag for type of scheme
     end
     
     %% Constructor method
