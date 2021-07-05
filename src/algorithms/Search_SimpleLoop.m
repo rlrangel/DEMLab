@@ -32,7 +32,10 @@ classdef Search_SimpleLoop < Search
             if (mod(drv.step,this.freq) ~= 0)
                 return;
             end
+            
+            % Set flags
             this.done = true;
+            removed   = false;
             
             % Outer loop over reference particles
             for i = 1:drv.n_particles
@@ -59,6 +62,7 @@ classdef Search_SimpleLoop < Search
                             p2.interacts(p2.interacts==int) = [];
                             
                             % Delete interaction object
+                            removed = true;
                             delete(int);
                         end
                     end
@@ -82,6 +86,7 @@ classdef Search_SimpleLoop < Search
                             w.interacts(w.interacts==int)   = [];    
 
                             % Delete interaction object
+                            removed = true;
                             delete(int);
                         end
                     end
@@ -89,8 +94,10 @@ classdef Search_SimpleLoop < Search
             end
             
             % Remove handle to deleted interactions from global list
-            drv.interacts(~isvalid(drv.interacts)) = [];
-            drv.n_interacts = length(drv.interacts);
+            if (removed)
+                drv.interacts(~isvalid(drv.interacts)) = [];
+                drv.n_interacts = length(drv.interacts);
+            end
         end
     end
     

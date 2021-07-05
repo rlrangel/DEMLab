@@ -21,8 +21,6 @@ classdef Driver < handle
         name      string = string.empty;   % problem name
         type      uint8  = uint8.empty;    % flag for type of analysis
         dimension uint8  = uint8.empty;    % model dimension
-        print     double = double.empty;   % progress print frequency
-        progr     double = double.empty;   % next progress print
         
         % Model components: total numbers
         n_mparts    uint32 = uint32.empty;   % number of model parts
@@ -58,6 +56,12 @@ classdef Driver < handle
         max_step  uint32  = uint32.empty;    % maximum step value allowed
         time      double  = double.empty;    % current simulation time
         step      uint32  = uint32.empty;    % current simulation step
+        
+        % Output
+        nprog double = double.empty;   % progress print frequency (% of total time)
+        nout  double = double.empty;   % number of outputs
+        tprog double = double.empty;   % next time for printing progress
+        tout  double = double.empty;   % next time for storing results
     end
     
     %% Constructor method
@@ -83,15 +87,6 @@ classdef Driver < handle
     
     %% Public methods
     methods
-        %------------------------------------------------------------------
-        function printProgress(this)
-            if (this.time >= this.progr * this.max_time)
-                
-                fprintf('\n%.1f%%: time %.2f, step %d',100*this.progr,this.time,this.step);
-                this.progr = this.progr + this.print;
-            end
-        end
-        
         %------------------------------------------------------------------
         function status = preProcess(this)
             status = 1;
@@ -123,6 +118,17 @@ classdef Driver < handle
             
             % Interactions search
             this.search.execute(this);
+            
+            % Compute limit ending time
+            if (isempty(this.max_time))
+                this.max_time = this.max_step * this.time_step;
+            elseif (~isempty(this.max_step))
+                this.max_time = min(this.max_time,this.max_step*this.time_step);
+            end
+            
+            % Initialize output control variables
+            this.tprog = this.nprog * this.max_time / 100;
+            this.tout  = this.max_time / this.nout;
         end
         
         %------------------------------------------------------------------
@@ -141,7 +147,6 @@ classdef Driver < handle
                     % Erase handles from global list of interactions
                     this.interacts(~isvalid(this.interacts)) = [];
                     this.n_interacts = length(this.interacts);
-                    
                     return;
                 end
             end
@@ -159,7 +164,6 @@ classdef Driver < handle
                         % Erase handles from global list of interactions
                         this.interacts(~isvalid(this.interacts)) = [];
                         this.n_interacts = length(this.interacts);
-                        
                         return;
                     end
                 end
@@ -177,6 +181,22 @@ classdef Driver < handle
                 mp = this.mparts(i);
                 mp.particles(~isvalid(mp.particles)) = [];
                 mp.n_particles = length(mp.particles);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function printProgress(this)
+            if (this.time >= this.tprog)
+                fprintf('\n%.1f%%: time %.2f, step %d',100*this.tprog/this.max_time,this.time,this.step);
+                this.tprog = this.tprog + this.nprog * this.max_time / 100;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function storeResults(this)
+            if (this.time >= this.tout)
+                %this.result.methodName();
+                this.tout = this.tout + this.max_time / this.nout;
             end
         end
     end

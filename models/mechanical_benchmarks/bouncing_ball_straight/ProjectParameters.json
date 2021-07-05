@@ -3,14 +3,12 @@
 		"name"             : "bouncing_ball",
 		"analysis_type"    : "mechanical",
 		"dimension"        : 2,
-		"model_parts_file" : "ModelParts.txt",
-		"progress_print"   : 1
+		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
 		"auto_time_step"      : false,
 		"time_step"           : 10e-6,
-		"final_time"          : 5,
-		"max_steps"           : 10e+6,
+		"final_time"          : 1,
 		"integr_scheme_trans" : "forward_euler",
 		"integr_scheme_rotat" : "forward_euler",
 		"parallelization"     : false,
@@ -18,19 +16,19 @@
 	},
 	"Search": {
 		"scheme"           : "simple_loop",
-		"search_frequency" : 10
+		"search_frequency" : 1
 	},
 	"GlobalCondition": {
 		"gravity" : [0.0,-9.81]
 	},
 	"Material": {
-			"name"        : "material_1",
-			"model_parts" : ["PARTICLES"],
-			"properties"  : {
-				"density"       : 1000.0,
-				"young_modulus" : 1000000,
-				"poisson_ratio" : 0.3
-			}
+		"name"        : "material_1",
+		"model_parts" : ["PARTICLES"],
+		"properties"  : {
+			"density"       : 1000.0,
+			"young_modulus" : 1000000,
+			"poisson_ratio" : 0.3
+		}
 	},
 	"InteractionModel": {
 		"contact_force_normal": {
@@ -43,5 +41,9 @@
 			"model"        : "simple_spring",
 			"spring_coeff" : 100000
 		}
+	},
+	"Output": {
+		"progress_print" : 1,
+		"number_output"  : 100
 	}
 }

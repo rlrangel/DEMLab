@@ -40,8 +40,8 @@ classdef Driver_ThermoMechanical < Driver
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
             this.auto_step   = true;
-            this.print       = 0.01;
-            this.progr       = this.print;
+            this.nprog       = 1;
+            this.nout        = 500;
         end
         
         %------------------------------------------------------------------
@@ -59,7 +59,7 @@ classdef Driver_ThermoMechanical < Driver
         
         %------------------------------------------------------------------
         function runAnalysis(this)
-            while (this.time < this.max_time && this.step < this.max_step)
+            while (this.time < this.max_time)
                 % Update time and step
                 this.time = this.time + this.time_step;
                 this.step = this.step + 1;
@@ -73,8 +73,9 @@ classdef Driver_ThermoMechanical < Driver
                 this.interactionLoop();
                 this.particleLoop();
                 
-                % Print progress
+                % Print progress and store results
                 this.printProgress();
+                this.storeResults();
             end
         end
     end

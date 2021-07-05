@@ -1,0 +1,45 @@
+Master:
+	Tasks:
+	* Plot results (from Plot, Plot_2D, Plot_3D: for animation and pictures);
+	* Graph results (from Graph - for graph mode results);
+	* Print results (from Print);
+	* Export results (from Export - for Paraview);
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Driver:
+	Tasks:
+	* Pre-precess:
+	  -Store initial states to results?;
+	
+	* Process:
+	  7) Store results: check if it is time;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Results:
+Results history arrays: position, displacement, velocity, acceleration, temperature, flux, radius, properties, etc;
+Results to be stored for animation, graph and depict;
+	Properties:
+	* 
+	
+	Tasks:
+	* 
+
+Plot:
+	Subclasses: 2D/3D;
+
+	Properties:
+	* Handle to Result object;
+	* Results to be animated;
+	* Results to be graphed (with the particle IDs, if applicable);
+	* Results to be depicted (with the given time steps);
+	
+	Tasks:
+	* Animation - results in a given frequency of step or time (position, displacement, velocity, acceleration, temperature, flux, geometric and physical properties, etc);
+	* Graph - evolution of properties:
+	  -Particle results over time: position, displacement, velocity, acceleration, temperature, flux, geometric and physical properties, etc;
+	  -Total model results over time: number particles, number of interactions, contact forces, heat flux, etc;
+	* Plot of pictures of particle results in a certain time steps;
+
+Print:
+	* Export to text file in a given frequency of step or time (selected information);
+	* Export to other formats: Paraview, GiD;

@@ -70,6 +70,9 @@ classdef Read < handle
             if (status)
                 status = this.getInteractionAssignment(json,drv);
             end
+            if (status)
+                status = this.getOutput(json,drv);
+            end
         end
         
         %------------------------------------------------------------------
@@ -152,18 +155,6 @@ classdef Read < handle
                 fprintf(2,'Invalid data in project parameters file: ProblemData.model_parts_file.\n');
                 fprintf(2,'It must be a string with the model part file name.\n');
                 status = 0; return;
-            end
-            
-            % Progress print frequency
-            if (isfield(PD,'progress_print'))
-                print = PD.progress_print;
-                if (~this.isDoubleArray(print,1) || print <= 0 || print > 100)
-                    fprintf(2,'Invalid data in project parameters file: ProblemData.progress_print.\n');
-                    fprintf(2,'It must be a numerica value between 0.0 and 100.0.\n');
-                    status = 0; return;
-                end
-                drv.print = print/100;
-                drv.progr = print/100;
             end
         end
         
@@ -1974,6 +1965,37 @@ classdef Read < handle
             elseif (~isfield(json,'InteractionAssignment'))
                 fprintf(2,'Missing data in project parameters file: InteractionModel.\n');
                 status = 0; return;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getOutput(this,json,drv)
+            status = 1;
+            if (~isfield(json,'Output'))
+                return;
+            end
+            OUT = json.Output;
+            
+            % Progress print frequency
+            if (isfield(OUT,'progress_print'))
+                prog = OUT.progress_print;
+                if (~this.isDoubleArray(prog,1) || prog <= 0 || prog > 100)
+                    fprintf(2,'Invalid data in project parameters file: Output.progress_print.\n');
+                    fprintf(2,'It must be a numeric value between 0.0 and 100.0.\n');
+                    status = 0; return;
+                end
+                drv.nprog = prog;
+            end
+            
+            % Number of outputs
+            if (isfield(OUT,'number_output'))
+                nout = OUT.number_output;
+                if (~this.isIntArray(nout,1) || nout < 0)
+                    fprintf(2,'Invalid data in project parameters file: Output.number_output.\n');
+                    fprintf(2,'It must be a positive integer.\n');
+                    status = 0; return;
+                end
+                drv.nout = nout;
             end
         end
     end
