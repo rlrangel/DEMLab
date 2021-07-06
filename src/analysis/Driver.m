@@ -10,9 +10,9 @@ classdef Driver < handle
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of analysis
-        MECHANICAL        = int8(1);
-        THERMAL           = int8(2);
-        THERMO_MECHANICAL = int8(3);
+        MECHANICAL        = uint8(1);
+        THERMAL           = uint8(2);
+        THERMO_MECHANICAL = uint8(3);
     end
     
     %% Public properties
@@ -236,9 +236,14 @@ classdef Driver < handle
             
             % Create animations
             if (~isempty(this.animates))
-                fprintf('\nCreating animations...\n');
                 for i = 1:length(this.animates)
+                    fprintf('\nCreating animation %s...',this.animates(i).atitle);
                     this.animates(i).execute(this);
+                end
+                fprintf('\n');
+                for i = 1:length(this.animates)
+                    fprintf('\nShowing animation %s...\n',this.animates(i).atitle);
+                    this.animates(i).show();
                 end
             end
         end

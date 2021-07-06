@@ -1,14 +1,14 @@
 {
 	"ProblemData": {
-		"name"             : "bouncing_ball",
+		"name"             : "bouncing_balls",
 		"analysis_type"    : "mechanical",
 		"dimension"        : 2,
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
 		"auto_time_step"      : false,
-		"time_step"           : 10e-6,
-		"final_time"          : 1,
+		"time_step"           : 0.00005,
+		"final_time"          : 10,
 		"integr_scheme_trans" : "forward_euler",
 		"integr_scheme_rotat" : "forward_euler",
 		"parallelization"     : true,
@@ -16,7 +16,7 @@
 	},
 	"Search": {
 		"scheme"           : "simple_loop",
-		"search_frequency" : 50
+		"search_frequency" : 10
 	},
 	"GlobalCondition": {
 		"gravity" : [0.0,-9.81]
@@ -44,12 +44,12 @@
 	},
 	"Output": {
 		"progress_print" : 1,
-		"number_output"  : 100
+		"number_output"  : 200
 	},
 	"Animation": {
 		"title"        : "Particle Motion",
-		"result"       : "motion",
+		"result"       : "radius",
 		"auto_play"    : true,
-		"bounding_box" : [-2.0,2.0,-1.0,3.0]
+		"bounding_box" : [0.0,10.0,-1.0,2.0]
 	}
 }

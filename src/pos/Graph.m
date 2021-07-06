@@ -34,12 +34,12 @@ classdef Graph < handle
         %------------------------------------------------------------------
         function execute(this,drv)
             % Create a new window
-            graph = figure;
+            fig = figure;
             
             % Set properties
             grid on;
             hold on;
-            movegui(graph,'center');
+            movegui(fig,'center');
             title(this.gtitle);
             
             % Plot curves

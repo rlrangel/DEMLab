@@ -87,7 +87,7 @@ classdef Master < handle
             
             % Pos-process
             drv.posProcess()
-            fprintf('\nFinished!\n');
+            fprintf('\nFinished!\n\n');
         end
         
         %------------------------------------------------------------------

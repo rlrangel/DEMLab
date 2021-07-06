@@ -2296,6 +2296,17 @@ classdef Read < handle
                     status = 0; return;
                 end
                 
+                % Automatic play
+                if (isfield(ANM,'auto_play'))
+                    play = ANM.auto_play;
+                    if (~this.isLogicalArray(play,1))
+                        fprintf(2,'Invalid data in project parameters file: Animation.auto_play.\n');
+                        fprintf(2,'It must be a boolean: true or false.\n');
+                        status = 0; return;
+                    end
+                    anm.play = play;
+                end
+                
                 % Plot particles IDs
                 if (isfield(ANM,'particle_ids'))
                     pids = ANM.particle_ids;
@@ -2305,6 +2316,19 @@ classdef Read < handle
                         status = 0; return;
                     end
                     anm.pids = pids;
+                end
+                
+                % Bounding box
+                if (isfield(ANM,'bounding_box'))
+                    bbox = ANM.bounding_box;
+                    if (~this.isDoubleArray(bbox,4) || bbox(1) >= bbox(2) || bbox(3) >= bbox(4))
+                        fprintf(2,'Invalid data in project parameters file: Animation.bounding_box.\n');
+                        fprintf(2,'It must be a numeric array  with four values: Xmin, Xmax, Ymin, Ymax.\n');
+                        status = 0; return;
+                    end
+                    anm.bbox = bbox;
+                else
+                    this.warn('Animation has no fixed limits (bounding box). It may lead to unsatisfactory animation behavior.');
                 end
                 
                 % Array of possible results

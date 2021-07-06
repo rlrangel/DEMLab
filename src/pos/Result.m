@@ -142,7 +142,7 @@ classdef Result < handle
             
             % Properties results
             if (this.has_radius)
-                this.radius = nan(r,1);
+                this.radius = nan(r,c);
             end
             
             % Force results
