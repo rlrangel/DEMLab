@@ -274,7 +274,7 @@ classdef Animate < handle
         %------------------------------------------------------------------
         function drawMovieFrame(this,drv,f)
             % Draw particles
-            parfor i = 1:this.np
+            for i = 1:this.np
                 if (isnan(this.times(i,f)))
                     continue;
                 end
