@@ -14,31 +14,36 @@ classdef Result < handle
         % Types of particle results: properties
         RADIUS = uint8(3);
         
-        % Types of particle results: forces
-        FORCE_MOD = uint8(4);
-        FORCE_X   = uint8(5);
-        FORCE_Y   = uint8(6);
-        TORQUE    = uint8(7);
-        
         % Types of particle results: position
-        COORDINATE_X = uint8(8);
-        COORDINATE_Y = uint8(9);
-        ORIENTATION  = uint8(10);
+        MOTION       = uint8(4);
+        COORDINATE_X = uint8(5);
+        COORDINATE_Y = uint8(6);
+        ORIENTATION  = uint8(7);
         
-        % Types of particle results: motion
-        MOTION           = uint8(11);
-        VELOCITY_MOD     = uint8(12);
-        VELOCITY_X       = uint8(13);
-        VELOCITY_Y       = uint8(14);
-        VELOCITY_ROT     = uint8(15);
-        ACCELERATION_MOD = uint8(16);
-        ACCELERATION_X   = uint8(17);
-        ACCELERATION_Y   = uint8(18);
-        ACCELERATION_ROT = uint8(19);
+        % Types of particle results: forces
+        FORCE_VEC = uint8(8);
+        FORCE_MOD = uint8(9);
+        FORCE_X   = uint8(10);
+        FORCE_Y   = uint8(11);
+        TORQUE    = uint8(12);
+        
+        % Types of particle results: velocity
+        VELOCITY_VEC = uint8(13);
+        VELOCITY_MOD = uint8(14);
+        VELOCITY_X   = uint8(15);
+        VELOCITY_Y   = uint8(16);
+        VELOCITY_ROT = uint8(17);
+        
+        % Types of particle results: acceleration
+        ACCELERATION_VEC = uint8(18);
+        ACCELERATION_MOD = uint8(19);
+        ACCELERATION_X   = uint8(20);
+        ACCELERATION_Y   = uint8(21);
+        ACCELERATION_ROT = uint8(22);
         
         % Types of particle results: thermal state
-        HEAT_RATE   = uint8(20);
-        TEMPERATURE = uint8(21);
+        HEAT_RATE   = uint8(23);
+        TEMPERATURE = uint8(24);
     end
     
     %% Public properties: Flags for required results
@@ -50,23 +55,22 @@ classdef Result < handle
         % Properties results
         has_radius = logical(false);
         
-        % Force results
-        has_force_mod = logical(false);
-        has_force_x   = logical(false);
-        has_force_y   = logical(false);
-        has_torque    = logical(false);
-        
         % Position results
         has_coord_x     = logical(false);
         has_coord_y     = logical(false);
         has_orientation = logical(false);
         
-        % Motion results
-        has_velocity_mod     = logical(false);
-        has_velocity_x       = logical(false);
-        has_velocity_y       = logical(false);
-        has_velocity_rot     = logical(false);
-        has_acceleration_mod = logical(false);
+        % Force results
+        has_force_x = logical(false);
+        has_force_y = logical(false);
+        has_torque  = logical(false);
+        
+        % Velocity results
+        has_velocity_x   = logical(false);
+        has_velocity_y   = logical(false);
+        has_velocity_rot = logical(false);
+        
+        % Acceleration results
         has_acceleration_x   = logical(false);
         has_acceleration_y   = logical(false);
         has_acceleration_rot = logical(false);
@@ -88,23 +92,22 @@ classdef Result < handle
         % Properties results
         radius double = double.empty;
         
-        % Force results
-        force_mod double = double.empty
-        force_x   double = double.empty
-        force_y   double = double.empty
-        torque    double = double.empty
-        
         % Position results
         coord_x     double = double.empty
         coord_y     double = double.empty
         orientation double = double.empty
         
-        % Motion results
-        velocity_mod     double = double.empty
-        velocity_x       double = double.empty
-        velocity_y       double = double.empty
-        velocity_rot     double = double.empty
-        acceleration_mod double = double.empty
+        % Force results
+        force_x double = double.empty
+        force_y double = double.empty
+        torque  double = double.empty
+        
+        % Velocity results
+        velocity_x   double = double.empty
+        velocity_y   double = double.empty
+        velocity_rot double = double.empty
+        
+        % Acceleration results
         acceleration_x   double = double.empty
         acceleration_y   double = double.empty
         acceleration_rot double = double.empty
@@ -146,9 +149,6 @@ classdef Result < handle
             end
             
             % Force results
-            if (this.has_force_mod)
-                this.force_mod = nan(r,c);
-            end
             if (this.has_force_x)
                 this.force_x = nan(r,c);
             end
@@ -170,10 +170,7 @@ classdef Result < handle
                 this.orientation = nan(r,c);
             end
             
-            % Motion results
-            if (this.has_velocity_mod)
-                this.velocity_mod = nan(r,c);
-            end
+            % Velocity results
             if (this.has_velocity_x)
                 this.velocity_x = nan(r,c);
             end
@@ -183,9 +180,8 @@ classdef Result < handle
             if (this.has_velocity_rot)
                 this.velocity_rot = nan(r,c);
             end
-            if (this.has_acceleration_mod)
-                this.acceleration_mod = nan(r,c);
-            end
+            
+            % Acceleration results
             if (this.has_acceleration_x)
                 this.acceleration_x = nan(r,c);
             end
@@ -229,24 +225,6 @@ classdef Result < handle
         end
         
         %------------------------------------------------------------------
-        function storeParticleForce(this,p)
-            r = p.id;
-            c = this.idx;
-            if (this.has_force_mod)
-                this.force_mod(r,c) = norm(p.force);
-            end
-            if (this.has_force_x)
-                this.force_x(r,c) = p.force(1);
-            end
-            if (this.has_force_y)
-                this.force_y(r,c) = p.force(2);
-            end
-            if (this.has_torque)
-                this.torque(r,c) = p.torque;
-            end
-        end
-        
-        %------------------------------------------------------------------
         function storeParticlePosition(this,p)
             r = p.id;
             c = this.idx;
@@ -262,12 +240,24 @@ classdef Result < handle
         end
         
         %------------------------------------------------------------------
+        function storeParticleForce(this,p)
+            r = p.id;
+            c = this.idx;
+            if (this.has_force_x)
+                this.force_x(r,c) = p.force(1);
+            end
+            if (this.has_force_y)
+                this.force_y(r,c) = p.force(2);
+            end
+            if (this.has_torque)
+                this.torque(r,c) = p.torque;
+            end
+        end
+        
+        %------------------------------------------------------------------
         function storeParticleMotion(this,p)
             r = p.id;
             c = this.idx;
-            if (this.has_velocity_mod)
-                this.velocity_mod(r,c) = norm(p.veloc_trl);
-            end
             if (this.has_velocity_x)
                 this.velocity_x(r,c) = p.veloc_trl(1);
             end
@@ -276,9 +266,6 @@ classdef Result < handle
             end
             if (this.has_velocity_rot)
                 this.velocity_rot(r,c) = p.veloc_rot;
-            end
-            if (this.has_acceleration_mod)
-                this.acceleration_mod(r,c) = norm(p.accel_trl);
             end
             if (this.has_acceleration_x)
                 this.acceleration_x(r,c) = p.accel_trl(1);

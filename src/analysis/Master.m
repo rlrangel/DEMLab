@@ -133,6 +133,13 @@ classdef Master < handle
         function startParallel(~,drv)
             p = gcp('nocreate');
             if (drv.parallel)
+                max_workers = parcluster('local').NumWorkers;
+                if (drv.workers > max_workers)
+                    drv.workers = max_workers;
+                    warning('off','backtrace');
+                    warning('The selected number of workers is greater than the available number of workers in this machine. The simulation will proceed with the %d available workers',max_workers);
+                    warning('on','backtrace');
+                end
                 if (isempty(p))
                     fprintf('\n');
                     parpool(drv.workers);

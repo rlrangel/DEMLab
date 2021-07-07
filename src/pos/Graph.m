@@ -33,7 +33,7 @@ classdef Graph < handle
     methods
         %------------------------------------------------------------------
         function execute(this,drv)
-            % Create a new window
+            % Create a new figure
             fig = figure;
             
             % Set properties
@@ -84,48 +84,54 @@ classdef Graph < handle
         end
         
         %------------------------------------------------------------------
-        function X = getData(~,drv,res,p)
+        function R = getData(~,drv,res,p)
             switch res
                 case drv.result.TIME
-                    X = drv.result.times;
+                    R = drv.result.times;
                 case drv.result.STEP
-                    X = drv.result.steps;
+                    R = drv.result.steps;
                 case drv.result.RADIUS
-                    X = drv.result.radius(p,:);
-                case drv.result.FORCE_MOD
-                    X = drv.result.force_mod(p,:);
-                case drv.result.FORCE_X
-                    X = drv.result.force_x(p,:);
-                case drv.result.FORCE_Y
-                    X = drv.result.force_y(p,:);
-                case drv.result.TORQUE
-                    X = drv.result.torque(p,:);
+                    R = drv.result.radius(p,:);
                 case drv.result.COORDINATE_X
-                    X = drv.result.coord_x(p,:);
+                    R = drv.result.coord_x(p,:);
                 case drv.result.COORDINATE_Y
-                    X = drv.result.coord_y(p,:);
+                    R = drv.result.coord_y(p,:);
                 case drv.result.ORIENTATION
-                    X = drv.result.orientation(p,:);
+                    R = drv.result.orientation(p,:);
+                case drv.result.FORCE_MOD
+                    x = drv.result.force_x(p,:);
+                    y = drv.result.force_y(p,:);
+                    R = vecnorm([x;y]);
+                case drv.result.FORCE_X
+                    R = drv.result.force_x(p,:);
+                case drv.result.FORCE_Y
+                    R = drv.result.force_y(p,:);
+                case drv.result.TORQUE
+                    R = drv.result.torque(p,:);
                 case drv.result.VELOCITY_MOD
-                    X = drv.result.velocity_mod(p,:);
+                    x = drv.result.velocity_x(p,:);
+                    y = drv.result.velocity_y(p,:);
+                    R = vecnorm([x;y]);
                 case drv.result.VELOCITY_X
-                    X = drv.result.velocity_x(p,:);
+                    R = drv.result.velocity_x(p,:);
                 case drv.result.VELOCITY_Y
-                    X = drv.result.velocity_y(p,:);
+                    R = drv.result.velocity_y(p,:);
                 case drv.result.VELOCITY_ROT
-                    X = drv.result.velocity_rot(p,:);
+                    R = drv.result.velocity_rot(p,:);
                 case drv.result.ACCELERATION_MOD
-                    X = drv.result.acceleration_mod(p,:);
+                    x = drv.result.acceleration_x(p,:);
+                    y = drv.result.acceleration_y(p,:);
+                    R = vecnorm([x;y]);
                 case drv.result.ACCELERATION_X
-                    X = drv.result.acceleration_x(p,:);
+                    R = drv.result.acceleration_x(p,:);
                 case drv.result.ACCELERATION_Y
-                    X = drv.result.acceleration_y(p,:);
+                    R = drv.result.acceleration_y(p,:);
                 case drv.result.ACCELERATION_ROT
-                    X = drv.result.acceleration_rot(p,:);
+                    R = drv.result.acceleration_rot(p,:);
                 case drv.result.TEMPERATURE
-                    X = drv.result.temperature(p,:);
+                    R = drv.result.temperature(p,:);
                 case drv.result.HEAT_RATE
-                    X = drv.result.heat_rate(p,:);
+                    R = drv.result.heat_rate(p,:);
             end
         end
     end

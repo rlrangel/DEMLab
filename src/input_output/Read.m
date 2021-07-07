@@ -2038,10 +2038,10 @@ classdef Read < handle
                 % Array of possible results
                 global_results = ["time","step"];
                 results_mech   = ["radius",...
-                                  "force_modulus","force_x","force_y","torque",...
                                   "coordinate_x","coordinate_y","orientation",...
-                                  "velocity_modulus","velocity_x","velocity_y","velocity_rot",...
-                                  "acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
+                                  "force_vector","force_modulus","force_x","force_y","torque",...
+                                  "velocity_vector","velocity_modulus","velocity_x","velocity_y","velocity_rot",...
+                                  "acceleration_vector","acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
                 results_therm  = ["heat_rate","temperature"];
                 
                 % Check and get axes data
@@ -2080,18 +2080,6 @@ classdef Read < handle
                 elseif (strcmp(X,'radius'))
                     gra.res_x = drv.result.RADIUS;
                     drv.result.has_radius = true;
-                elseif (strcmp(X,'force_modulus'))
-                    gra.res_x = drv.result.FORCE_MOD;
-                    drv.result.has_force_mod = true;
-                elseif (strcmp(X,'force_x'))
-                    gra.res_x = drv.result.FORCE_X;
-                    drv.result.has_force_x = true;
-                elseif (strcmp(X,'force_y'))
-                    gra.res_x = drv.result.FORCE_Y;
-                    drv.result.has_force_y = true;
-                elseif (strcmp(X,'torque'))
-                    gra.res_x = drv.result.TORQUE;
-                    drv.result.has_torque = true;
                 elseif (strcmp(X,'coordinate_x'))
                     gra.res_x = drv.result.COORDINATE_X;
                     drv.result.has_coord_x = true;
@@ -2101,9 +2089,23 @@ classdef Read < handle
                 elseif (strcmp(X,'orientation'))
                     gra.res_x = drv.result.ORIENTATION;
                     drv.result.has_orientation = true;
+                elseif (strcmp(X,'force_modulus'))
+                    gra.res_x = drv.result.FORCE_MOD;
+                    drv.result.has_force_x = true;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(X,'force_x'))
+                    gra.res_x = drv.result.FORCE_X;
+                    drv.result.has_force_x = true;
+                elseif (strcmp(X,'force_y'))
+                    gra.res_x = drv.result.FORCE_Y;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(X,'torque'))
+                    gra.res_x = drv.result.TORQUE;
+                    drv.result.has_torque = true;
                 elseif (strcmp(X,'velocity_modulus'))
                     gra.res_x = drv.result.VELOCITY_MOD;
-                    drv.result.has_velocity_mod = true;
+                    drv.result.has_velocity_x = true;
+                    drv.result.has_velocity_y = true;
                 elseif (strcmp(X,'velocity_x'))
                     gra.res_x = drv.result.VELOCITY_X;
                     drv.result.has_velocity_x = true;
@@ -2115,7 +2117,8 @@ classdef Read < handle
                     drv.result.has_velocity_rot = true;
                 elseif (strcmp(X,'acceleration_modulus'))
                     gra.res_x = drv.result.ACCELERATION_MOD;
-                    drv.result.has_acceleration_mod = true;
+                    drv.result.has_acceleration_x = true;
+                    drv.result.has_acceleration_y = true;
                 elseif (strcmp(X,'acceleration_x'))
                     gra.res_x = drv.result.ACCELERATION_X;
                     drv.result.has_acceleration_x = true;
@@ -2143,18 +2146,6 @@ classdef Read < handle
                 elseif (strcmp(Y,'radius'))
                     gra.res_y = drv.result.RADIUS;
                     drv.result.has_radius = true;
-                elseif (strcmp(Y,'force_modulus'))
-                    gra.res_y = drv.result.FORCE_MOD;
-                    drv.result.has_force_mod = true;
-                elseif (strcmp(Y,'force_x'))
-                    gra.res_y = drv.result.FORCE_X;
-                    drv.result.has_force_x = true;
-                elseif (strcmp(Y,'force_y'))
-                    gra.res_y = drv.result.FORCE_Y;
-                    drv.result.has_force_y = true;
-                elseif (strcmp(Y,'torque'))
-                    gra.res_y = drv.result.TORQUE;
-                    drv.result.has_torque = true;
                 elseif (strcmp(Y,'coordinate_x'))
                     gra.res_y = drv.result.COORDINATE_X;
                     drv.result.has_coord_x = true;
@@ -2164,9 +2155,23 @@ classdef Read < handle
                 elseif (strcmp(Y,'orientation'))
                     gra.res_y = drv.result.ORIENTATION;
                     drv.result.has_orientation = true;
+                elseif (strcmp(Y,'force_modulus'))
+                    gra.res_y = drv.result.FORCE_MOD;
+                    drv.result.has_force_x = true;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(Y,'force_x'))
+                    gra.res_y = drv.result.FORCE_X;
+                    drv.result.has_force_x = true;
+                elseif (strcmp(Y,'force_y'))
+                    gra.res_y = drv.result.FORCE_Y;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(Y,'torque'))
+                    gra.res_y = drv.result.TORQUE;
+                    drv.result.has_torque = true;
                 elseif (strcmp(Y,'velocity_modulus'))
                     gra.res_y = drv.result.VELOCITY_MOD;
-                    drv.result.has_velocity_mod = true;
+                    drv.result.has_velocity_x = true;
+                    drv.result.has_velocity_y = true;
                 elseif (strcmp(Y,'velocity_x'))
                     gra.res_y = drv.result.VELOCITY_X;
                     drv.result.has_velocity_x = true;
@@ -2178,7 +2183,8 @@ classdef Read < handle
                     drv.result.has_velocity_rot = true;
                 elseif (strcmp(Y,'acceleration_modulus'))
                     gra.res_y = drv.result.ACCELERATION_MOD;
-                    drv.result.has_acceleration_mod = true;
+                    drv.result.has_acceleration_x = true;
+                    drv.result.has_acceleration_y = true;
                 elseif (strcmp(Y,'acceleration_x'))
                     gra.res_y = drv.result.ACCELERATION_X;
                     drv.result.has_acceleration_x = true;
@@ -2332,11 +2338,11 @@ classdef Read < handle
                 end
                 
                 % Array of possible results
-                results_mech  = ["radius",...
-                                 "force_modulus","force_x","force_y","torque",...
-                                 "coordinate_x","coordinate_y","orientation",...
-                                 "motion","velocity_modulus","velocity_x","velocity_y","velocity_rot",...
-                                 "acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
+                results_mech   = ["radius",...
+                                  "motion","coordinate_x","coordinate_y","orientation",...
+                                  "force_vector","force_modulus","force_x","force_y","torque",...
+                                  "velocity_vector","velocity_modulus","velocity_x","velocity_y","velocity_rot",...
+                                  "acceleration_vector","acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
                 results_therm = ["heat_rate","temperature"];
                 
                 % Result type
@@ -2353,18 +2359,9 @@ classdef Read < handle
                 elseif (strcmp(result,'radius'))
                     anm.res_type = drv.result.RADIUS;
                     drv.result.has_radius = true;
-                elseif (strcmp(result,'force_modulus'))
-                    anm.res_type = drv.result.FORCE_MOD;
-                    drv.result.has_force_mod = true;
-                elseif (strcmp(result,'force_x'))
-                    anm.res_type = drv.result.FORCE_X;
-                    drv.result.has_force_x = true;
-                elseif (strcmp(result,'force_y'))
-                    anm.res_type = drv.result.FORCE_Y;
-                    drv.result.has_force_y = true;
-                elseif (strcmp(result,'torque'))
-                    anm.res_type = drv.result.TORQUE;
-                    drv.result.has_torque = true;
+                elseif (strcmp(result,'motion'))
+                    anm.res_type = drv.result.MOTION;
+                    drv.result.has_orientation = true;
                 elseif (strcmp(result,'coordinate_x'))
                     anm.res_type = drv.result.COORDINATE_X;
                     drv.result.has_coord_x = true;
@@ -2374,12 +2371,31 @@ classdef Read < handle
                 elseif (strcmp(result,'orientation'))
                     anm.res_type = drv.result.ORIENTATION;
                     drv.result.has_orientation = true;
-                elseif (strcmp(result,'motion'))
-                    anm.res_type = drv.result.MOTION;
-                    drv.result.has_orientation = true;
+                elseif (strcmp(result,'force_vector'))
+                    anm.res_type = drv.result.FORCE_VEC;
+                    drv.result.has_force_x = true;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(result,'force_modulus'))
+                    anm.res_type = drv.result.FORCE_MOD;
+                    drv.result.has_force_x = true;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(result,'force_x'))
+                    anm.res_type = drv.result.FORCE_X;
+                    drv.result.has_force_x = true;
+                elseif (strcmp(result,'force_y'))
+                    anm.res_type = drv.result.FORCE_Y;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(result,'torque'))
+                    anm.res_type = drv.result.TORQUE;
+                    drv.result.has_torque = true;
+                elseif (strcmp(result,'velocity_vector'))
+                    anm.res_type = drv.result.VELOCITY_VEC;
+                    drv.result.has_velocity_x = true;
+                    drv.result.has_velocity_y = true;
                 elseif (strcmp(result,'velocity_modulus'))
                     anm.res_type = drv.result.VELOCITY_MOD;
-                    drv.result.has_velocity_mod = true;
+                    drv.result.has_velocity_x = true;
+                    drv.result.has_velocity_y = true;
                 elseif (strcmp(result,'velocity_x'))
                     anm.res_type = drv.result.VELOCITY_X;
                     drv.result.has_velocity_x = true;
@@ -2389,9 +2405,14 @@ classdef Read < handle
                 elseif (strcmp(result,'velocity_rot'))
                     anm.res_type = drv.result.VELOCITY_ROT;
                     drv.result.has_velocity_rot = true;
+                elseif (strcmp(result,'acceleration_vector'))
+                    anm.res_type = drv.result.ACCELERATION_VEC;
+                    drv.result.has_acceleration_x = true;
+                    drv.result.has_acceleration_y = true;
                 elseif (strcmp(result,'acceleration_modulus'))
                     anm.res_type = drv.result.ACCELERATION_MOD;
-                    drv.result.has_acceleration_mod = true;
+                    drv.result.has_acceleration_x = true;
+                    drv.result.has_acceleration_y = true;
                 elseif (strcmp(result,'acceleration_x'))
                     anm.res_type = drv.result.ACCELERATION_X;
                     drv.result.has_acceleration_x = true;

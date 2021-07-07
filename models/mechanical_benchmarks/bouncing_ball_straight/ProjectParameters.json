@@ -12,7 +12,7 @@
 		"integr_scheme_trans" : "forward_euler",
 		"integr_scheme_rotat" : "forward_euler",
 		"parallelization"     : true,
-		"workers"             : 8
+		"workers"             : 4
 	},
 	"Search": {
 		"scheme"           : "simple_loop",

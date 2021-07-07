@@ -44,9 +44,14 @@ classdef Animate < handle
         path   string = string.empty;   % path to model folder
         
         % Results
+        np        uint32 = uint32.empty;   % total number of particles
+        nf        uint32 = uint32.empty;   % total number of frames
         res_type  uint8  = uint8.empty;    % flag for type of result
-        res_data  double = double.empty;   % array of result to be exhibited
+        res_scal  double = double.empty;   % array of scalar result to be exhibited
         res_range double = double.empty;   % array of results range (minimum to maximum value)
+        res_vecx  double = double.empty;   % array of x vector result to be exhibited
+        res_vecy  double = double.empty;   % array of y vector result to be exhibited
+        arrow_fct double = double.empty;   % multiplicator factor to define vetor arrow size
         coord_x   double = double.empty;   % array of particles x coordinates
         coord_y   double = double.empty;   % array of particles y coordinates
         radius    double = double.empty;   % array of particles radius
@@ -84,8 +89,8 @@ classdef Animate < handle
             this.fig = figure;
             
             % Set figure properties
-            this.fig.Visible = 'off';
-            this.fig.Units = 'normalized';
+            this.fig.Visible  = 'off';
+            this.fig.Units    = 'normalized';
             this.fig.Position = [0.1 0.1 0.8 0.8];
             
             % Set axes properties
@@ -121,64 +126,84 @@ classdef Animate < handle
             switch this.res_type
                 % Motion
                 case drv.result.MOTION
-                    this.res_data = drv.result.orientation;
+                    this.res_scal = drv.result.orientation;
                     this.type = this.MOTION;
                 
                 % Scalar
                 case drv.result.RADIUS
-                    this.res_data = drv.result.radius;
-                    this.type = this.SCALAR;
-                case drv.result.FORCE_MOD
-                    this.res_data = drv.result.force_mod;
-                    this.type = this.SCALAR;
-                case drv.result.FORCE_X
-                    this.res_data = drv.result.force_x;
-                    this.type = this.SCALAR;
-                case drv.result.FORCE_Y
-                    this.res_data = drv.result.force_y;
-                    this.type = this.SCALAR;
-                case drv.result.TORQUE
-                    this.res_data = drv.result.torque;
+                    this.res_scal = drv.result.radius;
                     this.type = this.SCALAR;
                 case drv.result.COORDINATE_X
-                    this.res_data = drv.result.coord_x;
+                    this.res_scal = drv.result.coord_x;
                     this.type = this.SCALAR;
                 case drv.result.COORDINATE_Y
-                    this.res_data = drv.result.coord_y;
+                    this.res_scal = drv.result.coord_y;
                     this.type = this.SCALAR;
                 case drv.result.ORIENTATION
-                    this.res_data = drv.result.orientation;
+                    this.res_scal = drv.result.orientation;
+                    this.type = this.SCALAR;
+                case drv.result.FORCE_MOD
+                    x = drv.result.force_x;
+                    y = drv.result.force_y;
+                    this.res_scal = vecnorm([x;y]);
+                    this.type = this.SCALAR;
+                case drv.result.FORCE_X
+                    this.res_scal = drv.result.force_x;
+                    this.type = this.SCALAR;
+                case drv.result.FORCE_Y
+                    this.res_scal = drv.result.force_y;
+                    this.type = this.SCALAR;
+                case drv.result.TORQUE
+                    this.res_scal = drv.result.torque;
                     this.type = this.SCALAR;
                 case drv.result.VELOCITY_MOD
-                    this.res_data = drv.result.velocity_mod;
+                    x = drv.result.velocity_x;
+                    y = drv.result.velocity_y;
+                    this.res_scal = vecnorm([x;y]);
                     this.type = this.SCALAR;
                 case drv.result.VELOCITY_X
-                    this.res_data = drv.result.velocity_x;
+                    this.res_scal = drv.result.velocity_x;
                     this.type = this.SCALAR;
                 case drv.result.VELOCITY_Y
-                    this.res_data = drv.result.velocity_y;
+                    this.res_scal = drv.result.velocity_y;
                     this.type = this.SCALAR;
                 case drv.result.VELOCITY_ROT
-                    this.res_data = drv.result.velocity_rot;
+                    this.res_scal = drv.result.velocity_rot;
                     this.type = this.SCALAR;
                 case drv.result.ACCELERATION_MOD
-                    this.res_data = drv.result.acceleration_mod;
+                    x = drv.result.acceleration_x;
+                    y = drv.result.acceleration_Y;
+                    this.res_scal = vecnorm([x;y]);
                     this.type = this.SCALAR;
                 case drv.result.ACCELERATION_X
-                    this.res_data = drv.result.acceleration_x;
+                    this.res_scal = drv.result.acceleration_x;
                     this.type = this.SCALAR;
                 case drv.result.ACCELERATION_Y
-                    this.res_data = drv.result.acceleration_y;
+                    this.res_scal = drv.result.acceleration_y;
                     this.type = this.SCALAR;
                 case drv.result.ACCELERATION_ROT
-                    this.res_data = drv.result.acceleration_rot;
+                    this.res_scal = drv.result.acceleration_rot;
                     this.type = this.SCALAR;
                 case drv.result.TEMPERATURE
-                    this.res_data = drv.result.temperature;
+                    this.res_scal = drv.result.temperature;
                     this.type = this.SCALAR;
                 case drv.result.HEAT_RATE
-                    this.res_data = drv.result.heat_rate;
+                    this.res_scal = drv.result.heat_rate;
                     this.type = this.SCALAR;
+                    
+                % Vector
+                case drv.result.FORCE_VEC
+                    this.res_vecx = drv.result.force_x;
+                    this.res_vecy = drv.result.force_y;
+                    this.type = this.VECTOR;
+                case drv.result.VELOCITY_VEC
+                    this.res_vecx = drv.result.velocity_x;
+                    this.res_vecy = drv.result.velocity_y;
+                    this.type = this.VECTOR;
+                case drv.result.ACCELERATION_VEC
+                    this.res_vecx = drv.result.acceleration_x;
+                    this.res_vecy = drv.result.acceleration_y;
+                    this.type = this.VECTOR;
             end
         end
         
@@ -186,8 +211,8 @@ classdef Animate < handle
         function createAnimation(this,drv)
             if (this.type == this.SCALAR)
                 % Get result range
-                min_val = min(this.res_data(:));
-                max_val = max(this.res_data(:));
+                min_val = min(this.res_scal(:));
+                max_val = max(this.res_scal(:));
                 if (min_val == max_val)
                     min_val = min_val - 1;
                     max_val = max_val + 1;
@@ -198,21 +223,41 @@ classdef Animate < handle
                 colormap jet;
                 caxis([min_val,max_val]);
                 colorbar;
+            
+            % Arrow size for vector results
+            elseif (this.type == this.VECTOR)
+                % Maximum vector norm value
+                x = this.res_vecx;
+                y = this.res_vecy;
+                max_vec = max(sqrt(x.^2+y.^2));
+                
+                % Figure size
+                limitx = xlim;
+                limity = ylim;
+                dx = limitx(2)-limitx(1);
+                dy = limity(2)-limity(1);
+                d  = sqrt(dx^2+dy^2);
+                
+                % Multiplicator factor
+                this.arrow_fct = 0.1 * d/max_vec;
             end
             
+            % Number of particles and frames
+            this.np = size(this.times,1);
+            this.nf = size(this.times,2);
+            
             % Preallocate movie frames array
-            nframes = size(this.res_data,2);
-            this.frames(nframes) = struct('cdata',[],'colormap',[]);
+            this.frames(this.nf) = struct('cdata',[],'colormap',[]);
             
             % Generate movie frames
-            for i = 1:nframes
+            for i = 1:this.nf
                 cla;
                 this.drawMovieFrame(drv,i);
                 this.frames(i) = getframe(this.fig);
             end
             
             % Compute frame rate (frames / second)
-            this.fps = nframes/drv.time;
+            this.fps = this.nf/drv.time;
         end
         
         %------------------------------------------------------------------
@@ -228,13 +273,9 @@ classdef Animate < handle
     methods
         %------------------------------------------------------------------
         function drawMovieFrame(this,drv,f)
-            % Number of particles and current frame time
-            np = size(this.res_data,1);
-            t = this.times(f);
-            
             % Draw particles
-            for i = 1:np
-                if (isnan(this.res_data(i,f)))
+            parfor i = 1:this.np
+                if (isnan(this.times(i,f)))
                     continue;
                 end
                 switch this.type
@@ -261,14 +302,14 @@ classdef Animate < handle
             
             % Draw bounding box
             if (~isempty(drv.bbox))
-                if (drv.bbox.isActive(t))
+                if (drv.bbox.isActive(this.times(f)))
                     this.drawBBox(drv.bbox);
                 end
             end
             
             % Draw sinks
             for i = 1:length(drv.sink)
-                if (drv.sink(i).isActive(t))
+                if (drv.sink(i).isActive(this.times(f)))
                     this.drawSink(drv.sink(i));
                 end
             end
@@ -289,7 +330,7 @@ classdef Animate < handle
             rectangle('Position',pos,'Curvature',[1 1],'EdgeColor',c,'LineWidth',w,'LineStyle',s,'FaceColor','none');
             
             % Plot orientation
-            o = this.res_data(i,j);
+            o = this.res_scal(i,j);
             p = [x,y]+[r*cos(o),r*sin(o)];
             line([x,p(1)],[y,p(2)],'Color',c,'LineWidth',w,'LineStyle',s);
         end
@@ -303,7 +344,7 @@ classdef Animate < handle
             pos = [x-r,y-r,2*r,2*r];
             
             % Color according to result
-            clr = interp1(this.res_range,colormap,this.res_data(i,j));
+            clr = interp1(this.res_range,colormap,this.res_scal(i,j));
             
             % Plot (rectangle with rounded sides)
             c = this.col_pedge;
@@ -314,7 +355,22 @@ classdef Animate < handle
         
         %------------------------------------------------------------------
         function drawParticleVector(this,i,j)
+            % Position
+            x = this.coord_x(i,j);
+            y = this.coord_y(i,j);
+            r = this.radius(i,j);
+            pos = [x-r,y-r,2*r,2*r];
             
+            % Plot (rectangle with rounded sides)
+            c = this.col_pedge;
+            w = this.wid_pedge;
+            s = this.sty_pedge;
+            rectangle('Position',pos,'Curvature',[1 1],'EdgeColor',c,'LineWidth',w,'LineStyle',s,'FaceColor','none');
+            
+            % Plot arrow
+            vx = this.arrow_fct * this.res_vecx(i,j);
+            vy = this.arrow_fct * this.res_vecy(i,j);
+            line([x,x+vx],[y,y+vy],'Color',c,'LineWidth',w,'LineStyle',s);
         end
         
         %------------------------------------------------------------------
