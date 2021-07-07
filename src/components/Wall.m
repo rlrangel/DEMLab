@@ -25,6 +25,12 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         
         % Neighbours Interactions
         interacts Interact = Interact.empty;    % handles to objects of Interact class
+        
+        % Fixed conditions (handles to objects of PC class)
+        fc_temperature PC = PC.empty;
+        
+        % Current thermal state
+        temperature double = double.empty;   % temperature
     end
     
     %% Constructor method
@@ -45,11 +51,19 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
     
     %% Abstract methods
     methods (Abstract)
-        
+        %------------------------------------------------------------------
+        setDefaultProps(this);
     end
     
     %% Public methods
     methods
-        
+        %------------------------------------------------------------------
+        function setFCTemperature(this,time)
+            for i = 1:length(this.fc_temperature)
+                if (this.fc_temperature(i).isActive(time))
+                    this.temperature = this.fc_temperature(i).getValue(time);
+                end
+            end
+        end
     end
 end

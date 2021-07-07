@@ -29,6 +29,7 @@ classdef Driver_Thermal < Driver
             this.n_interacts = 0;
             this.n_materials = 0;
             this.n_prescond  = 0;
+            this.search      = Search_SimpleLoop();
             this.scheme_temp = Scheme_EulerForward();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
@@ -56,6 +57,7 @@ classdef Driver_Thermal < Driver
                 % Loop over all interactions and particles
                 this.interactionLoop();
                 this.particleLoop();
+                this.wallLoop();
                 
                 % Print progress
                 this.printProgress();
@@ -79,11 +81,11 @@ classdef Driver_Thermal < Driver
                 if (int.kinemat.separ < 0)
                     % Constant parameters needed to be set only once
                     if (step == 1)
-                        int.cconduc = int.cconduc.setParameters(int);
-                        int.kinemat = int.kinemat.setContactArea(int);
                         int.kinemat.is_contact = true;
                         int.kinemat.dir_n  =  int.kinemat.dir / int.kinemat.dist;
                         int.kinemat.ovlp_n = -int.kinemat.separ;
+                        int.kinemat = int.kinemat.setContactArea(int);
+                        int.cconduc = int.cconduc.setParameters(int);
                     end
                     
                     % Compute interaction results and add to particles
@@ -112,15 +114,21 @@ classdef Driver_Thermal < Driver
             for i = 1:this.n_particles
                 p = particles(i);
                 
-                % Add prescribed conditions
-                p.addPCHeatFlux(time);
-                p.addPCHeatRate(time);
-                
-                % Evaluate equation of energy balance
-                p.computeTempChange();
-                
-                % Numerical integration
-                this.scheme_temp.updateTemperature(p,time_step);
+                % Solver thermal state
+                if (isempty(p.fc_temperature))
+                    % Add prescribed conditions
+                    p.addPCHeatFlux(time);
+                    p.addPCHeatRate(time);
+                    
+                    % Evaluate equation of energy balance
+                    p.computeTempChange();
+                    
+                    % Numerical integration
+                    this.scheme_temp.updateTemperature(p,time_step);
+                else
+                    % Set fixed conditions
+                    p.setFCTemperature(time);
+                end
                 
                 % Store results
                 if (store)
@@ -130,6 +138,21 @@ classdef Driver_Thermal < Driver
                 
                 % Reset forcing terms for next step
                 p.resetForcingTerms();
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function wallLoop(this)
+            % Properties accessed in parallel loop
+            walls = this.walls;
+            time  = this.time;
+            
+            % Loop over all walls
+            for i = 1:this.n_walls
+                w = walls(i);
+                
+                % Set fixed conditions
+                w.setFCTemperature(time);
             end
         end
     end

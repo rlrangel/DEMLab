@@ -16,11 +16,16 @@ classdef Wall_Circle < Wall
     methods
         function this = Wall_Circle()
             this = this@Wall(Wall.CIRCLE);
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
-        
+        %------------------------------------------------------------------
+        function setDefaultProps(this)
+            % Thermal state variables
+            this.temperature = 0;
+        end
     end
 end

@@ -34,6 +34,7 @@ classdef Driver_ThermoMechanical < Driver
             this.n_interacts = 0;
             this.n_materials = 0;
             this.n_prescond  = 0;
+            this.search      = Search_SimpleLoop();
             this.scheme_trl  = Scheme_EulerForward();
             this.scheme_rot  = Scheme_EulerForward();
             this.scheme_temp = Scheme_EulerForward();
@@ -72,6 +73,7 @@ classdef Driver_ThermoMechanical < Driver
                 % Loop over all interactions and particles
                 this.interactionLoop();
                 this.particleLoop();
+                this.wallLoop();
                 
                 % Print progress
                 this.printProgress();
@@ -163,35 +165,54 @@ classdef Driver_ThermoMechanical < Driver
             for i = 1:this.n_particles
                 p = particles(i);
                 
-                % Add global conditions
-                p.addWeight();
+                % Solver mechanical state
+                if (1)
+                    % Add global conditions
+                    p.addWeight();
+                    
+                    % Add prescribed conditions
+                    p.addPCForce(time);
+                    p.addPCTorque(time);
+                    
+                    % Evaluate equation of motion
+                    p.computeAccelTrl();
+                    p.computeAccelRot();
+                    
+                    % Numerical integration
+                    this.scheme_trl.updatePosition(p,time_step);
+                    this.scheme_rot.updateOrientation(p,time_step);
+                else
+                    % Set fixed conditions
+                end
                 
-                % Add prescribed conditions
-                p.addPCForce(time);
-                p.addPCTorque(time);
-                p.addPCHeatFlux(time);
-                p.addPCHeatRate(time);
-                
-                % Evaluate equations of motion and energy balance
-                p.computeAccelTrl();
-                p.computeAccelRot();
-                p.computeTempChange();
-                
-                % Numerical integration
-                this.scheme_trl.updatePosition(p,time_step);
-                this.scheme_rot.updateOrientation(p,time_step);
-                this.scheme_temp.updateTemperature(p,time_step);
+                % Solver thermal state
+                if (isempty(p.fc_temperature))
+                    % Add prescribed conditions
+                    p.addPCHeatFlux(time);
+                    p.addPCHeatRate(time);
+                    
+                    % Evaluate equation of energy balance
+                    p.computeTempChange();
+                    
+                    % Numerical integration
+                    this.scheme_temp.updateTemperature(p,time_step);
+                else
+                    % Set fixed conditions
+                    p.setFCTemperature(time);
+                end
                 
                 % Remove particles not respecting bbox and sinks
                 if (this.removeParticle(p))
                     removed = true;
+                    continue;
                 end
                 
                 % Store results
                 if (store)
-                    this.result.storeParticleForce(p);
-                    this.result.storeParticlePosition(p);
                     this.result.storeParticleMotion(p);
+                    this.result.storeParticlePosition(p);
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticleThermal(p);
                 end
                 
                 % Reset forcing terms for next step
@@ -201,6 +222,21 @@ classdef Driver_ThermoMechanical < Driver
             % Erase handles to removed particles from global list and model parts
             if (removed)
                 this.eraseHandlesToRemovedParticle;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function wallLoop(this)
+            % Properties accessed in parallel loop
+            walls = this.walls;
+            time  = this.time;
+            
+            % Loop over all walls
+            for i = 1:this.n_walls
+                w = walls(i);
+                
+                % Set fixed conditions
+                w.setFCTemperature(time);
             end
         end
     end

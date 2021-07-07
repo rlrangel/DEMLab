@@ -35,10 +35,13 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         interacts Interact = Interact.empty;   % handles to objects of Interact class
         
         % Prescribed conditions (handles to objects of PC class)
-        pc_forces     PC = PC.empty;
-        pc_torques    PC = PC.empty;
-        pc_heatfluxes PC = PC.empty;
-        pc_heatrates  PC = PC.empty;
+        pc_force     PC = PC.empty;
+        pc_torque    PC = PC.empty;
+        pc_heatflux  PC = PC.empty;
+        pc_heatrate  PC = PC.empty;
+        
+        % Fixed conditions (handles to objects of PC class)
+        fc_temperature PC = PC.empty;
         
         % Total forcing terms
         force     double = double.empty;
@@ -118,27 +121,27 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         function addPCForce(this,time)
-            for i = 1:length(this.pc_forces)
-                if (this.pc_forces(i).isActive(time))
-                    this.force = this.force + this.pc_forces(i).getValue(time);
+            for i = 1:length(this.pc_force)
+                if (this.pc_force(i).isActive(time))
+                    this.force = this.force + this.pc_force(i).getValue(time);
                 end
             end
         end
         
         %------------------------------------------------------------------
         function addPCTorque(this,time)
-            for i = 1:length(this.pc_torques)
-                if (this.pc_torques(i).isActive(time))
-                    this.torque = this.torque + this.pc_torques(i).getValue(time);
+            for i = 1:length(this.pc_torque)
+                if (this.pc_torque(i).isActive(time))
+                    this.torque = this.torque + this.pc_torque(i).getValue(time);
                 end
             end
         end
         
         %------------------------------------------------------------------
         function addPCHeatFlux(this,time)
-            for i = 1:length(this.pc_heatfluxes)
-                if (this.pc_heatfluxes(i).isActive(time))
-                    hr = this.pc_heatfluxes(i).getValue(time) * this.surface;
+            for i = 1:length(this.pc_heatflux)
+                if (this.pc_heatflux(i).isActive(time))
+                    hr = this.pc_heatflux(i).getValue(time) * this.surface;
                     this.heat_rate = this.heat_rate + hr;
                 end
             end
@@ -146,9 +149,18 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         function addPCHeatRate(this,time)
-            for i = 1:length(this.pc_heatrates)
-                if (this.pc_heatrates(i).isActive(time))
-                    this.heat_rate = this.heat_rate + this.pc_heatrates(i).getValue(time);
+            for i = 1:length(this.pc_heatrate)
+                if (this.pc_heatrate(i).isActive(time))
+                    this.heat_rate = this.heat_rate + this.pc_heatrate(i).getValue(time);
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function setFCTemperature(this,time)
+            for i = 1:length(this.fc_temperature)
+                if (this.fc_temperature(i).isActive(time))
+                    this.temperature = this.fc_temperature(i).getValue(time);
                 end
             end
         end

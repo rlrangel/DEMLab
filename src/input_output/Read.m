@@ -62,6 +62,9 @@ classdef Read < handle
                 status = this.getPrescribedCondition(json,drv,path);
             end
             if (status)
+                status = this.getFixedCondition(json,drv,path);
+            end
+            if (status)
                 status = this.getMaterial(json,drv);
             end
             if (status)
@@ -352,14 +355,14 @@ classdef Read < handle
         function status = getSearch(this,json,drv)
             status = 1;
             if (~isfield(json,'Search'))
-                fprintf(2,'Missing data in project parameters file: Search.\n');
-                status = 0; return;
-            elseif (~isfield(json.Search,'scheme'))
-                fprintf(2,'Missing data in project parameters file: Search.scheme.\n');
-                status = 0; return;
+                return;
             end
             
             % Scheme
+            if (~isfield(json.Search,'scheme'))
+                fprintf(2,'Missing data in project parameters file: Search.scheme.\n');
+                status = 0; return;
+            end
             scheme = string(json.Search.scheme);
             if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'simple_loop'))
                 fprintf(2,'Invalid data in project parameters file: Search.scheme.\n');
@@ -810,7 +813,7 @@ classdef Read < handle
                         status = 0; return;
                     end
                     
-                    % Apply initial temperature to selected particles
+                    % Apply initial temperature to selected elements
                     model_parts = string(T.model_parts);
                     for j = 1:length(model_parts)
                         name = model_parts(j);
@@ -820,6 +823,8 @@ classdef Read < handle
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
                             [drv.particles.temperature] = deal(val);
+                        elseif (strcmp(name,'WALLS'))
+                            [drv.walls.temperature] = deal(val);
                         else
                             mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
@@ -827,6 +832,7 @@ classdef Read < handle
                                 continue;
                             end
                             [mp.particles.temperature] = deal(val);
+                            [mp.walls.temperature]     = deal(val);
                         end
                     end
                 end
@@ -932,7 +938,7 @@ classdef Read < handle
                             status = 0; return;
                         elseif (~this.isDoubleArray(amplitude,2) || any(amplitude < 0))
                             fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.amplitude.\n');
-                            fprintf(2,'It must be a pair of numeric values with X,Y force components.\n');
+                            fprintf(2,'It must be a pair of positive values with X,Y force components.\n');
                             status = 0; return;
                         elseif (~this.isDoubleArray(period,1) || period <= 0)
                             fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.period.\n');
@@ -1067,14 +1073,14 @@ classdef Read < handle
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
-                            [drv.particles.pc_forces] = deal(pc);
+                            [drv.particles.pc_force] = deal(pc);
                         else
                             mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
                                 this.warn('Nonexistent model part used in PrescribedCondition.force.');
                                 continue;
                             end
-                            [mp.particles.pc_forces] = deal(pc);
+                            [mp.particles.pc_force] = deal(pc);
                         end
                     end
                     
@@ -1163,7 +1169,7 @@ classdef Read < handle
                             status = 0; return;
                         elseif (~this.isDoubleArray(amplitude,1) || amplitude < 0)
                             fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.amplitude.\n');
-                            fprintf(2,'It must be a numeric value.\n');
+                            fprintf(2,'It must be a positive value with the amplitude of oscillation.\n');
                             status = 0; return;
                         elseif (~this.isDoubleArray(period,1) || period <= 0)
                             fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.period.\n');
@@ -1298,14 +1304,14 @@ classdef Read < handle
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
-                            [drv.particles.pc_torques] = deal(pc);
+                            [drv.particles.pc_torque] = deal(pc);
                         else
                             mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
                                 this.warn('Nonexistent model part used in PrescribedCondition.torque.');
                                 continue;
                             end
-                            [mp.particles.pc_torques] = deal(pc);
+                            [mp.particles.pc_torque] = deal(pc);
                         end
                     end
                     
@@ -1394,7 +1400,7 @@ classdef Read < handle
                             status = 0; return;
                         elseif (~this.isDoubleArray(amplitude,1) || amplitude < 0)
                             fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.amplitude.\n');
-                            fprintf(2,'It must be a numeric value.\n');
+                            fprintf(2,'It must be a positive value with the amplitude of oscillation.\n');
                             status = 0; return;
                         elseif (~this.isDoubleArray(period,1) || period <= 0)
                             fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.period.\n');
@@ -1529,14 +1535,14 @@ classdef Read < handle
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
-                            [drv.particles.pc_heatfluxes] = deal(pc);
+                            [drv.particles.pc_heatflux] = deal(pc);
                         else
                             mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
                                 this.warn('Nonexistent model part used in PrescribedCondition.heat_flux.');
                                 continue;
                             end
-                            [mp.particles.pc_heatfluxes] = deal(pc);
+                            [mp.particles.pc_heatflux] = deal(pc);
                         end
                     end
                     
@@ -1625,7 +1631,7 @@ classdef Read < handle
                             status = 0; return;
                         elseif (~this.isDoubleArray(amplitude,1) || amplitude < 0)
                             fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.amplitude.\n');
-                            fprintf(2,'It must be a numeric value.\n');
+                            fprintf(2,'It must be a positive value with the amplitude of oscillation.\n');
                             status = 0; return;
                         elseif (~this.isDoubleArray(period,1) || period <= 0)
                             fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.period.\n');
@@ -1760,20 +1766,267 @@ classdef Read < handle
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
-                            [drv.particles.pc_heatrates] = deal(pc);
+                            [drv.particles.pc_heatrate] = deal(pc);
                         else
                             mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
                                 this.warn('Nonexistent model part used in PrescribedCondition.heat_rate.');
                                 continue;
                             end
-                            [mp.particles.pc_heatrates] = deal(pc);
+                            [mp.particles.pc_heatrate] = deal(pc);
                         end
                     end
                     
                     % Add to global list in driver
                     drv.prescond(end+1) = pc;
                     drv.n_prescond = drv.n_prescond + 1;
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getFixedCondition(this,json,drv,path)
+            status = 1;
+            if (~isfield(json,'FixedCondition'))
+                return;
+            end
+            FC = json.FixedCondition;
+            
+            fields = fieldnames(FC);
+            for i = 1:length(fields)
+                f = string(fields(i));
+                if (~strcmp(f,'temperature'))
+                    this.warn('A nonexistent field was identified in FixedCondition. It will be ignored.');
+                end
+            end
+            
+            % TEMPERATURE
+            if (isfield(FC,'temperature'))
+                for i = 1:length(FC.temperature)
+                    T = FC.temperature(i);
+                    if (~isfield(T,'type') || ~isfield(T,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: FixedCondition.temperature must have type and model_parts.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Type
+                    type = string(T.type);
+                    if (~this.isStringArray(type,1))
+                        fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.type.\n');
+                        status = 0; return;
+                        
+                    elseif (strcmp(type,'uniform'))
+                        % Create object
+                        cond = PC_Uniform();
+                        
+                        % Value
+                        if (~isfield(T,'value'))
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.temperature.value.\n');
+                            status = 0; return;
+                        end
+                        val = T.value;
+                        if (~this.isDoubleArray(val,1))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.value.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        end
+                        cond.value = val;
+                        
+                    elseif (strcmp(type,'linear'))
+                        % Create object
+                        cond = PC_Linear();
+                        
+                        % Initial value
+                        if (isfield(T,'initial_value'))
+                            val = T.initial_value;
+                            if (~this.isDoubleArray(val,1))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.initial_value.\n');
+                                fprintf(2,'It must be a numeric value.\n');
+                                status = 0; return;
+                            end
+                            cond.init_value = val;
+                        end
+                        
+                        % Slope
+                        if (~isfield(T,'slope'))
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.temperature.slope.\n');
+                            status = 0; return;
+                        end
+                        slope = T.slope;
+                        if (~this.isDoubleArray(slope,1))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.slope.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        end
+                        cond.slope = slope;
+                        
+                    elseif (strcmp(type,'oscillatory'))
+                        % Create object
+                        cond = PC_Oscillatory();
+                        
+                        % Base value, amplitude and period
+                        if (~isfield(T,'base_value') || ~isfield(T,'amplitude') || ~isfield(T,'period'))
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.temperature.\n');
+                            fprintf(2,'Oscillatory condition requires at least 3 fields: base_value, amplitude, period.\n');
+                            status = 0; return;
+                        end
+                        val       = T.base_value;
+                        amplitude = T.amplitude;
+                        period    = T.period;
+                        if (~this.isDoubleArray(val,1))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.base_value.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(amplitude,1) || amplitude < 0)
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.amplitude.\n');
+                            fprintf(2,'It must be a positive value with the amplitude of oscillation.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(period,1) || period <= 0)
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.period.\n');
+                            fprintf(2,'It must be a positive value with the period of oscillation.\n');
+                            status = 0; return;
+                        end
+                        cond.base_value = val;
+                        cond.amplitude  = amplitude;
+                        cond.period     = period;
+                        
+                        % Shift
+                        if (isfield(T,'shift'))
+                            shift = T.shift;
+                            if (~this.isDoubleArray(shift,1))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.shift.\n');
+                                fprintf(2,'It must be a numeric value with the shift of the oscillation.\n');
+                                status = 0; return;
+                            end
+                            cond.shift = shift;
+                        end
+                        
+                    elseif (strcmp(type,'table'))
+                        % Create object
+                        cond = PC_Table();
+                        
+                        % Table values
+                        if (isfield(T,'values'))
+                            vals = T.values';
+                            if (~this.isDoubleArray(vals,length(vals)))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.values.\n');
+                                fprintf(2,'It must be a numeric table with the first row as the independent variable values and the second as the dependent variable values.\n');
+                                status = 0; return;
+                            end
+                        elseif (isfield(T,'file'))
+                            file = T.file;
+                            if (~this.isStringArray(file,1))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.file.\n');
+                                fprintf(2,'It must be a string with the values file name.\n');
+                                status = 0; return;
+                            end
+                            [status,vals] = this.readTable(fullfile(path,file),2);
+                            if (status == 0)
+                                return;
+                            end
+                        else
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.temperature.values or FixedCondition.temperature.file.\n');
+                            status = 0; return;
+                        end
+                        if (size(vals,1) < 2 || size(vals,2) ~= 2)
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.values.\n');
+                            fprintf(2,'It must contain 2 columns (one for the independent variable values and another for the temperature values), and at least 2 points.\n');
+                            status = 0; return;
+                        end
+                        cond.val_x = vals(:,1);
+                        cond.val_y = vals(:,2);
+                        
+                        % Interpolation method
+                        if (isfield(T,'interpolation'))
+                            interp = T.interpolation;
+                            if (~this.isStringArray(interp,1) ||...
+                               (~strcmp(interp,'linear') &&...
+                                ~strcmp(interp,'makima') &&...
+                                ~strcmp(interp,'cubic')  &&...
+                                ~strcmp(interp,'pchip')  &&...
+                                ~strcmp(interp,'spline')))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.interpolation.\n');
+                                fprintf(2,'It must be a string with the interpolation method: linear, makima, cubic, pchip or spline.\n');
+                                status = 0; return;
+                            elseif (strcmp(interp,'linear'))
+                                if (size(cond.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for linear interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_LINEAR;
+                            elseif (strcmp(interp,'makima'))
+                                if (size(cond.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for makima interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_MAKIMA;
+                            elseif (strcmp(interp,'cubic'))
+                                if (size(cond.val_x,1) < 3)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.values.\n');
+                                    fprintf(2,'It must contain at least 3 points for cubic interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_CUBIC;
+                            elseif (strcmp(interp,'pchip'))
+                                if (size(cond.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for pchip interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_PCHIP;
+                            elseif (strcmp(interp,'spline'))
+                                if (size(cond.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for spline interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_SPLINE;
+                            end
+                        end
+                    else
+                        fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.type.\n');
+                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Interval
+                    if (isfield(T,'interval'))
+                        interval = T.interval;
+                        if (~this.isDoubleArray(interval,2) || interval(1) >= interval(2))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.interval.\n');
+                            fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
+                            status = 0; return;
+                        end
+                        cond.interval  = interval;
+                        cond.init_time = min(0,min(interval));
+                    else
+                        cond.init_time = 0;
+                    end
+                    
+                    % Add handle to fixed condition to selected elements
+                    model_parts = string(T.model_parts);
+                    for j = 1:length(model_parts)
+                        name = model_parts(j);
+                        if (~this.isStringArray(name,1))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0; return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            [drv.particles.fc_temperature] = deal(cond);
+                        elseif (strcmp(name,'WALLS'))
+                            [drv.walls.fc_temperature] = deal(cond);
+                        else
+                            mp = findobj(drv.mparts,'name',name);
+                            if (isempty(mp))
+                                this.warn('Nonexistent model part used in FixedCondition.temperature.');
+                                continue;
+                            end
+                            [mp.particles.fc_temperature] = deal(cond);
+                            [mp.walls.fc_temperature]     = deal(cond);
+                        end
+                    end
                 end
             end
         end
@@ -1884,7 +2137,7 @@ classdef Read < handle
                     this.warn('Unphysical value was found for material property.');
                 end
                 
-                % Set material to selected model parts
+                % Apply material to selected elements
                 model_parts = string(M.model_parts);
                 for j = 1:length(model_parts)
                     mp_name = model_parts(j);
@@ -1902,8 +2155,8 @@ classdef Read < handle
                             this.warn('Nonexistent model part used in Material.');
                             continue;
                         end
-                        [mp.material.material] = deal(mat);
-                        [mp.material.walls]    = deal(mat);
+                        [mp.particles.material] = deal(mat);
+                        [mp.walls.material]     = deal(mat);
                     end
                 end
             end

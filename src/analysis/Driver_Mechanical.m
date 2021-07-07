@@ -33,6 +33,7 @@ classdef Driver_Mechanical < Driver
             this.n_interacts = 0;
             this.n_materials = 0;
             this.n_prescond  = 0;
+            this.search      = Search_SimpleLoop();
             this.scheme_trl  = Scheme_EulerForward();
             this.scheme_rot  = Scheme_EulerForward();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
@@ -69,6 +70,7 @@ classdef Driver_Mechanical < Driver
                 % Loop over all interactions and particles
                 this.interactionLoop();
                 this.particleLoop();
+                this.wallLoop();
                 
                 % Print progress
                 this.printProgress();
@@ -157,31 +159,37 @@ classdef Driver_Mechanical < Driver
             for i = 1:this.n_particles
                 p = particles(i);
                 
-                % Add global conditions
-                p.addWeight();
-                
-                % Add prescribed conditions
-                p.addPCForce(time);
-                p.addPCTorque(time);
-                
-                % Evaluate equation of motion
-                p.computeAccelTrl();
-                p.computeAccelRot();
-                
-                % Numerical integration
-                this.scheme_trl.updatePosition(p,time_step);
-                this.scheme_rot.updateOrientation(p,time_step);
+                % Solver mechanical state
+                if (1)
+                    % Add global conditions
+                    p.addWeight();
+
+                    % Add prescribed conditions
+                    p.addPCForce(time);
+                    p.addPCTorque(time);
+
+                    % Evaluate equation of motion
+                    p.computeAccelTrl();
+                    p.computeAccelRot();
+
+                    % Numerical integration
+                    this.scheme_trl.updatePosition(p,time_step);
+                    this.scheme_rot.updateOrientation(p,time_step);
+                else
+                    % Set fixed conditions
+                end
                 
                 % Remove particles not respecting bbox and sinks
                 if (this.removeParticle(p))
                     removed = true;
+                    continue;
                 end
                 
                 % Store results
                 if (store)
-                    this.result.storeParticleForce(p);
                     this.result.storeParticlePosition(p);
                     this.result.storeParticleMotion(p);
+                    this.result.storeParticleForce(p);
                 end
                 
                 % Reset forcing terms for next step
@@ -191,6 +199,17 @@ classdef Driver_Mechanical < Driver
             % Erase handles to removed particles from global list and model parts
             if (removed)
                 this.eraseHandlesToRemovedParticle;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function wallLoop(this)
+            % Properties accessed in parallel loop
+            walls = this.walls;
+            
+            % Loop over all walls
+            for i = 1:this.n_walls
+                % Set fixed conditions
             end
         end
     end
