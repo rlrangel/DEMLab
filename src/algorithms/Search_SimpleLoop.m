@@ -138,7 +138,7 @@ classdef Search_SimpleLoop < Search
         function createInteractPW(this,drv,p,w)
             % Create binary kinematics object
             switch w.type
-                case w.LINE2D
+                case w.LINE
                     kin = BinKinematics_PWlin();
                 case w.CIRCLE
                     kin = BinKinematics_PWcirc();

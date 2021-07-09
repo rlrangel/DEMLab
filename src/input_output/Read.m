@@ -184,10 +184,10 @@ classdef Read < handle
             while (status == 1 && ~feof(fid))
                 line = deblank(fgetl(fid));
                 switch line
-                    case '%PARTICLES.DISK'
-                        status = this.readParticlesDisk(fid,drv);
-                    case '%WALLS.LINE2D'
-                        status = this.readWallsLine2D(fid,drv);
+                    case '%PARTICLES.SPHERE'
+                        status = this.readParticlesSphere(fid,drv);
+                    case '%WALLS.LINE'
+                        status = this.readWallsLine(fid,drv);
                     case '%WALLS.CIRCLE'
                         status = this.readWallsCircle(fid,drv);
                     case '%MODELPART'
@@ -2187,7 +2187,7 @@ classdef Read < handle
             % (applied to the interaction between all elements)
             if (length(json.InteractionModel) == 1)
                 % Create base object for common interactions
-                % IT IS CONSIDERING ONLY DISK-DISK INTERACTIONS!
+                % IT IS CONSIDERING ONLY SPHERE-SPHERE INTERACTIONS!
                 drv.search.b_interact = Interact();
                 
                 % Interaction models
@@ -2695,18 +2695,13 @@ classdef Read < handle
     %% Public methods: Model parts file
     methods
         %------------------------------------------------------------------
-        function status = readParticlesDisk(this,fid,drv)
+        function status = readParticlesSphere(this,fid,drv)
             status = 1;
             
-            if (drv.dimension == 3)
-                fprintf(2,'Invalid data: PARTICLES.DISK is only allowed in 2D models.\n');
-                status = 0; return;
-            end
-            
-            % Total number of disk particles
+            % Total number of sphere particles
             n = fscanf(fid,'%d',1);
             if (~this.isIntArray(n,1) || n < 0)
-                fprintf(2,'Invalid data in model parts file: Total number of PARTICLES.DISK.\n');
+                fprintf(2,'Invalid data in model parts file: Total number of PARTICLES.SPHERE.\n');
                 fprintf(2,'It must be a positive integer.\n');
                 status = 0; return;
             end
@@ -2728,7 +2723,7 @@ classdef Read < handle
                 % Read all values of current line
                 values = sscanf(line,'%f');
                 if (length(values) ~= 4 && length(values) ~= 5)
-                    fprintf(2,'Invalid data in model parts file: Number of parameters of PARTICLES.DISK.\n');
+                    fprintf(2,'Invalid data in model parts file: Number of parameters of PARTICLES.SPHERE.\n');
                     fprintf(2,'It requires 5 parameters: ID, coord X, coord Y, orientation, radius (radius is optional in this file).\n');
                     status = 0; return;
                 end
@@ -2736,7 +2731,7 @@ classdef Read < handle
                 % ID number
                 id = values(1);
                 if (~this.isIntArray(id,1) || id <= 0)
-                    fprintf(2,'Invalid data in model parts file: ID number of PARTICLES.DISK.\n');
+                    fprintf(2,'Invalid data in model parts file: ID number of PARTICLES.SPHERE.\n');
                     fprintf(2,'It must be a positive integer.\n');
                     status = 0; return;
                 end
@@ -2744,7 +2739,7 @@ classdef Read < handle
                 % Coordinates
                 coord = values(2:3);
                 if (~this.isDoubleArray(coord,2))
-                    fprintf(2,'Invalid data in model parts file: Coordinates of PARTICLES.DISK with ID %d.\n',id);
+                    fprintf(2,'Invalid data in model parts file: Coordinates of PARTICLES.SPHERE with ID %d.\n',id);
                     fprintf(2,'It must be a pair of numeric values.\n');
                     status = 0; return;
                 end
@@ -2752,7 +2747,7 @@ classdef Read < handle
                 % Orientation angle
                 orient = values(4);
                 if (~this.isDoubleArray(orient,1))
-                    fprintf(2,'Invalid data in model parts file: Orientation of PARTICLES.DISK with ID %d.\n',id);
+                    fprintf(2,'Invalid data in model parts file: Orientation of PARTICLES.SPHERE with ID %d.\n',id);
                     fprintf(2,'It must be a numeric value.\n');
                     status = 0; return;
                 end
@@ -2761,14 +2756,14 @@ classdef Read < handle
                 if (length(values) == 5)
                     radius = values(5);
                     if (~this.isDoubleArray(radius,1) || radius <= 0)
-                        fprintf(2,'Invalid data in model parts file: Radius of PARTICLES.DISK with ID %d.\n',id);
+                        fprintf(2,'Invalid data in model parts file: Radius of PARTICLES.SPHERE with ID %d.\n',id);
                         fprintf(2,'It must be a positive value.\n');
                         status = 0; return;
                     end
                 end
                 
                 % Create new particle object
-                particle        = Particle_Disk();
+                particle        = Particle_Sphere();
                 particle.id     = id;
                 particle.coord  = coord;
                 particle.orient = orient;
@@ -2785,24 +2780,19 @@ classdef Read < handle
             end
             
             if (i < n)
-                fprintf(2,'Invalid data in model parts file: Total number of PARTICLES.DISK is incompatible with provided data.\n');
+                fprintf(2,'Invalid data in model parts file: Total number of PARTICLES.SPHERE is incompatible with provided data.\n');
                 status = 0; return;
             end
         end
         
         %------------------------------------------------------------------
-        function status = readWallsLine2D(this,fid,drv)
+        function status = readWallsLine(this,fid,drv)
             status = 1;
             
-            if (drv.dimension == 3)
-                fprintf(2,'Invalid data: WALLS.LINE2D is only allowed in 2D models.\n');
-                status = 0; return;
-            end
-            
-            % Total number of line2D walls
+            % Total number of line walls
             n = fscanf(fid,'%d',1);
             if (~this.isIntArray(n,1) || n < 0)
-                fprintf(2,'Invalid data in model parts file: Total number of WALLS.LINE2D.\n');
+                fprintf(2,'Invalid data in model parts file: Total number of WALLS.LINE.\n');
                 fprintf(2,'It must be a positive integer.\n');
                 status = 0; return;
             end
@@ -2824,7 +2814,7 @@ classdef Read < handle
                 % Read all values of current line
                 values = sscanf(line,'%f');
                 if (length(values) ~= 5)
-                    fprintf(2,'Invalid data in model parts file: Number of parameters of WALLS.LINE2D.\n');
+                    fprintf(2,'Invalid data in model parts file: Number of parameters of WALLS.LINE.\n');
                     fprintf(2,'It requires 5 parameters: ID, coord X1, coord Y1, coord X2, coord Y2.\n');
                     status = 0; return;
                 end
@@ -2832,7 +2822,7 @@ classdef Read < handle
                 % ID number
                 id = values(1);
                 if (~this.isIntArray(id,1) || id <= 0)
-                    fprintf(2,'Invalid data in model parts file: ID number of WALLS.LINE2D.\n');
+                    fprintf(2,'Invalid data in model parts file: ID number of WALLS.LINE.\n');
                     fprintf(2,'It must be a positive integer.\n');
                     status = 0; return;
                 end
@@ -2840,13 +2830,13 @@ classdef Read < handle
                 % Coordinates
                 coord = values(2:5);
                 if (~this.isDoubleArray(coord,4))
-                    fprintf(2,'Invalid data in model parts file: Coordinates of WALLS.LINE2D with ID %d.\n',id);
+                    fprintf(2,'Invalid data in model parts file: Coordinates of WALLS.LINE with ID %d.\n',id);
                     fprintf(2,'It must be two pairs of numeric values: X1,Y1,X2,Y2.\n');
                     status = 0; return;
                 end
                 
                 % Create new wall object
-                wall           = Wall_Line2D();
+                wall           = Wall_Line();
                 wall.id        = id;
                 wall.coord_ini = coord(1:2);
                 wall.coord_end = coord(3:4);
@@ -2861,7 +2851,7 @@ classdef Read < handle
             end
             
             if (i < n)
-                fprintf(2,'Invalid data in model parts file: Total number of WALLS.LINE2D is incompatible with provided data.\n');
+                fprintf(2,'Invalid data in model parts file: Total number of WALLS.LINE is incompatible with provided data.\n');
                 status = 0; return;
             end
         end
@@ -2869,11 +2859,6 @@ classdef Read < handle
         %------------------------------------------------------------------
         function status = readWallsCircle(this,fid,drv)
             status = 1;
-            
-            if (drv.dimension == 3)
-                fprintf(2,'Invalid data: WALLS.CIRCLE is only allowed in 2D models.\n');
-                status = 0; return;
-            end
             
             % Total number of circle walls
             n = fscanf(fid,'%d',1);
@@ -3310,7 +3295,7 @@ classdef Read < handle
             status = 1;
             for i = 1:drv.n_walls
                 w = drv.walls(i);
-                if (w.type == w.LINE2D && isequal(w.coord_ini,w.coord_end))
+                if (w.type == w.LINE && isequal(w.coord_ini,w.coord_end))
                     fprintf(2,'Wall %d has no length.',w.id);
                     status = 0; return;
                 end

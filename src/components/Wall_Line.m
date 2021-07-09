@@ -1,10 +1,10 @@
-%% Wall_Line2D class
+%% Wall_Line class
 %
 %% Description
 %
 %% Implementation
 %
-classdef Wall_Line2D < Wall
+classdef Wall_Line < Wall
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Position
@@ -17,8 +17,8 @@ classdef Wall_Line2D < Wall
     
     %% Constructor method
     methods
-        function this = Wall_Line2D()
-            this = this@Wall(Wall.LINE2D);
+        function this = Wall_Line()
+            this = this@Wall(Wall.LINE);
             this.setDefaultProps();
         end
     end

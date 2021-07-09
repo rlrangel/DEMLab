@@ -1,10 +1,10 @@
-%% Particle_Disk class
+%% Particle_Sphere class
 %
 %% Description
 %
 %% Implementation
 %
-classdef Particle_Disk < Particle
+classdef Particle_Sphere < Particle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         
@@ -12,8 +12,8 @@ classdef Particle_Disk < Particle
     
     %% Constructor method
     methods
-        function this = Particle_Disk()
-            this = this@Particle(Particle.DISK);
+        function this = Particle_Sphere()
+            this = this@Particle(Particle.SPHERE);
             this.setDefaultProps();
         end
     end

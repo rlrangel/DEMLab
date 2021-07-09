@@ -383,7 +383,7 @@ classdef Animate < handle
             s = this.sty_wall;
             
             switch wall.type
-                case wall.LINE2D
+                case wall.LINE
                     x1 = wall.coord_ini(1);
                     y1 = wall.coord_ini(2);
                     x2 = wall.coord_end(1);

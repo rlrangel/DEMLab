@@ -10,7 +10,7 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of wall
-        LINE2D = uint8(1);
+        LINE   = uint8(1);
         CIRCLE = uint8(2);
     end
     
@@ -45,7 +45,7 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
     %% Default subclass definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
-            defaultObject = Wall_Line2D;
+            defaultObject = Wall_Line;
         end
     end
     

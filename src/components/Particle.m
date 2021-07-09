@@ -10,7 +10,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of particle
-        DISK = uint8(1);
+        SPHERE = uint8(1);
     end
     
     %% Public properties
@@ -73,7 +73,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
     %% Default subclass definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
-            defaultObject = Particle_Disk;
+            defaultObject = Particle_Sphere;
         end
     end
     
