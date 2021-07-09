@@ -19,11 +19,16 @@ classdef Wall_Line2D < Wall
     methods
         function this = Wall_Line2D()
             this = this@Wall(Wall.LINE2D);
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
-        
+        %------------------------------------------------------------------
+        function setDefaultProps(this)
+            % Thermal state variables
+            this.temperature = 0;
+        end
     end
 end

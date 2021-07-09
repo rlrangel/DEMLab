@@ -1,35 +1,36 @@
 DOCUMENTATION:
 -Comment and publish code;
--Presentation with instructions, code structure and theory;
+-Presentation with possibilities, instructions, code structure and theory;
 -GitLab Wiki: Similar to Kratos, with instructions and theory;
 -Website: similar to NeutralFile and Ftool (with model instructions and theory);
 -Register: patent nad DOI;
 -Articles: JOSS, Educational, Computer algorithms, others (mecanica computational);
 
-IMPLEMENTATION 1
--Fixed conditions, as documented in the IO file;
+----------------------------------------------------------------------------------------------------------
+IMPLEMENTATIONS:
+-Recursive tests;
+-Draw model before analysis start;
 -Define fluid properties for heat exchange, convection, etc (global or local properties: temperature, velocity, etc);
--Add frequency to check and evaluate BBox, Sink, Conditions, etc;
+-Variable properties;
+-Update particle volume if material has ThermalExpansionCoeff (think if radius is also set to change as a variable property);
 -Matrix search method, taking advantage from Matlab array operations (see script file with tests);
--Update particle volume if material has ThermalExpansionCoeff (think if radius is also set to change with as a variable property);
+-Periodic B.C.;
+-New types of particles: elipsoids, etc;
+-Print results file that can be loaded, to avoid needing to run again to get results;
+-Picture of result in a particular time (depict);
+-Export results: paraview, gid;
 -Convection/Radiation:
  Compute convection heat transfer with surrounding fluid (fixed given properties globally or locally) and add to interaction components;
  Compute radiation heat transfer with surroundings (fixed given property) and add to previous components;
-
-IMPLEMENTATION 2
--New types of particles: sphere, etc.
--Variable prescribed conditions: e.g. a force may be dependent on an independente variable (time/temperature), and the input is a table;
+ 
+----------------------------------------------------------------------------------------------------------
+IDEAS:
+-Send a warning when a condition is applied twice to an element, saying that the last one is kept;
+-Creation/destruction time for model parts;
+-Add frequency for every possible calculation (check and evaluate BBox, Sink, Conditions, etc);
+-Allow conditions to be dependent not only on time, but also on particle states, like temperature, etc;
 -Fixed forces/torques, just like fixed heat flux;
--Periodic B.C.;
--Recursive tests;
-
-IDEAS
--Print simulation information before analysis start (for users to check if it is OK);
--Draw model before analysis start (with IDs);
--Send a warning when a condition is applied more twice to an element, saying that the last one is kept;
--Open a result file to show it, instead of doing the analysis;
--Automatic separate model into a high/slow dynamic models parts in order to use different time steps and integration schemes in each one;
--Export: GiD format;
-
+-Graph of total model results over time: number particles, number of interactions, contact forces, heat flux, etc;
+-Evaluate interactions and particles in the same loop;
 -Create an interaction for all elements before analysis starts (more memory but more efficient loop);
--Evaluate interactions on th same loop of the particles;
+-Automatic separate model into a high/slow dynamic models parts in order to use different time steps and integration schemes in each one;

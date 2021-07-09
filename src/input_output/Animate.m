@@ -243,8 +243,8 @@ classdef Animate < handle
             end
             
             % Number of particles and frames
-            this.np = size(this.times,1);
-            this.nf = size(this.times,2);
+            this.np = size(this.radius,1);
+            this.nf = size(this.radius,2);
             
             % Preallocate movie frames array
             this.frames(this.nf) = struct('cdata',[],'colormap',[]);
@@ -258,6 +258,9 @@ classdef Animate < handle
             
             % Compute frame rate (frames / second)
             this.fps = this.nf/drv.time;
+            if (this.fps > 100)
+                this.fps = 100;
+            end
         end
         
         %------------------------------------------------------------------
@@ -275,7 +278,7 @@ classdef Animate < handle
         function drawMovieFrame(this,drv,f)
             % Draw particles
             for i = 1:this.np
-                if (isnan(this.times(i,f)))
+                if (isnan(this.times(1,f)))
                     continue;
                 end
                 switch this.type

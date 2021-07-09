@@ -111,6 +111,20 @@ classdef Driver < handle
                 
                 % Set basic properties
                 this.setParticleProps(p);
+                
+                % Reset forcing terms for next step
+                p.resetForcingTerms();
+                
+                % Set fixed conditions
+                p.setFCTemperature(this.time);
+            end
+            
+            % loop over all walls
+            for i = 1:this.n_walls
+                w = this.walls(i);
+                
+                % Set fixed conditions
+                w.setFCTemperature(this.time);
             end
             
             % Erase handles to removed particles from global list and model parts
@@ -134,14 +148,14 @@ classdef Driver < handle
             % Initialize result arrays
             this.result.initialize(this);
             
-            % Add initial conditions to result arrays
+            % Add initial values to result arrays
             this.result.storeGlobalParams(this);
             for i = 1:this.n_particles
                 p = this.particles(i);
                 this.result.storeParticleProp(p);
-                this.result.storeParticleForce(p);
-                this.result.storeParticlePosition(p);
                 this.result.storeParticleMotion(p);
+                this.result.storeParticlePosition(p);
+                this.result.storeParticleForce(p);
                 this.result.storeParticleThermal(p);
             end
             
@@ -234,7 +248,7 @@ classdef Driver < handle
                 end
             end
             
-            % Create animations
+            % Create and show animations
             if (~isempty(this.animates))
                 for i = 1:length(this.animates)
                     fprintf('\nCreating animation %s...',this.animates(i).atitle);
