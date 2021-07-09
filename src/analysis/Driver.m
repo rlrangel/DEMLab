@@ -36,7 +36,7 @@ classdef Driver < handle
         walls     Wall      = Wall.empty;        % handles to objects of Wall class
         interacts Interact  = Interact.empty;    % handles to objects of Interact class
         materials Material  = Material.empty;    % handles to objects of Material class
-        prescond  PC        = PC.empty;          % handles to objects of PC class
+        prescond  Cond      = Cond.empty;        % handles to objects of Cond class
         
         % Model limits
         bbox BBox = BBox.empty;   % handle to object of BBox class

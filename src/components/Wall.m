@@ -26,8 +26,8 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         % Neighbours Interactions
         interacts Interact = Interact.empty;    % handles to objects of Interact class
         
-        % Fixed conditions (handles to objects of PC class)
-        fc_temperature PC = PC.empty;
+        % Fixed conditions (handles to objects of Cond class)
+        fc_temperature Cond = Cond.empty;
         
         % Current thermal state
         temperature double = double.empty;   % temperature

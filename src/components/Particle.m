@@ -34,14 +34,14 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         % Neighbours Interactions
         interacts Interact = Interact.empty;   % handles to objects of Interact class
         
-        % Prescribed conditions (handles to objects of PC class)
-        pc_force     PC = PC.empty;
-        pc_torque    PC = PC.empty;
-        pc_heatflux  PC = PC.empty;
-        pc_heatrate  PC = PC.empty;
+        % Prescribed conditions (handles to objects of Cond class)
+        pc_force    Cond = Cond.empty;
+        pc_torque   Cond = Cond.empty;
+        pc_heatflux Cond = Cond.empty;
+        pc_heatrate Cond = Cond.empty;
         
-        % Fixed conditions (handles to objects of PC class)
-        fc_temperature PC = PC.empty;
+        % Fixed conditions (handles to objects of Cond class)
+        fc_temperature Cond = Cond.empty;
         
         % Total forcing terms
         force     double = double.empty;

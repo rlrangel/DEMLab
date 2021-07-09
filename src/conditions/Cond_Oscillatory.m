@@ -1,13 +1,13 @@
-%% PC_Oscillatory class
+%% Cond_Oscillatory class
 %
 %% Description
 %
 %% Implementation
 %
-classdef PC_Oscillatory < PC
+classdef Cond_Oscillatory < Cond
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        base_value double = double.empty;   % base value of prescribed condition for oscillation
+        base_value double = double.empty;   % base condition value for oscillation
         amplitude  double = double.empty;   % amplitude of oscillation around base value
         period     double = double.empty;   % period of oscillation
         shift      double = double.empty;   % shift from initial point of oscillation (phase angle)
@@ -15,8 +15,8 @@ classdef PC_Oscillatory < PC
     
     %% Constructor method
     methods
-        function this = PC_Oscillatory()
-            this = this@PC(PC.OSCILLATORY);
+        function this = Cond_Oscillatory()
+            this = this@Cond(Cond.OSCILLATORY);
             this.setDefaultProps();
         end
     end

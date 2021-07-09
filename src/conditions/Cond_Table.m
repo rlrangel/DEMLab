@@ -1,21 +1,21 @@
-%% PC_Table class
+%% Cond_Table class
 %
 %% Description
 %
 %% Implementation
 %
-classdef PC_Table < PC
+classdef Cond_Table < Cond
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         val_x  double = double.empty;   % independente variable (time) values
-        val_y  double = double.empty;   % prescribed condition values
+        val_y  double = double.empty;   % condition values
         interp uint8  = uint8.empty;    % flag for interpolation method
     end
     
     %% Constructor method
     methods
-        function this = PC_Table()
-            this = this@PC(PC.TABLE);
+        function this = Cond_Table()
+            this = this@Cond(Cond.TABLE);
             this.setDefaultProps();
         end
     end

@@ -1,19 +1,19 @@
-%% PC_Uniform class
+%% Cond_Uniform class
 %
 %% Description
 %
 %% Implementation
 %
-classdef PC_Uniform < PC
+classdef Cond_Uniform < Cond
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        value double = double.empty;   % uniform value of prescribed condition
+        value double = double.empty;   % uniform condition value
     end
     
     %% Constructor method
     methods
-        function this = PC_Uniform()
-            this = this@PC(PC.UNIFORM);
+        function this = Cond_Uniform()
+            this = this@Cond(Cond.UNIFORM);
             this.setDefaultProps();
         end
     end
