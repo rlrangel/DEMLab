@@ -8,7 +8,9 @@ classdef Driver_ThermoMechanical < Driver
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Global conditions
-        gravity double = double.empty;   % vector of gravity components value
+        gravity  double = double.empty;   % vector of gravity components value
+        damp_trl double = double.empty;   % damping for translational motion
+        damp_rot double = double.empty;   % damping for rotational motion
         
         % Time integration
         scheme_trl  Scheme = Scheme.empty;   % handle to object of Scheme class for translation integration
@@ -169,6 +171,12 @@ classdef Driver_ThermoMechanical < Driver
                 if (1)
                     % Add global conditions
                     p.addWeight();
+                    if (~isempty(this.damp_trl))
+                        p.addGblDampTransl(this.damp_trl);
+                    end
+                    if (~isempty(this.damp_rot))
+                        p.addGblDampRot(this.damp_rot);
+                    end
                     
                     % Add prescribed conditions
                     p.addPCForce(time);

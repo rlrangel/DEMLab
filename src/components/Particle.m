@@ -120,6 +120,16 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         end
         
         %------------------------------------------------------------------
+        function addGblDampTransl(this,damp_coeff)
+            this.force = this.force - damp_coeff * this.veloc_trl;
+        end
+        
+        %------------------------------------------------------------------
+        function addGblDampRot(this,damp_coeff)
+            this.torque = this.torque - damp_coeff * this.veloc_rot;
+        end
+        
+        %------------------------------------------------------------------
         function addPCForce(this,time)
             for i = 1:length(this.pc_force)
                 if (this.pc_force(i).isActive(time))

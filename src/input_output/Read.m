@@ -698,6 +698,26 @@ classdef Read < handle
                 end
                 drv.gravity = g;
             end
+            
+            % Damping
+            if (isfield(GC,'damping_translation'))
+                dt = GC.damping_translation;
+                if (~this.isDoubleArray(dt,1))
+                    fprintf(2,'Invalid data in project parameters file: GlobalCondition.damping_translation.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                end
+                drv.damp_trl = dt;
+            end
+            if (isfield(GC,'damping_rotation'))
+                dr = GC.damping_rotation;
+                if (~this.isDoubleArray(dr,1))
+                    fprintf(2,'Invalid data in project parameters file: GlobalCondition.damping_rotation.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                end
+                drv.damp_rot = dr;
+            end
         end
         
         %------------------------------------------------------------------
