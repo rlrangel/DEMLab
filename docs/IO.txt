@@ -110,12 +110,6 @@ The fixed motion starts from the position/orientation of elements at the beginni
 * PrescribedConditions:
 Apply only to mechanically/thermally free particles;
 
-* GlobalConditions:
-Applied to all particles;
-Global damping is the damping coeff that multiplies the velocity component to give a global viscous force (in adition to the contact one);
-	GlobalDampingTranslational: [double,double,double];
-	GlobalDampingRotational: [double,double,double];
-
 * Materials: (multiple)
 The name of a VariableProperties can be set to any material property;
 

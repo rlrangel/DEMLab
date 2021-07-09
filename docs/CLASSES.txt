@@ -2,21 +2,14 @@ Driver:
 	* Model components:
 	  -Number of variable properties;
 	  -Handles to VariableProperty objects;
-	
-	* Global conditions:
-	  -GlobalDampingTranslational; (default: [])
-	  -GlobalDampingRotational; (default: [])
-	
+		
 	Tasks:
 	  -Set initial variable properties values of particles and walls;
 	  -Compute the NeighbourDistance according to the models assumed for the interactions (particle property): each model returns the required distance;
 	   (also needs to update NeighbourDistance when particles are created/deleted)
 	  -Virtual method to compute automatic time step according to mechanical or thermal formula (may need to be updated if particles are removed/created);
 	  
-	* Active particles loop (parallel): 
-		-Global conditions evaluation:
-		 Check if model has global damping, if so, compute them in a particle method (damping coeff. x velocity components);
-		 
+	* Active particles loop (parallel): 		 
 		-Properties update:
 	     Check if particle has VariableProperty objects, if so, loop through them;
 		 Loop through VariableProperty objects: call method to update the dependent variable of each VariableProperty object;
@@ -75,10 +68,6 @@ Particle:
 	
 	* Neighbours Interactions:
 	  -NeighbourDistance;
-	
-	* Global damping contribution:
-	  -GlobalViscousForce;
-	  -GlobalViscousTorque;
 	
 ------------------------------------------------------------------------------------------------------------------------------------------------
 Interact:
