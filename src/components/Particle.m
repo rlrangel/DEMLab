@@ -10,7 +10,8 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of particle
-        SPHERE = uint8(1);
+        SPHERE   = uint8(1);
+        CYLINDER = uint8(2);
     end
     
     %% Public properties

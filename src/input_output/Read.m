@@ -186,6 +186,8 @@ classdef Read < handle
                 switch line
                     case '%PARTICLES.SPHERE'
                         status = this.readParticlesSphere(fid,drv);
+                    case '%PARTICLES.CYLINDER'
+                        status = this.readParticlesCylinder(fid,drv);
                     case '%WALLS.LINE'
                         status = this.readWallsLine(fid,drv);
                     case '%WALLS.CIRCLE'
@@ -2801,6 +2803,106 @@ classdef Read < handle
             
             if (i < n)
                 fprintf(2,'Invalid data in model parts file: Total number of PARTICLES.SPHERE is incompatible with provided data.\n');
+                status = 0; return;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = readParticlesCylinder(this,fid,drv)
+            status = 1;
+            
+            % Total number of cylinder particles
+            n = fscanf(fid,'%d',1);
+            if (~this.isIntArray(n,1) || n < 0)
+                fprintf(2,'Invalid data in model parts file: Total number of PARTICLES.CYLINDER.\n');
+                fprintf(2,'It must be a positive integer.\n');
+                status = 0; return;
+            end
+            
+            % Update total number of particles
+            drv.n_particles = drv.n_particles + n;
+            
+            % Read each particle
+            deblank(fgetl(fid)); % go to next line
+            for i = 1:n
+                if (feof(fid))
+                    break;
+                end
+                line = deblank(fgetl(fid));
+                if (isempty(line) || isnumeric(line))
+                    break;
+                end
+                
+                % Read all values of current line
+                values = sscanf(line,'%f');
+                if (length(values) ~= 5 && length(values) ~= 6)
+                    fprintf(2,'Invalid data in model parts file: Number of parameters of PARTICLES.CYLINDER.\n');
+                    fprintf(2,'It requires 6 parameters: ID, coord X, coord Y, orientation, length, radius (radius is optional in this file).\n');
+                    status = 0; return;
+                end
+                
+                % ID number
+                id = values(1);
+                if (~this.isIntArray(id,1) || id <= 0)
+                    fprintf(2,'Invalid data in model parts file: ID number of PARTICLES.CYLINDER.\n');
+                    fprintf(2,'It must be a positive integer.\n');
+                    status = 0; return;
+                end
+                
+                % Coordinates
+                coord = values(2:3);
+                if (~this.isDoubleArray(coord,2))
+                    fprintf(2,'Invalid data in model parts file: Coordinates of PARTICLES.CYLINDER with ID %d.\n',id);
+                    fprintf(2,'It must be a pair of numeric values.\n');
+                    status = 0; return;
+                end
+                
+                % Orientation angle
+                orient = values(4);
+                if (~this.isDoubleArray(orient,1))
+                    fprintf(2,'Invalid data in model parts file: Orientation of PARTICLES.CYLINDER with ID %d.\n',id);
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                end
+                
+                % Length
+                length = values(5);
+                if (~this.isDoubleArray(length,1) || length <= 0)
+                    fprintf(2,'Invalid data in model parts file: Length of PARTICLES.CYLINDER with ID %d.\n',id);
+                    fprintf(2,'It must be a positive value.\n');
+                    status = 0; return;
+                end
+                
+                % Radius
+                if (length(values) == 6)
+                    radius = values(6);
+                    if (~this.isDoubleArray(radius,1) || radius <= 0)
+                        fprintf(2,'Invalid data in model parts file: Radius of PARTICLES.CYLINDER with ID %d.\n',id);
+                        fprintf(2,'It must be a positive value.\n');
+                        status = 0; return;
+                    end
+                end
+                
+                % Create new particle object
+                particle        = Particle_Cylinder();
+                particle.id     = id;
+                particle.coord  = coord;
+                particle.orient = orient;
+                particle.length = length;
+                if (length(values) == 6)
+                    particle.radius = radius;
+                end
+                
+                % Store handle to particle object
+                if (id <= length(drv.particles) && ~isempty(drv.particles(id).id))
+                    fprintf(2,'Invalid numbering of particles: IDs cannot be repeated.\n');
+                    status = 0; return;
+                end
+                drv.particles(id) = particle;
+            end
+            
+            if (i < n)
+                fprintf(2,'Invalid data in model parts file: Total number of PARTICLES.CYLINDER is incompatible with provided data.\n');
                 status = 0; return;
             end
         end
