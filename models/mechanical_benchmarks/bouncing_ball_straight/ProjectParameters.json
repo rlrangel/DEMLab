@@ -11,7 +11,7 @@
 		"final_time"          : 1,
 		"integr_scheme_trans" : "forward_euler",
 		"integr_scheme_rotat" : "forward_euler",
-		"parallelization"     : true,
+		"parallelization"     : false,
 		"workers"             : 4
 	},
 	"Search": {

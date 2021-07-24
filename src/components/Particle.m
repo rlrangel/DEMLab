@@ -21,7 +21,6 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         id   uint32 = uint32.empty;   % identification number
         
         % Geometric properties
-        radius   double = double.empty;   % radius
         surface  double = double.empty;   % surface area
         volume   double = double.empty;   % volume
         minertia double = double.empty;   % moment of inertia

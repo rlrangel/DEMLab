@@ -40,7 +40,7 @@ classdef Driver_Mechanical < Driver
             this.scheme_rot  = Scheme_EulerForward();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
-            this.auto_step   = true;
+            this.auto_step   = false;
             this.result      = Result();
             this.nprog       = 1;
             this.nout        = 500;

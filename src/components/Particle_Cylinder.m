@@ -7,7 +7,9 @@
 classdef Particle_Cylinder < Particle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        
+        % Geometric properties
+        radius double = double.empty;   % radius
+        length double = double.empty;   % length
     end
     
     %% Constructor method
@@ -47,17 +49,17 @@ classdef Particle_Cylinder < Particle
         
         %------------------------------------------------------------------
         function setSurface(this)
-            this.surface = 4 * pi * this.radius^2;
+            this.surface = 2*pi*this.radius*this.length + 2*pi*this.radius^2;
         end
         
         %------------------------------------------------------------------
         function setVolume(this)
-            this.volume = 4 * pi * this.radius^3/3;
+            this.volume = pi * this.radius^2 * this.length;
         end
         
         %------------------------------------------------------------------
         function setMInertia(this)
-            this.minertia = 2 * this.mass * this.radius^2/5;
+            this.minertia = this.mass * this.radius^2/2;
         end
     end
 end

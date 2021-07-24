@@ -17,13 +17,16 @@ classdef ModelPart < handle
     %% Constructor method
     methods
         function this = ModelPart()
-            this.n_particles = 0;
-            this.n_walls     = 0;
+            this.setDefaultProps();
         end
     end
     
     %% Public methods
     methods
-        
+        %------------------------------------------------------------------
+        function setDefaultProps(this)
+            this.n_particles = 0;
+            this.n_walls     = 0;
+        end
     end
 end

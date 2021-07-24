@@ -1,10 +1,10 @@
-%% BinKinematics_PWcirc (Particle-Circle Wall) class
+%% BinKinematics_CylinderWcirc (Cylinder-Wall Circle) class
 %
 %% Description
 %
 %% Implementation
 %
-classdef BinKinematics_PWcirc < BinKinematics
+classdef BinKinematics_CylinderWcirc < BinKinematics
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         
@@ -12,8 +12,8 @@ classdef BinKinematics_PWcirc < BinKinematics
     
     %% Constructor method
     methods
-        function this = BinKinematics_PWcirc()
-            this = this@BinKinematics(BinKinematics.PARTICLE_WALL_CIRCLE);
+        function this = BinKinematics_CylinderWcirc()
+            this = this@BinKinematics(BinKinematics.CYLINDER_WALL_CIRCLE);
         end
     end
     
@@ -87,15 +87,16 @@ classdef BinKinematics_PWcirc < BinKinematics
         function this = setContactArea(this,int)
             % Needed properties
             d    = this.dist;
+            l    = int.elem1.length;
             r1   = int.elem1.radius;
             r2   = int.elem2.radius;
             r1_2 = r1 * r1;
             r2_2 = r2 * r2;
             
             % Contact radius and area
-            R2 = r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2;
-            this.contact_radius = sqrt(R2);
-            this.contact_area = pi * R2;
+            r = sqrt(r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2);
+            this.contact_radius = r;
+            this.contact_area   = 2 * r * l;
         end
         
         %------------------------------------------------------------------

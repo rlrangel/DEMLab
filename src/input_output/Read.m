@@ -2209,7 +2209,6 @@ classdef Read < handle
             % (applied to the interaction between all elements)
             if (length(json.InteractionModel) == 1)
                 % Create base object for common interactions
-                % IT IS CONSIDERING ONLY SPHERE-SPHERE INTERACTIONS!
                 drv.search.b_interact = Interact();
                 
                 % Interaction models
@@ -3290,14 +3289,11 @@ classdef Read < handle
                     status = 0; return;
                 end
                 if (strcmp(CFN.stiff_coeff_formula,'time'))
-                    drv.search.b_interact.cforcen.stiff_formula =...
-                    drv.search.b_interact.cforcen.TIME;
+                    drv.search.b_interact.cforcen.stiff_formula = drv.search.b_interact.cforcen.TIME;
                 elseif (strcmp(CFN.stiff_coeff_formula,'overlap'))
-                    drv.search.b_interact.cforcen.stiff_formula =...
-                    drv.search.b_interact.cforcen.OVERLAP;
+                    drv.search.b_interact.cforcen.stiff_formula = drv.search.b_interact.cforcen.OVERLAP;
                 elseif (strcmp(CFN.stiff_coeff_formula,'energy'))
-                    drv.search.b_interact.cforcen.stiff_formula =...
-                    drv.search.b_interact.cforcen.ENERGY;
+                    drv.search.b_interact.cforcen.stiff_formula = drv.search.b_interact.cforcen.ENERGY;
                 end
             end
             
@@ -3409,6 +3405,13 @@ classdef Read < handle
                     fprintf(2,'More than one material was provided to particle %d.',p.id);
                     status = 0; return;
                 end
+            end
+            
+            % Check compatibility between different types of particles
+            if (length(findobj(drv.particles,'type',drv.particles(1).SPHERE))   > 1 &&...
+                length(findobj(drv.particles,'type',drv.particles(1).CYLINDER)) > 1)
+                fprintf(2,'Interaction between SPEHERE and CYLINDER particles is not defined.');
+                status = 0; return;
             end
         end
         

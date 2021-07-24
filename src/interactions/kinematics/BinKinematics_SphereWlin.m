@@ -1,10 +1,10 @@
-%% BinKinematics_PWlin (Particle-Line Wall) class
+%% BinKinematics_SphereWlin (Sphere-Wall Line) class
 %
 %% Description
 %
 %% Implementation
 %
-classdef BinKinematics_PWlin < BinKinematics
+classdef BinKinematics_SphereWlin < BinKinematics
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         
@@ -12,8 +12,8 @@ classdef BinKinematics_PWlin < BinKinematics
     
     %% Constructor method
     methods
-        function this = BinKinematics_PWlin()
-            this = this@BinKinematics(BinKinematics.PARTICLE_WALL_LINE);
+        function this = BinKinematics_SphereWlin()
+            this = this@BinKinematics(BinKinematics.SPHERE_WALL_LINE);
         end
     end
     

@@ -107,8 +107,8 @@ classdef Search_SimpleLoop < Search
     methods
         %------------------------------------------------------------------
         function createInteractPP(this,drv,p1,p2)
-            % Create binary kinematics object
-            kin = BinKinematics_PP();
+            % Create binary kinematic object
+            kin = this.createPPKinematic(p1,p2);
             
             % Compute and check separation between elements
             kin = kin.setRelPos(p1,p2);
@@ -136,13 +136,8 @@ classdef Search_SimpleLoop < Search
         
         %------------------------------------------------------------------
         function createInteractPW(this,drv,p,w)
-            % Create binary kinematics object
-            switch w.type
-                case w.LINE
-                    kin = BinKinematics_PWlin();
-                case w.CIRCLE
-                    kin = BinKinematics_PWcirc();
-            end
+            % Create binary kinematic object
+            kin = this.createPWKinematic(p,w);
             
             % Compute and check separation between elements
             kin = kin.setRelPos(p,w);
@@ -166,6 +161,42 @@ classdef Search_SimpleLoop < Search
             p.interacts(end+1)   = int;
             w.interacts(end+1)   = int;
             drv.interacts(end+1) = int;
+        end
+        
+        %------------------------------------------------------------------
+        function kin = createPPKinematic(~,p1,p2)
+            switch p1.type
+                case p1.SPHERE
+                    switch p2.type
+                        case p2.SPHERE
+                            kin = BinKinematics_SphereSphere();
+                    end
+                case p1.CYLINDER
+                    switch p2.type
+                        case p2.CYLINDER
+                            kin = BinKinematics_CylinderCylinder();
+                    end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function kin = createPWKinematic(~,p,w)
+            switch p.type
+                case p.SPHERE
+                    switch w.type
+                        case w.LINE
+                            kin = BinKinematics_SphereWlin();
+                        case w.CIRCLE
+                            kin = BinKinematics_SphereWcirc();
+                    end
+                case p.CYLINDER
+                    switch w.type
+                        case w.LINE
+                            kin = BinKinematics_CylinderWlin();
+                        case w.CIRCLE
+                            kin = BinKinematics_CylinderWcirc();
+                    end
+            end
         end
     end
 end

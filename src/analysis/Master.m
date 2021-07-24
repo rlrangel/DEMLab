@@ -143,17 +143,14 @@ classdef Master < handle
                 if (isempty(p))
                     fprintf('\n');
                     parpool(drv.workers);
-                    fprintf('\n');
                 elseif (p.NumWorkers ~= drv.workers)
                     fprintf('\n');
                     delete(p)
                     parpool(drv.workers);
-                    fprintf('\n');
                 end
             elseif (~isempty(p))
                 fprintf('\n');
                 delete(p);
-                fprintf('\n');
             end
             ps = parallel.Settings;
             ps.Pool.AutoCreate = false;

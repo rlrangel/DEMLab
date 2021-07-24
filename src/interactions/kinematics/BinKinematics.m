@@ -9,10 +9,15 @@
 classdef BinKinematics < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
-        % Types of binary kinematics
-        PARTICLE_PARTICLE    = uint8(1);
-        PARTICLE_WALL_LINE   = uint8(2);
-        PARTICLE_WALL_CIRCLE = uint8(3);
+        % Types of binary kinematics between same particles
+        SPHERE_SPHERE     = uint8(1);
+        CYLINDER_CYLINDER = uint8(2);
+        
+        % Types of binary kinematics between particles and walls
+        SPHERE_WALL_LINE     = uint8(3);
+        SPHERE_WALL_CIRCLE   = uint8(4);
+        CYLINDER_WALL_LINE   = uint8(5);
+        CYLINDER_WALL_CIRCLE = uint8(6);
     end
     
     %% Public properties
@@ -54,7 +59,7 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
     %% Default subclass definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
-            defaultObject = BinKinematics_PP;
+            defaultObject = BinKinematics_SphereSphere;
         end
     end
     

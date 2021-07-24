@@ -7,7 +7,8 @@
 classdef Particle_Sphere < Particle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        
+        % Geometric properties
+        radius double = double.empty;   % radius
     end
     
     %% Constructor method
