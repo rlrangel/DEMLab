@@ -1817,8 +1817,239 @@ classdef Read < handle
             fields = fieldnames(FC);
             for i = 1:length(fields)
                 f = string(fields(i));
-                if (~strcmp(f,'temperature'))
+                if (~strcmp(f,'velocity_translation') || ~strcmp(f,'temperature'))
                     this.warn('A nonexistent field was identified in FixedCondition. It will be ignored.');
+                end
+            end
+            
+            % VELOCITY TRANSLATION
+            if (isfield(FC,'velocity_translation'))
+                for i = 1:length(FC.velocity_translation)
+                    V = FC.velocity_translation(i);
+                    if (~isfield(V,'type') || ~isfield(V,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: FixedCondition.velocity_translation must have type and model_parts.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Type
+                    type = string(V.type);
+                    if (~this.isStringArray(type,1))
+                        fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.type.\n');
+                        status = 0; return;
+                        
+                    elseif (strcmp(type,'uniform'))
+                        % Create object
+                        cond = Cond_Uniform();
+                        
+                        % Value
+                        if (~isfield(V,'value'))
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.velocity_translation.value.\n');
+                            status = 0; return;
+                        end
+                        val = V.value;
+                        if (~this.isDoubleArray(val,2))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.value.\n');
+                            fprintf(2,'It must be a pair of numeric values.\n');
+                            status = 0; return;
+                        end
+                        cond.value = val;
+                        
+                    elseif (strcmp(type,'linear'))
+                        % Create object
+                        cond = Cond_Linear();
+                        
+                        % Initial value
+                        if (isfield(V,'initial_value'))
+                            val = V.initial_value;
+                            if (~this.isDoubleArray(val,2))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.initial_value.\n');
+                                fprintf(2,'It must be a pair of numeric values.\n');
+                                status = 0; return;
+                            end
+                            cond.init_value = val;
+                        end
+                        
+                        % Slope
+                        if (~isfield(V,'slope'))
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.velocity_translation.slope.\n');
+                            status = 0; return;
+                        end
+                        slope = V.slope;
+                        if (~this.isDoubleArray(slope,2))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.slope.\n');
+                            fprintf(2,'It must be a pair of numeric values.\n');
+                            status = 0; return;
+                        end
+                        cond.slope = slope;
+                        
+                    elseif (strcmp(type,'oscillatory'))
+                        % Create object
+                        cond = Cond_Oscillatory();
+                        
+                        % Base value, amplitude and period
+                        if (~isfield(V,'base_value') || ~isfield(V,'amplitude') || ~isfield(V,'period'))
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.velocity_translation.\n');
+                            fprintf(2,'Oscillatory condition requires at least 3 fields: base_value, amplitude, period.\n');
+                            status = 0; return;
+                        end
+                        val       = V.base_value;
+                        amplitude = V.amplitude;
+                        period    = V.period;
+                        if (~this.isDoubleArray(val,2))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.base_value.\n');
+                            fprintf(2,'It must be a pair of numeric values with X,Y velocity components.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(amplitude,2) || amplitude < 0)
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.amplitude.\n');
+                            fprintf(2,'It must be a pair of positive values with X,Y velocity components.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(period,1) || period <= 0)
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.period.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            fprintf(2,'It must be a positive value with the period of oscillation.\n');
+                            status = 0; return;
+                        end
+                        cond.base_value = val;
+                        cond.amplitude  = amplitude;
+                        cond.period     = period;
+                        
+                        % Shift
+                        if (isfield(V,'shift'))
+                            shift = V.shift;
+                            if (~this.isDoubleArray(shift,1))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.shift.\n');
+                                fprintf(2,'It must be a numeric value with the shift of the oscillation.\n');
+                                status = 0; return;
+                            end
+                            cond.shift = shift;
+                        end
+                        
+                    elseif (strcmp(type,'table'))
+                        % Create object
+                        cond = Cond_Table();
+                        
+                        % Table values
+                        if (isfield(V,'values'))
+                            vals = V.values';
+                            if (~this.isDoubleArray(vals,length(vals)))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.values.\n');
+                                fprintf(2,'It must be a numeric table with the first row as the independent variable values and the second as the dependent variable values.\n');
+                                status = 0; return;
+                            end
+                        elseif (isfield(V,'file'))
+                            file = V.file;
+                            if (~this.isStringArray(file,1))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.file.\n');
+                                fprintf(2,'It must be a string with the values file name.\n');
+                                status = 0; return;
+                            end
+                            [status,vals] = this.readTable(fullfile(path,file),3);
+                            if (status == 0)
+                                return;
+                            end
+                        else
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.velocity_translation.values or FixedCondition.velocity_translation.file.\n');
+                            status = 0; return;
+                        end
+                        if (size(vals,1) < 2 || size(vals,2) ~= 3)
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.values.\n');
+                            fprintf(2,'It must contain 2 columns (one for the independent variable values and another for the velocity values), and at least 2 points.\n');
+                            status = 0; return;
+                        end
+                        cond.val_x = vals(:,1);
+                        cond.val_y = vals(:,2);
+                        
+                        % Interpolation method
+                        if (isfield(V,'interpolation'))
+                            interp = V.interpolation;
+                            if (~this.isStringArray(interp,1) ||...
+                               (~strcmp(interp,'linear') &&...
+                                ~strcmp(interp,'makima') &&...
+                                ~strcmp(interp,'cubic')  &&...
+                                ~strcmp(interp,'pchip')  &&...
+                                ~strcmp(interp,'spline')))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.interpolation.\n');
+                                fprintf(2,'It must be a string with the interpolation method: linear, makima, cubic, pchip or spline.\n');
+                                status = 0; return;
+                            elseif (strcmp(interp,'linear'))
+                                if (size(cond.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for linear interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_LINEAR;
+                            elseif (strcmp(interp,'makima'))
+                                if (size(cond.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for makima interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_MAKIMA;
+                            elseif (strcmp(interp,'cubic'))
+                                if (size(cond.val_x,1) < 3)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.values.\n');
+                                    fprintf(2,'It must contain at least 3 points for cubic interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_CUBIC;
+                            elseif (strcmp(interp,'pchip'))
+                                if (size(cond.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for pchip interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_PCHIP;
+                            elseif (strcmp(interp,'spline'))
+                                if (size(cond.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for spline interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_SPLINE;
+                            end
+                        end
+                    else
+                        fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.type.\n');
+                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Interval
+                    if (isfield(V,'interval'))
+                        interval = V.interval;
+                        if (~this.isDoubleArray(interval,2) || interval(1) >= interval(2))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.interval.\n');
+                            fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
+                            status = 0; return;
+                        end
+                        cond.interval  = interval;
+                        cond.init_time = min(0,min(interval));
+                    else
+                        cond.init_time = 0;
+                    end
+                    
+                    % Add handle to fixed condition to selected elements
+                    model_parts = string(V.model_parts);
+                    for j = 1:length(model_parts)
+                        name = model_parts(j);
+                        if (~this.isStringArray(name,1))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0; return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            [drv.particles.fc_velocity] = deal(cond);
+                        elseif (strcmp(name,'WALLS'))
+                            [drv.walls.fc_velocity] = deal(cond);
+                        else
+                            mp = findobj(drv.mparts,'name',name);
+                            if (isempty(mp))
+                                this.warn('Nonexistent model part used in FixedCondition.velocity_translation.');
+                                continue;
+                            end
+                            [mp.particles.fc_velocity] = deal(cond);
+                            [mp.walls.fc_velocity]     = deal(cond);
+                        end
+                    end
                 end
             end
             
@@ -1905,6 +2136,7 @@ classdef Read < handle
                             status = 0; return;
                         elseif (~this.isDoubleArray(period,1) || period <= 0)
                             fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.period.\n');
+                            fprintf(2,'It must be a positive value with the period of oscillation.\n');
                             fprintf(2,'It must be a positive value with the period of oscillation.\n');
                             status = 0; return;
                         end

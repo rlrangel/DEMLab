@@ -115,7 +115,12 @@ classdef Driver < handle
                 % Reset forcing terms for next step
                 p.resetForcingTerms();
                 
+                % Set flags for free particle
+                p.setFreeMech(this.time);
+                p.setFreeTherm(this.time);
+                
                 % Set fixed conditions
+                p.setFCVelocity(this.time);
                 p.setFCTemperature(this.time);
             end
             
@@ -124,6 +129,7 @@ classdef Driver < handle
                 w = this.walls(i);
                 
                 % Set fixed conditions
+                w.setFCVelocity(this.time);
                 w.setFCTemperature(this.time);
             end
             

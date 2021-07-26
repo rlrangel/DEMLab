@@ -41,7 +41,12 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         pc_heatrate Cond = Cond.empty;
         
         % Fixed conditions (handles to objects of Cond class)
+        fc_velocity    Cond = Cond.empty;
         fc_temperature Cond = Cond.empty;
+        
+        % Flags for free/fixed particles
+        free_mech  logical = logical.empty;   % flag for mechanically free particle
+        free_therm logical = logical.empty;   % flag for thermally free particle
         
         % Total forcing terms
         force     double = double.empty;
@@ -93,6 +98,9 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         setMInertia(this);
+        
+        %------------------------------------------------------------------
+        setFCVelocity(this,time,dt);
     end
     
     %% Public methods
@@ -162,6 +170,20 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
             for i = 1:length(this.pc_heatrate)
                 if (this.pc_heatrate(i).isActive(time))
                     this.heat_rate = this.heat_rate + this.pc_heatrate(i).getValue(time);
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function setFreeMech(this,time)
+            if (isempty(this.fc_velocity))
+                this.free_mech = true;
+            else
+                for i = 1:length(this.fc_velocity)
+                    if (this.fc_velocity(i).isActive(time))
+                        this.free_mech = false;
+                        return;
+                    end
                 end
             end
         end

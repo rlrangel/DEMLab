@@ -27,7 +27,12 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         interacts Interact = Interact.empty;    % handles to objects of Interact class
         
         % Fixed conditions (handles to objects of Cond class)
+        fc_velocity    Cond = Cond.empty;
         fc_temperature Cond = Cond.empty;
+        
+        % Flags for free/fixed particles
+        free_mech  logical = logical.empty;   % flag for mechanically free particle
+        free_therm logical = logical.empty;   % flag for thermally free particle
         
         % Current thermal state
         temperature double = double.empty;   % temperature
@@ -53,10 +58,41 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
     methods (Abstract)
         %------------------------------------------------------------------
         setDefaultProps(this);
+        
+        %------------------------------------------------------------------
+        setFCVelocity(this,time,dt);
     end
     
     %% Public methods
     methods
+        %------------------------------------------------------------------
+        function setFreeMech(this,time)
+            if (isempty(this.fc_velocity))
+                this.free_mech = true;
+            else
+                for i = 1:length(this.fc_velocity)
+                    if (this.fc_velocity(i).isActive(time))
+                        this.free_mech = false;
+                        return;
+                    end
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function setFreeTherm(this,time)
+            if (isempty(this.fc_temperature))
+                this.free_therm = true;
+            else
+                for i = 1:length(this.fc_temperature)
+                    if (this.fc_temperature(i).isActive(time))
+                        this.free_therm = false;
+                        return;
+                    end
+                end
+            end
+        end
+        
         %------------------------------------------------------------------
         function setFCTemperature(this,time)
             for i = 1:length(this.fc_temperature)

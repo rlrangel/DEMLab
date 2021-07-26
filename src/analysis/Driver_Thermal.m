@@ -114,8 +114,11 @@ classdef Driver_Thermal < Driver
             for i = 1:this.n_particles
                 p = particles(i);
                 
+                % Set flag for free particle
+                p.setFreeTherm(this.time);
+                
                 % Solver thermal state
-                if (isempty(p.fc_temperature))
+                if (p.free_therm)
                     % Add prescribed conditions
                     p.addPCHeatFlux(time);
                     p.addPCHeatRate(time);
@@ -126,7 +129,7 @@ classdef Driver_Thermal < Driver
                     % Numerical integration
                     this.scheme_temp.updateTemperature(p,time_step);
                 else
-                    % Set fixed conditions
+                    % Set fixed temperature
                     p.setFCTemperature(time);
                 end
                 
@@ -147,12 +150,23 @@ classdef Driver_Thermal < Driver
             walls = this.walls;
             time  = this.time;
             
+            % Initialize flags
+            store = this.storeResults();
+            
             % Loop over all walls
             for i = 1:this.n_walls
                 w = walls(i);
                 
-                % Set fixed conditions
-                w.setFCTemperature(time);
+                % Set fixed temperature
+                w.setFreeTherm(this.time);
+                if (~w.free_therm)
+                    w.setFCTemperature(time);
+                end
+                
+                % Store results
+                if (store)
+                    this.result.storeWallThermal(w);
+                end
             end
         end
     end

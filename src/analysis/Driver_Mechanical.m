@@ -161,8 +161,11 @@ classdef Driver_Mechanical < Driver
             for i = 1:this.n_particles
                 p = particles(i);
                 
+                % Set flag for free particle
+                p.setFreeMech(this.time);
+                
                 % Solver mechanical state
-                if (1)
+                if (p.free_mech)
                     % Add global conditions
                     p.addWeight();
                     if (~isempty(this.damp_trl))
@@ -185,6 +188,7 @@ classdef Driver_Mechanical < Driver
                     this.scheme_rot.updateOrientation(p,time_step);
                 else
                     % Set fixed conditions
+                    p.setFCVelocity(time,time_step);
                 end
                 
                 % Remove particles not respecting bbox and sinks
@@ -215,9 +219,23 @@ classdef Driver_Mechanical < Driver
             % Properties accessed in parallel loop
             walls = this.walls;
             
+            % Initialize flags
+            store = this.storeResults();
+            
             % Loop over all walls
             for i = 1:this.n_walls
-                % Set fixed conditions
+                w = walls(i);
+                
+                % Set fixed motion
+                w.setFreeMech(this.time);
+                if (~w.free_mech)
+                    w.setFCVelocity(time,time_step);
+                end
+                
+                % Store results
+                if (store)
+                    this.result.storeWallPosition(w);
+                end
             end
         end
     end

@@ -44,6 +44,12 @@ classdef Result < handle
         % Types of particle results: thermal state
         HEAT_RATE   = uint8(23);
         TEMPERATURE = uint8(24);
+        
+        % Types of wall results: position
+        
+        
+        % Types of wall results: temperature
+        
     end
     
     %% Public properties: Flags for required results
@@ -289,5 +295,20 @@ classdef Result < handle
                 this.heat_rate(r,c) = p.heat_rate;
             end
         end
+        
+        %------------------------------------------------------------------
+        function storeWallPosition(this,w)
+            r = p.id;
+            c = this.idx;
+            if (this.has_coord_x)
+                this.coord_x(r,c) = p.coord(1);
+            end
+            if (this.has_coord_y)
+                this.coord_y(r,c) = p.coord(2);
+            end
+        end
+        
+        
+        
     end
 end
