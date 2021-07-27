@@ -28,7 +28,6 @@ classdef Driver < handle
         n_walls     uint32 = uint32.empty;   % number of walls
         n_interacts uint32 = uint32.empty;   % number of binary interactions
         n_materials uint32 = uint32.empty;   % number of materials
-        n_prescond  uint32 = uint32.empty;   % number of prescribed conditions
         
         % Model components: handle to objects
         mparts    ModelPart = ModelPart.empty;   % handles to objects of ModelPart class
@@ -36,7 +35,6 @@ classdef Driver < handle
         walls     Wall      = Wall.empty;        % handles to objects of Wall class
         interacts Interact  = Interact.empty;    % handles to objects of Interact class
         materials Material  = Material.empty;    % handles to objects of Material class
-        prescond  Cond      = Cond.empty;        % handles to objects of Cond class
         
         % Model limits
         bbox BBox = BBox.empty;   % handle to object of BBox class
@@ -57,17 +55,17 @@ classdef Driver < handle
         time      double  = double.empty;    % current simulation time
         step      uint32  = uint32.empty;    % current simulation step
         
+        % Output generation
+        result   Result  = Result.empty;    % handle to object of Result class
+        graphs   Graph   = Graph.empty;     % handles to objects of Graph class
+        animates Animate = Animate.empty;   % handles to objects of Animate class
+        
         % Output control
         nprog double  = double.empty;    % progress print frequency (% of total time)
         nout  double  = double.empty;    % number of outputs
         tprog double  = double.empty;    % next time for printing progress
         tout  double  = double.empty;    % next time for storing results
-        store logical = logical.empty;   % flag for storing results
-        
-        % Output generation
-        result   Result  = Result.empty;    % handle to object of Result class
-        graphs   Graph   = Graph.empty;     % handles to objects of Graph class
-        animates Animate = Animate.empty;   % handles to objects of Animate class
+        store logical = logical.empty;   % flag for step to store results
     end
     
     %% Constructor method
@@ -121,7 +119,7 @@ classdef Driver < handle
                 p.setFreeTherm(this.time);
                 
                 % Set fixed conditions
-                p.setFCVelocity(this.time,this.time_step);
+                p.setFCTranslation(this.time,this.time_step);
                 p.setFCTemperature(this.time);
             end
             
@@ -130,7 +128,7 @@ classdef Driver < handle
                 w = this.walls(i);
                 
                 % Set fixed conditions
-                w.setFCVelocity(this.time,this.time_step);
+                w.setFCTranslation(this.time,this.time_step);
                 w.setFCTemperature(this.time);
             end
             
@@ -200,8 +198,8 @@ classdef Driver < handle
             
             % Remove particles not respecting sinks
             if (~isempty(this.sink))
-                for j = 1:length(this.sink)
-                    if (this.sink(j).removeParticle(p,this.time))
+                for i = 1:length(this.sink)
+                    if (this.sink(i).removeParticle(p,this.time))
                         do = true;
                         
                         % Remove particle and its interactions

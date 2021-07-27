@@ -99,9 +99,6 @@ classdef Read < handle
             if (status)
                 status = this.checkWalls(drv);
             end
-            
-            % All elements have an interaction model defined between them;
-            % Interaction models are consistent;
         end
     end
     
@@ -120,8 +117,8 @@ classdef Read < handle
             end
             PD = json.ProblemData;
             
-            if (~isfield(PD,'name') || ~isfield(PD,'analysis_type') || ~isfield(PD,'dimension') || ~isfield(PD,'model_parts_file'))
-                fprintf(2,'Missing data in project parameters file: ProblemData must have name, analysis_type, dimension and model_parts_file.\n');
+            if (~isfield(PD,'name') || ~isfield(PD,'analysis_type') || ~isfield(PD,'model_parts_file'))
+                fprintf(2,'Missing data in project parameters file: ProblemData must have name, analysis_type, and model_parts_file.\n');
                 status = 0; return;
             end
             
@@ -150,13 +147,15 @@ classdef Read < handle
             drv.name = name;
             
             % Dimension
-            dim = PD.dimension;
-            if (~this.isIntArray(dim,1) || dim ~= 2)
-                fprintf(2,'Invalid data in project parameters file: ProblemData.dimension.\n');
-                fprintf(2,'Available options: 2.\n');
-                status = 0; return;
+            if (isfield(PD,'dimension'))
+                dim = PD.dimension;
+                if (~this.isIntArray(dim,1) || dim ~= 2)
+                    fprintf(2,'Invalid data in project parameters file: ProblemData.dimension.\n');
+                    fprintf(2,'Available options: 2.\n');
+                    status = 0; return;
+                end
+                drv.dimension = dim;
             end
-            drv.dimension = dim;
             
             % Model parts file name
             model_parts_file = string(PD.model_parts_file);
@@ -286,7 +285,7 @@ classdef Read < handle
                     ~strcmp(scheme,'modified_euler') &&...
                     ~strcmp(scheme,'taylor2'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_trans.\n');
-                    fprintf(2,'Available options: forward_euler.\n');
+                    fprintf(2,'Available options: forward_euler, modified_euler, taylor2.\n');
                     status = 0; return;
                 end
                 if (strcmp(scheme,'forward_euler'))
@@ -376,7 +375,7 @@ classdef Read < handle
             
             % Search frequency
             if (isfield(json.Search,'search_frequency'))
-                if (~this.isDoubleArray(json.Search.search_frequency,1) || json.Search.search_frequency <= 0)
+                if (~this.isIntArray(json.Search.search_frequency,1) || json.Search.search_frequency <= 0)
                     fprintf(2,'Invalid data in project parameters file: Search.search_frequency.\n');
                     fprintf(2,'It must be a positive integer.\n');
                     status = 0; return;
@@ -741,18 +740,18 @@ classdef Read < handle
             end
             
             % TRANSLATIONAL VELOCITY
-            if (isfield(IC,'TranslationalVelocity'))
-                for i = 1:length(IC.TranslationalVelocity)
-                    TV = IC.TranslationalVelocity(i);
+            if (isfield(IC,'translational_velocity'))
+                for i = 1:length(IC.translational_velocity)
+                    TV = IC.translational_velocity(i);
                     if (~isfield(TV,'value') || ~isfield(TV,'model_parts'))
-                        fprintf(2,'Missing data in project parameters file: InitialCondition.TranslationalVelocity must have value and model_parts.\n');
+                        fprintf(2,'Missing data in project parameters file: InitialCondition.translational_velocity must have value and model_parts.\n');
                         status = 0; return;
                     end
                     
                     % Velocity value
                     val = TV.value;
                     if (~this.isDoubleArray(val,2))
-                        fprintf(2,'Invalid data in project parameters file: InitialCondition.TranslationalVelocity.value.\n');
+                        fprintf(2,'Invalid data in project parameters file: InitialCondition.translational_velocity.value.\n');
                         fprintf(2,'It must be a pair of numeric values with X,Y velocity components.\n');
                         status = 0; return;
                     end
@@ -762,7 +761,7 @@ classdef Read < handle
                     for j = 1:length(model_parts)
                         name = model_parts(j);
                         if (~this.isStringArray(name,1))
-                            fprintf(2,'Invalid data in project parameters file: InitialCondition.TranslationalVelocity.model_parts.\n');
+                            fprintf(2,'Invalid data in project parameters file: InitialCondition.translational_velocity.model_parts.\n');
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
@@ -770,7 +769,7 @@ classdef Read < handle
                         else
                             mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
-                                this.warn('Nonexistent model part used in InitialCondition.TranslationalVelocity.');
+                                this.warn('Nonexistent model part used in InitialCondition.translational_velocity.');
                                 continue;
                             end
                             [mp.particles.veloc_trl] = deal(val);
@@ -780,19 +779,19 @@ classdef Read < handle
             end
             
             % ROTATIONAL VELOCITY
-            if (isfield(IC,'RotationalVelocity'))                
-                for i = 1:length(IC.RotationalVelocity)
-                    RV = IC.RotationalVelocity(i);
+            if (isfield(IC,'rotational_velocity'))                
+                for i = 1:length(IC.rotational_velocity)
+                    RV = IC.rotational_velocity(i);
                     if (~isfield(RV,'value') || ~isfield(RV,'model_parts'))
-                        fprintf(2,'Missing data in project parameters file: InitialCondition.RotationalVelocity must have value and model_parts.\n');
+                        fprintf(2,'Missing data in project parameters file: InitialCondition.rotational_velocity must have value and model_parts.\n');
                         status = 0; return;
                     end
                     
                     % Velocity value
                     val = RV.value;
                     if (~this.isDoubleArray(val,1))
-                        fprintf(2,'Invalid data in project parameters file: InitialCondition.RotationalVelocity.value.\n');
-                        fprintf(2,'It must be a numeric value with rotational velocity.\n');
+                        fprintf(2,'Invalid data in project parameters file: InitialCondition.rotational_velocity.value.\n');
+                        fprintf(2,'It must be a numeric value.\n');
                         status = 0; return;
                     end
                     
@@ -801,7 +800,7 @@ classdef Read < handle
                     for j = 1:length(model_parts)
                         name = model_parts(j);
                         if (~this.isStringArray(name,1))
-                            fprintf(2,'Invalid data in project parameters file: InitialCondition.RotationalVelocity.model_parts.\n');
+                            fprintf(2,'Invalid data in project parameters file: InitialCondition.rotational_velocity.model_parts.\n');
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
@@ -809,7 +808,7 @@ classdef Read < handle
                         else
                             mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
-                                this.warn('Nonexistent model part used in InitialCondition.RotationalVelocity.');
+                                this.warn('Nonexistent model part used in InitialCondition.rotational_velocity.');
                                 continue;
                             end
                             [mp.particles.veloc_rot] = deal(val);
@@ -831,7 +830,7 @@ classdef Read < handle
                     val = T.value;
                     if (~this.isDoubleArray(val,1))
                         fprintf(2,'Invalid data in project parameters file: InitialCondition.temperature.value.\n');
-                        fprintf(2,'It must be a numeric value with temperature.\n');
+                        fprintf(2,'It must be a numeric value.\n');
                         status = 0; return;
                     end
                     
@@ -879,6 +878,7 @@ classdef Read < handle
                     this.warn('A nonexistent field was identified in PrescribedCondition. It will be ignored.');
                 end
             end
+            
             % In the following, the types of conditions have very similar codes
             
             % FORCE
@@ -1105,10 +1105,6 @@ classdef Read < handle
                             [mp.particles.pc_force] = deal(pc);
                         end
                     end
-                    
-                    % Add to global list in driver
-                    drv.prescond(end+1) = pc;
-                    drv.n_prescond = drv.n_prescond + 1;
                 end
             end
             
@@ -1336,10 +1332,6 @@ classdef Read < handle
                             [mp.particles.pc_torque] = deal(pc);
                         end
                     end
-                    
-                    % Add to global list in driver
-                    drv.prescond(end+1) = pc;
-                    drv.n_prescond = drv.n_prescond + 1;
                 end
             end
             
@@ -1567,10 +1559,6 @@ classdef Read < handle
                             [mp.particles.pc_heatflux] = deal(pc);
                         end
                     end
-                    
-                    % Add to global list in driver
-                    drv.prescond(end+1) = pc;
-                    drv.n_prescond = drv.n_prescond + 1;
                 end
             end
             
@@ -1798,10 +1786,6 @@ classdef Read < handle
                             [mp.particles.pc_heatrate] = deal(pc);
                         end
                     end
-                    
-                    % Add to global list in driver
-                    drv.prescond(end+1) = pc;
-                    drv.n_prescond = drv.n_prescond + 1;
                 end
             end
         end
@@ -1817,7 +1801,9 @@ classdef Read < handle
             fields = fieldnames(FC);
             for i = 1:length(fields)
                 f = string(fields(i));
-                if (~strcmp(f,'velocity_translation') && ~strcmp(f,'temperature'))
+                if (~strcmp(f,'velocity_translation') && ...
+                    ~strcmp(f,'velocity_rotation')    &&...
+                    ~strcmp(f,'temperature'))
                     this.warn('A nonexistent field was identified in FixedCondition. It will be ignored.');
                 end
             end
@@ -1953,11 +1939,11 @@ classdef Read < handle
                         end
                         if (size(vals,1) < 2 || size(vals,2) ~= 3)
                             fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.values.\n');
-                            fprintf(2,'It must contain 2 columns (one for the independent variable values and another for the velocity values), and at least 2 points.\n');
+                            fprintf(2,'It must contain 3 columns (one for the independent variable values and 2 for the velocity X,Y component values), and at least 2 points.\n');
                             status = 0; return;
                         end
                         cond.val_x = vals(:,1);
-                        cond.val_y = vals(:,2);
+                        cond.val_y = vals(:,2:3);
                         
                         % Interpolation method
                         if (isfield(V,'interpolation'))
@@ -2037,17 +2023,247 @@ classdef Read < handle
                             fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
                             status = 0; return;
                         elseif (strcmp(name,'PARTICLES'))
-                            [drv.particles.fc_velocity] = deal(cond);
+                            [drv.particles.fc_translation] = deal(cond);
                         elseif (strcmp(name,'WALLS'))
-                            [drv.walls.fc_velocity] = deal(cond);
+                            [drv.walls.fc_translation] = deal(cond);
                         else
                             mp = findobj(drv.mparts,'name',name);
                             if (isempty(mp))
                                 this.warn('Nonexistent model part used in FixedCondition.velocity_translation.');
                                 continue;
                             end
-                            [mp.particles.fc_velocity] = deal(cond);
-                            [mp.walls.fc_velocity]     = deal(cond);
+                            [mp.particles.fc_translation] = deal(cond);
+                            [mp.walls.fc_translation]     = deal(cond);
+                        end
+                    end
+                end
+            end
+            
+            % VELOCITY ROTATION
+            if (isfield(FC,'velocity_rotation'))
+                for i = 1:length(FC.velocity_rotation)
+                    V = FC.velocity_rotation(i);
+                    if (~isfield(V,'type') || ~isfield(V,'model_parts'))
+                        fprintf(2,'Missing data in project parameters file: FixedCondition.velocity_rotation must have type and model_parts.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Type
+                    type = string(V.type);
+                    if (~this.isStringArray(type,1))
+                        fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.type.\n');
+                        status = 0; return;
+                        
+                    elseif (strcmp(type,'uniform'))
+                        % Create object
+                        cond = Cond_Uniform();
+                        
+                        % Value
+                        if (~isfield(V,'value'))
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.velocity_rotation.value.\n');
+                            status = 0; return;
+                        end
+                        val = V.value;
+                        if (~this.isDoubleArray(val,1))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.value.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        end
+                        cond.value = val;
+                        
+                    elseif (strcmp(type,'linear'))
+                        % Create object
+                        cond = Cond_Linear();
+                        
+                        % Initial value
+                        if (isfield(V,'initial_value'))
+                            val = V.initial_value;
+                            if (~this.isDoubleArray(val,1))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.initial_value.\n');
+                                fprintf(2,'It must be a numeric value.\n');
+                                status = 0; return;
+                            end
+                            cond.init_value = val;
+                        end
+                        
+                        % Slope
+                        if (~isfield(V,'slope'))
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.velocity_rotation.slope.\n');
+                            status = 0; return;
+                        end
+                        slope = V.slope;
+                        if (~this.isDoubleArray(slope,1))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.slope.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        end
+                        cond.slope = slope;
+                        
+                    elseif (strcmp(type,'oscillatory'))
+                        % Create object
+                        cond = Cond_Oscillatory();
+                        
+                        % Base value, amplitude and period
+                        if (~isfield(V,'base_value') || ~isfield(V,'amplitude') || ~isfield(V,'period'))
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.velocity_rotation.\n');
+                            fprintf(2,'Oscillatory condition requires at least 3 fields: base_value, amplitude, period.\n');
+                            status = 0; return;
+                        end
+                        val       = V.base_value;
+                        amplitude = V.amplitude;
+                        period    = V.period;
+                        if (~this.isDoubleArray(val,1))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.base_value.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(amplitude,1) || amplitude < 0)
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.amplitude.\n');
+                            fprintf(2,'It must be a positive value.\n');
+                            status = 0; return;
+                        elseif (~this.isDoubleArray(period,1) || period <= 0)
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.period.\n');
+                            fprintf(2,'It must be a positive value with the period of oscillation.\n');
+                            status = 0; return;
+                        end
+                        cond.base_value = val;
+                        cond.amplitude  = amplitude;
+                        cond.period     = period;
+                        
+                        % Shift
+                        if (isfield(V,'shift'))
+                            shift = V.shift;
+                            if (~this.isDoubleArray(shift,1))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.shift.\n');
+                                fprintf(2,'It must be a numeric value with the shift of the oscillation.\n');
+                                status = 0; return;
+                            end
+                            cond.shift = shift;
+                        end
+                        
+                    elseif (strcmp(type,'table'))
+                        % Create object
+                        cond = Cond_Table();
+                        
+                        % Table values
+                        if (isfield(V,'values'))
+                            vals = V.values';
+                            if (~this.isDoubleArray(vals,length(vals)))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.values.\n');
+                                fprintf(2,'It must be a numeric table with the first row as the independent variable values and the second as the dependent variable values.\n');
+                                status = 0; return;
+                            end
+                        elseif (isfield(V,'file'))
+                            file = V.file;
+                            if (~this.isStringArray(file,1))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.file.\n');
+                                fprintf(2,'It must be a string with the values file name.\n');
+                                status = 0; return;
+                            end
+                            [status,vals] = this.readTable(fullfile(path,file),2);
+                            if (status == 0)
+                                return;
+                            end
+                        else
+                            fprintf(2,'Missing data in project parameters file: FixedCondition.velocity_rotation.values or FixedCondition.velocity_rotation.file.\n');
+                            status = 0; return;
+                        end
+                        if (size(vals,1) < 2 || size(vals,2) ~= 2)
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.values.\n');
+                            fprintf(2,'It must contain 2 columns (one for the independent variable values and another for the velocity values), and at least 2 points.\n');
+                            status = 0; return;
+                        end
+                        cond.val_x = vals(:,1);
+                        cond.val_y = vals(:,2);
+                        
+                        % Interpolation method
+                        if (isfield(V,'interpolation'))
+                            interp = V.interpolation;
+                            if (~this.isStringArray(interp,1) ||...
+                               (~strcmp(interp,'linear') &&...
+                                ~strcmp(interp,'makima') &&...
+                                ~strcmp(interp,'cubic')  &&...
+                                ~strcmp(interp,'pchip')  &&...
+                                ~strcmp(interp,'spline')))
+                                fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.interpolation.\n');
+                                fprintf(2,'It must be a string with the interpolation method: linear, makima, cubic, pchip or spline.\n');
+                                status = 0; return;
+                            elseif (strcmp(interp,'linear'))
+                                if (size(cond.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for linear interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_LINEAR;
+                            elseif (strcmp(interp,'makima'))
+                                if (size(cond.val_x,1) < 2)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.values.\n');
+                                    fprintf(2,'It must contain at least 2 points for makima interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_MAKIMA;
+                            elseif (strcmp(interp,'cubic'))
+                                if (size(cond.val_x,1) < 3)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.values.\n');
+                                    fprintf(2,'It must contain at least 3 points for cubic interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_CUBIC;
+                            elseif (strcmp(interp,'pchip'))
+                                if (size(cond.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for pchip interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_PCHIP;
+                            elseif (strcmp(interp,'spline'))
+                                if (size(cond.val_x,1) < 4)
+                                    fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.values.\n');
+                                    fprintf(2,'It must contain at least 4 points for spline interpolation.\n');
+                                    status = 0; return;
+                                end
+                                cond.interp = cond.INTERP_SPLINE;
+                            end
+                        end
+                    else
+                        fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.type.\n');
+                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        status = 0; return;
+                    end
+                    
+                    % Interval
+                    if (isfield(V,'interval'))
+                        interval = V.interval;
+                        if (~this.isDoubleArray(interval,2) || interval(1) >= interval(2))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.interval.\n');
+                            fprintf(2,'It must be a pair of numeric values and the minimum value must be smaller than the maximum.\n');
+                            status = 0; return;
+                        end
+                        cond.interval  = interval;
+                        cond.init_time = min(0,min(interval));
+                    else
+                        cond.init_time = 0;
+                    end
+                    
+                    % Add handle to fixed condition to selected elements
+                    model_parts = string(V.model_parts);
+                    for j = 1:length(model_parts)
+                        name = model_parts(j);
+                        if (~this.isStringArray(name,1))
+                            fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.model_parts.\n');
+                            fprintf(2,'It must be a list of strings containing the names of the model parts.\n');
+                            status = 0; return;
+                        elseif (strcmp(name,'PARTICLES'))
+                            [drv.particles.fc_rotation] = deal(cond);
+                        elseif (strcmp(name,'WALLS'))
+                            [drv.walls.fc_rotation] = deal(cond);
+                        else
+                            mp = findobj(drv.mparts,'name',name);
+                            if (isempty(mp))
+                                this.warn('Nonexistent model part used in FixedCondition.velocity_rotation.');
+                                continue;
+                            end
+                            [mp.particles.fc_rotation] = deal(cond);
+                            [mp.walls.fc_rotation]     = deal(cond);
                         end
                     end
                 end
@@ -2136,7 +2352,6 @@ classdef Read < handle
                             status = 0; return;
                         elseif (~this.isDoubleArray(period,1) || period <= 0)
                             fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.period.\n');
-                            fprintf(2,'It must be a positive value with the period of oscillation.\n');
                             fprintf(2,'It must be a positive value with the period of oscillation.\n');
                             status = 0; return;
                         end
@@ -2460,7 +2675,7 @@ classdef Read < handle
             
             % Multiple case:
             if (length(json.InteractionModel) > 1)
-                fprintf(2,'Multiple interaction models not yet available.\n');
+                fprintf(2,'Multiple interaction models is not yet available.\n');
                 status = 0; return;
             end
         end
@@ -2851,6 +3066,13 @@ classdef Read < handle
                                   "acceleration_vector","acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
                 results_therm = ["heat_rate","temperature"];
                 
+                % Data needed in all animation types
+                drv.result.has_time          = true;
+                drv.result.has_coord_x       = true;
+                drv.result.has_coord_y       = true;
+                drv.result.has_radius        = true;
+                drv.result.has_wall_position = true;
+                
                 % Result type
                 if (~isfield(ANM,'result'))
                     fprintf(2,'Missing data in project parameters file: Animation.result.\n');
@@ -2936,13 +3158,6 @@ classdef Read < handle
                     anm.res_type = drv.result.HEAT_RATE;
                     drv.result.has_heat_rate = true;
                 end
-                
-                % Data needed in all animation types
-                drv.result.has_time          = true;
-                drv.result.has_coord_x       = true;
-                drv.result.has_coord_y       = true;
-                drv.result.has_radius        = true;
-                drv.result.has_wall_position = true;
             end
         end
     end

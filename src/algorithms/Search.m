@@ -21,7 +21,7 @@ classdef Search < handle & matlab.mixin.Heterogeneous
         
         % Parameters
         freq     uint32 = uint32.empty;   % frequency of search (in steps)
-        max_dist double = uint32.empty;   % threshold neighbour distance (exclusive) to create an interaction
+        max_dist double = double.empty;   % threshold neighbour distance (exclusive) to create an interaction
         
         % Base object for common interactions
         b_interact Interact = Interact.empty;   % handle to object of Interact class for all interactions

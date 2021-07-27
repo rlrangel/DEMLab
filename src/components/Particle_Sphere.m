@@ -24,7 +24,8 @@ classdef Particle_Sphere < Particle
         %------------------------------------------------------------------
         function setDefaultProps(this)
             % Flags for free/fixed particle
-            this.free_mech  = true;
+            this.free_trl   = true;
+            this.free_rot   = true;
             this.free_therm = true;
             
             % Forcing terms
@@ -44,13 +45,6 @@ classdef Particle_Sphere < Particle
         end
         
         %------------------------------------------------------------------
-        function resetForcingTerms(this)
-            this.force     = [0;0];
-            this.torque    = 0;
-            this.heat_rate = 0;
-        end
-        
-        %------------------------------------------------------------------
         function setSurface(this)
             this.surface = 4 * pi * this.radius^2;
         end
@@ -63,25 +57,6 @@ classdef Particle_Sphere < Particle
         %------------------------------------------------------------------
         function setMInertia(this)
             this.minertia = 2 * this.mass * this.radius^2/5;
-        end
-        
-        %------------------------------------------------------------------
-        function setFCVelocity(this,time,dt)
-            if (this.free_mech)
-                return;
-            end
-            
-            vel = [0;0];
-            for i = 1:length(this.fc_velocity)
-                if (this.fc_velocity(i).isActive(time))
-                    vel = vel + this.fc_velocity(i).getValue(time);
-                end
-            end
-            
-            % Set acceleration / velocity / coordinates
-            this.accel_trl = (vel-this.veloc_trl) / dt;
-            this.veloc_trl =  vel;
-            this.coord     =  this.coord + vel * dt;
         end
     end
 end

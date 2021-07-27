@@ -36,15 +36,15 @@ classdef Wall_Line < Wall
         end
         
         %------------------------------------------------------------------
-        function setFCVelocity(this,time,dt)
+        function setFCTranslation(this,time,dt)
             if (this.free_mech)
                 return;
             end
             
             vel = [0;0];
-            for i = 1:length(this.fc_velocity)
-                if (this.fc_velocity(i).isActive(time))
-                    vel = vel + this.fc_velocity(i).getValue(time);
+            for i = 1:length(this.fc_translation)
+                if (this.fc_translation(i).isActive(time))
+                    vel = vel + this.fc_translation(i).getValue(time);
                 end
             end
             

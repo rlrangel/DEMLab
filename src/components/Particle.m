@@ -41,11 +41,13 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         pc_heatrate Cond = Cond.empty;
         
         % Fixed conditions (handles to objects of Cond class)
-        fc_velocity    Cond = Cond.empty;
+        fc_translation Cond = Cond.empty;
+        fc_rotation    Cond = Cond.empty;
         fc_temperature Cond = Cond.empty;
         
         % Flags for free/fixed particles
-        free_mech  logical = logical.empty;   % flag for mechanically free particle
+        free_trl   logical = logical.empty;   % flag for translational free particle
+        free_rot   logical = logical.empty;   % flag for rotational free particle
         free_therm logical = logical.empty;   % flag for thermally free particle
         
         % Total forcing terms
@@ -55,7 +57,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         
         % Current mechanical state
         coord     double = double.empty;   % coordinates of centroid
-        orient    double = double.empty;   % orientation angles
+        orient    double = double.empty;   % orientation angle
         veloc_trl double = double.empty;   % translational velocity
         veloc_rot double = double.empty;   % rotational velocity
         accel_trl double = double.empty;   % translational acceleration
@@ -88,9 +90,6 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         setDefaultProps(this);
         
         %------------------------------------------------------------------
-        resetForcingTerms(this);
-        
-        %------------------------------------------------------------------
         setSurface(this);
         
         %------------------------------------------------------------------
@@ -98,9 +97,6 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         setMInertia(this);
-        
-        %------------------------------------------------------------------
-        setFCVelocity(this,time,dt);
     end
     
     %% Public methods
@@ -118,6 +114,13 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         %------------------------------------------------------------------
         function setTInertia(this)
             this.tinertia = this.mass * this.material.hcapacity;
+        end
+        
+        %------------------------------------------------------------------
+        function resetForcingTerms(this)
+            this.force     = [0;0];
+            this.torque    = 0;
+            this.heat_rate = 0;
         end
         
         %------------------------------------------------------------------
@@ -176,29 +179,72 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         function setFreeMech(this,time)
-            if (isempty(this.fc_velocity))
-                this.free_mech = true;
-            else
-                for i = 1:length(this.fc_velocity)
-                    if (this.fc_velocity(i).isActive(time))
-                        this.free_mech = false;
-                        return;
-                    end
+            this.free_trl = true;
+            this.free_rot = true;
+            for i = 1:length(this.fc_translation)
+                if (this.fc_translation(i).isActive(time))
+                    this.free_trl = false;
+                    break;
+                end
+            end
+            for i = 1:length(this.fc_rotation)
+                if (this.fc_rotation(i).isActive(time))
+                    this.free_rot = false;
+                    break;
                 end
             end
         end
         
         %------------------------------------------------------------------
         function setFreeTherm(this,time)
-            if (isempty(this.fc_temperature))
-                this.free_therm = true;
+            this.free_therm = true;
+            for i = 1:length(this.fc_temperature)
+                if (this.fc_temperature(i).isActive(time))
+                    this.free_therm = false;
+                    return;
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function setFCTranslation(this,time,dt)
+            if (this.free_trl)
+                if (~this.free_rot)
+                    this.accel_trl = [0;0];
+                    this.veloc_trl = [0;0];
+                    this.coord     =  this.coord;
+                end
             else
-                for i = 1:length(this.fc_temperature)
-                    if (this.fc_temperature(i).isActive(time))
-                        this.free_therm = false;
-                        return;
+                vel = [0;0];
+                for i = 1:length(this.fc_translation)
+                    if (this.fc_translation(i).isActive(time))
+                        vel = vel + this.fc_translation(i).getValue(time);
                     end
                 end
+                this.accel_trl = (vel-this.veloc_trl) / dt;
+                this.veloc_trl =  vel;
+                this.coord     =  this.coord + vel * dt;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function setFCRotation(this,time,dt)
+            if (this.free_rot)
+                if (~this.free_trl)
+                    this.accel_rot = 0;
+                    this.veloc_rot = 0;
+                    this.orient    =  this.orient;
+                end
+            else
+                vel = 0;
+                for i = 1:length(this.fc_rotation)
+                    if (this.fc_rotation(i).isActive(time))
+                        vel = vel + this.fc_rotation(i).getValue(time);
+                    end
+                end
+                this.accel_rot = (vel-this.veloc_trl) / dt;
+                this.veloc_rot =  vel;
+                this.orient    =  this.orient + vel * dt;
             end
         end
         
@@ -215,17 +261,17 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         end
         
         %------------------------------------------------------------------
-        function computeAccelTrl(this)
+        function setAccelTrl(this)
             this.accel_trl = this.force / this.mass;
         end
         
         %------------------------------------------------------------------
-        function computeAccelRot(this)
+        function setAccelRot(this)
             this.accel_rot = this.torque / this.minertia;
         end
         
         %------------------------------------------------------------------
-        function computeTempChange(this)
+        function setTempChange(this)
             this.temp_change = this.heat_rate / this.tinertia;
         end
     end

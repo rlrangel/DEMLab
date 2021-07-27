@@ -23,12 +23,12 @@ classdef Driver_Thermal < Driver
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
+            this.dimension   = 2;
             this.n_mparts    = 0;
             this.n_particles = 0;
             this.n_walls     = 0;
             this.n_interacts = 0;
             this.n_materials = 0;
-            this.n_prescond  = 0;
             this.search      = Search_SimpleLoop();
             this.scheme_temp = Scheme_EulerForward();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
@@ -124,7 +124,7 @@ classdef Driver_Thermal < Driver
                     p.addPCHeatRate(time);
                     
                     % Evaluate equation of energy balance
-                    p.computeTempChange();
+                    p.setTempChange();
                     
                     % Numerical integration
                     this.scheme_temp.updateTemperature(p,time_step);

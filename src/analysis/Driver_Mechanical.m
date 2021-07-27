@@ -29,12 +29,12 @@ classdef Driver_Mechanical < Driver
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
+            this.dimension   = 2;
             this.n_mparts    = 0;
             this.n_particles = 0;
             this.n_walls     = 0;
             this.n_interacts = 0;
             this.n_materials = 0;
-            this.n_prescond  = 0;
             this.search      = Search_SimpleLoop();
             this.scheme_trl  = Scheme_EulerForward();
             this.scheme_rot  = Scheme_EulerForward();
@@ -167,7 +167,7 @@ classdef Driver_Mechanical < Driver
                 p.setFreeMech(this.time);
                 
                 % Solver mechanical state
-                if (p.free_mech)
+                if (p.free_trl && p.free_rot)
                     % Add global conditions
                     p.addWeight();
                     if (~isempty(this.damp_trl))
@@ -182,15 +182,15 @@ classdef Driver_Mechanical < Driver
                     p.addPCTorque(time);
 
                     % Evaluate equation of motion
-                    p.computeAccelTrl();
-                    p.computeAccelRot();
+                    p.setAccelTrl();
+                    p.setAccelRot();
 
                     % Numerical integration
                     this.scheme_trl.updatePosition(p,time_step);
                     this.scheme_rot.updateOrientation(p,time_step);
                 else
                     % Set fixed conditions
-                    p.setFCVelocity(time,time_step);
+                    p.setFCTranslation(time,time_step);
                 end
                 
                 % Remove particles not respecting bbox and sinks
@@ -230,7 +230,7 @@ classdef Driver_Mechanical < Driver
                 % Set fixed motion
                 w.setFreeMech(this.time);
                 if (~w.free_mech)
-                    w.setFCVelocity(time,time_step);
+                    w.setFCTranslation(time,time_step);
                 end
                 
                 % Store results

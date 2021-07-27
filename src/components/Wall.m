@@ -27,7 +27,8 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         interacts Interact = Interact.empty;    % handles to objects of Interact class
         
         % Fixed conditions (handles to objects of Cond class)
-        fc_velocity    Cond = Cond.empty;
+        fc_translation Cond = Cond.empty;
+        fc_rotation    Cond = Cond.empty;
         fc_temperature Cond = Cond.empty;
         
         % Flags for free/fixed particles
@@ -60,18 +61,18 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         setDefaultProps(this);
         
         %------------------------------------------------------------------
-        setFCVelocity(this,time,dt);
+        setFCTranslation(this,time,dt);
     end
     
     %% Public methods
     methods
         %------------------------------------------------------------------
         function setFreeMech(this,time)
-            if (isempty(this.fc_velocity))
+            if (isempty(this.fc_translation))
                 this.free_mech = true;
             else
-                for i = 1:length(this.fc_velocity)
-                    if (this.fc_velocity(i).isActive(time))
+                for i = 1:length(this.fc_translation)
+                    if (this.fc_translation(i).isActive(time))
                         this.free_mech = false;
                         return;
                     end
