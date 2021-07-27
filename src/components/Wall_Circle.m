@@ -34,6 +34,10 @@ classdef Wall_Circle < Wall
         
         %------------------------------------------------------------------
         function setFCVelocity(this,time,dt)
+            if (this.free_mech)
+                return;
+            end
+            
             vel = [0;0];
             for i = 1:length(this.fc_velocity)
                 if (this.fc_velocity(i).isActive(time))
@@ -42,7 +46,7 @@ classdef Wall_Circle < Wall
             end
             
             % Set center coordinates
-            this.center = vel * dt;
+            this.center = this.center + vel * dt;
         end
     end
 end

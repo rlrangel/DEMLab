@@ -44,12 +44,6 @@ classdef Result < handle
         % Types of particle results: thermal state
         HEAT_RATE   = uint8(23);
         TEMPERATURE = uint8(24);
-        
-        % Types of wall results: position
-        
-        
-        % Types of wall results: temperature
-        
     end
     
     %% Public properties: Flags for required results
@@ -58,32 +52,36 @@ classdef Result < handle
         has_time = logical(false);
         has_step = logical(false);
         
-        % Properties results
+        % Particle properties
         has_radius = logical(false);
         
-        % Position results
+        % Particle position
         has_coord_x     = logical(false);
         has_coord_y     = logical(false);
         has_orientation = logical(false);
         
-        % Force results
+        % Particle force
         has_force_x = logical(false);
         has_force_y = logical(false);
         has_torque  = logical(false);
         
-        % Velocity results
+        % Particle velocity
         has_velocity_x   = logical(false);
         has_velocity_y   = logical(false);
         has_velocity_rot = logical(false);
         
-        % Acceleration results
+        % Particle acceleration
         has_acceleration_x   = logical(false);
         has_acceleration_y   = logical(false);
         has_acceleration_rot = logical(false);
         
-        % Thermal state results
+        % Particle thermal state
         has_heat_rate   = logical(false);
         has_temperature = logical(false);
+        
+        % Wall state
+        has_wall_position    = logical(false);
+        has_wall_temperature = logical(false);
     end
     
     %% Public properties: Results storage
@@ -95,32 +93,36 @@ classdef Result < handle
         times double = double.empty;
         steps double = double.empty;
         
-        % Properties results
+        % Particle properties
         radius double = double.empty;
         
-        % Position results
-        coord_x     double = double.empty
-        coord_y     double = double.empty
-        orientation double = double.empty
+        % Particle position
+        coord_x     double = double.empty;
+        coord_y     double = double.empty;
+        orientation double = double.empty;
         
-        % Force results
-        force_x double = double.empty
-        force_y double = double.empty
-        torque  double = double.empty
+        % Particle force
+        force_x double = double.empty;
+        force_y double = double.empty;
+        torque  double = double.empty;
         
-        % Velocity results
-        velocity_x   double = double.empty
-        velocity_y   double = double.empty
-        velocity_rot double = double.empty
+        % Particle velocity
+        velocity_x   double = double.empty;
+        velocity_y   double = double.empty;
+        velocity_rot double = double.empty;
         
-        % Acceleration results
-        acceleration_x   double = double.empty
-        acceleration_y   double = double.empty
-        acceleration_rot double = double.empty
+        % Particle acceleration
+        acceleration_x   double = double.empty;
+        acceleration_y   double = double.empty;
+        acceleration_rot double = double.empty;
         
-        % Thermal state results
-        heat_rate   double = double.empty
-        temperature double = double.empty
+        % Particle thermal state
+        heat_rate   double = double.empty;
+        temperature double = double.empty;
+        
+        % Wall state
+        wall_position    double = double.empty;
+        wall_temperature double = double.empty;
     end
     
     %% Constructor method
@@ -134,12 +136,11 @@ classdef Result < handle
     methods
         %------------------------------------------------------------------
         function initialize(this,drv)
-            % Number of rows and columns
-            r = drv.n_particles;   % rows: total number of particles
-            c = drv.nout+1;        % columns: number of output steps (+initial conditions)
-            
             % Index for columns
             this.idx = 1;
+            
+            % Number of columns: number of output steps (+initial conditions)
+            c = drv.nout+1; 
             
             % Global parameters
             if (this.has_time)
@@ -149,12 +150,15 @@ classdef Result < handle
                 this.steps = nan(1,c);
             end
             
-            % Properties results
+            % Number of rows for particles: total number of particles
+            r = drv.n_particles;
+            
+            % Particle properties
             if (this.has_radius)
                 this.radius = nan(r,c);
             end
             
-            % Force results
+            % Particle force
             if (this.has_force_x)
                 this.force_x = nan(r,c);
             end
@@ -165,7 +169,7 @@ classdef Result < handle
                 this.torque = nan(r,c);
             end
             
-            % Position results
+            % Particle position
             if (this.has_coord_x)
                 this.coord_x = nan(r,c);
             end
@@ -176,7 +180,7 @@ classdef Result < handle
                 this.orientation = nan(r,c);
             end
             
-            % Velocity results
+            % Particle velocity
             if (this.has_velocity_x)
                 this.velocity_x = nan(r,c);
             end
@@ -187,7 +191,7 @@ classdef Result < handle
                 this.velocity_rot = nan(r,c);
             end
             
-            % Acceleration results
+            % Particle acceleration
             if (this.has_acceleration_x)
                 this.acceleration_x = nan(r,c);
             end
@@ -198,12 +202,26 @@ classdef Result < handle
                 this.acceleration_rot = nan(r,c);
             end
             
-            % Thermal state results
+            % Particle thermal state
             if (this.has_heat_rate)
                 this.heat_rate = nan(r,c);
             end
             if (this.has_temperature)
                 this.temperature = nan(r,c);
+            end
+            
+            % Number of rows for walls: total number of walls
+            r = drv.n_walls;
+            
+            % Wall state
+            if (this.has_wall_position)
+                % 4 values for each wall in any column:
+                % * Line wall:   x1,y1,x2,y2
+                % * Circle wall: x,y,R,nan
+                this.wall_position = nan(4*r,c);
+            end
+            if (this.has_wall_temperature)
+                this.wall_temperature = nan(r,c);
             end
         end
         
@@ -298,17 +316,29 @@ classdef Result < handle
         
         %------------------------------------------------------------------
         function storeWallPosition(this,w)
-            r = p.id;
+            r = 4 * (w.id-1) + 1;
             c = this.idx;
-            if (this.has_coord_x)
-                this.coord_x(r,c) = p.coord(1);
-            end
-            if (this.has_coord_y)
-                this.coord_y(r,c) = p.coord(2);
+            if (this.has_wall_position)
+                if (w.type == w.LINE)
+                    this.wall_position(r+0,c) = w.coord_ini(1);
+                    this.wall_position(r+1,c) = w.coord_ini(2);
+                    this.wall_position(r+2,c) = w.coord_end(1);
+                    this.wall_position(r+3,c) = w.coord_end(2);
+                elseif (w.type == w.CIRCLE)
+                    this.wall_position(r+0,c) = w.center(1);
+                    this.wall_position(r+1,c) = w.center(2);
+                    this.wall_position(r+2,c) = w.radius;
+                end
             end
         end
         
-        
-        
+        %------------------------------------------------------------------
+        function storeWallThermal(this,w)
+            r = w.id;
+            c = this.idx;
+            if (this.has_wall_temperature)
+                this.wall_temperature(r,c) = w.temperature;
+            end
+        end
     end
 end

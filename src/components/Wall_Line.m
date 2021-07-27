@@ -37,6 +37,10 @@ classdef Wall_Line < Wall
         
         %------------------------------------------------------------------
         function setFCVelocity(this,time,dt)
+            if (this.free_mech)
+                return;
+            end
+            
             vel = [0;0];
             for i = 1:length(this.fc_velocity)
                 if (this.fc_velocity(i).isActive(time))
@@ -45,8 +49,8 @@ classdef Wall_Line < Wall
             end
             
             % Set end coordinates
-            this.coord_ini = vel * dt;
-            this.coord_end = vel * dt;
+            this.coord_ini = this.coord_ini + vel * dt;
+            this.coord_end = this.coord_end + vel * dt;
         end
     end
 end

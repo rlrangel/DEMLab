@@ -58,10 +58,11 @@ classdef Driver < handle
         step      uint32  = uint32.empty;    % current simulation step
         
         % Output control
-        nprog double = double.empty;   % progress print frequency (% of total time)
-        nout  double = double.empty;   % number of outputs
-        tprog double = double.empty;   % next time for printing progress
-        tout  double = double.empty;   % next time for storing results
+        nprog double  = double.empty;    % progress print frequency (% of total time)
+        nout  double  = double.empty;    % number of outputs
+        tprog double  = double.empty;    % next time for printing progress
+        tout  double  = double.empty;    % next time for storing results
+        store logical = logical.empty;   % flag for storing results
         
         % Output generation
         result   Result  = Result.empty;    % handle to object of Result class
@@ -120,7 +121,7 @@ classdef Driver < handle
                 p.setFreeTherm(this.time);
                 
                 % Set fixed conditions
-                p.setFCVelocity(this.time);
+                p.setFCVelocity(this.time,this.time_step);
                 p.setFCTemperature(this.time);
             end
             
@@ -129,7 +130,7 @@ classdef Driver < handle
                 w = this.walls(i);
                 
                 % Set fixed conditions
-                w.setFCVelocity(this.time);
+                w.setFCVelocity(this.time,this.time_step);
                 w.setFCTemperature(this.time);
             end
             
@@ -163,6 +164,11 @@ classdef Driver < handle
                 this.result.storeParticlePosition(p);
                 this.result.storeParticleForce(p);
                 this.result.storeParticleThermal(p);
+            end
+            for i = 1:this.n_walls
+                w = this.walls(i);
+                this.result.storeWallPosition(w);
+                this.result.storeWallThermal(w);
             end
             
             % Initialize output control variables

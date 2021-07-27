@@ -189,7 +189,24 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         end
         
         %------------------------------------------------------------------
+        function setFreeTherm(this,time)
+            if (isempty(this.fc_temperature))
+                this.free_therm = true;
+            else
+                for i = 1:length(this.fc_temperature)
+                    if (this.fc_temperature(i).isActive(time))
+                        this.free_therm = false;
+                        return;
+                    end
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
         function setFCTemperature(this,time)
+            if (this.free_therm)
+                return;
+            end
             for i = 1:length(this.fc_temperature)
                 if (this.fc_temperature(i).isActive(time))
                     this.temperature = this.fc_temperature(i).getValue(time);

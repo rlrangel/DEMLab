@@ -90,7 +90,7 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
         function this = setContactArea(this,int)
             % Needed properties
             d    = this.dist;
-            l    = this.length;
+            l    = this.leng;
             r1   = int.elem1.radius;
             r2   = int.elem2.radius;
             r1_2 = r1 * r1;

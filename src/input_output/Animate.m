@@ -43,19 +43,27 @@ classdef Animate < handle
         atitle string = string.empty;   % animation title
         path   string = string.empty;   % path to model folder
         
-        % Results
+        % Results: general
+        res_type  uint8  = uint8.empty;    % flag for type of result
         np        uint32 = uint32.empty;   % total number of particles
         nf        uint32 = uint32.empty;   % total number of frames
-        res_type  uint8  = uint8.empty;    % flag for type of result
-        res_scal  double = double.empty;   % array of scalar result to be exhibited
+        
+        % Results: common
+        times    double = double.empty;   % array of simulation times of each step
+        coord_x  double = double.empty;   % array of particles x coordinates
+        coord_y  double = double.empty;   % array of particles y coordinates
+        radius   double = double.empty;   % array of particles radius
+        wall_pos double = double.empty;   % array of wall positions
+        
+        % Results: scalar
         res_range double = double.empty;   % array of results range (minimum to maximum value)
+        res_scal  double = double.empty;   % array of scalar result to be exhibited for particles
+        res_wall  double = double.empty;   % array of scalar result to be exhibited for walls
+        
+        % Results: vector
         res_vecx  double = double.empty;   % array of x vector result to be exhibited
         res_vecy  double = double.empty;   % array of y vector result to be exhibited
         arrow_fct double = double.empty;   % multiplicator factor to define vetor arrow size
-        coord_x   double = double.empty;   % array of particles x coordinates
-        coord_y   double = double.empty;   % array of particles y coordinates
-        radius    double = double.empty;   % array of particles radius
-        times     double = double.empty;   % array of simulation times of each step
         
         % Options
         play logical = logical.empty;   % flag for playing animation in Matlab after creation
@@ -102,11 +110,12 @@ classdef Animate < handle
                 ylim(this.bbox(3:4))
             end
             
-            % Set common properties (always needed to show model animation)
-            this.coord_x = drv.result.coord_x;
-            this.coord_y = drv.result.coord_y;
-            this.radius  = drv.result.radius;
-            this.times   = drv.result.times;
+            % Set common results (always needed to show model animation)
+            this.times    = drv.result.times;
+            this.coord_x  = drv.result.coord_x;
+            this.coord_y  = drv.result.coord_y;
+            this.radius   = drv.result.radius;
+            this.wall_pos = drv.result.wall_position;
             
             % Set type and create animation
             this.setType(drv)
@@ -186,6 +195,7 @@ classdef Animate < handle
                     this.type = this.SCALAR;
                 case drv.result.TEMPERATURE
                     this.res_scal = drv.result.temperature;
+                    this.res_wall = drv.result.wall_temperature;
                     this.type = this.SCALAR;
                 case drv.result.HEAT_RATE
                     this.res_scal = drv.result.heat_rate;
@@ -211,8 +221,12 @@ classdef Animate < handle
         function createAnimation(this,drv)
             if (this.type == this.SCALAR)
                 % Get result range
-                min_val = min(this.res_scal(:));
-                max_val = max(this.res_scal(:));
+                min_val_p = min(this.res_scal(:));
+                max_val_p = max(this.res_scal(:));
+                min_val_w = min(this.res_wall(:));
+                max_val_w = max(this.res_wall(:));
+                min_val = min([min_val_p,min_val_w]);
+                max_val = max([max_val_p,max_val_w]);
                 if (min_val == max_val)
                     min_val = min_val - 1;
                     max_val = max_val + 1;
@@ -276,11 +290,12 @@ classdef Animate < handle
     methods
         %------------------------------------------------------------------
         function drawMovieFrame(this,drv,f)
+            if (isnan(this.times(1,f)))
+                return;
+            end
+            
             % Draw particles
             for i = 1:this.np
-                if (isnan(this.times(1,f)))
-                    continue;
-                end
                 switch this.type
                     case this.MOTION
                         this.drawParticleMotion(i,f);
@@ -300,7 +315,7 @@ classdef Animate < handle
             
             % Draw walls
             for i = 1:drv.n_walls
-                this.drawWall(drv.walls(i));
+                this.drawWall(drv.walls(i),f);
             end
             
             % Draw bounding box
@@ -377,21 +392,33 @@ classdef Animate < handle
         end
         
         %------------------------------------------------------------------
-        function drawWall(this,wall)
-            c = this.col_wall;
+        function drawWall(this,wall,j)
             w = this.wid_wall;
             s = this.sty_wall;
             
+            % Set wall color
+            if (isempty(this.res_wall))
+                c = this.col_wall;
+            else
+                c = interp1(this.res_range,colormap,this.res_wall(wall.id,j));
+            end
+            
+            % Column ID
+            col = 4 * (wall.id-1) + 1;
+            
             switch wall.type
                 case wall.LINE
-                    x1 = wall.coord_ini(1);
-                    y1 = wall.coord_ini(2);
-                    x2 = wall.coord_end(1);
-                    y2 = wall.coord_end(2);
+                    x1 = this.wall_pos(col+0,j);
+                    y1 = this.wall_pos(col+1,j);
+                    x2 = this.wall_pos(col+2,j);
+                    y2 = this.wall_pos(col+3,j);
                     line([x1,x2],[y1,y2],'Color',c,'LineWidth',w,'LineStyle',s);
                 
                 case wall.CIRCLE
-                    this.drawCircle(wall.center(1),wall.center(2),wall.radius,c,w,s);
+                    x = this.wall_pos(col+0,j);
+                    y = this.wall_pos(col+1,j);
+                    r = this.wall_pos(col+2,j);
+                    this.drawCircle(x,y,r,c,w,s);
             end
         end
         

@@ -54,7 +54,15 @@ classdef Driver_Thermal < Driver
                 this.time = this.time + this.time_step;
                 this.step = this.step + 1;
                 
-                % Loop over all interactions and particles
+                % Store current time and step to result arrays
+                if (this.storeResults())
+                    this.store = true;
+                    this.result.storeGlobalParams(this);
+                else
+                    this.store = false;
+                end
+                
+                % Loop over all interactions, particles and walls
                 this.interactionLoop();
                 this.particleLoop();
                 this.wallLoop();
@@ -102,14 +110,6 @@ classdef Driver_Thermal < Driver
             time      = this.time;
             time_step = this.time_step;
             
-            % Initialize flags
-            store = this.storeResults();
-            
-            % Store current time and step to result arrays
-            if (store)
-                this.result.storeGlobalParams(this);
-            end
-            
             % Loop over all particles
             for i = 1:this.n_particles
                 p = particles(i);
@@ -134,7 +134,7 @@ classdef Driver_Thermal < Driver
                 end
                 
                 % Store results
-                if (store)
+                if (this.store)
                     this.result.storeParticlePosition(p);
                     this.result.storeParticleThermal(p);
                 end
@@ -150,9 +150,6 @@ classdef Driver_Thermal < Driver
             walls = this.walls;
             time  = this.time;
             
-            % Initialize flags
-            store = this.storeResults();
-            
             % Loop over all walls
             for i = 1:this.n_walls
                 w = walls(i);
@@ -164,7 +161,7 @@ classdef Driver_Thermal < Driver
                 end
                 
                 % Store results
-                if (store)
+                if (this.store)
                     this.result.storeWallThermal(w);
                 end
             end

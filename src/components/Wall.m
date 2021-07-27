@@ -95,6 +95,9 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         function setFCTemperature(this,time)
+            if (this.free_therm)
+                return;
+            end
             for i = 1:length(this.fc_temperature)
                 if (this.fc_temperature(i).isActive(time))
                     this.temperature = this.fc_temperature(i).getValue(time);

@@ -21,6 +21,13 @@
 	"GlobalCondition": {
 		"gravity" : [0.0,-9.81]
 	},
+	"FixedCondition": {
+		"velocity_translation": {
+			"type"        : "uniform",
+			"model_parts" : ["WALLS"],
+			"value"       : [0.0,1.0]
+		}
+	},
 	"Material": {
 		"name"        : "material_1",
 		"model_parts" : ["PARTICLES"],

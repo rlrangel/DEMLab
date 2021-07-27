@@ -1817,7 +1817,7 @@ classdef Read < handle
             fields = fieldnames(FC);
             for i = 1:length(fields)
                 f = string(fields(i));
-                if (~strcmp(f,'velocity_translation') || ~strcmp(f,'temperature'))
+                if (~strcmp(f,'velocity_translation') && ~strcmp(f,'temperature'))
                     this.warn('A nonexistent field was identified in FixedCondition. It will be ignored.');
                 end
             end
@@ -2931,16 +2931,18 @@ classdef Read < handle
                 elseif (strcmp(result,'temperature'))
                     anm.res_type = drv.result.TEMPERATURE;
                     drv.result.has_temperature = true;
+                    drv.result.has_wall_temperature = true;
                 elseif (strcmp(result,'heat_rate'))
                     anm.res_type = drv.result.HEAT_RATE;
                     drv.result.has_heat_rate = true;
                 end
                 
-                % Time vector, coordinates and radius are needed in all result types
-                drv.result.has_time    = true;
-                drv.result.has_coord_x = true;
-                drv.result.has_coord_y = true;
-                drv.result.has_radius  = true;
+                % Data needed in all animation types
+                drv.result.has_time          = true;
+                drv.result.has_coord_x       = true;
+                drv.result.has_coord_y       = true;
+                drv.result.has_radius        = true;
+                drv.result.has_wall_position = true;
             end
         end
     end
@@ -3119,7 +3121,7 @@ classdef Read < handle
                 particle.id     = id;
                 particle.coord  = coord;
                 particle.orient = orient;
-                particle.length = length;
+                particle.leng   = length;
                 if (length(values) == 6)
                     particle.radius = radius;
                 end
