@@ -28,29 +28,61 @@ classdef Wall_Line < Wall
         %------------------------------------------------------------------
         function setDefaultProps(this)
             % Flags for free/fixed wall
-            this.free_mech  = true;
-            this.free_therm = true;
+            this.fixed_motion = false;
+            this.fixed_therm  = false;
+            
+            % Mechanical state variables
+            this.veloc_trl = [0;0];
+            this.veloc_rot = 0;
             
             % Thermal state variables
             this.temperature = 0;
         end
         
         %------------------------------------------------------------------
-        function setFCTranslation(this,time,dt)
-            if (this.free_mech)
+        function setFCMotion(this,time,dt)
+            this.veloc_trl = [0;0];
+            this.veloc_rot = 0;
+            if (~this.fixed_motion)
                 return;
             end
             
-            vel = [0;0];
+            % Translation
+            coord_mid = (this.coord_ini+this.coord_end)/2;
             for i = 1:length(this.fc_translation)
                 if (this.fc_translation(i).isActive(time))
-                    vel = vel + this.fc_translation(i).getValue(time);
+                    vel = this.fc_translation(i).getValue(time);
+                    
+                    % Velocity
+                    this.veloc_trl = this.veloc_trl + vel;
+                    
+                    % Mid-point coodinates
+                    coord_mid = coord_mid + vel * dt;
                 end
             end
             
-            % Set end coordinates
-            this.coord_ini = this.coord_ini + vel * dt;
-            this.coord_end = this.coord_end + vel * dt;
+            % Rotation
+            ang = atan2((this.coord_end(2)-this.coord_ini(2)),((this.coord_end(1)-this.coord_ini(1))));
+            for i = 1:length(this.fc_rotation)
+                if (this.fc_rotation(i).isActive(time))
+                    vel = this.fc_rotation(i).getValue(time);
+                    
+                    % Velocity
+                    this.veloc_rot = this.veloc_rot + vel;
+                    
+                    % Angular orientation
+                    ang = ang + vel * dt;
+                end
+            end
+            
+            % New coordinates
+            L = this.len/2;
+            x1 = coord_mid - L * cos(ang);
+            y1 = coord_mid - L * sin(ang);
+            x2 = coord_mid + L * cos(ang);
+            y2 = coord_mid + L * sin(ang);
+            this.coord_ini = [x1;y1];
+            this.coord_end = [x2;y2];
         end
     end
 end

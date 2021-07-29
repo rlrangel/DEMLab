@@ -57,7 +57,7 @@ classdef Animate < handle
         
         % Results: scalar
         res_range double = double.empty;   % array of results range (minimum to maximum value)
-        res_scal  double = double.empty;   % array of scalar result to be exhibited for particles
+        res_part  double = double.empty;   % array of scalar result to be exhibited for particles
         res_wall  double = double.empty;   % array of scalar result to be exhibited for walls
         
         % Results: vector
@@ -135,70 +135,70 @@ classdef Animate < handle
             switch this.res_type
                 % Motion
                 case drv.result.MOTION
-                    this.res_scal = drv.result.orientation;
+                    this.res_part = drv.result.orientation;
                     this.type = this.MOTION;
                 
                 % Scalar
                 case drv.result.RADIUS
-                    this.res_scal = drv.result.radius;
+                    this.res_part = drv.result.radius;
                     this.type = this.SCALAR;
                 case drv.result.COORDINATE_X
-                    this.res_scal = drv.result.coord_x;
+                    this.res_part = drv.result.coord_x;
                     this.type = this.SCALAR;
                 case drv.result.COORDINATE_Y
-                    this.res_scal = drv.result.coord_y;
+                    this.res_part = drv.result.coord_y;
                     this.type = this.SCALAR;
                 case drv.result.ORIENTATION
-                    this.res_scal = drv.result.orientation;
+                    this.res_part = drv.result.orientation;
                     this.type = this.SCALAR;
                 case drv.result.FORCE_MOD
                     x = drv.result.force_x;
                     y = drv.result.force_y;
-                    this.res_scal = vecnorm([x;y]);
+                    this.res_part = vecnorm([x;y]);
                     this.type = this.SCALAR;
                 case drv.result.FORCE_X
-                    this.res_scal = drv.result.force_x;
+                    this.res_part = drv.result.force_x;
                     this.type = this.SCALAR;
                 case drv.result.FORCE_Y
-                    this.res_scal = drv.result.force_y;
+                    this.res_part = drv.result.force_y;
                     this.type = this.SCALAR;
                 case drv.result.TORQUE
-                    this.res_scal = drv.result.torque;
+                    this.res_part = drv.result.torque;
                     this.type = this.SCALAR;
                 case drv.result.VELOCITY_MOD
                     x = drv.result.velocity_x;
                     y = drv.result.velocity_y;
-                    this.res_scal = vecnorm([x;y]);
+                    this.res_part = vecnorm([x;y]);
                     this.type = this.SCALAR;
                 case drv.result.VELOCITY_X
-                    this.res_scal = drv.result.velocity_x;
+                    this.res_part = drv.result.velocity_x;
                     this.type = this.SCALAR;
                 case drv.result.VELOCITY_Y
-                    this.res_scal = drv.result.velocity_y;
+                    this.res_part = drv.result.velocity_y;
                     this.type = this.SCALAR;
                 case drv.result.VELOCITY_ROT
-                    this.res_scal = drv.result.velocity_rot;
+                    this.res_part = drv.result.velocity_rot;
                     this.type = this.SCALAR;
                 case drv.result.ACCELERATION_MOD
                     x = drv.result.acceleration_x;
                     y = drv.result.acceleration_Y;
-                    this.res_scal = vecnorm([x;y]);
+                    this.res_part = vecnorm([x;y]);
                     this.type = this.SCALAR;
                 case drv.result.ACCELERATION_X
-                    this.res_scal = drv.result.acceleration_x;
+                    this.res_part = drv.result.acceleration_x;
                     this.type = this.SCALAR;
                 case drv.result.ACCELERATION_Y
-                    this.res_scal = drv.result.acceleration_y;
+                    this.res_part = drv.result.acceleration_y;
                     this.type = this.SCALAR;
                 case drv.result.ACCELERATION_ROT
-                    this.res_scal = drv.result.acceleration_rot;
+                    this.res_part = drv.result.acceleration_rot;
                     this.type = this.SCALAR;
                 case drv.result.TEMPERATURE
-                    this.res_scal = drv.result.temperature;
+                    this.res_part = drv.result.temperature;
                     this.res_wall = drv.result.wall_temperature;
                     this.type = this.SCALAR;
                 case drv.result.HEAT_RATE
-                    this.res_scal = drv.result.heat_rate;
+                    this.res_part = drv.result.heat_rate;
                     this.type = this.SCALAR;
                     
                 % Vector
@@ -221,8 +221,8 @@ classdef Animate < handle
         function createAnimation(this,drv)
             if (this.type == this.SCALAR)
                 % Get result range
-                min_val_p = min(this.res_scal(:));
-                max_val_p = max(this.res_scal(:));
+                min_val_p = min(this.res_part(:));
+                max_val_p = max(this.res_part(:));
                 min_val_w = min(this.res_wall(:));
                 max_val_w = max(this.res_wall(:));
                 min_val = min([min_val_p,min_val_w]);
@@ -348,7 +348,7 @@ classdef Animate < handle
             rectangle('Position',pos,'Curvature',[1 1],'EdgeColor',c,'LineWidth',w,'LineStyle',s,'FaceColor','none');
             
             % Plot orientation
-            o = this.res_scal(i,j);
+            o = this.res_part(i,j);
             p = [x,y]+[r*cos(o),r*sin(o)];
             line([x,p(1)],[y,p(2)],'Color',c,'LineWidth',w,'LineStyle',s);
         end
@@ -362,7 +362,7 @@ classdef Animate < handle
             pos = [x-r,y-r,2*r,2*r];
             
             % Color according to result
-            clr = interp1(this.res_range,colormap,this.res_scal(i,j));
+            clr = interp1(this.res_range,colormap,this.res_part(i,j));
             
             % Plot (rectangle with rounded sides)
             c = this.col_pedge;

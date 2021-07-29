@@ -45,7 +45,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         fc_rotation    Cond = Cond.empty;
         fc_temperature Cond = Cond.empty;
         
-        % Flags for free/fixed particles
+        % Flags for free/fixed particle
         free_trl   logical = logical.empty;   % flag for translational free particle
         free_rot   logical = logical.empty;   % flag for rotational free particle
         free_therm logical = logical.empty;   % flag for thermally free particle
@@ -209,43 +209,33 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         %------------------------------------------------------------------
         function setFCTranslation(this,time,dt)
             if (this.free_trl)
-                if (~this.free_rot)
-                    this.accel_trl = [0;0];
-                    this.veloc_trl = [0;0];
-                    this.coord     =  this.coord;
-                end
-            else
-                vel = [0;0];
-                for i = 1:length(this.fc_translation)
-                    if (this.fc_translation(i).isActive(time))
-                        vel = vel + this.fc_translation(i).getValue(time);
-                    end
-                end
-                this.accel_trl = (vel-this.veloc_trl) / dt;
-                this.veloc_trl =  vel;
-                this.coord     =  this.coord + vel * dt;
+                return;
             end
+            v = [0;0];
+            for i = 1:length(this.fc_translation)
+                if (this.fc_translation(i).isActive(time))
+                    v = v + this.fc_translation(i).getValue(time);
+                end
+            end
+            this.accel_trl = (v-this.veloc_trl) / dt;
+            this.veloc_trl =  v;
+            this.coord     =  this.coord + v * dt;
         end
         
         %------------------------------------------------------------------
-        function setFCRotation(this,time,dt)
+        function setFCRotationn(this,time,dt)
             if (this.free_rot)
-                if (~this.free_trl)
-                    this.accel_rot = 0;
-                    this.veloc_rot = 0;
-                    this.orient    =  this.orient;
-                end
-            else
-                vel = 0;
-                for i = 1:length(this.fc_rotation)
-                    if (this.fc_rotation(i).isActive(time))
-                        vel = vel + this.fc_rotation(i).getValue(time);
-                    end
-                end
-                this.accel_rot = (vel-this.veloc_trl) / dt;
-                this.veloc_rot =  vel;
-                this.orient    =  this.orient + vel * dt;
+                return;
             end
+            w = 0;
+            for i = 1:length(this.fc_rotation)
+                if (this.fc_rotation(i).isActive(time))
+                    w = w + this.fc_rotation(i).getValue(time);
+                end
+            end
+            this.accel_rot = (w-this.veloc_rot) / dt;
+            this.veloc_rot =  w;
+            this.orient    =  this.orient + w * dt;
         end
         
         %------------------------------------------------------------------

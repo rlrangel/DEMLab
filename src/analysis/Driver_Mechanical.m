@@ -40,7 +40,6 @@ classdef Driver_Mechanical < Driver
             this.scheme_rot  = Scheme_EulerForward();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
-            this.auto_step   = false;
             this.result      = Result();
             this.nprog       = 1;
             this.nout        = 500;
@@ -81,6 +80,9 @@ classdef Driver_Mechanical < Driver
                 this.interactionLoop();
                 this.particleLoop();
                 this.wallLoop();
+                
+                % Adjustments before next step
+                this.search.done = false;
                 
                 % Print progress
                 this.printProgress();
@@ -144,9 +146,6 @@ classdef Driver_Mechanical < Driver
                     end
                 end
             end
-            
-            % Adjustments before next step
-            this.search.done = false;
         end
         
         %------------------------------------------------------------------
@@ -166,31 +165,45 @@ classdef Driver_Mechanical < Driver
                 % Set flag for free particle
                 p.setFreeMech(this.time);
                 
-                % Solver mechanical state
-                if (p.free_trl && p.free_rot)
+                % Solve translational motion
+                if (p.free_trl)
                     % Add global conditions
                     p.addWeight();
                     if (~isempty(this.damp_trl))
                         p.addGblDampTransl(this.damp_trl);
                     end
+                    
+                    % Add prescribed conditions
+                    p.addPCForce(time);
+                    
+                    % Evaluate equation of motion
+                    p.setAccelTrl();
+                    
+                    % Numerical integration
+                    this.scheme_trl.updatePosition(p,time_step);
+                else
+                    % Set fixed translation
+                    p.setFCTranslation(time,time_step);
+                end
+                
+                % Solve rotational motion
+                if (p.free_rot)
+                    % Add global conditions
                     if (~isempty(this.damp_rot))
                         p.addGblDampRot(this.damp_rot);
                     end
                     
                     % Add prescribed conditions
-                    p.addPCForce(time);
                     p.addPCTorque(time);
-
+                    
                     % Evaluate equation of motion
-                    p.setAccelTrl();
                     p.setAccelRot();
-
+                    
                     % Numerical integration
-                    this.scheme_trl.updatePosition(p,time_step);
                     this.scheme_rot.updateOrientation(p,time_step);
                 else
-                    % Set fixed conditions
-                    p.setFCTranslation(time,time_step);
+                    % Set fixed rotation
+                    p.setFCRotation(time,time_step);
                 end
                 
                 % Remove particles not respecting bbox and sinks
@@ -201,8 +214,8 @@ classdef Driver_Mechanical < Driver
                 
                 % Store results
                 if (this.store)
-                    this.result.storeParticlePosition(p);
                     this.result.storeParticleMotion(p);
+                    this.result.storeParticlePosition(p);
                     this.result.storeParticleForce(p);
                 end
                 
@@ -228,10 +241,8 @@ classdef Driver_Mechanical < Driver
                 w = walls(i);
                 
                 % Set fixed motion
-                w.setFreeMech(this.time);
-                if (~w.free_mech)
-                    w.setFCTranslation(time,time_step);
-                end
+                w.setFreeMotion(this.time);
+                w.setFCMotion(time,time_step);
                 
                 % Store results
                 if (this.store)

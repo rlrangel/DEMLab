@@ -228,16 +228,6 @@ classdef Read < handle
                 status = 0; return;
             end
             
-            % Automatic time step
-            if (isfield(json.Solver,'auto_time_step'))
-                if (~this.isLogicalArray(json.Solver.auto_time_step,1))
-                    fprintf(2,'Invalid data in project parameters file: Solver.auto_time_step.\n');
-                    fprintf(2,'It must be a boolean: true or false.\n');
-                    status = 0; return;
-                end
-                drv.auto_step = json.Solver.auto_time_step;
-            end
-            
             % Time step
             if (isfield(json.Solver,'time_step'))
                 if (~this.isDoubleArray(json.Solver.time_step,1) || json.Solver.time_step <= 0)
@@ -246,7 +236,7 @@ classdef Read < handle
                     status = 0; return;
                 end
                 drv.time_step = json.Solver.time_step;
-            elseif (~isfield(json.Solver,'auto_time_step'))
+            else
                 fprintf(2,'Missing data in project parameters file: Solver.time_step.\n');
                 status = 0; return;
             end
@@ -3336,7 +3326,7 @@ classdef Read < handle
                 particle.id     = id;
                 particle.coord  = coord;
                 particle.orient = orient;
-                particle.leng   = length;
+                particle.len    = length;
                 if (length(values) == 6)
                     particle.radius = radius;
                 end

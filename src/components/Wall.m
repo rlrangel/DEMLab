@@ -31,9 +31,13 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         fc_rotation    Cond = Cond.empty;
         fc_temperature Cond = Cond.empty;
         
-        % Flags for free/fixed particles
-        free_mech  logical = logical.empty;   % flag for mechanically free particle
-        free_therm logical = logical.empty;   % flag for thermally free particle
+        % Flags for free/fixed wall
+        fixed_motion logical = logical.empty;   % flag for fixed motion wall
+        fixed_therm  logical = logical.empty;   % flag for fixed temperature wall
+        
+        % Current mechanical state
+        veloc_trl double = double.empty;   % translational velocity
+        veloc_rot double = double.empty;   % rotational velocity
         
         % Current thermal state
         temperature double = double.empty;   % temperature
@@ -61,19 +65,25 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         setDefaultProps(this);
         
         %------------------------------------------------------------------
-        setFCTranslation(this,time,dt);
+        setFCMotion(this,time,dt);
     end
     
     %% Public methods
     methods
         %------------------------------------------------------------------
-        function setFreeMech(this,time)
-            if (isempty(this.fc_translation))
-                this.free_mech = true;
+        function setFreeMotion(this,time)
+            if (isempty(this.fc_translation) && isempty(this.fc_rotation))
+                this.fixed_motion = false;
             else
                 for i = 1:length(this.fc_translation)
                     if (this.fc_translation(i).isActive(time))
-                        this.free_mech = false;
+                        this.fixed_motion = true;
+                        return;
+                    end
+                end
+                for i = 1:length(this.fc_rotation)
+                    if (this.fc_rotation(i).isActive(time))
+                        this.fixed_motion = true;
                         return;
                     end
                 end
@@ -83,11 +93,11 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         %------------------------------------------------------------------
         function setFreeTherm(this,time)
             if (isempty(this.fc_temperature))
-                this.free_therm = true;
+                this.fixed_therm = false;
             else
                 for i = 1:length(this.fc_temperature)
                     if (this.fc_temperature(i).isActive(time))
-                        this.free_therm = false;
+                        this.fixed_therm = true;
                         return;
                     end
                 end
@@ -96,7 +106,7 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         function setFCTemperature(this,time)
-            if (this.free_therm)
+            if (~this.fixed_therm)
                 return;
             end
             for i = 1:length(this.fc_temperature)

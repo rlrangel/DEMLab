@@ -25,28 +25,39 @@ classdef Wall_Circle < Wall
         %------------------------------------------------------------------
         function setDefaultProps(this)
             % Flags for free/fixed wall
-            this.free_mech  = true;
-            this.free_therm = true;
+            this.fixed_motion = false;
+            this.fixed_therm  = false;
+            
+            % Mechanical state variables
+            this.veloc_trl = [0;0];
+            this.veloc_rot = 0;
             
             % Thermal state variables
             this.temperature = 0;
         end
         
         %------------------------------------------------------------------
-        function setFCTranslation(this,time,dt)
-            if (this.free_mech)
+        function setFCMotion(this,time,dt)
+            this.veloc_trl = [0;0];
+            this.veloc_rot = 0;
+            if (~this.fixed_motion)
                 return;
             end
             
-            vel = [0;0];
+            % Translation
             for i = 1:length(this.fc_translation)
                 if (this.fc_translation(i).isActive(time))
-                    vel = vel + this.fc_translation(i).getValue(time);
+                    this.veloc_trl = this.veloc_trl + this.fc_translation(i).getValue(time);
                 end
             end
+            this.center = this.center + this.veloc_trl * dt;
             
-            % Set center coordinates
-            this.center = this.center + vel * dt;
+            % Rotation
+            for i = 1:length(this.fc_rotation)
+                if (this.fc_rotation(i).isActive(time))
+                    this.veloc_rot = this.veloc_rot + this.fc_rotation(i).getValue(time);
+                end
+            end
         end
     end
 end

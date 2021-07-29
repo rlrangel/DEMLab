@@ -66,17 +66,26 @@ classdef BinKinematics_SphereWlin < BinKinematics
         %------------------------------------------------------------------
         function this = setOverlaps(this,int,dt)
             p = int.elem1;
+            w = int.elem2;
             
             % Normal overlap and unit vector
             this.ovlp_n = -this.separ;
             this.dir_n  =  this.dir / this.dist;
             
-            % Position of contact point relative to particle centroid
-            c = (p.radius - this.ovlp_n) * this.dir_n;
+            % Position of contact point
+            cp = (p.radius - this.ovlp_n) * this.dir_n;
+            cw = (p.coord+cp) - (w.coord_ini+w.coord_end)/2;
             
-            % Relative velocity at contact point (3D due to cross-product)
-            w = cross([0;0;p.veloc_rot],[c(1);c(2);0]);
-            vr = p.veloc_trl + w(1:2);
+            % Particle velocity at contact point (3D due to cross-product)
+            wp  = cross([0;0;p.veloc_rot],[cp(1);cp(2);0]);
+            vcp = p.veloc_trl + wp(1:2);
+            
+            % Wall velocity at contact point (3D due to cross-product)
+            ww  = cross([0;0;w.veloc_rot],[cw(1);cw(2);0]);
+            vcw = w.veloc_trl + ww(1:2);
+            
+            % Relative velocity at contact point
+            vr = vcp - vcw;
             
             % Normal overlap rate of change
             this.vel_n = dot(vr,this.dir_n);

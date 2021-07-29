@@ -42,7 +42,6 @@ classdef Driver_ThermoMechanical < Driver
             this.scheme_temp = Scheme_EulerForward();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
-            this.auto_step   = false;
             this.result      = Result();
             this.nprog       = 1;
             this.nout        = 500;
@@ -84,6 +83,9 @@ classdef Driver_ThermoMechanical < Driver
                 this.interactionLoop();
                 this.particleLoop();
                 this.wallLoop();
+                
+                % Adjustments before next step
+                this.search.done = false;
                 
                 % Print progress
                 this.printProgress();
@@ -150,9 +152,6 @@ classdef Driver_ThermoMechanical < Driver
                     end
                 end
             end
-            
-            % Adjustments before next step
-            this.search.done = false;
         end
         
         %------------------------------------------------------------------
@@ -173,34 +172,48 @@ classdef Driver_ThermoMechanical < Driver
                 p.setFreeMech(this.time);
                 p.setFreeTherm(this.time);
                 
-                % Solver mechanical state
-                if (p.free_trl && p.free_rot)
+                % Solve translational motion
+                if (p.free_trl)
                     % Add global conditions
                     p.addWeight();
                     if (~isempty(this.damp_trl))
                         p.addGblDampTransl(this.damp_trl);
                     end
+                    
+                    % Add prescribed conditions
+                    p.addPCForce(time);
+                    
+                    % Evaluate equation of motion
+                    p.setAccelTrl();
+                    
+                    % Numerical integration
+                    this.scheme_trl.updatePosition(p,time_step);
+                else
+                    % Set fixed translation
+                    p.setFCTranslation(time,time_step);
+                end
+                
+                % Solve rotational motion
+                if (p.free_rot)
+                    % Add global conditions
                     if (~isempty(this.damp_rot))
                         p.addGblDampRot(this.damp_rot);
                     end
                     
                     % Add prescribed conditions
-                    p.addPCForce(time);
                     p.addPCTorque(time);
                     
                     % Evaluate equation of motion
-                    p.setAccelTrl();
                     p.setAccelRot();
                     
                     % Numerical integration
-                    this.scheme_trl.updatePosition(p,time_step);
                     this.scheme_rot.updateOrientation(p,time_step);
                 else
-                    % Set fixed motion
-                    p.setFCTranslation(time,time_step);
+                    % Set fixed rotation
+                    p.setFCRotation(time,time_step);
                 end
                 
-                % Solver thermal state
+                % Solve thermal state
                 if (p.free_therm)
                     % Add prescribed conditions
                     p.addPCHeatFlux(time);
@@ -252,16 +265,12 @@ classdef Driver_ThermoMechanical < Driver
                 w = walls(i);
                 
                 % Set fixed motion
-                w.setFreeMech(this.time);
-                if (~w.free_mech)
-                    w.setFCTranslation(time,time_step);
-                end
+                w.setFreeMotion(this.time);
+                w.setFCMotion(time,time_step);
                 
                 % Set fixed temperature
                 w.setFreeTherm(this.time);
-                if (~w.free_therm)
-                    w.setFCTemperature(time);
-                end
+                w.setFCTemperature(time);
                 
                 % Store results
                 if (this.store)

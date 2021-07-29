@@ -48,7 +48,6 @@ classdef Driver < handle
         search Search = Search.empty;   % handle to object of Search class
         
         % Time advancing
-        auto_step logical = logical.empty;   % flag for automatic time step
         time_step double  = double.empty;    % time step value
         max_time  double  = double.empty;    % maximum simulation time
         max_step  uint32  = uint32.empty;    % maximum step value allowed
@@ -114,12 +113,8 @@ classdef Driver < handle
                 % Reset forcing terms for next step
                 p.resetForcingTerms();
                 
-                % Set flags for free particle
-                p.setFreeMech(this.time);
+                % Set fixed temperature (fixed motion not set now)
                 p.setFreeTherm(this.time);
-                
-                % Set fixed conditions
-                p.setFCTranslation(this.time,this.time_step);
                 p.setFCTemperature(this.time);
             end
             
@@ -127,8 +122,8 @@ classdef Driver < handle
             for i = 1:this.n_walls
                 w = this.walls(i);
                 
-                % Set fixed conditions
-                w.setFCTranslation(this.time,this.time_step);
+                % Set fixed temperature (fixed motion not set now)
+                p.setFreeTherm(this.time);
                 w.setFCTemperature(this.time);
             end
             

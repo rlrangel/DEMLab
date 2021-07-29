@@ -33,7 +33,6 @@ classdef Driver_Thermal < Driver
             this.scheme_temp = Scheme_EulerForward();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
             this.workers     = parcluster('local').NumWorkers;
-            this.auto_step   = false;
             this.result      = Result();
             this.nprog       = 1;
             this.nout        = 500;
@@ -117,7 +116,7 @@ classdef Driver_Thermal < Driver
                 % Set flag for free particle
                 p.setFreeTherm(this.time);
                 
-                % Solver thermal state
+                % Solve thermal state
                 if (p.free_therm)
                     % Add prescribed conditions
                     p.addPCHeatFlux(time);
@@ -156,9 +155,7 @@ classdef Driver_Thermal < Driver
                 
                 % Set fixed temperature
                 w.setFreeTherm(this.time);
-                if (~w.free_therm)
-                    w.setFCTemperature(time);
-                end
+                w.setFCTemperature(time);
                 
                 % Store results
                 if (this.store)
