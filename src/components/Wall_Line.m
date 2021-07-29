@@ -77,10 +77,10 @@ classdef Wall_Line < Wall
             
             % New coordinates
             L = this.len/2;
-            x1 = coord_mid - L * cos(ang);
-            y1 = coord_mid - L * sin(ang);
-            x2 = coord_mid + L * cos(ang);
-            y2 = coord_mid + L * sin(ang);
+            x1 = coord_mid(1) - L * cos(ang);
+            y1 = coord_mid(2) - L * sin(ang);
+            x2 = coord_mid(1) + L * cos(ang);
+            y2 = coord_mid(2) + L * sin(ang);
             this.coord_ini = [x1;y1];
             this.coord_end = [x2;y2];
         end
