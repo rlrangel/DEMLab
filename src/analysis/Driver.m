@@ -123,7 +123,7 @@ classdef Driver < handle
                 w = this.walls(i);
                 
                 % Set fixed temperature (fixed motion not set now)
-                p.setFreeTherm(this.time);
+                w.setFreeTherm(this.time);
                 w.setFCTemperature(this.time);
             end
             

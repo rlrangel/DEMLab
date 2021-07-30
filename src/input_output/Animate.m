@@ -102,7 +102,6 @@ classdef Animate < handle
             this.fig.Position = [0.1 0.1 0.8 0.8];
             
             % Set axes properties
-            title(gca,this.atitle);
             axis(gca,'equal');
             hold on;
             if (~isempty(this.bbox))
@@ -261,14 +260,18 @@ classdef Animate < handle
             this.nf = size(this.radius,2);
             
             % Preallocate movie frames array
-            this.frames(this.nf) = struct('cdata',[],'colormap',[]);
+            frams(this.nf) = struct('cdata',[],'colormap',[]);
             
             % Generate movie frames
+            tim = this.times;
+            tit = this.atitle;
             for i = 1:this.nf
                 cla;
+                title(gca,strcat(tit,sprintf(' - Time: %.3f',tim(i))));
                 this.drawMovieFrame(drv,i);
-                this.frames(i) = getframe(this.fig);
+                frams(i) = getframe(this.fig);
             end
+            this.frames = frams;
             
             % Compute frame rate (frames / second)
             this.fps = this.nf/drv.time;

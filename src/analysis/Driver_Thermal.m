@@ -108,13 +108,14 @@ classdef Driver_Thermal < Driver
             particles = this.particles;
             time      = this.time;
             time_step = this.time_step;
+            store     = this.store;
             
             % Loop over all particles
             for i = 1:this.n_particles
                 p = particles(i);
                 
                 % Set flag for free particle
-                p.setFreeTherm(this.time);
+                p.setFreeTherm(time);
                 
                 % Solve thermal state
                 if (p.free_therm)
@@ -133,7 +134,7 @@ classdef Driver_Thermal < Driver
                 end
                 
                 % Store results
-                if (this.store)
+                if (store)
                     this.result.storeParticlePosition(p);
                     this.result.storeParticleThermal(p);
                 end
@@ -148,17 +149,19 @@ classdef Driver_Thermal < Driver
             % Properties accessed in parallel loop
             walls = this.walls;
             time  = this.time;
+            store = this.store;
             
             % Loop over all walls
             for i = 1:this.n_walls
                 w = walls(i);
                 
                 % Set fixed temperature
-                w.setFreeTherm(this.time);
+                w.setFreeTherm(time);
                 w.setFCTemperature(time);
                 
                 % Store results
-                if (this.store)
+                if (store)
+                    this.result.storeWallPosition(w);
                     this.result.storeWallThermal(w);
                 end
             end

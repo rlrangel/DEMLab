@@ -57,8 +57,8 @@ classdef BinKinematics_SphereSphere < BinKinematics
             % Velocities at contact point (3D due to cross-product)
             w1 = cross([0;0;p1.veloc_rot],[c1(1);c1(2);0]);
             w2 = cross([0;0;p2.veloc_rot],[c2(1);c2(2);0]);
-            vc1 = p1.veloc_trl + w1;
-            vc2 = p2.veloc_trl + w2;
+            vc1 = p1.veloc_trl + w1(1:2);
+            vc2 = p2.veloc_trl + w2(1:2);
             
             % Relative velocity at contact point
             vr = vc1 - vc2;

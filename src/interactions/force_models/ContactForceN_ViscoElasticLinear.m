@@ -38,7 +38,7 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
             r    = int.eff_radius;
             m    = int.eff_mass;
             y    = int.eff_young;
-            v0   = int.kinemat.v0_n;
+            v0   = abs(int.kinemat.v0_n);
             e    = this.restitution;
             beta = pi/log(e);
             

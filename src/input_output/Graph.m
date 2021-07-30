@@ -48,8 +48,8 @@ classdef Graph < handle
                 name = this.names(i);
                 
                 % Get X,Y data arrays
-                x = this.getData(drv,this.res_x,this.px);
-                y = this.getData(drv,this.res_y,this.py);
+                x = this.getData(drv,this.res_x,this.px(i));
+                y = this.getData(drv,this.res_y,this.py(i));
                 
                 % Remove NaN (Not a Number) and adjust array sizes
                 nanx = find(isnan(x),1);

@@ -1,12 +1,12 @@
 {
 	"ProblemData": {
 		"name"             : "bouncing_ball_straight",
-		"analysis_type"    : "mechanical",
+		"analysis_type"    : "thermo_mechanical",
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
 		"time_step"           : 10e-6,
-		"final_time"          : 5,
+		"final_time"          : 10,
 		"integr_scheme_trans" : "forward_euler",
 		"integr_scheme_rotat" : "forward_euler",
 		"parallelization"     : false
@@ -18,13 +18,28 @@
 	"GlobalCondition": {
 		"gravity" : [0.0,-9.81]
 	},
+	"InitialCondition": {
+		"temperature": {
+			"value"       : 300,
+			"model_parts" : ["PARTICLES"]
+		}
+	},
+	"FixedCondition": {
+		"temperature": {
+			"type"        : "uniform",
+			"model_parts" : ["WALLS"],
+			"value"       : 400
+		}
+	},
 	"Material": {
 		"name"        : "material_1",
 		"model_parts" : ["PARTICLES"],
 		"properties"  : {
-			"density"       : 500.0,
-			"young_modulus" : 10000000,
-			"poisson_ratio" : 0.3
+			"density"              : 100.0,
+			"young_modulus"        : 10000000,
+			"poisson_ratio"        : 0.3,
+			"thermal_conductivity" : 1000,
+			"heat_capacity"        : 5
 		}
 	},
 	"InteractionModel": {
@@ -37,24 +52,18 @@
 		"contact_force_tangent": {
 			"model"        : "simple_spring",
 			"spring_coeff" : 100000
+		},
+		"contact_conduction": {
+			"model" : "batchelor_obrien"
 		}
 	},
 	"Output": {
-		"number_output"  : 100
+		"number_output"  : 200
 	},
 	"Animation": {
 		"title"        : "Particle Motion",
-		"result"       : "motion",
+		"result"       : "temperature",
 		"auto_play"    : true,
 		"bounding_box" : [-2.0,2.0,-1.0,3.0]
-	},
-	"Graph": {
-		"title"  : "Particle Position",
-		"axis_x" : "time",
-		"axis_y" : "coordinate_y",
-		"curve"  : {
-			"name"       : "p1",
-			"particle_y" : 1
-		}
 	}
 }

@@ -41,7 +41,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
         %------------------------------------------------------------------
         function this = setRelPos(this,p,w)
             direction = p.coord - w.center;
-            this.dist = norm(this.dir);
+            this.dist = norm(direction);
             
             % Set distance and surface separation
             d = this.dist;

@@ -154,6 +154,7 @@ classdef Driver_Mechanical < Driver
             particles = this.particles;
             time      = this.time;
             time_step = this.time_step;
+            store     = this.store;
             
             % Initialize flags
             removed = false;
@@ -163,7 +164,7 @@ classdef Driver_Mechanical < Driver
                 p = particles(i);
                 
                 % Set flag for free particle
-                p.setFreeMech(this.time);
+                p.setFreeMech(time);
                 
                 % Solve translational motion
                 if (p.free_trl)
@@ -213,7 +214,7 @@ classdef Driver_Mechanical < Driver
                 end
                 
                 % Store results
-                if (this.store)
+                if (store)
                     this.result.storeParticleMotion(p);
                     this.result.storeParticlePosition(p);
                     this.result.storeParticleForce(p);
@@ -235,17 +236,18 @@ classdef Driver_Mechanical < Driver
             walls     = this.walls;
             time      = this.time;
             time_step = this.time_step;
+            store     = this.store;
             
             % Loop over all walls
             for i = 1:this.n_walls
                 w = walls(i);
                 
                 % Set fixed motion
-                w.setFreeMotion(this.time);
+                w.setFreeMotion(time);
                 w.setFCMotion(time,time_step);
                 
                 % Store results
-                if (this.store)
+                if (store)
                     this.result.storeWallPosition(w);
                 end
             end

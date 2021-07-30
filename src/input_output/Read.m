@@ -722,8 +722,8 @@ classdef Read < handle
             fields = fieldnames(IC);
             for i = 1:length(fields)
                 f = string(fields(i));
-                if (~strcmp(f,'TranslationalVelocity') &&...
-                    ~strcmp(f,'RotationalVelocity')    &&...
+                if (~strcmp(f,'translational_velocity') &&...
+                    ~strcmp(f,'rotational_velocity')    &&...
                     ~strcmp(f,'temperature'))
                     this.warn('A nonexistent field was identified in InitialCondition. It will be ignored.');
                 end
@@ -1875,7 +1875,7 @@ classdef Read < handle
                             fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.base_value.\n');
                             fprintf(2,'It must be a pair of numeric values with X,Y velocity components.\n');
                             status = 0; return;
-                        elseif (~this.isDoubleArray(amplitude,2) || amplitude < 0)
+                        elseif (~this.isDoubleArray(amplitude,2) || any(amplitude) < 0)
                             fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.amplitude.\n');
                             fprintf(2,'It must be a pair of positive values with X,Y velocity components.\n');
                             status = 0; return;
@@ -3049,12 +3049,12 @@ classdef Read < handle
                 end
                 
                 % Array of possible results
-                results_mech   = ["radius",...
-                                  "motion","coordinate_x","coordinate_y","orientation",...
-                                  "force_vector","force_modulus","force_x","force_y","torque",...
-                                  "velocity_vector","velocity_modulus","velocity_x","velocity_y","velocity_rot",...
-                                  "acceleration_vector","acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
-                results_therm = ["heat_rate","temperature"];
+                results_general = ["radius",...
+                                   "motion","coordinate_x","coordinate_y","orientation"];
+                results_mech    = ["force_vector","force_modulus","force_x","force_y","torque",...
+                                   "velocity_vector","velocity_modulus","velocity_x","velocity_y","velocity_rot",...
+                                   "acceleration_vector","acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
+                results_therm   = ["heat_rate","temperature"];
                 
                 % Data needed in all animation types
                 drv.result.has_time          = true;
@@ -3070,7 +3070,15 @@ classdef Read < handle
                 end
                 result = string(ANM.result);
                 if (~this.isStringArray(result,1) ||...
-                   (~ismember(result,results_mech) && ~ismember(result,results_therm)))
+                   (~ismember(result,results_general) && ~ismember(result,results_mech) && ~ismember(result,results_therm)))
+                    fprintf(2,'Invalid data in project parameters file: Animation.result.\n');
+                    fprintf(2,'Available result options can be checked in the documentation.\n');
+                    status = 0; return;
+                elseif (drv.type == drv.MECHANICAL && ismember(result,results_therm))
+                    fprintf(2,'Invalid data in project parameters file: Animation.result.\n');
+                    fprintf(2,'Available result options can be checked in the documentation.\n');
+                    status = 0; return;
+                elseif (drv.type == drv.THERMAL && ismember(result,results_mech))
                     fprintf(2,'Invalid data in project parameters file: Animation.result.\n');
                     fprintf(2,'Available result options can be checked in the documentation.\n');
                     status = 0; return;
@@ -3692,7 +3700,7 @@ classdef Read < handle
             end
             
             % Model parameters
-            if (~isfield(IM.contact_force_normal,'model'))
+            if (~isfield(IM.contact_conduction,'model'))
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_conduction.model.\n');
                 status = 0; return;
             end

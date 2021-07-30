@@ -1,20 +1,30 @@
 {
 	"ProblemData": {
-		"name"             : "resting_ball",
+		"name"             : "resting_balls_5",
 		"analysis_type"    : "thermal",
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
 		"time_step"           : 10e-4,
-		"final_time"          : 20,
+		"final_time"          : 10,
 		"integr_scheme_therm" : "forward_euler",
 		"parallelization"     : false
 	},
 	"InitialCondition": {
-		"temperature": {
+		"temperature": [
+			{
+			"value"       : 250,
+			"model_parts" : ["Middle"]
+			},
+			{
 			"value"       : 300,
-			"model_parts" : ["PARTICLES"]
-		}
+			"model_parts" : ["Left"]
+			},
+			{
+			"value"       : 350,
+			"model_parts" : ["Right"]
+			}
+		]
 	},
 	"FixedCondition": {
 		"temperature": {
@@ -31,7 +41,7 @@
 			"young_modulus"        : 10000000,
 			"poisson_ratio"        : 0.3,
 			"thermal_conductivity" : 1000,
-			"heat_capacity"        : 10
+			"heat_capacity"        : 500
 		}
 	},
 	"InteractionModel": {
@@ -46,15 +56,29 @@
 		"title"        : "Particle Temperature",
 		"result"       : "temperature",
 		"auto_play"    : true,
-		"bounding_box" : [-2.0,2.0,-1.0,3.0]
+		"bounding_box" : [-1.5,1.5,-0.1,0.5]
 	},
 	"Graph": {
 		"title"  : "Particle Temperature",
 		"axis_x" : "time",
 		"axis_y" : "temperature",
-		"curve"  : {
+		"curve"  : [
+			{
 			"name"       : "p1",
 			"particle_y" : 1
-		}
+			},{
+			"name"       : "p2",
+			"particle_y" : 2
+			},{
+			"name"       : "p3",
+			"particle_y" : 3
+			},{
+			"name"       : "p4",
+			"particle_y" : 4
+			},{
+			"name"       : "p5",
+			"particle_y" : 5
+			}
+		]
 	}
 }
