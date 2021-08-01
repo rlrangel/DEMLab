@@ -10,13 +10,18 @@ classdef ContactForceN < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of model
-        VISCOELASTIC_LINEAR = uint8(1);
+        VISCOELASTIC_LINEAR    = uint8(1);
+        VISCOELASTIC_NONLINEAR = uint8(2);
         
-        % Types of stiffness formulation
+        % Types of linear stiffness formulation
         NONE    = uint8(1);
         TIME    = uint8(2);
         OVERLAP = uint8(3);
         ENERGY  = uint8(4);
+        
+        % Types of nonlinear damping formulation
+        TTI = uint8(1);
+        KK  = uint8(2);
     end
     
     %% Public properties

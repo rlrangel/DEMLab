@@ -1875,7 +1875,7 @@ classdef Read < handle
                             fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.base_value.\n');
                             fprintf(2,'It must be a pair of numeric values with X,Y velocity components.\n');
                             status = 0; return;
-                        elseif (~this.isDoubleArray(amplitude,2) || any(amplitude) < 0)
+                        elseif (~this.isDoubleArray(amplitude,2) || any(amplitude < 0))
                             fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.amplitude.\n');
                             fprintf(2,'It must be a pair of positive values with X,Y velocity components.\n');
                             status = 0; return;
@@ -3626,15 +3626,21 @@ classdef Read < handle
             end
             model = string(IM.contact_force_normal.model);
             if (~this.isStringArray(model,1) ||...
-               (~strcmp(model,'viscoelastic_linear')))
+               (~strcmp(model,'viscoelastic_linear')) &&...
+                ~strcmp(model,'viscoelastic_nonlinear'))
                 fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.model.\n');
-                fprintf(2,'Available options: viscoelastic_linear.\n');
+                fprintf(2,'Available options: viscoelastic_linear, viscoelastic_nonlinear.\n');
                 status = 0; return;
             end
             
             % Call sub-method for each type of model
             if (strcmp(model,'viscoelastic_linear'))
                 if (~this.contactForceNormal_ViscoElasticLinear(IM.contact_force_normal,drv))
+                    status = 0;
+                    return;
+                end
+            elseif (strcmp(model,'viscoelastic_nonlinear'))
+                if (~this.contactForceNormal_ViscoElasticNonlinear(IM.contact_force_normal,drv))
                     status = 0;
                     return;
                 end
@@ -3741,6 +3747,53 @@ classdef Read < handle
                     drv.search.b_interact.cforcen.stiff_formula = drv.search.b_interact.cforcen.OVERLAP;
                 elseif (strcmp(CFN.stiff_coeff_formula,'energy'))
                     drv.search.b_interact.cforcen.stiff_formula = drv.search.b_interact.cforcen.ENERGY;
+                end
+            end
+            
+            % Artificial cohesion
+            if (isfield(CFN,'remove_artificial_cohesion'))
+                if (~this.isLogicalArray(CFN.remove_artificial_cohesion,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.remove_artificial_cohesion.\n');
+                    fprintf(2,'It must be a boolean: true or false.\n');
+                    status = 0; return;
+                end
+                drv.search.b_interact.cforcen.remove_cohesion = CFN.remove_artificial_cohesion;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = contactForceNormal_ViscoElasticNonlinear(this,CFN,drv)
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.cforcen = ContactForceN_ViscoElasticNonlinear();
+            
+            % Damping formulation
+            if (isfield(CFN,'damping_formula'))
+                if (~this.isStringArray(CFN.damping_formula,1) ||...
+                   (~strcmp(CFN.damping_formula,'TTI') &&...
+                    ~strcmp(CFN.damping_formula,'KK')))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.damping_formula.\n');
+                    fprintf(2,'Available options: TTI, KK.\n');
+                    status = 0; return;
+                end
+                if (strcmp(CFN.damping_formula,'TTI'))
+                    drv.search.b_interact.cforcen.damp_formula = drv.search.b_interact.cforcen.TTI;
+                elseif (strcmp(CFN.damping_formula,'KK'))
+                    drv.search.b_interact.cforcen.damp_formula = drv.search.b_interact.cforcen.KK;
+                    
+                    % Damping coefficient value
+                    if (~isfield(CFN,'damping_coeff'))
+                        fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.damping_coeff.\n');
+                        status = 0; return;
+                    end
+                    damp_coeff = CFN.damping_coeff;
+                    if (~this.isDoubleArray(damp_coeff,1))
+                        fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.damping_coeff.\n');
+                        fprintf(2,'It must be a numeric value.\n');
+                        status = 0; return;
+                    end
+                    drv.search.b_interact.cforcen.damp = damp_coeff;
                 end
             end
             
