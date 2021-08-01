@@ -3626,10 +3626,11 @@ classdef Read < handle
             end
             model = string(IM.contact_force_normal.model);
             if (~this.isStringArray(model,1) ||...
-               (~strcmp(model,'viscoelastic_linear')) &&...
-                ~strcmp(model,'viscoelastic_nonlinear'))
+               (~strcmp(model,'viscoelastic_linear'))   &&...
+                ~strcmp(model,'viscoelastic_nonlinear') &&...
+                ~strcmp(model,'elastoplastic_linear'))
                 fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.model.\n');
-                fprintf(2,'Available options: viscoelastic_linear, viscoelastic_nonlinear.\n');
+                fprintf(2,'Available options: viscoelastic_linear, viscoelastic_nonlinear, elastoplastic_linear.\n');
                 status = 0; return;
             end
             
@@ -3641,6 +3642,11 @@ classdef Read < handle
                 end
             elseif (strcmp(model,'viscoelastic_nonlinear'))
                 if (~this.contactForceNormal_ViscoElasticNonlinear(IM.contact_force_normal,drv))
+                    status = 0;
+                    return;
+                end
+            elseif (strcmp(model,'elastoplastic_linear'))
+                if (~this.contactForceNormal_ElastoPlasticLinear(IM.contact_force_normal,drv))
                     status = 0;
                     return;
                 end
@@ -3805,6 +3811,62 @@ classdef Read < handle
                     status = 0; return;
                 end
                 drv.search.b_interact.cforcen.remove_cohesion = CFN.remove_artificial_cohesion;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = contactForceNormal_ElastoPlasticLinear(this,CFN,drv)
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.cforcen = ContactForceN_ElastoPlasticLinear();
+            
+            % Loading stiffness formulation
+            if (isfield(CFN,'load_stiff_coeff_formula'))
+                if (~this.isStringArray(CFN.load_stiff_coeff_formula,1) ||...
+                   (~strcmp(CFN.load_stiff_coeff_formula,'time')        &&...
+                    ~strcmp(CFN.load_stiff_coeff_formula,'overlap')     &&...
+                    ~strcmp(CFN.load_stiff_coeff_formula,'energy')))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.load_stiff_coeff_formula.\n');
+                    fprintf(2,'Available options: time, overlap, energy.\n');
+                    status = 0; return;
+                end
+                if (strcmp(CFN.load_stiff_coeff_formula,'time'))
+                    drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.TIME;
+                elseif (strcmp(CFN.load_stiff_coeff_formula,'overlap'))
+                    drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.OVERLAP;
+                elseif (strcmp(CFN.load_stiff_coeff_formula,'energy'))
+                    drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.ENERGY;
+                end
+            end
+            
+            % Unloading stiffness formulation
+            if (isfield(CFN,'unload_stiff_coeff_formula'))
+                if (~this.isStringArray(CFN.unload_stiff_coeff_formula,1) ||...
+                   (~strcmp(CFN.unload_stiff_coeff_formula,'constant')    &&...
+                    ~strcmp(CFN.unload_stiff_coeff_formula,'variable')))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.unload_stiff_coeff_formula.\n');
+                    fprintf(2,'Available options: constant, variable.\n');
+                    status = 0; return;
+                end
+                if (strcmp(CFN.unload_stiff_coeff_formula,'constant'))
+                    drv.search.b_interact.cforcen.unload_stiff_formula = drv.search.b_interact.cforcen.CONSTANT;
+                elseif (strcmp(CFN.unload_stiff_coeff_formula,'variable'))
+                    drv.search.b_interact.cforcen.unload_stiff_formula = drv.search.b_interact.cforcen.VARIABLE;
+                    
+                    % Variable unload stiffness coefficient parameter
+                    if (~isfield(CFN,'unload_param'))
+                        fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.unload_param.\n');
+                        status = 0; return;
+                    end
+                    unload_param = CFN.unload_param;
+                    if (~this.isDoubleArray(unload_param,1))
+                        fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.unload_param.\n');
+                        fprintf(2,'It must be a numeric value.\n');
+                        status = 0; return;
+                    end
+                    drv.search.b_interact.cforcen.unload_param = unload_param;
+                end
             end
         end
         
