@@ -138,8 +138,8 @@ classdef Driver_Thermal < Driver
                 w = this.walls(i);
                 
                 % Set fixed temperature
-                w.setFreeTherm(his.time);
-                w.setFCTemperature(his.time);
+                w.setFreeTherm(this.time);
+                w.setFCTemperature(this.time);
                 
                 % Store results
                 if (this.store)
