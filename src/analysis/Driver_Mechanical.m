@@ -93,26 +93,19 @@ classdef Driver_Mechanical < Driver
    %% Public methods: Subclass specifics
     methods
         %------------------------------------------------------------------
-        function interactionLoop(this)
-            % Properties accessed in parallel loop
-            interacts   = this.interacts;
-            time        = this.time;
-            time_step   = this.time_step;
-            done_search = this.search.done;
-            
-            % Loop over all interactions
+        function interactionLoop(this)            
             for i = 1:this.n_interacts
-                int = interacts(i);
+                int = this.interacts(i);
                 
                 % Update relative position (if not already done in search)
-                if (~done_search)
+                if (~this.search.done)
                     int.kinemat = int.kinemat.setRelPos(int.elem1,int.elem2);
                 end
                 
                 % Evaluate contact interactions
                 if (int.kinemat.separ < 0)
                     % Update overlap parameters
-                    int.kinemat = int.kinemat.setOverlaps(int,time_step);
+                    int.kinemat = int.kinemat.setOverlaps(int,this.time_step);
                     
                     % Update contact area
                     int.kinemat = int.kinemat.setContactArea(int);
@@ -120,7 +113,7 @@ classdef Driver_Mechanical < Driver
                     % Set initial contact parameters
                     if (~int.kinemat.is_contact)
                         % Initialize contact
-                        int.kinemat = int.kinemat.setCollisionParams(time);
+                        int.kinemat = int.kinemat.setCollisionParams(this.time);
                         
                         % Initialize interaction parameters values
                         int.cforcen = int.cforcen.setParameters(int);
@@ -128,7 +121,7 @@ classdef Driver_Mechanical < Driver
                     end
                     
                     % Update contact duration
-                    int.kinemat.contact_time = time - int.kinemat.contact_start;
+                    int.kinemat.contact_time = this.time - int.kinemat.contact_start;
                     
                     % Compute interaction results
                     int.cforcen = int.cforcen.evalForce(int);
@@ -150,21 +143,15 @@ classdef Driver_Mechanical < Driver
         
         %------------------------------------------------------------------
         function particleLoop(this)
-            % Properties accessed in parallel loop
-            particles = this.particles;
-            time      = this.time;
-            time_step = this.time_step;
-            store     = this.store;
-            
             % Initialize flags
             removed = false;
             
             % Loop over all particles
             for i = 1:this.n_particles
-                p = particles(i);
+                p = this.particles(i);
                 
                 % Set flag for free particle
-                p.setFreeMech(time);
+                p.setFreeMech(this.time);
                 
                 % Solve translational motion
                 if (p.free_trl)
@@ -175,16 +162,16 @@ classdef Driver_Mechanical < Driver
                     end
                     
                     % Add prescribed conditions
-                    p.addPCForce(time);
+                    p.addPCForce(this.time);
                     
                     % Evaluate equation of motion
                     p.setAccelTrl();
                     
                     % Numerical integration
-                    this.scheme_trl.updatePosition(p,time_step);
+                    this.scheme_trl.updatePosition(p,this.time_step);
                 else
                     % Set fixed translation
-                    p.setFCTranslation(time,time_step);
+                    p.setFCTranslation(this.time,this.time_step);
                 end
                 
                 % Solve rotational motion
@@ -195,16 +182,16 @@ classdef Driver_Mechanical < Driver
                     end
                     
                     % Add prescribed conditions
-                    p.addPCTorque(time);
+                    p.addPCTorque(this.time);
                     
                     % Evaluate equation of motion
                     p.setAccelRot();
                     
                     % Numerical integration
-                    this.scheme_rot.updateOrientation(p,time_step);
+                    this.scheme_rot.updateOrientation(p,this.time_step);
                 else
                     % Set fixed rotation
-                    p.setFCRotation(time,time_step);
+                    p.setFCRotation(this.time,this.time_step);
                 end
                 
                 % Remove particles not respecting bbox and sinks
@@ -214,7 +201,7 @@ classdef Driver_Mechanical < Driver
                 end
                 
                 % Store results
-                if (store)
+                if (this.store)
                     this.result.storeParticleMotion(p);
                     this.result.storeParticlePosition(p);
                     this.result.storeParticleForce(p);
@@ -232,22 +219,15 @@ classdef Driver_Mechanical < Driver
         
         %------------------------------------------------------------------
         function wallLoop(this)
-            % Properties accessed in parallel loop
-            walls     = this.walls;
-            time      = this.time;
-            time_step = this.time_step;
-            store     = this.store;
-            
-            % Loop over all walls
             for i = 1:this.n_walls
-                w = walls(i);
+                w = this.walls(i);
                 
                 % Set fixed motion
-                w.setFreeMotion(time);
-                w.setFCMotion(time,time_step);
+                w.setFreeMotion(this.time);
+                w.setFCMotion(this.time,this.time_step);
                 
                 % Store results
-                if (store)
+                if (this.store)
                     this.result.storeWallPosition(w);
                 end
             end

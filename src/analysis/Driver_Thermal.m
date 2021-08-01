@@ -76,18 +76,13 @@ classdef Driver_Thermal < Driver
     methods
         %------------------------------------------------------------------
         function interactionLoop(this)
-            % Properties accessed in parallel loop
-            interacts = this.interacts;
-            step = this.step;
-            
-            % Loop over all interactions
             for i = 1:this.n_interacts
-                int = interacts(i);
+                int = this.interacts(i);
                 
                 % Evaluate contact interactions
                 if (int.kinemat.separ < 0)
                     % Constant parameters needed to be set only once
-                    if (step == 1)
+                    if (this.step == 1)
                         int.kinemat.is_contact = true;
                         int.kinemat.dir_n  =  int.kinemat.dir / int.kinemat.dist;
                         int.kinemat.ovlp_n = -int.kinemat.separ;
@@ -104,37 +99,30 @@ classdef Driver_Thermal < Driver
         
         %------------------------------------------------------------------
         function particleLoop(this)
-            % Properties accessed in parallel loop
-            particles = this.particles;
-            time      = this.time;
-            time_step = this.time_step;
-            store     = this.store;
-            
-            % Loop over all particles
             for i = 1:this.n_particles
-                p = particles(i);
+                p = this.particles(i);
                 
                 % Set flag for free particle
-                p.setFreeTherm(time);
+                p.setFreeTherm(this.time);
                 
                 % Solve thermal state
                 if (p.free_therm)
                     % Add prescribed conditions
-                    p.addPCHeatFlux(time);
-                    p.addPCHeatRate(time);
+                    p.addPCHeatFlux(this.time);
+                    p.addPCHeatRate(this.time);
                     
                     % Evaluate equation of energy balance
                     p.setTempChange();
                     
                     % Numerical integration
-                    this.scheme_temp.updateTemperature(p,time_step);
+                    this.scheme_temp.updateTemperature(p,this.time_step);
                 else
                     % Set fixed temperature
-                    p.setFCTemperature(time);
+                    p.setFCTemperature(this.time);
                 end
                 
                 % Store results
-                if (store)
+                if (this.store)
                     this.result.storeParticlePosition(p);
                     this.result.storeParticleThermal(p);
                 end
@@ -146,21 +134,15 @@ classdef Driver_Thermal < Driver
         
         %------------------------------------------------------------------
         function wallLoop(this)
-            % Properties accessed in parallel loop
-            walls = this.walls;
-            time  = this.time;
-            store = this.store;
-            
-            % Loop over all walls
             for i = 1:this.n_walls
-                w = walls(i);
+                w = this.walls(i);
                 
                 % Set fixed temperature
-                w.setFreeTherm(time);
-                w.setFCTemperature(time);
+                w.setFreeTherm(his.time);
+                w.setFCTemperature(his.time);
                 
                 % Store results
-                if (store)
+                if (this.store)
                     this.result.storeWallPosition(w);
                     this.result.storeWallThermal(w);
                 end
