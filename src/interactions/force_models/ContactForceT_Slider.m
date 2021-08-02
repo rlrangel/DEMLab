@@ -1,19 +1,19 @@
-%% ContactForceT_Spring class
+%% ContactForceT_Slider class
 %
 %% Description
 %
 %% Implementation
 %
-classdef ContactForceT_Spring < ContactForceT
+classdef ContactForceT_Slider < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        stiff double = double.empty;   % spring stiffness coefficient
+        friction double = double.empty;   % friction coefficient
     end
     
     %% Constructor method
     methods
-        function this = ContactForceT_Spring()
-            this = this@ContactForceT(ContactForceT.SPRING);
+        function this = ContactForceT_Slider()
+            this = this@ContactForceT(ContactForceT.SLIDER);
         end
     end
     
@@ -26,10 +26,10 @@ classdef ContactForceT_Spring < ContactForceT
         
         %------------------------------------------------------------------
         function this = evalForce(this,int)
-            % Force modulus (elastic contribution only)
-            f = this.stiff * int.kinemat.ovlp_t;
+            % Force modulus (friction contribution only)
+            f = this.friction * abs(int.cforcen.total_force);
             
-            % Total tangential force vector (against deformation)
+            % Total tangential force vector (against motion)
             this.total_force = -f * int.kinemat.dir_t;
         end
     end

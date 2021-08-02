@@ -1,19 +1,19 @@
-%% ContactForceT_Spring class
+%% ContactForceT_Dashpot class
 %
 %% Description
 %
 %% Implementation
 %
-classdef ContactForceT_Spring < ContactForceT
+classdef ContactForceT_Dashpot < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        stiff double = double.empty;   % spring stiffness coefficient
+        damp double = double.empty;   % damping coefficient
     end
     
     %% Constructor method
     methods
-        function this = ContactForceT_Spring()
-            this = this@ContactForceT(ContactForceT.SPRING);
+        function this = ContactForceT_Dashpot()
+            this = this@ContactForceT(ContactForceT.DASHPOT);
         end
     end
     
@@ -26,10 +26,10 @@ classdef ContactForceT_Spring < ContactForceT
         
         %------------------------------------------------------------------
         function this = evalForce(this,int)
-            % Force modulus (elastic contribution only)
-            f = this.stiff * int.kinemat.ovlp_t;
+            % Force modulus (viscous contribution only)
+            f = this.damp * int.kinemat.vel_t;
             
-            % Total tangential force vector (against deformation)
+            % Total tangential force vector (against motion)
             this.total_force = -f * int.kinemat.dir_t;
         end
     end

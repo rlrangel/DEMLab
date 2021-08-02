@@ -10,7 +10,9 @@ classdef ContactForceT < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of model
-        SPRING = uint8(1);
+        SLIDER  = uint8(1);
+        SPRING  = uint8(2);
+        DASHPOT = uint8(3);
     end
     
     %% Public properties
