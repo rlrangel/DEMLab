@@ -10,16 +10,13 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
         % Formulation options
         stiff_formula   uint8   = uint8.empty;     % flag for type of stiffness formulation
         remove_cohesion logical = logical.empty;   % flag for removing artificial cohesion
-        
-        % Contact parameters
-        damp double = double.empty;   % damping coefficient
     end
     
     %% Constructor method
     methods
         function this = ContactForceN_ViscoElasticLinear()
             this = this@ContactForceN(ContactForceN.VISCOELASTIC_LINEAR);
-            this.setDefaultProps();
+            this = this.setDefaultProps();
         end
     end
     
@@ -72,7 +69,7 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
                 f = 0;
             end
             
-            % Total normal force vector (against deformation and velocity)
+            % Total tangential force vector (against deformation and motion)
             this.total_force = -f * dir;
         end
     end

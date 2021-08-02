@@ -1,10 +1,10 @@
-%% ContactForceT_SpringDashpotSlider class
+%% ContactForceT_SDSLinear class
 %
 %% Description
 %
 %% Implementation
 %
-classdef ContactForceT_SpringDashpotSlider < ContactForceT
+classdef ContactForceT_SDSLinear < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Formulation options
@@ -19,9 +19,9 @@ classdef ContactForceT_SpringDashpotSlider < ContactForceT
     
     %% Constructor method
     methods
-        function this = ContactForceT_SpringDashpotSlider()
-            this = this@ContactForceT(ContactForceT.SPRING_DASHPOT_SLIDER);
-            this.setDefaultProps();
+        function this = ContactForceT_SDSLinear()
+            this = this@ContactForceT(ContactForceT.SDS_LINEAR);
+            this = this.setDefaultProps();
         end
     end
     
@@ -53,12 +53,12 @@ classdef ContactForceT_SpringDashpotSlider < ContactForceT
             % Force modulus (viscoelastic and friction contributions)
             fe = this.stiff * int.kinemat.ovlp_t;
             fv = this.damp  * int.kinemat.vel_t;
-            ff = this.fric  * abs(int.cforcen.total_force);
+            ff = this.fric  * norm(int.cforcen.total_force);
             
             % Limit viscoelastic force by Coulomb law
             f = min(abs(fe+fv),abs(ff));
             
-            % Total tangential force vector (against deformation)
+            % Total tangential force vector (against deformation and motion)
             this.total_force = -f * int.kinemat.dir_t;
         end
     end

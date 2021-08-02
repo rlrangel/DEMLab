@@ -19,7 +19,7 @@ classdef ContactForceT_SpringSlider < ContactForceT
     methods
         function this = ContactForceT_SpringSlider()
             this = this@ContactForceT(ContactForceT.SPRING_SLIDER);
-            this.setDefaultProps();
+            this = this.setDefaultProps();
         end
     end
     
@@ -31,7 +31,7 @@ classdef ContactForceT_SpringSlider < ContactForceT
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,~)
+        function this = setParameters(this,int)
             if (this.auto_stiff)
                 this.stiff = (1-int.eff_poisson)/(1-int.eff_poisson/2) * int.cforcen.stiff;
             end
@@ -41,12 +41,12 @@ classdef ContactForceT_SpringSlider < ContactForceT
         function this = evalForce(this,int)
             % Force modulus (elastic and friction contributions)
             fe = this.stiff * int.kinemat.ovlp_t;
-            ff = this.fric  * abs(int.cforcen.total_force);
+            ff = this.fric  * norm(int.cforcen.total_force);
             
             % Limit elastic force by Coulomb law
             f = min(abs(fe),abs(ff));
             
-            % Total tangential force vector (against deformation)
+            % Total tangential force vector (against deformation and motion)
             this.total_force = -f * int.kinemat.dir_t;
         end
     end

@@ -21,7 +21,7 @@ classdef ContactForceN_ElastoPlasticLinear < ContactForceN
     methods
         function this = ContactForceN_ElastoPlasticLinear()
             this = this@ContactForceN(ContactForceN.ELASTOPLASTIC_LINEAR);
-            this.setDefaultProps();
+            this = this.setDefaultProps();
         end
     end
     
@@ -87,7 +87,7 @@ classdef ContactForceN_ElastoPlasticLinear < ContactForceN
                 f = 0;
             end
             
-            % Total normal force vector (against deformation)
+            % Total tangential force vector (against deformation and motion)
             this.total_force = -f * dir;
         end
     end

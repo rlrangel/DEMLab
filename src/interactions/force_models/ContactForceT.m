@@ -10,12 +10,19 @@ classdef ContactForceT < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of model
-        SLIDER                = uint8(1);
-        SPRING                = uint8(2);
-        DASHPOT               = uint8(3);
-        SPRING_SLIDER         = uint8(4);
-        DASHPOT_SLIDER        = uint8(5);
-        SPRING_DASHPOT_SLIDER = uint8(6);
+        SLIDER         = uint8(1);
+        SPRING         = uint8(2);
+        DASHPOT        = uint8(3);
+        SPRING_SLIDER  = uint8(4);
+        DASHPOT_SLIDER = uint8(5);
+        SDS_LINEAR     = uint8(6);
+        SDS_NONLINEAR  = uint8(7);
+        
+        % Types of nonlinear SDS formulation
+        DD  = uint8(1);
+        LTH = uint8(2);
+        ZZY = uint8(3);
+        TTI = uint8(4);
     end
     
     %% Public properties

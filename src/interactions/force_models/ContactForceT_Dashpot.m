@@ -15,7 +15,7 @@ classdef ContactForceT_Dashpot < ContactForceT
     methods
         function this = ContactForceT_Dashpot()
             this = this@ContactForceT(ContactForceT.DASHPOT);
-            this.setDefaultProps();
+            this = this.setDefaultProps();
         end
     end
     
@@ -36,7 +36,7 @@ classdef ContactForceT_Dashpot < ContactForceT
             % Force modulus (viscous contribution only)
             f = this.damp * int.kinemat.vel_t;
             
-            % Total tangential force vector (against motion)
+            % Total tangential force vector (against deformation and motion)
             this.total_force = -f * int.kinemat.dir_t;
         end
     end

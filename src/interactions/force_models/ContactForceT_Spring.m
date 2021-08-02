@@ -18,7 +18,7 @@ classdef ContactForceT_Spring < ContactForceT
     methods
         function this = ContactForceT_Spring()
             this = this@ContactForceT(ContactForceT.SPRING);
-            this.setDefaultProps();
+            this = this.setDefaultProps();
         end
     end
     
@@ -41,7 +41,7 @@ classdef ContactForceT_Spring < ContactForceT
             % Force modulus (elastic contribution only)
             f = this.stiff * int.kinemat.ovlp_t;
             
-            % Total tangential force vector (against deformation)
+            % Total tangential force vector (against deformation and motion)
             this.total_force = -f * int.kinemat.dir_t;
         end
     end

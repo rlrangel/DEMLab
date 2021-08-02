@@ -15,7 +15,7 @@ classdef ContactForceT_Slider < ContactForceT
     methods
         function this = ContactForceT_Slider()
             this = this@ContactForceT(ContactForceT.SLIDER);
-            this.setDefaultProps();
+            this = this.setDefaultProps();
         end
     end
     
@@ -34,9 +34,9 @@ classdef ContactForceT_Slider < ContactForceT
         %------------------------------------------------------------------
         function this = evalForce(this,int)
             % Force modulus (friction contribution only)
-            f = this.fric * abs(int.cforcen.total_force);
+            f = this.fric * norm(int.cforcen.total_force);
             
-            % Total tangential force vector (against motion)
+            % Total tangential force vector (against deformation and motion)
             this.total_force = -f * int.kinemat.dir_t;
         end
     end

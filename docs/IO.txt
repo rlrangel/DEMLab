@@ -102,16 +102,6 @@ Before analysis start, the value of a property must be set according to the Vari
 		-> (elastoplastic_linear) AutoUnloadingStiffCoeff: true/false; (default: true - from restitution coefficient)
 		-> (elastoplastic_linear) UnloadingStiffCoeffFactor: double; (default: 1 - free factor to multiply the automatic coeff)
 		-> (elastoplastic_linear) UnloadingStiffCoeffValue: double; (in case automatic factor is false - default: 0.0)
-	-TangentialContactForce:
-		-> Model: string;
-		-> (simple_dashpot) DampingCoeff: double;
-		-> (spring_slider)  SpringCoeff: double;
-		-> (spring_slider)  FrictionCoeff: double;
-		-> (dashpot_slider) DampingCoeff: double;
-		-> (dashpot_slider) FrictionCoeff: double;
-		-> (spring_dashpot_slider) SpringCoeff: double;
-		-> (spring_dashpot_slider) DampingCoeff: double;
-		-> (spring_dashpot_slider) FrictionCoeff: double;
 	-RollingResistance:
 		-> Model: string; (default: none)
 
