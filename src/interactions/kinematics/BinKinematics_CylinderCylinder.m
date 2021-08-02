@@ -28,7 +28,17 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             
             int.eff_radius = p1.radius * p2.radius / (p1.radius + p2.radius);
             int.eff_mass   = p1.mass   * p2.mass   / (p1.mass   + p2.mass);
-            int.eff_young  = 1 / ((1-m1.poisson^2)/m1.young + (1-m2.poisson^2)/m2.young);
+            if (~isempty(m1.young) && ~isempty(m1.poisson) &&...
+                ~isempty(m2.young) && ~isempty(m2.poisson))
+                int.eff_young = 1 / ((1-m1.poisson^2)/m1.young + (1-m2.poisson^2)/m2.young);
+            end
+            if (~isempty(m1.shear) && ~isempty(m1.poisson) &&...
+                ~isempty(m2.shear) && ~isempty(m2.poisson))
+                int.eff_shear = 1 / ((2-m1.poisson^2)/m1.shear + (2-m2.poisson^2)/m2.shear);
+            end
+            if (~isempty(m1.poisson) && ~isempty(m2.poisson))
+                int.eff_poisson = (m1.poisson + m2.poisson) / 2;
+            end
             if (~isempty(m1.conduct) && ~isempty(m2.conduct))
                 int.eff_conduct = m1.conduct * m2.conduct / (m1.conduct + m2.conduct);
             end

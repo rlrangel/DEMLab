@@ -7,6 +7,7 @@
 classdef ContactForceT_Dashpot < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
+        % Contact parameters
         damp double = double.empty;   % damping coefficient
     end
     
@@ -14,11 +15,17 @@ classdef ContactForceT_Dashpot < ContactForceT
     methods
         function this = ContactForceT_Dashpot()
             this = this@ContactForceT(ContactForceT.DASHPOT);
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
+        %------------------------------------------------------------------
+        function this = setDefaultProps(this)
+            
+        end
+        
         %------------------------------------------------------------------
         function this = setParameters(this,~)
             

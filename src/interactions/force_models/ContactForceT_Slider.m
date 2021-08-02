@@ -7,18 +7,25 @@
 classdef ContactForceT_Slider < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        friction double = double.empty;   % friction coefficient
+        % Contact parameters
+        fric double = double.empty;   % friction coefficient
     end
     
     %% Constructor method
     methods
         function this = ContactForceT_Slider()
             this = this@ContactForceT(ContactForceT.SLIDER);
+            this.setDefaultProps();
         end
     end
     
     %% Public methods: implementation of superclass declarations
     methods
+        %------------------------------------------------------------------
+        function this = setDefaultProps(this)
+            
+        end
+        
         %------------------------------------------------------------------
         function this = setParameters(this,~)
             
@@ -27,7 +34,7 @@ classdef ContactForceT_Slider < ContactForceT
         %------------------------------------------------------------------
         function this = evalForce(this,int)
             % Force modulus (friction contribution only)
-            f = this.friction * abs(int.cforcen.total_force);
+            f = this.fric * abs(int.cforcen.total_force);
             
             % Total tangential force vector (against motion)
             this.total_force = -f * int.kinemat.dir_t;

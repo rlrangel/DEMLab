@@ -1,23 +1,26 @@
-%% ContactForceT_Spring class
+%% ContactForceT_SpringDashpotSlider class
 %
 %% Description
 %
 %% Implementation
 %
-classdef ContactForceT_Spring < ContactForceT
+classdef ContactForceT_SpringDashpotSlider < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Formulation options
         auto_stiff logical = logical.empty;   % flag for computing spring stiffness automatically
+        auto_damp  logical = logical.empty;   % flag for computing damping stiffness automatically
         
         % Contact parameters
         stiff double = double.empty;   % stiffness coefficient
+        damp  double = double.empty;   % damping coefficient
+        fric  double = double.empty;   % friction coefficient
     end
     
     %% Constructor method
     methods
-        function this = ContactForceT_Spring()
-            this = this@ContactForceT(ContactForceT.SPRING);
+        function this = ContactForceT_SpringDashpotSlider()
+            this = this@ContactForceT(ContactForceT.SPRING_DASHPOT_SLIDER);
             this.setDefaultProps();
         end
     end
@@ -27,6 +30,7 @@ classdef ContactForceT_Spring < ContactForceT
         %------------------------------------------------------------------
         function this = setDefaultProps(this)
             this.auto_stiff = true;
+            this.auto_damp  = false;
         end
         
         %------------------------------------------------------------------
@@ -34,12 +38,25 @@ classdef ContactForceT_Spring < ContactForceT
             if (this.auto_stiff)
                 this.stiff = (1-int.eff_poisson)/(1-int.eff_poisson/2) * int.cforcen.stiff;
             end
+            if (this.auto_damp)
+                if (this.restitution == 0)
+                    this.damp = 2 * sqrt(2 * int.eff_mass * this.stiff / 7);
+                else
+                    lnrest = log(this.restitution);
+                    this.damp = -2 * lnrest * sqrt(2 * int.eff_mass * this.stiff / 7) / sqrt(lnrest^2 + pi^2);
+                end
+            end
         end
         
         %------------------------------------------------------------------
         function this = evalForce(this,int)
-            % Force modulus (elastic contribution only)
-            f = this.stiff * int.kinemat.ovlp_t;
+            % Force modulus (viscoelastic and friction contributions)
+            fe = this.stiff * int.kinemat.ovlp_t;
+            fv = this.damp  * int.kinemat.vel_t;
+            ff = this.fric  * abs(int.cforcen.total_force);
+            
+            % Limit viscoelastic force by Coulomb law
+            f = min(abs(fe+fv),abs(ff));
             
             % Total tangential force vector (against deformation)
             this.total_force = -f * int.kinemat.dir_t;

@@ -1,10 +1,10 @@
-%% ContactForceT_Spring class
+%% ContactForceT_SpringSlider class
 %
 %% Description
 %
 %% Implementation
 %
-classdef ContactForceT_Spring < ContactForceT
+classdef ContactForceT_SpringSlider < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Formulation options
@@ -12,12 +12,13 @@ classdef ContactForceT_Spring < ContactForceT
         
         % Contact parameters
         stiff double = double.empty;   % stiffness coefficient
+        fric  double = double.empty;   % friction coefficient
     end
     
     %% Constructor method
     methods
-        function this = ContactForceT_Spring()
-            this = this@ContactForceT(ContactForceT.SPRING);
+        function this = ContactForceT_SpringSlider()
+            this = this@ContactForceT(ContactForceT.SPRING_SLIDER);
             this.setDefaultProps();
         end
     end
@@ -30,7 +31,7 @@ classdef ContactForceT_Spring < ContactForceT
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,int)
+        function this = setParameters(this,~)
             if (this.auto_stiff)
                 this.stiff = (1-int.eff_poisson)/(1-int.eff_poisson/2) * int.cforcen.stiff;
             end
@@ -38,8 +39,12 @@ classdef ContactForceT_Spring < ContactForceT
         
         %------------------------------------------------------------------
         function this = evalForce(this,int)
-            % Force modulus (elastic contribution only)
-            f = this.stiff * int.kinemat.ovlp_t;
+            % Force modulus (elastic and friction contributions)
+            fe = this.stiff * int.kinemat.ovlp_t;
+            ff = this.fric  * abs(int.cforcen.total_force);
+            
+            % Limit elastic force by Coulomb law
+            f = min(abs(fe),abs(ff));
             
             % Total tangential force vector (against deformation)
             this.total_force = -f * int.kinemat.dir_t;

@@ -11,9 +11,8 @@ classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
         damp_formula    uint8   = uint8.empty;     % flag for type of damping formulation
         remove_cohesion logical = logical.empty;   % flag for removing artificial cohesion
         
-        % Constant parameters
-        stiff double = double.empty;   % spring stiffness coefficient
-        damp  double = double.empty;   % damping coefficient
+        % Contact parameters
+        damp double = double.empty;   % damping coefficient
     end
     
     %% Constructor method

@@ -11,8 +11,7 @@ classdef ContactForceN_ElastoPlasticLinear < ContactForceN
         load_stiff_formula   uint8 = uint8.empty;   % flag for type of loading stiffness formulation
         unload_stiff_formula uint8 = uint8.empty;   % flag for type of unloading stiffness formulation
         
-        % Constant parameters
-        load_stiff   double = double.empty;   % loading spring stiffness coefficient
+        % Contact parameters
         unload_stiff double = double.empty;   % unloading spring stiffness coefficient
         unload_param double = double.empty;   % variable unload stiffness coefficient parameter
         residue      double = double.empty;   % residual overlap
@@ -49,24 +48,24 @@ classdef ContactForceN_ElastoPlasticLinear < ContactForceN
             % Loading spring stiffness coefficient
             switch this.load_stiff_formula
                 case this.TIME
-                    this.load_stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+1/beta^2);
+                    this.stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+1/beta^2);
                 case this.OVERLAP
-                    this.load_stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5) * exp(-atan(beta)/beta)^2;
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5) * exp(-atan(beta)/beta)^2;
                 case this.ENERGY
-                    this.load_stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5);
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5);
             end
             
             % Unloading spring stiffness coefficient
             switch this.unload_stiff_formula
                 case this.CONSTANT
-                    this.unload_stiff = this.load_stiff / e2;
+                    this.unload_stiff = this.stiff / e2;
                 case this.VARIABLE
-                    fmax = this.load_stiff * v0 * sqrt(m/this.load_stiff);
-                    this.unload_stiff = this.load_stiff + S * fmax;
+                    fmax = this.stiff * v0 * sqrt(m/this.stiff);
+                    this.unload_stiff = this.stiff + S * fmax;
             end
             
             % Residual overlap
-            this.residue = v0 * sqrt(m/this.load_stiff) * (1-e2);
+            this.residue = v0 * sqrt(m/this.stiff) * (1-e2);
         end
         
         %------------------------------------------------------------------
@@ -76,7 +75,7 @@ classdef ContactForceN_ElastoPlasticLinear < ContactForceN
             ovlp = int.kinemat.ovlp_n;
             vel  = int.kinemat.vel_n;
             res  = this.residue;
-            kl   = this.load_stiff;
+            kl   = this.stiff;
             ku   = this.unload_stiff;
             
             % Elastic force according to loading or unloading behavior

@@ -1,23 +1,21 @@
-%% ContactForceT_Spring class
+%% ContactForceT_DashpotSlider class
 %
 %% Description
 %
 %% Implementation
 %
-classdef ContactForceT_Spring < ContactForceT
+classdef ContactForceT_DashpotSlider < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        % Formulation options
-        auto_stiff logical = logical.empty;   % flag for computing spring stiffness automatically
-        
         % Contact parameters
-        stiff double = double.empty;   % stiffness coefficient
+        damp double = double.empty;   % damping coefficient
+        fric double = double.empty;   % friction coefficient
     end
     
     %% Constructor method
     methods
-        function this = ContactForceT_Spring()
-            this = this@ContactForceT(ContactForceT.SPRING);
+        function this = ContactForceT_DashpotSlider()
+            this = this@ContactForceT(ContactForceT.DASHPOT_SLIDER);
             this.setDefaultProps();
         end
     end
@@ -26,20 +24,22 @@ classdef ContactForceT_Spring < ContactForceT
     methods
         %------------------------------------------------------------------
         function this = setDefaultProps(this)
-            this.auto_stiff = true;
+            
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,int)
-            if (this.auto_stiff)
-                this.stiff = (1-int.eff_poisson)/(1-int.eff_poisson/2) * int.cforcen.stiff;
-            end
+        function this = setParameters(this,~)
+            
         end
         
         %------------------------------------------------------------------
         function this = evalForce(this,int)
-            % Force modulus (elastic contribution only)
-            f = this.stiff * int.kinemat.ovlp_t;
+            % Force modulus (viscous and friction contributions)
+            fv = this.damp * int.kinemat.vel_t;
+            ff = this.fric * abs(int.cforcen.total_force); 
+            
+            % Limit elastic force by Coulomb law
+            f = min(abs(fv),abs(ff));
             
             % Total tangential force vector (against deformation)
             this.total_force = -f * int.kinemat.dir_t;

@@ -36,6 +36,7 @@ classdef ContactForceN < matlab.mixin.Heterogeneous
         
         % Contact parameters
         restitution double = double.empty;   % normal coefficient of restitution
+        stiff       double = double.empty;   % spring stiffness coefficient
         
         % Force results
         total_force double = double.empty;   % resulting force vector

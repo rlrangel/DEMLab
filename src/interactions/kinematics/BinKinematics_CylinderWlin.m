@@ -28,11 +28,34 @@ classdef BinKinematics_CylinderWlin < BinKinematics
             
             int.eff_radius = p.radius;
             int.eff_mass   = p.mass;
+            
+            % Wall with no material set
             if (isempty(mw))
-                int.eff_young = mp.young / (1 - mp.poisson^2);
+                if (~isempty(mp.young) && ~isempty(mp.poisson))
+                    int.eff_young = mp.young / (1 - mp.poisson^2);
+                end
+                if (~isempty(mp.shear) && ~isempty(mp.poisson))
+                    int.eff_shear = mp.shear / (2 - mp.poisson^2);
+                end
+                if (~isempty(mp.poisson))
+                    int.eff_poisson = mp.poisson;
+                end
+                
+            % Wall with material set
             else
-                int.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
+                if (~isempty(mp.young) && ~isempty(mp.poisson) &&...
+                    ~isempty(mw.young) && ~isempty(mw.poisson))
+                    int.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
+                end
+                if (~isempty(mp.shear) && ~isempty(mp.poisson) &&...
+                    ~isempty(mw.shear) && ~isempty(mw.poisson))
+                    int.eff_shear = 1 / ((2-mp.poisson^2)/mp.shear + (2-mw.poisson^2)/mw.shear);
+                end
+                if (~isempty(mp.poisson) && ~isempty(mw.poisson))
+                    int.eff_poisson = (mp.poisson + mw.poisson) / 2;
+                end
             end
+            
             if (~isempty(mp.conduct))
                 int.eff_conduct = mp.conduct;
             end

@@ -3684,12 +3684,15 @@ classdef Read < handle
                 status = 0; return;
             end
             model = string(IM.contact_force_tangent.model);
-            if (~this.isStringArray(model,1)   ||...
-               (~strcmp(model,'simple_slider') &&...
-                ~strcmp(model,'simple_spring') &&...
-                ~strcmp(model,'simple_dashpot')))
+            if (~this.isStringArray(model,1)    ||...
+               (~strcmp(model,'simple_slider')  &&...
+                ~strcmp(model,'simple_spring')  &&...
+                ~strcmp(model,'simple_dashpot') &&...
+                ~strcmp(model,'spring_slider')  &&...
+                ~strcmp(model,'dashpot_slider') &&...
+                ~strcmp(model,'spring_dashpot_slider')))
                 fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.model.\n');
-                fprintf(2,'Available options: simple_slider, simple_spring, simple_dashpot.\n');
+                fprintf(2,'Available options: simple_slider, simple_spring, simple_dashpot, spring_slider, dashpot_slider, spring_dashpot_slider.\n');
                 status = 0; return;
             end
             
@@ -3709,6 +3712,33 @@ classdef Read < handle
                     status = 0;
                     return;
                 end
+            elseif (strcmp(model,'spring_slider'))
+                if (~this.contactForceTangent_SpringSlider(IM.contact_force_tangent,drv))
+                    status = 0;
+                    return;
+                end
+            elseif (strcmp(model,'dashpot_slider'))
+                if (~this.contactForceTangent_DashpotSlider(IM.contact_force_tangent,drv))
+                    status = 0;
+                    return;
+                end
+            elseif (strcmp(model,'spring_dashpot_slider'))
+                if (~this.contactForceTangent_SpringDashpotSlider(IM.contact_force_tangent,drv))
+                    status = 0;
+                    return;
+                end
+            end
+            
+            % Coefficient of restitution
+            if (isfield(IM.contact_force_tangent,'restitution_coeff'))
+                rest = IM.contact_force_tangent.restitution_coeff;
+                if (~this.isDoubleArray(rest,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.restitution_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                elseif (rest < 0 || rest > 1)
+                    this.warn('Unphysical value was found for InteractionModel.contact_force_tangent.restitution_coeff.');
+                end
+                drv.search.b_interact.cforcet.restitution = rest;
             end
         end
         
@@ -3834,36 +3864,36 @@ classdef Read < handle
             drv.search.b_interact.cforcen = ContactForceN_ElastoPlasticLinear();
             
             % Loading stiffness formulation
-            if (isfield(CFN,'load_stiff_coeff_formula'))
-                if (~this.isStringArray(CFN.load_stiff_coeff_formula,1) ||...
-                   (~strcmp(CFN.load_stiff_coeff_formula,'time')        &&...
-                    ~strcmp(CFN.load_stiff_coeff_formula,'overlap')     &&...
-                    ~strcmp(CFN.load_stiff_coeff_formula,'energy')))
-                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.load_stiff_coeff_formula.\n');
+            if (isfield(CFN,'load_stiff_formula'))
+                if (~this.isStringArray(CFN.load_stiff_formula,1) ||...
+                   (~strcmp(CFN.load_stiff_formula,'time')        &&...
+                    ~strcmp(CFN.load_stiff_formula,'overlap')     &&...
+                    ~strcmp(CFN.load_stiff_formula,'energy')))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.load_stiff_formula.\n');
                     fprintf(2,'Available options: time, overlap, energy.\n');
                     status = 0; return;
                 end
-                if (strcmp(CFN.load_stiff_coeff_formula,'time'))
+                if (strcmp(CFN.load_stiff_formula,'time'))
                     drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.TIME;
-                elseif (strcmp(CFN.load_stiff_coeff_formula,'overlap'))
+                elseif (strcmp(CFN.load_stiff_formula,'overlap'))
                     drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.OVERLAP;
-                elseif (strcmp(CFN.load_stiff_coeff_formula,'energy'))
+                elseif (strcmp(CFN.load_stiff_formula,'energy'))
                     drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.ENERGY;
                 end
             end
             
             % Unloading stiffness formulation
-            if (isfield(CFN,'unload_stiff_coeff_formula'))
-                if (~this.isStringArray(CFN.unload_stiff_coeff_formula,1) ||...
-                   (~strcmp(CFN.unload_stiff_coeff_formula,'constant')    &&...
-                    ~strcmp(CFN.unload_stiff_coeff_formula,'variable')))
-                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.unload_stiff_coeff_formula.\n');
+            if (isfield(CFN,'unload_stiff_formula'))
+                if (~this.isStringArray(CFN.unload_stiff_formula,1) ||...
+                   (~strcmp(CFN.unload_stiff_formula,'constant')    &&...
+                    ~strcmp(CFN.unload_stiff_formula,'variable')))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.unload_stiff_formula.\n');
                     fprintf(2,'Available options: constant, variable.\n');
                     status = 0; return;
                 end
-                if (strcmp(CFN.unload_stiff_coeff_formula,'constant'))
+                if (strcmp(CFN.unload_stiff_formula,'constant'))
                     drv.search.b_interact.cforcen.unload_stiff_formula = drv.search.b_interact.cforcen.CONSTANT;
-                elseif (strcmp(CFN.unload_stiff_coeff_formula,'variable'))
+                elseif (strcmp(CFN.unload_stiff_formula,'variable'))
                     drv.search.b_interact.cforcen.unload_stiff_formula = drv.search.b_interact.cforcen.VARIABLE;
                     
                     % Variable unload stiffness coefficient parameter
@@ -3883,22 +3913,22 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = contactForceTangent_SimpleSlider(this,CFN,drv)
+        function status = contactForceTangent_SimpleSlider(this,CFT,drv)
             status = 1;
             
             % Create object
             drv.search.b_interact.cforcet = ContactForceT_Slider();
             
             % Friction coefficient value
-            if (isfield(CFN,'friction_coeff'))
-                if (~this.isDoubleArray(CFN.friction_coeff,1))
+            if (isfield(CFT,'friction_coeff'))
+                if (~this.isDoubleArray(CFT.friction_coeff,1))
                     fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.friction_coeff.\n');
                     fprintf(2,'It must be a numeric value.\n');
                     status = 0; return;
-                elseif (CFN.friction_coeff <= 0)
+                elseif (CFT.friction_coeff <= 0)
                     this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.friction_coeff');
                 end
-                drv.search.b_interact.cforcet.friction = CFN.friction_coeff;
+                drv.search.b_interact.cforcet.fric = CFT.friction_coeff;
             else
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.friction_coeff.\n');
                 status = 0; return;
@@ -3906,47 +3936,179 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = contactForceTangent_SimpleSpring(this,CFN,drv)
+        function status = contactForceTangent_SimpleSpring(this,CFT,drv)
             status = 1;
             
             % Create object
             drv.search.b_interact.cforcet = ContactForceT_Spring();
             
             % Stiffness coefficient value
-            if (isfield(CFN,'stiff_coeff'))
-                if (~this.isDoubleArray(CFN.stiff_coeff,1))
+            if (isfield(CFT,'stiff_coeff'))
+                if (~this.isDoubleArray(CFT.stiff_coeff,1))
                     fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.stiff_coeff.\n');
                     fprintf(2,'It must be a numeric value.\n');
                     status = 0; return;
-                elseif (CFN.stiff_coeff <= 0)
+                elseif (CFT.stiff_coeff <= 0)
                     this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.stiff_coeff');
                 end
-                drv.search.b_interact.cforcet.stiff = CFN.stiff_coeff;
+                drv.search.b_interact.cforcet.stiff = CFT.stiff_coeff;
+                drv.search.b_interact.cforcet.auto_stiff = false;
             else
-                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.stiff_coeff.\n');
-                status = 0; return;
+                drv.search.b_interact.cforcet.auto_stiff = true;
             end
         end
         
         %------------------------------------------------------------------
-        function status = contactForceTangent_SimpleDashpot(this,CFN,drv)
+        function status = contactForceTangent_SimpleDashpot(this,CFT,drv)
             status = 1;
             
             % Create object
             drv.search.b_interact.cforcet = ContactForceT_Dashpot();
             
             % Damping coefficient value
-            if (isfield(CFN,'damping_coeff'))
-                if (~this.isDoubleArray(CFN.damping_coeff,1))
+            if (isfield(CFT,'damping_coeff'))
+                if (~this.isDoubleArray(CFT.damping_coeff,1))
                     fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.damping_coeff.\n');
                     fprintf(2,'It must be a numeric value.\n');
                     status = 0; return;
-                elseif (CFN.damping_coeff <= 0)
+                elseif (CFT.damping_coeff <= 0)
                     this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.damping_coeff');
                 end
-                drv.search.b_interact.cforcet.damp = CFN.damping_coeff;
+                drv.search.b_interact.cforcet.damp = CFT.damping_coeff;
             else
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.damping_coeff.\n');
+                status = 0; return;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = contactForceTangent_SpringSlider(this,CFT,drv)
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.cforcet = ContactForceT_SpringSlider();
+            
+            % Stiffness coefficient value
+            if (isfield(CFT,'stiff_coeff'))
+                if (~this.isDoubleArray(CFT.stiff_coeff,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.stiff_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (CFT.stiff_coeff <= 0)
+                    this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.stiff_coeff');
+                end
+                drv.search.b_interact.cforcet.stiff = CFT.stiff_coeff;
+                drv.search.b_interact.cforcet.auto_stiff = false;
+            else
+                drv.search.b_interact.cforcet.auto_stiff = true;
+            end
+            
+            % Friction coefficient value
+            if (isfield(CFT,'friction_coeff'))
+                if (~this.isDoubleArray(CFT.friction_coeff,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.friction_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (CFT.friction_coeff <= 0)
+                    this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.friction_coeff');
+                end
+                drv.search.b_interact.cforcet.fric = CFT.friction_coeff;
+            else
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.friction_coeff.\n');
+                status = 0; return;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = contactForceTangent_DashpotSlider(this,CFT,drv)
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.cforcet = ContactForceT_DashpotSlider();
+            
+            % Damping coefficient value
+            if (isfield(CFT,'damping_coeff'))
+                if (~this.isDoubleArray(CFT.damping_coeff,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.damping_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (CFT.damping_coeff <= 0)
+                    this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.damping_coeff');
+                end
+                drv.search.b_interact.cforcet.damp = CFT.damping_coeff;
+            else
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.damping_coeff.\n');
+                status = 0; return;
+            end
+            
+            % Friction coefficient value
+            if (isfield(CFT,'friction_coeff'))
+                if (~this.isDoubleArray(CFT.friction_coeff,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.friction_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (CFT.friction_coeff <= 0)
+                    this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.friction_coeff');
+                end
+                drv.search.b_interact.cforcet.fric = CFT.friction_coeff;
+            else
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.friction_coeff.\n');
+                status = 0; return;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = contactForceTangent_SpringDashpotSlider(this,CFT,drv)
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.cforcet = ContactForceT_SpringDashpotSlider();
+            
+            % Stiffness coefficient value
+            if (isfield(CFT,'stiff_coeff'))
+                if (~this.isDoubleArray(CFT.stiff_coeff,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.stiff_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (CFT.stiff_coeff <= 0)
+                    this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.stiff_coeff');
+                end
+                drv.search.b_interact.cforcet.stiff = CFT.stiff_coeff;
+                drv.search.b_interact.cforcet.auto_stiff = false;
+            else
+                drv.search.b_interact.cforcet.auto_stiff = true;
+            end
+            
+            % Damping coefficient value
+            if (isfield(CFT,'damping_coeff'))
+                if (~this.isDoubleArray(CFT.damping_coeff,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.damping_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (CFT.damping_coeff <= 0)
+                    this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.damping_coeff');
+                end
+                drv.search.b_interact.cforcet.damp = CFT.damping_coeff;
+                drv.search.b_interact.cforcet.auto_damp = false;
+            elseif (~isempty(drv.search.b_interact.cforcet.restitution))
+                drv.search.b_interact.cforcet.auto_damp = true;
+            else
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.damping_coeff or InteractionModel.contact_force_tangent.restitution_coeff.\n');
+                status = 0; return;
+            end
+            
+            % Friction coefficient value
+            if (isfield(CFT,'friction_coeff'))
+                if (~this.isDoubleArray(CFT.friction_coeff,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.friction_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (CFT.friction_coeff <= 0)
+                    this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.friction_coeff');
+                end
+                drv.search.b_interact.cforcet.fric = CFT.friction_coeff;
+            else
+                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.friction_coeff.\n');
                 status = 0; return;
             end
         end
@@ -3999,11 +4161,13 @@ classdef Read < handle
                     fprintf(2,'Missing thermal properties of material %s.',m.name);
                     status = 0; return;
                 end
-                shear_from_poisson = m.young / (2 + 2*m.poisson);
-                if (isempty(m.shear))
-                    m.shear = shear_from_poisson;
-                elseif (m.shear ~= shear_from_poisson)
-                    this.warn('Provided shear modulus is not physically consistent with Young modulus and Poisson ratio.');
+                if (~isempty(m.young) && ~isempty(m.poisson))
+                    shear_from_poisson = m.young / (2 + 2*m.poisson);
+                    if (isempty(m.shear))
+                        m.shear = shear_from_poisson;
+                    elseif (m.shear ~= shear_from_poisson)
+                        this.warn('Provided shear modulus is not physically consistent with Young modulus and Poisson ratio.');
+                    end
                 end
                 % young_real needed when area correction is used
             end

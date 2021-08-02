@@ -10,15 +10,21 @@ classdef ContactForceT < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of model
-        SLIDER  = uint8(1);
-        SPRING  = uint8(2);
-        DASHPOT = uint8(3);
+        SLIDER                = uint8(1);
+        SPRING                = uint8(2);
+        DASHPOT               = uint8(3);
+        SPRING_SLIDER         = uint8(4);
+        DASHPOT_SLIDER        = uint8(5);
+        SPRING_DASHPOT_SLIDER = uint8(6);
     end
     
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Identification
         type uint8 = uint8.empty;   % flag for type of model
+        
+        % Contact parameters
+        restitution double = double.empty;   % tangent coefficient of restitution
         
         % Force results
         total_force double = double.empty;   % resulting force vector
@@ -42,6 +48,9 @@ classdef ContactForceT < matlab.mixin.Heterogeneous
     
     %% Abstract methods
     methods (Abstract)
+        %------------------------------------------------------------------
+        this = setDefaultProps(this);
+        
         %------------------------------------------------------------------
         this = setParameters(this,interact);
         

@@ -15,6 +15,8 @@ classdef Interact < handle & matlab.mixin.Copyable
         eff_radius  double = double.empty;
         eff_mass    double = double.empty;
         eff_young   double = double.empty;
+        eff_shear   double = double.empty;
+        eff_poisson double = double.empty;
         eff_conduct double = double.empty;
         
         % Interaction models (value class objects)
