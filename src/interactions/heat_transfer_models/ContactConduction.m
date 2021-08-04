@@ -2,7 +2,13 @@
 %
 %% Description
 %
-% 
+% This is a value heterogeneous super-class for the definition of models
+% for the contact heat conduction between elements.
+%
+% This super-class defines abstracts methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <contactconduction_bob.html ContactConduction_BOB> (default)
 %
 classdef ContactConduction < matlab.mixin.Heterogeneous
     %% Constant values

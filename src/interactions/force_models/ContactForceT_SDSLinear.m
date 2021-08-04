@@ -2,14 +2,22 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <contactforcet.html ContactForceT> class for
+% the implementation of the *Linear Spring-Dashpot-Slider* tangent contact
+% force model.
+%
+% 
+%
+% References:
+%
+% * 
 %
 classdef ContactForceT_SDSLinear < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Formulation options
-        auto_stiff logical = logical.empty;   % flag for computing spring stiffness automatically
-        auto_damp  logical = logical.empty;   % flag for computing damping stiffness automatically
+        auto_stiff logical = logical.empty;   % flag for computing stiffness coefficient automatically
+        auto_damp  logical = logical.empty;   % flag for computing damping coefficient automatically
         
         % Contact parameters
         stiff double = double.empty;   % stiffness coefficient

@@ -2,7 +2,14 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <contactforcet.html ContactForceT> class for
+% the implementation of the *Simple Slider* tangent contact force model.
+%
+% 
+%
+% References:
+%
+% * 
 %
 classdef ContactForceT_Slider < ContactForceT
     %% Public properties

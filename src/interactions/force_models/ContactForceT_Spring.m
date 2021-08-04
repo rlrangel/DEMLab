@@ -2,13 +2,20 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <contactforcet.html ContactForceT> class for
+% the implementation of the *Simple Spring* tangent contact force model.
+%
+% 
+%
+% References:
+%
+% * 
 %
 classdef ContactForceT_Spring < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Formulation options
-        auto_stiff logical = logical.empty;   % flag for computing spring stiffness automatically
+        auto_stiff logical = logical.empty;   % flag for computing stiffness coefficient automatically
         
         % Contact parameters
         stiff double = double.empty;   % stiffness coefficient

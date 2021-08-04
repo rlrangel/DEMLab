@@ -1,8 +1,21 @@
-%% ContactForceT (Tangential Contact Force) class
+%% ContactForceT (Tangent Contact Force) class
 %
 %% Description
 %
-
+% This is a value heterogeneous super-class for the definition of models
+% for the tangent contact force between elements.
+%
+% This super-class defines abstracts methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <contactforcet_spring.html ContactForceT_Spring> (default)
+% * <contactforcet_dashpot.html ContactForceT_Dashpot>
+% * <contactforcet_slider.html ContactForceT_Slider>
+% * <contactforcet_springslider.html ContactForceT_SpringSlider>
+% * <contactforcet_dashpotslider.html ContactForceT_DashpotSlider>
+% * <contactforcet_sdslinear.html ContactForceT_SDSLinear>
+% * <contactforcet_sdsnonlinear.html ContactForceT_SDSNonlinear>
+%
 classdef ContactForceT < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
@@ -60,10 +73,5 @@ classdef ContactForceT < matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         this = evalForce(this,interact);
-    end
-    
-    %% Public methods
-    methods
-        
     end
 end

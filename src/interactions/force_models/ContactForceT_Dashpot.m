@@ -2,7 +2,14 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <contactforcet.html ContactForceT> class for
+% the implementation of the *Simple Dashpot* tangent contact force model.
+%
+% 
+%
+% References:
+%
+% * 
 %
 classdef ContactForceT_Dashpot < ContactForceT
     %% Public properties

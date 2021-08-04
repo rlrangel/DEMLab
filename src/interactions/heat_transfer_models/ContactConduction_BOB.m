@@ -2,7 +2,15 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <contactconduction.html ContactConduction>
+% class for the implementation of the *Batchelor & O'Brien* contact heat
+% conduction model.
+%
+% 
+%
+% References:
+%
+% * 
 %
 classdef ContactConduction_BOB < ContactConduction
     %% Constructor method

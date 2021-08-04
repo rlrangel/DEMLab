@@ -2,7 +2,15 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <contactforcet.html ContactForceT> class for
+% the implementation of the *Noninear Spring-Dashpot-Slider* tangent
+% contact force model.
+%
+% 
+%
+% References:
+%
+% * 
 %
 classdef ContactForceT_SDSNonlinear < ContactForceT
     %% Public properties

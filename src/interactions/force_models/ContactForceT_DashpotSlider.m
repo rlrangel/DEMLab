@@ -2,7 +2,14 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <contactforcet.html ContactForceT> class for
+% the implementation of the *Dashpot-Slider* tangent contact force model.
+%
+% 
+%
+% References:
+%
+% * 
 %
 classdef ContactForceT_DashpotSlider < ContactForceT
     %% Public properties
