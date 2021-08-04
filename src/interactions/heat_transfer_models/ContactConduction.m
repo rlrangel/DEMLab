@@ -2,9 +2,7 @@
 %
 %% Description
 %
-%% Subclasses
-%
-%% Implementation
+% 
 %
 classdef ContactConduction < matlab.mixin.Heterogeneous
     %% Constant values
@@ -31,7 +29,7 @@ classdef ContactConduction < matlab.mixin.Heterogeneous
         end
     end
     
-    %% Default subclass definition
+    %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
             defaultObject = ContactConduction_BOB;
@@ -41,14 +39,9 @@ classdef ContactConduction < matlab.mixin.Heterogeneous
     %% Abstract methods
     methods (Abstract)
         %------------------------------------------------------------------
-        this = setParameters(this,interact);
+        this = setDefaultProps(this);
         
         %------------------------------------------------------------------
         this = evalHeatRate(this,interact);
-    end
-    
-    %% Public methods
-    methods
-        
     end
 end

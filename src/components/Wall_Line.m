@@ -2,7 +2,8 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <wall.html Wall> class for the
+% implementation of *Line* rigid walls.
 %
 classdef Wall_Line < Wall
     %% Public properties
@@ -23,11 +24,11 @@ classdef Wall_Line < Wall
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
-            % Flags for free/fixed wall
+            % Flags for fixed wall
             this.fixed_motion = false;
             this.fixed_therm  = false;
             

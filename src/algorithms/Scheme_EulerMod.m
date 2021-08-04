@@ -1,15 +1,39 @@
-%% Scheme_EulerMod (Modified Euler) class
+%% Scheme_EulerMod class
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <scheme.html Scheme> class for the
+% implementation of the time integration scheme *Modified Euler*.
+%
+% * Translational motion:
+%
+% $v_{i} = v_{i-1} + a_{i} \times \Delta t$
+%
+% $x_{i} = x_{i-1} + v_{i} \times \Delta t$
+%
+% * Rotational motion:
+%
+% $\omega_{i} = \omega_{i-1} + \alpha_{i} \times \Delta t$
+%
+% $\theta_{i} = \theta_{i-1} + \omega_{i} \times \Delta t$
+%
+% * Notation
+%
+% $\Delta t$: Time increment
+%
+% $x$: Coordinates
+%
+% $v$: Translational velocity
+%
+% $a$: Translational acceleration
+%
+% $\theta$: angular orientation
+%
+% $\omega$: angular velocity
+%
+% $\alpha$: angular acceleration
 %
 classdef Scheme_EulerMod < Scheme
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        
-    end
-    
     %% Constructor method
     methods
         function this = Scheme_EulerMod()
@@ -17,7 +41,7 @@ classdef Scheme_EulerMod < Scheme
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function updatePosition(~,p,dt)

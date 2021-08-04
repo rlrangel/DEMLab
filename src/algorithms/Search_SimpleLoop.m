@@ -2,14 +2,18 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <search.html Search> class for the
+% implementation of the interaction search algorithm *Simple Loop*.
+%
+% This algorithm performs an outer loop over all particles and searches for
+% interacting particles and walls through inner loops over all particles
+% with a higher ID number and all walls.
+%
+% For each interaction found, a binary <interact.html Interaction> object
+% is created to manage the mechanical and / or thermal interaction between
+% both elements.
 %
 classdef Search_SimpleLoop < Search
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        
-    end
-    
     %% Constructor method
     methods
         function this = Search_SimpleLoop()
@@ -18,7 +22,7 @@ classdef Search_SimpleLoop < Search
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
@@ -103,7 +107,7 @@ classdef Search_SimpleLoop < Search
         end
     end
     
-    %% Public methods: Subclass specifics
+    %% Public methods: sub-class specifics
     methods
         %------------------------------------------------------------------
         function createInteractPP(this,drv,p1,p2)

@@ -2,7 +2,8 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <sink.html Sink> class for the implementation
+% of *Circle* sinks.
 %
 classdef Sink_Circle < Sink
     %% Public properties
@@ -18,7 +19,7 @@ classdef Sink_Circle < Sink
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function do = removeParticle(this,p,time)

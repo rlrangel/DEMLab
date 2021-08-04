@@ -2,7 +2,15 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <driver.html Driver> class for the
+% implementation of the *Thermal* analysis driver.
+%
+% In this type of analysis only the thermal behavior of particles is
+% simulated (particles motion is not computed).
+%
+% This class is responsible for solving all the time steps of a thermal
+% simulation by performing loops over all interactions, particles and walls
+% in order to compute the changes of temperature.
 %
 classdef Driver_Thermal < Driver
     %% Public properties
@@ -23,7 +31,6 @@ classdef Driver_Thermal < Driver
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
-            this.dimension   = 2;
             this.n_mparts    = 0;
             this.n_particles = 0;
             this.n_walls     = 0;
@@ -47,7 +54,7 @@ classdef Driver_Thermal < Driver
         end
         
         %------------------------------------------------------------------
-        function runAnalysis(this)
+        function process(this)
             while (this.time < this.max_time)
                 % Update time and step
                 this.time = this.time + this.time_step;
@@ -72,7 +79,7 @@ classdef Driver_Thermal < Driver
         end
     end
     
-   %% Public methods: Subclass specifics
+   %% Public methods: sub-class specifics
     methods
         %------------------------------------------------------------------
         function interactionLoop(this)
@@ -102,8 +109,8 @@ classdef Driver_Thermal < Driver
             for i = 1:this.n_particles
                 p = this.particles(i);
                 
-                % Set flag for free particle
-                p.setFreeTherm(this.time);
+                % Set flag for fixed temperature
+                p.setFixedThermal(this.time);
                 
                 % Solve thermal state
                 if (p.free_therm)
@@ -137,8 +144,8 @@ classdef Driver_Thermal < Driver
             for i = 1:this.n_walls
                 w = this.walls(i);
                 
-                % Set fixed temperature
-                w.setFreeTherm(this.time);
+                % Set flag for fixed temperature
+                w.setFixedThermal(this.time);
                 w.setFCTemperature(this.time);
                 
                 % Store results

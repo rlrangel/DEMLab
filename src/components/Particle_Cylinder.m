@@ -2,14 +2,18 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <particle.html Particle> class for the
+% implementation of *Cylinder* particles.
+%
+% A cylinder particle behaves as a disk in a 2D model, but its properties are
+% computed assuming that it is a 3D body.
 %
 classdef Particle_Cylinder < Particle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Geometric properties
         radius double = double.empty;   % radius
-        len    double = double.empty;   % length
+        len    double = double.empty;   % out-of-plane length
     end
     
     %% Constructor method
@@ -20,7 +24,7 @@ classdef Particle_Cylinder < Particle
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)

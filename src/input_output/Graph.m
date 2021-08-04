@@ -2,7 +2,8 @@
 %
 %% Description
 %
-%% Implementation
+% This is a handle class responsible for creating, displaying and saving
+% a graph of a required result.
 %
 classdef Graph < handle
     %% Public properties

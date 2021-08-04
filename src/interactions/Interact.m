@@ -2,7 +2,8 @@
 %
 %% Description
 %
-%% Implementation
+% This is a handle heterogeneous super-class for the definition of binary
+% interactions between elements (particle-particle and particle-wall).
 %
 classdef Interact < handle & matlab.mixin.Copyable
     %% Public properties
@@ -20,7 +21,7 @@ classdef Interact < handle & matlab.mixin.Copyable
         eff_conduct double = double.empty;
         
         % Interaction models (value class objects)
-        kinemat BinKinematics     = BinKinematics.empty;       % general kinematics
+        kinemat BinKinematics     = BinKinematics.empty;       % general binary kinematics
         cforcen ContactForceN     = ContactForceN.empty;       % contact force normal
         cforcet ContactForceT     = ContactForceT.empty;       % contact force tangent
         cconduc ContactConduction = ContactConduction.empty;   % contact thermal conduction
@@ -31,10 +32,5 @@ classdef Interact < handle & matlab.mixin.Copyable
         function this = Interact()
             
         end
-    end
-    
-    %% Public methods
-    methods
-        
     end
 end

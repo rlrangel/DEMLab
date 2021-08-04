@@ -1,15 +1,18 @@
-%% BinKinematics_SphereWcirc (Sphere-Wall Circle) class
+%% BinKinematics_SphereWcirc class
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <binkinematics.html BinKinematics> class for
+% the implementation of the *Sphere-Wall Circle* binary kinematics for
+% particle-wall interactions.
+%
+% 
+%
+% References:
+%
+% * 
 %
 classdef BinKinematics_SphereWcirc < BinKinematics
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        
-    end
-    
     %% Constructor method
     methods
         function this = BinKinematics_SphereWcirc()
@@ -17,7 +20,7 @@ classdef BinKinematics_SphereWcirc < BinKinematics
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setEffParams(~,int)

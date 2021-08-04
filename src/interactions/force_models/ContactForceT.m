@@ -2,10 +2,7 @@
 %
 %% Description
 %
-%% Subclasses
-%
-%% Implementation
-%
+
 classdef ContactForceT < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
@@ -46,7 +43,7 @@ classdef ContactForceT < matlab.mixin.Heterogeneous
         end
     end
     
-    %% Default subclass definition
+    %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
             defaultObject = ContactForceT_Spring;

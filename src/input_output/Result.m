@@ -2,7 +2,7 @@
 %
 %% Description
 %
-%% Implementation
+% This is a handle class responsible for storing the required results.
 %
 classdef Result < handle
     %% Constant values
@@ -46,7 +46,7 @@ classdef Result < handle
         TEMPERATURE = uint8(24);
     end
     
-    %% Public properties: Flags for required results
+    %% Public properties: flags for required results
     properties (SetAccess = public, GetAccess = public)
         % Global parameters
         has_time = logical(false);
@@ -84,7 +84,7 @@ classdef Result < handle
         has_wall_temperature = logical(false);
     end
     
-    %% Public properties: Results storage
+    %% Public properties: results storage
     properties (SetAccess = public, GetAccess = public)
         % Index for columns (current output step)
         idx uint32 = uint32.empty;

@@ -1,15 +1,18 @@
-%% BinKinematics_CylinderWcirc (Cylinder-Wall Circle) class
+%% BinKinematics_CylinderWcirc class
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <binkinematics.html BinKinematics> class for
+% the implementation of the *Cylinder-Wall Circle* binary kinematics for
+% particle-wall interactions.
+%
+% 
+%
+% References:
+%
+% * 
 %
 classdef BinKinematics_CylinderWcirc < BinKinematics
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        
-    end
-    
     %% Constructor method
     methods
         function this = BinKinematics_CylinderWcirc()
@@ -17,7 +20,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setEffParams(~,int)

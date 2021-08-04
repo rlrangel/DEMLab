@@ -2,14 +2,13 @@
 %
 %% Description
 %
-%% Implementation
+% This is the main class for running the simulation.
 %
-classdef Master < handle
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        
-    end
-    
+% The _execute_ method is responsible for managing the high-level tasks
+% and call the appropriate methods to perform each task, from the reading
+% of the input files to the showing of the results.
+%
+classdef Master
     %% Constructor method
     methods
         function this = Master()
@@ -20,7 +19,7 @@ classdef Master < handle
     %% Public methods
     methods
         %------------------------------------------------------------------
-        function runSimulation(this,file_fullname)
+        function execute(this,file_fullname)
             % Print header
             this.printHeader();
             
@@ -63,7 +62,7 @@ classdef Master < handle
                 return;
             end
             
-            % Pre-processs
+            % Pre-process
             fprintf('\nPre-processing...\n');
             if (~drv.preProcess())
                 fprintf('\nExiting program...\n');
@@ -80,7 +79,7 @@ classdef Master < handle
             fprintf('\nStarting analysis:\n');
             fprintf('%s\n',datestr(now));
             tic;
-            drv.runAnalysis();
+            drv.process();
             
             % Print finished status
             this.printFinishedStatus();
@@ -94,7 +93,7 @@ classdef Master < handle
         function printHeader(~)
             fprintf('==================================================================\n');
             fprintf('           DEMLab - Discrete Element Method Laboratory            \n');
-            fprintf('                     Version 1.0 - July 2021                      \n');
+            fprintf('                    Version 1.0 - August 2021                     \n');
             fprintf(' International Center for Numerical Methods in Engineering (CIMNE)\n');
             fprintf('==================================================================\n\n');
         end

@@ -2,7 +2,9 @@
 %
 %% Description
 %
-%% Implementation
+% This is a handle class for the definition of model parts.
+%
+% It stores the particles and walls belonging to a model part.
 %
 classdef ModelPart < handle
     %% Public properties

@@ -2,7 +2,11 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <particle.html Particle> class for the
+% implementation of *Sphere* particles.
+%
+% A sphere particle behaves as a disk in a 2D model, but its properties are
+% computed assuming that it is a 3D body.
 %
 classdef Particle_Sphere < Particle
     %% Public properties
@@ -19,7 +23,7 @@ classdef Particle_Sphere < Particle
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)

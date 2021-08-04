@@ -2,9 +2,19 @@
 %
 %% Description
 %
-%% Subclasses
+% This is a handle heterogeneous super-class for the definition of rigid
+% walls.
 %
-%% Implementation
+% Rigid walls are not solved with mechanical or thermal equilibrium
+% equations.
+% Their motion and / or temperature are not influenced by their
+% interactions with other elements.
+%
+% This super-class defines abstracts methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <wall_line.html Wall_Line> (default)
+% * <wall_circle.html Wall_Circle>
 %
 classdef Wall < handle & matlab.mixin.Heterogeneous
     %% Constant values
@@ -26,10 +36,10 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         % Neighbours Interactions
         interacts Interact = Interact.empty;    % handles to objects of Interact class
         
-        % Fixed conditions (handles to objects of Cond class)
-        fc_translation Cond = Cond.empty;
-        fc_rotation    Cond = Cond.empty;
-        fc_temperature Cond = Cond.empty;
+        % Fixed conditions (handles to objects of Condition class)
+        fc_translation Condition = Condition.empty;
+        fc_rotation    Condition = Condition.empty;
+        fc_temperature Condition = Condition.empty;
         
         % Flags for free/fixed wall
         fixed_motion logical = logical.empty;   % flag for fixed motion wall
@@ -40,7 +50,7 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         veloc_rot double = double.empty;   % rotational velocity
         
         % Current thermal state
-        temperature double = double.empty;   % temperature
+        temperature double = double.empty;
     end
     
     %% Constructor method
@@ -52,7 +62,7 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         end
     end
     
-    %% Default subclass definition
+    %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
             defaultObject = Wall_Line;
@@ -71,7 +81,7 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
     %% Public methods
     methods
         %------------------------------------------------------------------
-        function setFreeMotion(this,time)
+        function setFixedMotion(this,time)
             if (isempty(this.fc_translation) && isempty(this.fc_rotation))
                 this.fixed_motion = false;
             else
@@ -91,7 +101,7 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         end
         
         %------------------------------------------------------------------
-        function setFreeTherm(this,time)
+        function setFixedThermal(this,time)
             if (isempty(this.fc_temperature))
                 this.fixed_therm = false;
             else

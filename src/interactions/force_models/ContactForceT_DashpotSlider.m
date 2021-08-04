@@ -20,7 +20,7 @@ classdef ContactForceT_DashpotSlider < ContactForceT
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function this = setDefaultProps(this)

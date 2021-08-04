@@ -2,14 +2,16 @@
 %
 %% Description
 %
-%% Implementation
+% This is a handle class responsible for reading the input files, building
+% the simulation objects, and checking the input data.
+%
+% Two files are read for a simulation:
+%
+% * _json_ file with the *project parameters*
+%
+% * _txt_ file with the *model parts*
 %
 classdef Read < handle
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        
-    end
-    
     %% Constructor method
     methods
         function this = Read()
@@ -17,7 +19,7 @@ classdef Read < handle
         end
     end
     
-    %% Public methods: Main functions
+    %% Public methods: main functions
     methods
         %------------------------------------------------------------------
         function [status,drv] = execute(this,path,fid)
@@ -102,7 +104,7 @@ classdef Read < handle
         end
     end
     
-    %% Public methods: Project parameters file
+    %% Public methods: project parameters file
     methods
         %------------------------------------------------------------------
         function [status,drv,model_parts_file] = getProblemData(this,json)
@@ -145,17 +147,6 @@ classdef Read < handle
                 status = 0; return;
             end
             drv.name = name;
-            
-            % Dimension
-            if (isfield(PD,'dimension'))
-                dim = PD.dimension;
-                if (~this.isIntArray(dim,1) || dim ~= 2)
-                    fprintf(2,'Invalid data in project parameters file: ProblemData.dimension.\n');
-                    fprintf(2,'Available options: 2.\n');
-                    status = 0; return;
-                end
-                drv.dimension = dim;
-            end
             
             % Model parts file name
             model_parts_file = string(PD.model_parts_file);
@@ -888,7 +879,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'uniform'))
                         % Create object
-                        pc = Cond_Uniform();
+                        pc = Condition_Uniform();
                         
                         % Value
                         if (~isfield(F,'value'))
@@ -905,7 +896,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'linear'))
                         % Create object
-                        pc = Cond_Linear();
+                        pc = Condition_Linear();
                         
                         % Initial value
                         if (isfield(F,'initial_value'))
@@ -933,7 +924,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'oscillatory'))
                         % Create object
-                        pc = Cond_Oscillatory();
+                        pc = Condition_Oscillatory();
                         
                         % Base value, amplitude and period
                         if (~isfield(F,'base_value') || ~isfield(F,'amplitude') || ~isfield(F,'period'))
@@ -974,7 +965,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'table'))
                         % Create object
-                        pc = Cond_Table();
+                        pc = Condition_Table();
                         
                         % Table values
                         if (isfield(F,'values'))
@@ -1115,7 +1106,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'uniform'))
                         % Create object
-                        pc = Cond_Uniform();
+                        pc = Condition_Uniform();
                         
                         % Value
                         if (~isfield(T,'value'))
@@ -1132,7 +1123,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'linear'))
                         % Create object
-                        pc = Cond_Linear();
+                        pc = Condition_Linear();
                         
                         % Initial value
                         if (isfield(T,'initial_value'))
@@ -1160,7 +1151,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'oscillatory'))
                         % Create object
-                        pc = Cond_Oscillatory();
+                        pc = Condition_Oscillatory();
                         
                         % Base value, amplitude and period
                         if (~isfield(T,'base_value') || ~isfield(T,'amplitude') || ~isfield(T,'period'))
@@ -1201,7 +1192,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'table'))
                         % Create object
-                        pc = Cond_Table();
+                        pc = Condition_Table();
                         
                         % Table values
                         if (isfield(T,'values'))
@@ -1342,7 +1333,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'uniform'))
                         % Create object
-                        pc = Cond_Uniform();
+                        pc = Condition_Uniform();
                         
                         % Value
                         if (~isfield(HF,'value'))
@@ -1359,7 +1350,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'linear'))
                         % Create object
-                        pc = Cond_Linear();
+                        pc = Condition_Linear();
                         
                         % Initial value
                         if (isfield(HF,'initial_value'))
@@ -1387,7 +1378,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'oscillatory'))
                         % Create object
-                        pc = Cond_Oscillatory();
+                        pc = Condition_Oscillatory();
                         
                         % Base value, amplitude and period
                         if (~isfield(HF,'base_value') || ~isfield(HF,'amplitude') || ~isfield(HF,'period'))
@@ -1428,7 +1419,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'table'))
                         % Create object
-                        pc = Cond_Table();
+                        pc = Condition_Table();
                         
                         % Table values
                         if (isfield(HF,'values'))
@@ -1569,7 +1560,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'uniform'))
                         % Create object
-                        pc = Cond_Uniform();
+                        pc = Condition_Uniform();
                         
                         % Value
                         if (~isfield(HF,'value'))
@@ -1586,7 +1577,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'linear'))
                         % Create object
-                        pc = Cond_Linear();
+                        pc = Condition_Linear();
                         
                         % Initial value
                         if (isfield(HF,'initial_value'))
@@ -1614,7 +1605,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'oscillatory'))
                         % Create object
-                        pc = Cond_Oscillatory();
+                        pc = Condition_Oscillatory();
                         
                         % Base value, amplitude and period
                         if (~isfield(HF,'base_value') || ~isfield(HF,'amplitude') || ~isfield(HF,'period'))
@@ -1655,7 +1646,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'table'))
                         % Create object
-                        pc = Cond_Table();
+                        pc = Condition_Table();
                         
                         % Table values
                         if (isfield(HF,'values'))
@@ -1815,7 +1806,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'uniform'))
                         % Create object
-                        cond = Cond_Uniform();
+                        cond = Condition_Uniform();
                         
                         % Value
                         if (~isfield(V,'value'))
@@ -1832,7 +1823,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'linear'))
                         % Create object
-                        cond = Cond_Linear();
+                        cond = Condition_Linear();
                         
                         % Initial value
                         if (isfield(V,'initial_value'))
@@ -1860,7 +1851,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'oscillatory'))
                         % Create object
-                        cond = Cond_Oscillatory();
+                        cond = Condition_Oscillatory();
                         
                         % Base value, amplitude and period
                         if (~isfield(V,'base_value') || ~isfield(V,'amplitude') || ~isfield(V,'period'))
@@ -1902,7 +1893,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'table'))
                         % Create object
-                        cond = Cond_Table();
+                        cond = Condition_Table();
                         
                         % Table values
                         if (isfield(V,'values'))
@@ -2046,7 +2037,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'uniform'))
                         % Create object
-                        cond = Cond_Uniform();
+                        cond = Condition_Uniform();
                         
                         % Value
                         if (~isfield(V,'value'))
@@ -2063,7 +2054,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'linear'))
                         % Create object
-                        cond = Cond_Linear();
+                        cond = Condition_Linear();
                         
                         % Initial value
                         if (isfield(V,'initial_value'))
@@ -2091,7 +2082,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'oscillatory'))
                         % Create object
-                        cond = Cond_Oscillatory();
+                        cond = Condition_Oscillatory();
                         
                         % Base value, amplitude and period
                         if (~isfield(V,'base_value') || ~isfield(V,'amplitude') || ~isfield(V,'period'))
@@ -2132,7 +2123,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'table'))
                         % Create object
-                        cond = Cond_Table();
+                        cond = Condition_Table();
                         
                         % Table values
                         if (isfield(V,'values'))
@@ -2276,7 +2267,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'uniform'))
                         % Create object
-                        cond = Cond_Uniform();
+                        cond = Condition_Uniform();
                         
                         % Value
                         if (~isfield(T,'value'))
@@ -2293,7 +2284,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'linear'))
                         % Create object
-                        cond = Cond_Linear();
+                        cond = Condition_Linear();
                         
                         % Initial value
                         if (isfield(T,'initial_value'))
@@ -2321,7 +2312,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'oscillatory'))
                         % Create object
-                        cond = Cond_Oscillatory();
+                        cond = Condition_Oscillatory();
                         
                         % Base value, amplitude and period
                         if (~isfield(T,'base_value') || ~isfield(T,'amplitude') || ~isfield(T,'period'))
@@ -2362,7 +2353,7 @@ classdef Read < handle
                         
                     elseif (strcmp(type,'table'))
                         % Create object
-                        cond = Cond_Table();
+                        cond = Condition_Table();
                         
                         % Table values
                         if (isfield(T,'values'))
@@ -3160,7 +3151,7 @@ classdef Read < handle
         end
     end
     
-    %% Public methods: Model parts file
+    %% Public methods: model parts file
     methods
         %------------------------------------------------------------------
         function status = readParticlesSphere(this,fid,drv)
@@ -3606,7 +3597,7 @@ classdef Read < handle
         end
     end
     
-    %% Public methods: Interactions models
+    %% Public methods: interactions models
     methods
         %------------------------------------------------------------------
         function status = interactContactForceNormal(this,IM,drv)
@@ -4211,7 +4202,7 @@ classdef Read < handle
         end
     end
     
-    %% Public methods: Checks
+    %% Public methods: checks
     methods
         %------------------------------------------------------------------
         function status = checkDriver(~,drv)
@@ -4369,7 +4360,7 @@ classdef Read < handle
         end
     end
     
-    %% Static methods: Auxiliary
+    %% Static methods: auxiliary
     methods (Static)
         %------------------------------------------------------------------
         function warn(str)

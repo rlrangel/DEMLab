@@ -2,25 +2,29 @@
 %
 %% Description
 %
-%% Subclasses
+% This is a handle heterogeneous super-class for the definition of
+% interactions search algorithms.
 %
-%% Implementation
+% This super-class defines abstracts methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <search_simpleloop.html Search_SimpleLoop> (default)
 %
 classdef Search < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
-        % Types of search
+        % Types of search algorithm
         SIMPLE_LOOP = uint8(1);
     end
     
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Identification
-        type uint8   = uint8.empty;     % flag for type of search
-        done logical = logical.empty;   % flag for identifying if search has been done in a time step
+        type uint8   = uint8.empty;     % flag for type of search algorithm
+        done logical = logical.empty;   % flag for identifying if search has been done in current time step
         
         % Parameters
-        freq     uint32 = uint32.empty;   % frequency of search (in steps)
+        freq     uint32 = uint32.empty;   % search frequency (in steps)
         max_dist double = double.empty;   % threshold neighbour distance (exclusive) to create an interaction
         
         % Base object for common interactions
@@ -36,7 +40,7 @@ classdef Search < handle & matlab.mixin.Heterogeneous
         end
     end
     
-    %% Default subclass definition
+    %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
             defaultObject = Search_SimpleLopp;
@@ -50,10 +54,5 @@ classdef Search < handle & matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         execute(this,drv);
-    end
-    
-    %% Public methods
-    methods
-        
     end
 end

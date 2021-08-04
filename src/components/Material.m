@@ -2,7 +2,10 @@
 %
 %% Description
 %
-%% Implementation
+% This is a handle class for the definition of materials.
+%
+% It stores mechanical and / or thermal material properties related to
+% solids.
 %
 classdef Material < handle
     %% Public properties
@@ -28,10 +31,5 @@ classdef Material < handle
         function this = Material()
             
         end
-    end
-    
-    %% Public methods
-    methods
-        
     end
 end

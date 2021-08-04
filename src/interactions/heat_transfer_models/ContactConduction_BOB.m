@@ -5,22 +5,18 @@
 %% Implementation
 %
 classdef ContactConduction_BOB < ContactConduction
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        
-    end
-    
     %% Constructor method
     methods
         function this = ContactConduction_BOB()
             this = this@ContactConduction(ContactConduction.BATCHELOR_OBRIEN);
+            this = this.setDefaultProps();
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
-        function this = setParameters(this,~)
+        function this = setDefaultProps(this)
             
         end
         

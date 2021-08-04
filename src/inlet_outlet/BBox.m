@@ -2,9 +2,19 @@
 %
 %% Description
 %
-%% Subclasses
+% This is a handle heterogeneous super-class for the definition of bounding
+% boxes.
 %
-%% Implementation
+% A bounding box is used to limit the simulation domain.
+% Particles that are outside the bounding box limits are removed from the
+% simulation.
+%
+% This super-class defines abstracts methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <bbox_rectangle.html BBox_Rectangle> (default)
+% * <bbox_circle.html BBox_Circle>
+% * <bbox_polygon.html BBox_Polygon>
 %
 classdef BBox < handle & matlab.mixin.Heterogeneous
     %% Constant values
@@ -30,7 +40,7 @@ classdef BBox < handle & matlab.mixin.Heterogeneous
         end
     end
     
-    %% Default subclass definition
+    %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
             defaultObject = BBox_Rectangle;

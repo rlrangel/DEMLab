@@ -2,7 +2,18 @@
 %
 %% Description
 %
-%% Implementation
+% This is a handle class responsible for creating, displaying and saving
+% an animation of a required result.
+%
+% Three types of animated results are available:
+%
+% * *Motion*: Shows only the motion of particles and walls.
+%
+% * *Scalar*: Shows the motion of the elements and fills the particles with
+% colors to represent a scalar result.
+%
+% * *Vector*: Shows the motion of the elements and uses arrows to indicate
+% the direction and intensity of a vector results.
 %
 classdef Animate < handle
     %% Constant values: animation types
@@ -48,7 +59,7 @@ classdef Animate < handle
         np        uint32 = uint32.empty;   % total number of particles
         nf        uint32 = uint32.empty;   % total number of frames
         
-        % Results: common
+        % Results: common to all
         times    double = double.empty;   % array of simulation times of each step
         coord_x  double = double.empty;   % array of particles x coordinates
         coord_y  double = double.empty;   % array of particles y coordinates
@@ -70,7 +81,7 @@ classdef Animate < handle
         pids logical = logical.empty;   % flag for ploting particles IDs
         bbox double  = double.empty;    % fixed limits for animation
         
-        % Animation
+        % Animation components
         fig    matlab.ui.Figure = matlab.ui.Figure.empty;             % figure handle
         frames struct           = struct('cdata',[],'colormap',[]);   % array of movie frames
         fps    double           = double.empty;                       % movie frame rate

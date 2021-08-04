@@ -2,9 +2,18 @@
 %
 %% Description
 %
-%% Subclasses
+% This is a handle heterogeneous super-class for the definition of
+% particles.
 %
-%% Implementation
+% In DEM, particles are assumed to be soft so that contact forces and heat
+% exchange are originated by overlaps.
+% Furthermore, their shapes are assumed to be preserved after collisions.
+%
+% This super-class defines abstracts methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <particle_sphere.html Particle_Sphere> (default)
+% * <particle_cylinder.html Particle_Cylinder>
 %
 classdef Particle < handle & matlab.mixin.Heterogeneous
     %% Constant values
@@ -34,16 +43,16 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         % Neighbours Interactions
         interacts Interact = Interact.empty;   % handles to objects of Interact class
         
-        % Prescribed conditions (handles to objects of Cond class)
-        pc_force    Cond = Cond.empty;
-        pc_torque   Cond = Cond.empty;
-        pc_heatflux Cond = Cond.empty;
-        pc_heatrate Cond = Cond.empty;
+        % Prescribed conditions (handles to objects of Condition class)
+        pc_force    Condition = Condition.empty;
+        pc_torque   Condition = Condition.empty;
+        pc_heatflux Condition = Condition.empty;
+        pc_heatrate Condition = Condition.empty;
         
-        % Fixed conditions (handles to objects of Cond class)
-        fc_translation Cond = Cond.empty;
-        fc_rotation    Cond = Cond.empty;
-        fc_temperature Cond = Cond.empty;
+        % Fixed conditions (handles to objects of Condition class)
+        fc_translation Condition = Condition.empty;
+        fc_rotation    Condition = Condition.empty;
+        fc_temperature Condition = Condition.empty;
         
         % Flags for free/fixed particle
         free_trl   logical = logical.empty;   % flag for translational free particle
@@ -77,7 +86,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         end
     end
     
-    %% Default subclass definition
+    %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
             defaultObject = Particle_Sphere;
@@ -178,7 +187,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         end
         
         %------------------------------------------------------------------
-        function setFreeMech(this,time)
+        function setFixedMech(this,time)
             this.free_trl = true;
             this.free_rot = true;
             for i = 1:length(this.fc_translation)
@@ -196,7 +205,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         end
         
         %------------------------------------------------------------------
-        function setFreeTherm(this,time)
+        function setFixedThermal(this,time)
             this.free_therm = true;
             for i = 1:length(this.fc_temperature)
                 if (this.fc_temperature(i).isActive(time))

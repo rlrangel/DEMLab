@@ -1,10 +1,22 @@
-%% Cond_Table class
+%% Condition_Table class
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <Condition.html Condition> class for the
+% implementation of *Table* conditions.
 %
-classdef Cond_Table < Cond
+% Different methods can be used for interpolating the table values:
+%
+% * Linear
+% * Makima
+% * Cubic
+% * Pchip
+% * Spline
+%
+% For more information on these methods, check their description
+% <https://www.mathworks.com/help/matlab/ref/interp1.html#btwp6lt-1-method here>
+%
+classdef Condition_Table < Condition
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         val_x  double = double.empty;   % independente variable (time) values
@@ -14,13 +26,13 @@ classdef Cond_Table < Cond
     
     %% Constructor method
     methods
-        function this = Cond_Table()
-            this = this@Cond(Cond.TABLE);
+        function this = Condition_Table()
+            this = this@Condition(Condition.TABLE);
             this.setDefaultProps();
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)

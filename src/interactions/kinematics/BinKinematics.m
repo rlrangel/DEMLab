@@ -2,9 +2,18 @@
 %
 %% Description
 %
-%% Subclasses
+% This is a value heterogeneous super-class for the definition of the
+% kinematics for binary interactions between elements.
 %
-%% Implementation
+% This super-class defines abstracts methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <binkinematics_spheresphere.html BinKinematics_SphereSphere> (default)
+% * <binkinematics_spherewlin.html BinKinematics_SphereWlin>
+% * <binkinematics_spherewcirc.html BinKinematics_SphereWcirc>
+% * <binkinematics_cylindercylinder.html BinKinematics_CylinderCylinder>
+% * <binkinematics_cylinderwlin.html BinKinematics_CylinderWlin>
+% * <binkinematics_cylinderwcirc.html BinKinematics_CylinderWcirc>
 %
 classdef BinKinematics < matlab.mixin.Heterogeneous
     %% Constant values
@@ -30,13 +39,15 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
         dist  double = double.empty;   % distance between centroids
         separ double = double.empty;   % separation between surfaces
         
-        % Overlap parameters
-        dir_n      double  = double.empty;    % unit direction vector (normal)
-        dir_t      double  = double.empty;    % unit direction vector (tangent)
-        ovlp_n     double  = double.empty;    % overlap (normal)
-        ovlp_t     double  = double.empty;    % overlap (tangent)
-        vel_n      double  = double.empty;    % overlap rate of change (normal)
-        vel_t      double  = double.empty;    % overlap rate of change (tangent)
+        % Normal overlap parameters
+        dir_n  double = double.empty;   % unit direction vector
+        ovlp_n double = double.empty;   % overlap
+        vel_n  double = double.empty;   % overlap rate of change
+        
+        % Tangent overlap parameters
+        dir_t  double = double.empty;   % unit direction vector
+        ovlp_t double = double.empty;   % overlap
+        vel_t  double = double.empty;   % overlap rate of change
         
         % Contact parameters
         is_contact     logical = logical.empty;   % flag for contact interaction
@@ -56,7 +67,7 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
         end
     end
     
-    %% Default subclass definition
+    %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
             defaultObject = BinKinematics_SphereSphere;

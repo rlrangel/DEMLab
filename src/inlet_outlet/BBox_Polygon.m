@@ -2,7 +2,8 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <bbox.html BBox> class for the implementation
+% of *Polygon* bounding boxes.
 %
 classdef BBox_Polygon < BBox
     %% Public properties
@@ -18,7 +19,7 @@ classdef BBox_Polygon < BBox
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function do = removeParticle(this,p,time)

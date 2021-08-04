@@ -2,7 +2,15 @@
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <driver.html Driver> class for the
+% implementation of the *Mechanical* analysis driver.
+%
+% In this type of analysis only the mechanical behavior of particles is
+% simulated (kinetics and kinematics).
+%
+% This class is responsible for solving all the time steps of a mechanical
+% simulation by performing loops over all interactions, particles and walls
+% in order to compute the changes of motion.
 %
 classdef Driver_Mechanical < Driver
     %% Public properties
@@ -25,11 +33,10 @@ classdef Driver_Mechanical < Driver
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
-            this.dimension   = 2;
             this.n_mparts    = 0;
             this.n_particles = 0;
             this.n_walls     = 0;
@@ -57,7 +64,7 @@ classdef Driver_Mechanical < Driver
         end
         
         %------------------------------------------------------------------
-        function runAnalysis(this)
+        function process(this)
             while (this.time < this.max_time)
                 % Update time and step
                 this.time = this.time + this.time_step;
@@ -90,7 +97,7 @@ classdef Driver_Mechanical < Driver
         end
     end
     
-   %% Public methods: Subclass specifics
+   %% Public methods: sub-class specifics
     methods
         %------------------------------------------------------------------
         function interactionLoop(this)            
@@ -150,8 +157,8 @@ classdef Driver_Mechanical < Driver
             for i = 1:this.n_particles
                 p = this.particles(i);
                 
-                % Set flag for free particle
-                p.setFreeMech(this.time);
+                % Set flags for fixed motion
+                p.setFixedMech(this.time);
                 
                 % Solve translational motion
                 if (p.free_trl)
@@ -223,7 +230,7 @@ classdef Driver_Mechanical < Driver
                 w = this.walls(i);
                 
                 % Set fixed motion
-                w.setFreeMotion(this.time);
+                w.setFixedMotion(this.time);
                 w.setFCMotion(this.time,this.time_step);
                 
                 % Store results

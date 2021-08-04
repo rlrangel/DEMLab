@@ -1,12 +1,21 @@
-%% Cond class
+%% Condition class
 %
 %% Description
 %
-%% Subclasses
+% This is a handle heterogeneous super-class for the definition of
+% conditions.
 %
-%% Implementation
+% A condition is a function that returns a value for each provided time.
 %
-classdef Cond < handle & matlab.mixin.Heterogeneous
+% This super-class defines abstracts methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <Condition_Uniform.html Condition_Uniform> (default)
+% * <Condition_Linear.html Condition_Linear>
+% * <Condition_Oscillatory.html Condition_Oscillatory>
+% * <Condition_Table.html Condition_Table>
+%
+classdef Condition < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of condition variation
@@ -15,7 +24,7 @@ classdef Cond < handle & matlab.mixin.Heterogeneous
         OSCILLATORY = uint8(3);
         TABLE       = uint8(4);
         
-        % Types of interpolation methods
+        % Types of table interpolation methods
         INTERP_LINEAR = uint8(1);
         INTERP_MAKIMA = uint8(2);
         INTERP_CUBIC  = uint8(3);
@@ -32,17 +41,17 @@ classdef Cond < handle & matlab.mixin.Heterogeneous
     
     %% Constructor method
     methods
-        function this = Cond(type)
+        function this = Condition(type)
             if (nargin > 0)
                 this.type = type;
             end
         end
     end
     
-    %% Default subclass definition
+    %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
-            defaultObject = Cond_Uniform;
+            defaultObject = Condition_Uniform;
         end
     end
     

@@ -1,10 +1,23 @@
-%% Cond_Linear class
+%% Condition_Linear class
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <Condition.html Condition> class for the
+% implementation of *Linear* conditions.
 %
-classdef Cond_Linear < Cond
+% In a given time _t_, a linear condition value _y_, is obtained as:
+%
+% $y(t) = y_{0} + s \times (t-t_{0})$
+%
+% Where:
+%
+% $t_{0}$: Initial time
+%
+% $y_{0}$: Value at initial time
+%
+% $s$: Time rate of change
+%
+classdef Condition_Linear < Condition
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         init_value double = double.empty;   % initial condition value when activated
@@ -13,13 +26,13 @@ classdef Cond_Linear < Cond
     
     %% Constructor method
     methods
-        function this = Cond_Linear()
-            this = this@Cond(Cond.LINEAR);
+        function this = Condition_Linear()
+            this = this@Condition(Condition.LINEAR);
             this.setDefaultProps();
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)

@@ -2,9 +2,15 @@
 %
 %% Description
 %
-%% Subclasses
+% This is a handle heterogeneous super-class for the definition of time
+% integration schemes.
 %
-%% Implementation
+% This super-class defines abstracts methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <scheme_eulerforward.html Scheme_EulerForward> (default)
+% * <scheme_eulermod.html Scheme_EulerMod>
+% * <scheme_taylor2.html Scheme_Taylor2>
 %
 classdef Scheme < handle & matlab.mixin.Heterogeneous
     %% Constant values
@@ -29,7 +35,7 @@ classdef Scheme < handle & matlab.mixin.Heterogeneous
         end
     end
     
-    %% Default subclass definition
+    %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
             defaultObject = Search_EulerForward;
@@ -46,10 +52,5 @@ classdef Scheme < handle & matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         updateTemperature(this,particle);
-    end
-    
-    %% Public methods
-    methods
-        
     end
 end

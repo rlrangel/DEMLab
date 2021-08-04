@@ -1,10 +1,27 @@
-%% Cond_Oscillatory class
+%% Condition_Oscillatory class
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <Condition.html Condition> class for the
+% implementation of *Oscillatory* conditions.
 %
-classdef Cond_Oscillatory < Cond
+% In a given time _t_, an oscillatory condition value _y_, is obtained as:
+%
+% $y(t) = y_{0} + \lambda sin(\frac{2\pi}{\tau}(t-t_{0}) + \phi)$
+%
+% Where:
+%
+% $t_{0}$: Initial time
+%
+% $y_{0}$: Base value for oscillation
+%
+% $\lambda$: Oscillation amplitude around base value
+%
+% $\tau$: Oscillation period
+%
+% $\phi$: Oscillation phase shift
+%
+classdef Condition_Oscillatory < Condition
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         base_value double = double.empty;   % base condition value for oscillation
@@ -15,13 +32,13 @@ classdef Cond_Oscillatory < Cond
     
     %% Constructor method
     methods
-        function this = Cond_Oscillatory()
-            this = this@Cond(Cond.OSCILLATORY);
+        function this = Condition_Oscillatory()
+            this = this@Condition(Condition.OSCILLATORY);
             this.setDefaultProps();
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)

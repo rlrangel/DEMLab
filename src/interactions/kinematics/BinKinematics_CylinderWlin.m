@@ -1,15 +1,18 @@
-%% BinKinematics_CylinderWlin (Cylinder-Wall Line) class
+%% BinKinematics_CylinderWlin class
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <binkinematics.html BinKinematics> class for
+% the implementation of the *Cylinder-Wall Line* binary kinematics for
+% particle-wall interactions.
+%
+% 
+%
+% References:
+%
+% * 
 %
 classdef BinKinematics_CylinderWlin < BinKinematics
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        
-    end
-    
     %% Constructor method
     methods
         function this = BinKinematics_CylinderWlin()
@@ -17,7 +20,7 @@ classdef BinKinematics_CylinderWlin < BinKinematics
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setEffParams(~,int)

@@ -1,15 +1,18 @@
-%% BinKinematics_SphereSphere (Sphere-Sphere) class
+%% BinKinematics_SphereSphere class
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <binkinematics.html BinKinematics> class for
+% the implementation of the *Sphere-Sphere* binary kinematics for
+% particle-particle interactions.
+%
+% 
+%
+% References:
+%
+% * 
 %
 classdef BinKinematics_SphereSphere < BinKinematics
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        
-    end
-    
     %% Constructor method
     methods
         function this = BinKinematics_SphereSphere()
@@ -17,7 +20,7 @@ classdef BinKinematics_SphereSphere < BinKinematics
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setEffParams(~,int)

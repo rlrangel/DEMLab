@@ -2,9 +2,18 @@
 %
 %% Description
 %
-%% Subclasses
+% This is a handle heterogeneous super-class for the definition of sinks.
 %
-%% Implementation
+% A sink is used to insert holes into the simulation domain.
+% Particles that are inside the sink limits are removed from the
+% simulation.
+%
+% This super-class defines abstracts methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <sink_rectangle.html Sink_Rectangle> (default)
+% * <sink_circle.html Sink_Circle>
+% * <sink_polygon.html Sink_Polygon>
 %
 classdef Sink < handle & matlab.mixin.Heterogeneous
     %% Constant values
@@ -30,7 +39,7 @@ classdef Sink < handle & matlab.mixin.Heterogeneous
         end
     end
     
-    %% Default subclass definition
+    %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
             defaultObject = Sink_Rectangle;

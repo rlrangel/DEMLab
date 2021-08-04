@@ -2,9 +2,17 @@
 %
 %% Description
 %
-%% Subclasses
+% This is a handle super-class for the definition of analysis drivers.
 %
-%% Implementation
+% An analysis driver is the core of the simulation, being responsible to
+% perform the time steps of particular types of analysis.
+%
+% This super-class defines abstracts methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <driver_thermomechanical.html Driver_ThermoMechanical>
+% * <driver_mechanical.html Driver_Mechanical>
+% * <driver_thermal.html Driver_Thermal>
 %
 classdef Driver < handle
     %% Constant values
@@ -18,9 +26,8 @@ classdef Driver < handle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Problem data
-        name      string = string.empty;   % problem name
-        type      uint8  = uint8.empty;    % flag for type of analysis
-        dimension uint8  = uint8.empty;    % model dimension
+        name string = string.empty;   % problem name
+        type uint8  = uint8.empty;    % flag for type of analysis
         
         % Model components: total numbers
         n_mparts    uint32 = uint32.empty;   % number of model parts
@@ -48,11 +55,11 @@ classdef Driver < handle
         search Search = Search.empty;   % handle to object of Search class
         
         % Time advancing
-        time_step double  = double.empty;    % time step value
-        max_time  double  = double.empty;    % maximum simulation time
-        max_step  uint32  = uint32.empty;    % maximum step value allowed
-        time      double  = double.empty;    % current simulation time
-        step      uint32  = uint32.empty;    % current simulation step
+        time_step double  = double.empty;   % time step value
+        max_time  double  = double.empty;   % maximum simulation time
+        max_step  uint32  = uint32.empty;   % maximum step value allowed
+        time      double  = double.empty;   % current simulation time
+        step      uint32  = uint32.empty;   % current simulation step
         
         % Output generation
         result   Result  = Result.empty;    % handle to object of Result class
@@ -85,7 +92,7 @@ classdef Driver < handle
         setParticleProps(this,particle);
         
         %------------------------------------------------------------------
-        runAnalysis(this);
+        process(this);
     end
     
     %% Public methods
@@ -114,7 +121,7 @@ classdef Driver < handle
                 p.resetForcingTerms();
                 
                 % Set fixed temperature (fixed motion not set now)
-                p.setFreeTherm(this.time);
+                p.setFixedThermal(this.time);
                 p.setFCTemperature(this.time);
             end
             
@@ -123,7 +130,7 @@ classdef Driver < handle
                 w = this.walls(i);
                 
                 % Set fixed temperature (fixed motion not set now)
-                w.setFreeTherm(this.time);
+                w.setFixedThermal(this.time);
                 w.setFCTemperature(this.time);
             end
             

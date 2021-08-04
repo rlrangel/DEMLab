@@ -1,15 +1,39 @@
-%% Scheme_Taylor2 (Taylor 2nd Order) class
+%% Scheme_Taylor2 class
 %
 %% Description
 %
-%% Implementation
+% This is a sub-class of the <scheme.html Scheme> class for the
+% implementation of the time integration scheme *Taylor 2nd Order*.
+%
+% * Translational motion:
+%
+% $x_{i} = x_{i-1} + v_{i-1} \times \Delta t + 0.5 \times a_{i} \times \Delta t^{2}$
+%
+% $v_{i} = v_{i-1} + a_{i} \times \Delta t$
+%
+% * Rotational motion:
+%
+% $\theta_{i} = \theta_{i-1} + \omega_{i-1} \times \Delta t + 0.5 \times \alpha_{i} \times \Delta t^{2}$
+%
+% $\omega_{i} = \omega_{i-1} + \alpha_{i} \times \Delta t$
+%
+% * Notation
+%
+% $\Delta t$: Time increment
+%
+% $x$: Coordinates
+%
+% $v$: Translational velocity
+%
+% $a$: Translational acceleration
+%
+% $\theta$: angular orientation
+%
+% $\omega$: angular velocity
+%
+% $\alpha$: angular acceleration
 %
 classdef Scheme_Taylor2 < Scheme
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        
-    end
-    
     %% Constructor method
     methods
         function this = Scheme_Taylor2()
@@ -17,7 +41,7 @@ classdef Scheme_Taylor2 < Scheme
         end
     end
     
-    %% Public methods: implementation of superclass declarations
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function updatePosition(~,p,dt)
