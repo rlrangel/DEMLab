@@ -17,7 +17,7 @@
 %
 % $\omega_{i} = \omega_{i-1} + \alpha_{i} \times \Delta t$
 %
-% * Notation
+% Where:
 %
 % $\Delta t$: Time increment
 %

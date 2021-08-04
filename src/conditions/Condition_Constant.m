@@ -1,30 +1,30 @@
-%% Condition_Uniform class
+%% Condition_Constant class
 %
 %% Description
 %
 % This is a sub-class of the <Condition.html Condition> class for the
-% implementation of *Uniform* conditions.
+% implementation of *Constant* conditions.
 %
-% In a given time _t_, a uniform condition value _y_, is obtained as:
+% In a given time _t_, a constant condition value _y_, is obtained as:
 %
 % $y(t) = y_{0}$, for all _t_
 %
 % Where:
 %
-% $y_{0}$: Uniform value
+% $y_{0}$: Constant value
 %
 %% Implementation
 %
-classdef Condition_Uniform < Condition
+classdef Condition_Constant < Condition
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        value double = double.empty;   % uniform condition value
+        value double = double.empty;   % constant condition value
     end
     
     %% Constructor method
     methods
-        function this = Condition_Uniform()
-            this = this@Condition(Condition.UNIFORM);
+        function this = Condition_Constant()
+            this = this@Condition(Condition.CONSTANT);
             this.setDefaultProps();
         end
     end

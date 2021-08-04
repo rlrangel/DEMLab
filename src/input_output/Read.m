@@ -5,7 +5,7 @@
 % This is a handle class responsible for reading the input files, building
 % the simulation objects, and checking the input data.
 %
-% Two files are read for a simulation:
+% Two files are read for running a simulation:
 %
 % * _json_ file with the *project parameters*
 %
@@ -877,9 +877,9 @@ classdef Read < handle
                         fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.type.\n');
                         status = 0; return;
                         
-                    elseif (strcmp(type,'uniform'))
+                    elseif (strcmp(type,'constant'))
                         % Create object
-                        pc = Condition_Uniform();
+                        pc = Condition_Constant();
                         
                         % Value
                         if (~isfield(F,'value'))
@@ -1049,7 +1049,7 @@ classdef Read < handle
                         end
                     else
                         fprintf(2,'Invalid data in project parameters file: PrescribedCondition.force.type.\n');
-                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        fprintf(2,'Available options: constant, linear, oscillatory, table.\n');
                         status = 0; return;
                     end
                     
@@ -1104,9 +1104,9 @@ classdef Read < handle
                         fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.type.\n');
                         status = 0; return;
                         
-                    elseif (strcmp(type,'uniform'))
+                    elseif (strcmp(type,'constant'))
                         % Create object
-                        pc = Condition_Uniform();
+                        pc = Condition_Constant();
                         
                         % Value
                         if (~isfield(T,'value'))
@@ -1276,7 +1276,7 @@ classdef Read < handle
                         end
                     else
                         fprintf(2,'Invalid data in project parameters file: PrescribedCondition.torque.type.\n');
-                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        fprintf(2,'Available options: constant, linear, oscillatory, table.\n');
                         status = 0; return;
                     end
                     
@@ -1331,9 +1331,9 @@ classdef Read < handle
                         fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.type.\n');
                         status = 0; return;
                         
-                    elseif (strcmp(type,'uniform'))
+                    elseif (strcmp(type,'constant'))
                         % Create object
-                        pc = Condition_Uniform();
+                        pc = Condition_Constant();
                         
                         % Value
                         if (~isfield(HF,'value'))
@@ -1503,7 +1503,7 @@ classdef Read < handle
                         end
                     else
                         fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_flux.type.\n');
-                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        fprintf(2,'Available options: constant, linear, oscillatory, table.\n');
                         status = 0; return;
                     end
                     
@@ -1558,9 +1558,9 @@ classdef Read < handle
                         fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.type.\n');
                         status = 0; return;
                         
-                    elseif (strcmp(type,'uniform'))
+                    elseif (strcmp(type,'constant'))
                         % Create object
-                        pc = Condition_Uniform();
+                        pc = Condition_Constant();
                         
                         % Value
                         if (~isfield(HF,'value'))
@@ -1730,7 +1730,7 @@ classdef Read < handle
                         end
                     else
                         fprintf(2,'Invalid data in project parameters file: PrescribedCondition.heat_rate.type.\n');
-                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        fprintf(2,'Available options: constant, linear, oscillatory, table.\n');
                         status = 0; return;
                     end
                     
@@ -1804,9 +1804,9 @@ classdef Read < handle
                         fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.type.\n');
                         status = 0; return;
                         
-                    elseif (strcmp(type,'uniform'))
+                    elseif (strcmp(type,'constant'))
                         % Create object
-                        cond = Condition_Uniform();
+                        cond = Condition_Constant();
                         
                         % Value
                         if (~isfield(V,'value'))
@@ -1977,7 +1977,7 @@ classdef Read < handle
                         end
                     else
                         fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_translation.type.\n');
-                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        fprintf(2,'Available options: constant, linear, oscillatory, table.\n');
                         status = 0; return;
                     end
                     
@@ -2035,9 +2035,9 @@ classdef Read < handle
                         fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.type.\n');
                         status = 0; return;
                         
-                    elseif (strcmp(type,'uniform'))
+                    elseif (strcmp(type,'constant'))
                         % Create object
-                        cond = Condition_Uniform();
+                        cond = Condition_Constant();
                         
                         % Value
                         if (~isfield(V,'value'))
@@ -2207,7 +2207,7 @@ classdef Read < handle
                         end
                     else
                         fprintf(2,'Invalid data in project parameters file: FixedCondition.velocity_rotation.type.\n');
-                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        fprintf(2,'Available options: constant, linear, oscillatory, table.\n');
                         status = 0; return;
                     end
                     
@@ -2265,9 +2265,9 @@ classdef Read < handle
                         fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.type.\n');
                         status = 0; return;
                         
-                    elseif (strcmp(type,'uniform'))
+                    elseif (strcmp(type,'constant'))
                         % Create object
-                        cond = Condition_Uniform();
+                        cond = Condition_Constant();
                         
                         % Value
                         if (~isfield(T,'value'))
@@ -2437,7 +2437,7 @@ classdef Read < handle
                         end
                     else
                         fprintf(2,'Invalid data in project parameters file: FixedCondition.temperature.type.\n');
-                        fprintf(2,'Available options: uniform, linear, oscillatory, table.\n');
+                        fprintf(2,'Available options: constant, linear, oscillatory, table.\n');
                         status = 0; return;
                     end
                     

@@ -42,7 +42,7 @@ classdef ContactConduction < matlab.mixin.Heterogeneous
         end
     end
     
-    %% Abstract methods
+    %% Abstract methods: implemented in derived sub-classes
     methods (Abstract)
         %------------------------------------------------------------------
         this = setDefaultProps(this);

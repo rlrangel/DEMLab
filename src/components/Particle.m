@@ -5,7 +5,7 @@
 % This is a handle heterogeneous super-class for the definition of
 % particles.
 %
-% In DEM, particles are assumed to be soft so that contact forces and heat
+% In DEM, particles are assumed to be soft, so that contact forces and heat
 % exchange are originated by overlaps.
 % Furthermore, their shapes are assumed to be preserved after collisions.
 %
@@ -93,7 +93,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         end
     end
     
-    %% Abstract methods
+    %% Abstract methods: implemented in derived sub-classes
     methods (Abstract)
         %------------------------------------------------------------------
         setDefaultProps(this);

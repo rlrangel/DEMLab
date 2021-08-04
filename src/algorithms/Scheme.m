@@ -42,7 +42,7 @@ classdef Scheme < handle & matlab.mixin.Heterogeneous
         end
     end
     
-    %% Abstract methods
+    %% Abstract methods: implemented in derived sub-classes
     methods (Abstract)
         %------------------------------------------------------------------
         updatePosition(this,particle,time_step);

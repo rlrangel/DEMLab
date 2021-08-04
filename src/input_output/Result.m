@@ -4,6 +4,9 @@
 %
 % This is a handle class responsible for storing the required results.
 %
+% Each result type is stored in a separate array, which is initialized with
+% NaN's (Not a Number).
+%
 classdef Result < handle
     %% Constant values
     properties (Constant = true, Access = public)

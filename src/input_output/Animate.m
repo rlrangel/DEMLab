@@ -13,7 +13,7 @@
 % colors to represent a scalar result.
 %
 % * *Vector*: Shows the motion of the elements and uses arrows to indicate
-% the direction and intensity of a vector results.
+% the direction and intensity of a vector result.
 %
 classdef Animate < handle
     %% Constant values: animation types
@@ -55,9 +55,9 @@ classdef Animate < handle
         path   string = string.empty;   % path to model folder
         
         % Results: general
-        res_type  uint8  = uint8.empty;    % flag for type of result
-        np        uint32 = uint32.empty;   % total number of particles
-        nf        uint32 = uint32.empty;   % total number of frames
+        res_type uint8  = uint8.empty;    % flag for type of result
+        np       uint32 = uint32.empty;   % total number of particles
+        nf       uint32 = uint32.empty;   % total number of frames
         
         % Results: common to all
         times    double = double.empty;   % array of simulation times of each step

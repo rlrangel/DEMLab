@@ -11,7 +11,7 @@
 %
 % Where:
 %
-% $t_{0}$: Initial time
+% $t_{0}$: Initial time (when condition is activated)
 %
 % $y_{0}$: Value at initial time
 %

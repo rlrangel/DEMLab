@@ -4,8 +4,7 @@
 %
 % This is a handle class for the definition of materials.
 %
-% It stores mechanical and / or thermal material properties related to
-% solids.
+% It stores mechanical and / or thermal properties related to solids.
 %
 classdef Material < handle
     %% Public properties

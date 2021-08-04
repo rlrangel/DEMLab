@@ -5,7 +5,7 @@
 % This is a sub-class of the <driver.html Driver> class for the
 % implementation of the *Thermomechanical* analysis driver.
 %
-% In this type of analysis, the mechanical and thermal behavior of
+% In this type of analysis, the mechanical and thermal behaviors of
 % particles are simulated.
 %
 % This class is responsible for solving all the time steps of a

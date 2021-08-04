@@ -46,7 +46,7 @@ classdef Sink < handle & matlab.mixin.Heterogeneous
         end
     end
     
-    %% Abstract methods
+    %% Abstract methods: implemented in derived sub-classes
     methods (Abstract)
         %------------------------------------------------------------------
         do = removeParticle(this,particle,time);

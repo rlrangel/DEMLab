@@ -17,7 +17,7 @@
 %
 % $\theta_{i} = \theta_{i-1} + \omega_{i} \times \Delta t$
 %
-% * Notation
+% Where:
 %
 % $\Delta t$: Time increment
 %

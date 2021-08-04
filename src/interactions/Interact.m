@@ -5,6 +5,9 @@
 % This is a handle heterogeneous super-class for the definition of binary
 % interactions between elements (particle-particle and particle-wall).
 %
+% Several different models can be assigned for mechanical and / or thermal
+% interactions.
+%
 classdef Interact < handle & matlab.mixin.Copyable
     %% Public properties
     properties (SetAccess = public, GetAccess = public)

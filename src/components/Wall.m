@@ -5,7 +5,7 @@
 % This is a handle heterogeneous super-class for the definition of rigid
 % walls.
 %
-% Rigid walls are not solved with mechanical or thermal equilibrium
+% Rigid walls are not solved with mechanical and / or thermal equilibrium
 % equations.
 % Their motion and / or temperature are not influenced by their
 % interactions with other elements.
@@ -69,7 +69,7 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         end
     end
     
-    %% Abstract methods
+    %% Abstract methods: implemented in derived sub-classes
     methods (Abstract)
         %------------------------------------------------------------------
         setDefaultProps(this);

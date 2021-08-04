@@ -5,6 +5,13 @@
 % This is a handle heterogeneous super-class for the definition of
 % interactions search algorithms.
 %
+% A search algorithm is invoked frequently during the simulation to
+% identify the neighbours of each particle.
+%
+% Depending on the interaction models adopted, a threshold distance is
+% assumed for defining a neighbour (contact neighbours have a threshold
+% distance of zero).
+%
 % This super-class defines abstracts methods that must be implemented in
 % the derived *sub-classes*:
 %
@@ -47,7 +54,7 @@ classdef Search < handle & matlab.mixin.Heterogeneous
         end
     end
     
-    %% Abstract methods
+    %% Abstract methods: implemented in derived sub-classes
     methods (Abstract)
         %------------------------------------------------------------------
         setDefaultProps(this);

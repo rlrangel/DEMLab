@@ -2,10 +2,13 @@
 %
 %% Description
 %
-% This is a handle super-class for the definition of analysis drivers.
+% This is a handle super-class for the definition of an analysis driver.
 %
 % An analysis driver is the core of the simulation, being responsible to
 % perform the time steps of particular types of analysis.
+%
+% It also does the pre and pos processing in public methods, since these
+% tasks are common to all types of analysis.
 %
 % This super-class defines abstracts methods that must be implemented in
 % the derived *sub-classes*:
@@ -83,7 +86,7 @@ classdef Driver < handle
         end
     end
     
-    %% Abstract methods
+    %% Abstract methods: implemented in derived sub-classes
     methods (Abstract)
         %------------------------------------------------------------------
         setDefaultProps(this);

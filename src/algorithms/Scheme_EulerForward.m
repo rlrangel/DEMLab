@@ -21,7 +21,7 @@
 %
 % $T_{i} = T_{i-1} + \frac{\partial T}{\partial t}_{i} \times \Delta t$
 %
-% * Notation
+% Where:
 %
 % $\Delta t$: Time increment
 %

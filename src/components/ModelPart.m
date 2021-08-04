@@ -6,6 +6,10 @@
 %
 % It stores the particles and walls belonging to a model part.
 %
+% Model parts are used to group together particles and / or walls, so that
+% properties and conditions can be applied to several sifferent elements
+% at once.
+%
 classdef ModelPart < handle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)

@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is the main class for running the simulation.
+% This is the main class for running a simulation.
 %
 % The _execute_ method is responsible for managing the high-level tasks
 % and call the appropriate methods to perform each task, from the reading

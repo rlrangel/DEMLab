@@ -5,26 +5,27 @@
 % This is a handle heterogeneous super-class for the definition of
 % conditions.
 %
-% A condition is a function that returns a value for each provided time.
+% A condition is a time function that returns a value for each provided
+% time value.
 %
 % This super-class defines abstracts methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <Condition_Uniform.html Condition_Uniform> (default)
-% * <Condition_Linear.html Condition_Linear>
-% * <Condition_Oscillatory.html Condition_Oscillatory>
-% * <Condition_Table.html Condition_Table>
+% * <condition_constant.html Condition_Constant> (default)
+% * <condition_linear.html Condition_Linear>
+% * <condition_oscillatory.html Condition_Oscillatory>
+% * <condition_table.html Condition_Table>
 %
 classdef Condition < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of condition variation
-        UNIFORM     = uint8(1);
+        CONSTANT    = uint8(1);
         LINEAR      = uint8(2);
         OSCILLATORY = uint8(3);
         TABLE       = uint8(4);
         
-        % Types of table interpolation methods
+        % Types of table data interpolation methods
         INTERP_LINEAR = uint8(1);
         INTERP_MAKIMA = uint8(2);
         INTERP_CUBIC  = uint8(3);
@@ -51,11 +52,11 @@ classdef Condition < handle & matlab.mixin.Heterogeneous
     %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
-            defaultObject = Condition_Uniform;
+            defaultObject = Condition_Constant;
         end
     end
     
-    %% Abstract methods
+    %% Abstract methods: implemented in derived sub-classes
     methods (Abstract)
         %------------------------------------------------------------------
         setDefaultProps(this);
