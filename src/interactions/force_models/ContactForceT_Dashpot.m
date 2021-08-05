@@ -5,11 +5,20 @@
 % This is a sub-class of the <contactforcet.html ContactForceT> class for
 % the implementation of the *Simple Dashpot* tangent contact force model.
 %
-% 
+% This model assumes that the tangent contact force has only a viscous
+% component $F_{t}^{v}$, provided by a linear dashpot.
 %
-% References:
+% $$\left \{ F_{t} \right \} = -F_{t}^{v}\hat{t}$$
 %
-% * 
+% $$F_{t}^{v} = \eta_{t} \dot{\delta_{t}}$$
+%
+% The tangent damping coefficient $\eta_{t}$ must be provided.
+%
+% *Notation*:
+%
+% $\hat{t}$: Tangent direction between elements
+%
+% $\dot{\delta_{t}}$: Time rate of change of tangent overlap
 %
 classdef ContactForceT_Dashpot < ContactForceT
     %% Public properties

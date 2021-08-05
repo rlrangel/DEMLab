@@ -6,11 +6,56 @@
 % the implementation of the *Linear Visco-Elastic* normal contact force
 % model.
 %
-% 
+% This model assumes that the normal contact force has an elastic
+% $F_{n}^{e}$ and a viscous $F_{n}^{v}$ component, provided by a linear
+% spring and dashpot, respectively.
 %
-% References:
+% $$\left \{ F_{n} \right \} = (F_{n}^{e} + F_{n}^{v})(-\hat{n})$$
 %
-% * 
+% $$F_{n}^{e} = K_{n} \delta_{n}$$
+%
+% $$F_{n}^{v} = \eta_{n} \dot{\delta_{n}}$$
+%
+% The stiffness coefficient $K_{n}$ can be computed by 3 different
+% formulas:
+%
+% * *Equivalent energy*:
+%
+% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}}$$
+%
+% * *Equivalent overlap*:
+%
+% $$K_{n} = 1.053\left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}}\left ( 1+ \beta^{-2} \right )$$
+%
+% * *Equivalent time*:
+%
+% $$K_{n} = 1.198\left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}} \left ( exp \left ( -\frac{tg^{-1}(\beta)}{\beta} \right ) \right )^{2}$$
+%
+% The damping coefficient $\eta_{n}$ is computed as:
+%
+% $$\eta_{n} = \sqrt{\frac{4m_{eff}K_{n}}{1+\beta^{2}}}$$
+%
+% *Notation*:
+%
+% $\hat{n}$: Normal direction between elements
+%
+% $\delta_{n}$: Normal overlap
+%
+% $\dot{\delta_{n}}$: Time rate of change of normal overlap
+%
+% $\dot{\delta}_{n}^{0}$: Time rate of change of normal overlap at the impact moment
+%
+% $R_{eff}$: Effective contact radius
+%
+% $E_{eff}$: Effective Young modulus
+%
+% $m_{eff}$: Effective mass
+%
+% $\beta = \frac{\pi}{ln(e)}$, where _e_ is the normal coefficient of restitution
+%
+% *References*:
+%
+% * <https://doi.org/10.1680/geot.1979.29.1.47 P.A. Cundall and O.D.L. Strack. A discrete numerical model for granular assemblies, _Geotechnique_, 29:47-65, 1979> (proposal).
 %
 classdef ContactForceN_ViscoElasticLinear < ContactForceN
     %% Public properties
@@ -48,12 +93,12 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
             
             % Spring stiffness coefficient
             switch this.stiff_formula
-                case this.TIME
-                    this.stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+1/beta^2);
-                case this.OVERLAP
-                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5) * exp(-atan(beta)/beta)^2;
                 case this.ENERGY
                     this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5);
+                case this.OVERLAP
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5) * (exp(-atan(beta)/beta))^2;
+                case this.TIME
+                    this.stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+beta^(-2));
             end
             
             % Damping coefficient

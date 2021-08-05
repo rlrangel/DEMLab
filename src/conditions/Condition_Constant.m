@@ -7,7 +7,7 @@
 %
 % In a given time _t_, a constant condition value _y_, is obtained as:
 %
-% $y(t) = y_{0}$, for all _t_
+% $$y(t) = y_{0}$$
 %
 % Where:
 %

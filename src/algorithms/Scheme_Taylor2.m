@@ -5,19 +5,19 @@
 % This is a sub-class of the <scheme.html Scheme> class for the
 % implementation of the time integration scheme *Taylor 2nd Order*.
 %
-% * Translational motion:
+% * *Translational motion*:
 %
-% $x_{i} = x_{i-1} + v_{i-1} \times \Delta t + 0.5 \times a_{i} \times \Delta t^{2}$
+% $$x_{i} = x_{i-1} + v_{i-1} \times \Delta t + 0.5 \times a_{i} \times \Delta t^{2}$$
 %
-% $v_{i} = v_{i-1} + a_{i} \times \Delta t$
+% $$v_{i} = v_{i-1} + a_{i} \times \Delta t$$
 %
-% * Rotational motion:
+% * *Rotational motion*:
 %
-% $\theta_{i} = \theta_{i-1} + \omega_{i-1} \times \Delta t + 0.5 \times \alpha_{i} \times \Delta t^{2}$
+% $$\theta_{i} = \theta_{i-1} + \omega_{i-1} \times \Delta t + 0.5 \times \alpha_{i} \times \Delta t^{2}$$
 %
-% $\omega_{i} = \omega_{i-1} + \alpha_{i} \times \Delta t$
+% $$\omega_{i} = \omega_{i-1} + \alpha_{i} \times \Delta t$$
 %
-% Where:
+% *Notation*:
 %
 % $\Delta t$: Time increment
 %

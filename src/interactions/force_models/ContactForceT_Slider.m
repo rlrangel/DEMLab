@@ -5,11 +5,20 @@
 % This is a sub-class of the <contactforcet.html ContactForceT> class for
 % the implementation of the *Simple Slider* tangent contact force model.
 %
-% 
+% This model assumes that the tangent contact force has only a friction
+% component $F_{t}^{f}$, provided by a slider.
 %
-% References:
+% $$\left \{ F_{t} \right \} = -F_{t}^{f}\hat{t}$$
 %
-% * 
+% $$F_{t}^{f} = \mu \left | F_{n} \right |$$
+%
+% The friction coefficient $\mu$ must be provided.
+%
+% *Notation*:
+%
+% $\hat{t}$: Tangent direction between elements
+%
+% $F_{n}$: Normal contact force vector
 %
 classdef ContactForceT_Slider < ContactForceT
     %% Public properties

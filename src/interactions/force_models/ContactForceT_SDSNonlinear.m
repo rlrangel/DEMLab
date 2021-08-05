@@ -3,14 +3,85 @@
 %% Description
 %
 % This is a sub-class of the <contactforcet.html ContactForceT> class for
-% the implementation of the *Noninear Spring-Dashpot-Slider* tangent
+% the implementation of the *Nonlinear Spring-Dashpot-Slider* tangent
 % contact force model.
 %
-% 
+% This model assumes that the tangent contact force has an elastic component
+% $F_{t}^{e}$, provided by a spring, a viscous component $F_{t}^{v}$,
+% provided by a dashpot, and a friction component $F_{t}^{f}$, provided by
+% a slider, which limits the total force according to Coulomb law. 
 %
-% References:
+% $$\left \{ F_{t} \right \} = min(\left | F_{t}^{e}+F_{t}^{v} \right |,F_{t}^{f})(-\hat{t})$$
 %
-% * 
+% $$F_{t}^{f} = \mu \left | F_{n} \right |$$
+%
+% The friction coefficient $\mu$ must be provided.
+%
+% The elastic and viscous components can be camputed by different
+% formulations:
+%
+% * *DD (Di Renzo & Di Maio)*:
+%
+% $$F_{t}^{e} = \frac{16}{3} G_{eff} \sqrt{R_{eff} \delta_{n}} \delta_{t}$$
+%
+% $$F_{t}^{v} = 0$$
+%
+% * *LTH (Langston, Tuzun & Heyes)*:
+%
+% $$F_{t}^{e} = \mu \left | F_{n} \right | \left ( 1 - \left ( 1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}) \right )^{\frac{3}{2}} \right )$$
+%
+% $$F_{t}^{v} = \eta_{t} \left ( \frac{6m_{eff} \mu \left | F_{n} \right |}{\delta_{t}^{max}} \sqrt{1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}} \right )^{\frac{1}{2}} \dot{\delta_{t}}$$
+%
+% The tangent damping coefficient $\eta_{t}$ must be provided.
+%
+% * *ZZY (Zheng, Zhu & Yu)*:
+%
+% $$F_{t}^{e} = \mu \left | F_{n} \right | \left ( 1 - \left ( 1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}) \right )^{\frac{3}{2}} \right )$$
+%
+% $$F_{t}^{v} = \frac{\eta_{t}}{2G_{eff}\delta_{t}^{max}} \left ( 1 - \frac{0.4\eta_{t} \left | \dot{\delta_{t}} \right | }{2G_{eff}\delta_{t}^{max}} \right ) \left ( 1.5\mu \left | F_{n} \right | \sqrt{1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}} \right ) \dot{\delta_{t}}$$
+%
+% The tangent damping coefficient $\eta_{t}$ must be provided.
+%
+% * *TTI (Tsuji, Tanaka & Ishida)*:
+%
+% $$F_{t}^{e} = \frac{\sqrt{2R_{eff}}E_{eff}}{(2-\nu_{eff})(1+\nu_{eff})} \sqrt{\delta_{n}} \delta_{t}$$
+%
+% $$F_{t}^{v} = \eta_{n} \dot{\delta_{t}}$$
+%
+% The tangent damping coefficient $\eta_{t}$ must be provided.
+%
+% *Notation*:
+%
+% $\hat{t}$: Tangent direction between elements
+%
+% $\delta_{n}$: Normal overlap
+%
+% $\delta_{t}$: Tangent overlap
+%
+% $\dot{\delta_{t}}$: Time rate of change of tangent overlap
+%
+% $F_{n}$: Normal contact force vector
+%
+% $m_{eff}$: Effective mass
+%
+% $R_{eff}$: Effective contact radius
+%
+% $E_{eff}$: Effective Young modulus
+%
+% $G_{eff}$: Effective shear modulus
+%
+% $\nu_{eff}$: Effective Poisson ratio
+%
+% $\delta_{t}^{max} = \mu \delta_{n} \frac{2-\nu_{eff}}{2(1-\nu_{eff})}$:
+% Tangent overlap when sliding starts
+%
+% *References*:
+%
+% * <https://doi.org/10.1016/j.ces.2004.10.004 A. Di Renzo and F.P. Di Maio. An improved integral non?linear model for the contact of particles in distinct element simulations, _Chem. Eng. Sci._, 60(5):1303-1312, 2005> (DD model).
+%
+% * <https://doi.org/10.1016/0009-2509(94)85095-X P.A. Langston, U. Tuzun and D.M.Heyes. Continuous potential discrete particle simulations of stress and velocity fields in hoppers: transition from fluid to granular flow, _Chem. Eng. Sci._, 49(8):1259-1275, 1994> (LTH model).
+%
+% * <https://doi.org/10.1016/0032-5910(92)88030-L Y. Tsuji, T. Tanaka and T. Ishida. Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, _Powder Technol._, 71(3):239-250, 1992> (TTI model).
 %
 classdef ContactForceT_SDSNonlinear < ContactForceT
     %% Public properties

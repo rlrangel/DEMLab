@@ -5,19 +5,19 @@
 % This is a sub-class of the <scheme.html Scheme> class for the
 % implementation of the time integration scheme *Modified Euler*.
 %
-% * Translational motion:
+% * *Translational motion*:
 %
-% $v_{i} = v_{i-1} + a_{i} \times \Delta t$
+% $$v_{i} = v_{i-1} + a_{i} \times \Delta t$$
 %
-% $x_{i} = x_{i-1} + v_{i} \times \Delta t$
+% $$x_{i} = x_{i-1} + v_{i} \times \Delta t$$
 %
-% * Rotational motion:
+% * *Rotational motion*:
 %
-% $\omega_{i} = \omega_{i-1} + \alpha_{i} \times \Delta t$
+% $$\omega_{i} = \omega_{i-1} + \alpha_{i} \times \Delta t$$
 %
-% $\theta_{i} = \theta_{i-1} + \omega_{i} \times \Delta t$
+% $$\theta_{i} = \theta_{i-1} + \omega_{i} \times \Delta t$$
 %
-% Where:
+% *Notation*:
 %
 % $\Delta t$: Time increment
 %

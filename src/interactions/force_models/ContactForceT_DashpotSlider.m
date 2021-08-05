@@ -5,11 +5,31 @@
 % This is a sub-class of the <contactforcet.html ContactForceT> class for
 % the implementation of the *Dashpot-Slider* tangent contact force model.
 %
-% 
+% This model assumes that the tangent contact force has a viscous component
+% $F_{t}^{v}$, provided by a linear dashpot, and a friction component
+% $F_{t}^{f}$, provided by a slider, which limits the total force according
+% to Coulomb law.
 %
-% References:
+% $$\left \{ F_{t} \right \} = min(F_{t}^{v},F_{t}^{f})(-\hat{t})$$
 %
-% * 
+% $$F_{t}^{v} = \eta_{t} \dot{\delta_{t}}$$
+%
+% $$F_{t}^{f} = \mu \left | F_{n} \right |$$
+%
+% The tangent damping coefficient $\eta_{t}$ and the friction coefficient
+% $\mu$ must be provided.
+%
+% *Notation*:
+%
+% $\hat{t}$: Tangent direction between elements
+%
+% $\dot{\delta_{t}}$: Time rate of change of tangent overlap
+%
+% $F_{n}$: Normal contact force vector
+%
+% *References*:
+%
+% * <https://doi.org/10.1016/0032-5910(86)80048-1 P.K. Haff and B.T. Werner. Computer simulation of the mechanical sorting of grains, _Powder Techn._, 48(3):239-245, 1986> (proposal).
 %
 classdef ContactForceT_DashpotSlider < ContactForceT
     %% Public properties

@@ -5,11 +5,24 @@
 % This is a sub-class of the <contactforcet.html ContactForceT> class for
 % the implementation of the *Simple Spring* tangent contact force model.
 %
-% 
+% This model assumes that the tangent contact force has only an elastic
+% component $F_{t}^{e}$, provided by a linear spring.
 %
-% References:
+% $$\left \{ F_{t} \right \} = -F_{t}^{e}\hat{t}$$
 %
-% * 
+% $$F_{t}^{e} = K_{t} \delta_{t}$$
+%
+% The tangent stiffness coefficient $K_{t}$ can be computed as a function
+% of the normal stiffness coefficient $K_{n}$ and the effective Poisson
+% ratio $\nu_{eff}$:
+%
+% $$K_{t} = \frac{1-\nu_{eff}}{1-\frac{\nu_{eff}}{2}}K_{n}$$
+%
+% *Notation*:
+%
+% $\hat{t}$: Tangent direction between elements
+%
+% $\delta_{t}$: Tangent overlap
 %
 classdef ContactForceT_Spring < ContactForceT
     %% Public properties

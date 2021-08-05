@@ -7,7 +7,7 @@
 %
 % In a given time _t_, a linear condition value _y_, is obtained as:
 %
-% $y(t) = y_{0} + s \times (t-t_{0})$
+% $$y(t) = y_{0} + s \times (t-t_{0})$$
 %
 % Where:
 %

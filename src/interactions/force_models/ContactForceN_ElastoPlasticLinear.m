@@ -6,11 +6,88 @@
 % the implementation of the *Linear Elasto-Plastic* normal contact force
 % model.
 %
+% This model assumes that the normal contact force has only an elastic
+% component $F_{n}^{e}$ that is provided by a hysteric linear spring.
+%
+% The hysteric spring stiffness adopts different values depending on
+% whether elements approach or depart from each other.
+% The unloading stiffness is always greater than the loading stiffness.
 % 
+% The energy dissipation in this model is due to the spring hysteresis and
+% it is able to simulate the plastic deformation of elements during
+% collisions.
 %
-% References:
+% $$\left \{ F_{n} \right \} = -F_{n}^{e}\hat{n}$$
 %
-% * 
+% * *Loading* ($\dot{\delta_{n}}>0$):
+%
+% $$F_{n}^{e} = K_{n}^{L}\delta_{n}$$
+%
+% * *Unloading (before detachment)* ($\dot{\delta_{n}}<0, \delta_{n}>\delta_{n}^{res}$):
+%
+% $$F_{n}^{e} = K_{n}^{U} \left ( \delta_{n}-\delta_{n}^{res} \right )$$
+%
+% * *Unloading (after detachment)* ($\dot{\delta_{n}}<0, \delta_{n}\leq \delta_{n}^{res}$):
+%
+% $$F_{n}^{e} = 0$$
+%
+% The loading stiffness coefficient $K_{n}^{L}$ can be computed by 3
+% different formulas:
+%
+% * *Equivalent energy*:
+%
+% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}}$$
+%
+% * *Equivalent overlap*:
+%
+% $$K_{n} = 1.053\left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}}\left ( 1+ \beta^{-2} \right )$$
+%
+% * *Equivalent time*:
+%
+% $$K_{n} = 1.198\left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}} \left ( exp \left ( -\frac{tg^{-1}(\beta)}{\beta} \right ) \right )^{2}$$
+%
+% The unloading stiffness coefficient $K_{n}^{U}$ can be computed by 2
+% different formulas:
+%
+% * *Constant*:
+%
+% $$K_{n}^{U} = \frac{K_{n}^{L}}{e^{2}}$$
+%
+% * *Variable*:
+%
+% $$K_{n}^{U} = K_{n}^{L}+SF_{n}^{max}$$
+%
+% $$F_{n}^{max} = K_{n}^{L}\dot{\delta}_{n}^{0}\sqrt{\frac{m_{eff}}{K_{n}^{L}}}$$
+%
+% The residual overlap due to palstic deformation is computed as:
+%
+% $$\delta_{n}^{res} = \dot{\delta}_{n}^{0} \sqrt{\frac{m_{eff}}{K_{n}^{L}}} (1-e^{2})$$
+%
+% *Notation*:
+%
+% $\hat{n}$: Normal direction between elements
+%
+% $\delta_{n}$: Normal overlap
+%
+% $\dot{\delta_{n}}$: Time rate of change of normal overlap
+%
+% $\dot{\delta}_{n}^{0}$: Time rate of change of normal overlap at the impact moment
+%
+% $R_{eff}$: Effective contact radius
+%
+% $E_{eff}$: Effective Young modulus
+%
+% $m_{eff}$: Effective mass
+%
+% $e$: Normal coefficient of restitution
+%
+% $\beta = \frac{\pi}{ln(e)}$
+%
+% $S$: Variable unload stiffness coefficient parameter
+%
+% *References*:
+%
+% * <https://doi.org/10.1122/1.549893 O.R. Walton and R.L. Braun. Viscosity, granular temperature, and stress calculations for shearing assemblies of inelastic, frictional disks, _J. Rheol._, 30:949, 1986> (proposal).
 %
 classdef ContactForceN_ElastoPlasticLinear < ContactForceN
     %% Public properties
@@ -55,12 +132,12 @@ classdef ContactForceN_ElastoPlasticLinear < ContactForceN
             
             % Loading spring stiffness coefficient
             switch this.load_stiff_formula
-                case this.TIME
-                    this.stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+1/beta^2);
-                case this.OVERLAP
-                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5) * exp(-atan(beta)/beta)^2;
                 case this.ENERGY
                     this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5);
+                case this.OVERLAP
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5) * exp(-atan(beta)/beta)^2;
+                case this.TIME
+                    this.stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+1/beta^2);
             end
             
             % Unloading spring stiffness coefficient

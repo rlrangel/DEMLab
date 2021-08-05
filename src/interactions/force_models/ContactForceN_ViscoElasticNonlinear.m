@@ -6,11 +6,57 @@
 % the implementation of the *Nonlinear Visco-Elastic* normal contact force
 % model.
 %
-% 
+% This model assumes that the normal contact force has an elastic
+% $F_{n}^{e}$ and a viscous $F_{n}^{v}$ component, provided by a nonlinear
+% spring and dashpot, respectively.
 %
-% References:
+% $$\left \{ F_{n} \right \} = (F_{n}^{e} + F_{n}^{v})(-\hat{n})$$
 %
-% * 
+% The elastic force is always computed according to Hertz contact theory:
+%
+% $$F_{n}^{e} = K_{hz} \delta_{n}^{\frac{3}{2}}$$
+%
+% $$K_{hz} = \frac{4}{3} E_{eff} \sqrt{R_{eff}}$$
+%
+% The viscous force can be computed by 2 different formulas:
+%
+% * *TTI (Tsuji, Tanaka & Ishida)*:
+%
+% $$F_{n}^{v} = \eta_{n} \delta_{n}^{\frac{1}{4}} \dot{\delta_{n}}$$
+%
+% $$\eta_{n} = -2.2664\frac{ln(e)\sqrt{m_{eff}K_{hz}}}{\sqrt{ln(e)^{2}+10.1354}}$$
+%
+% * *KK (Kuwabara & Kono)*:
+%
+% $$F_{n}^{v} = \eta_{n} \delta_{n}^{\frac{1}{2}} \dot{\delta_{n}}$$
+%
+% The damping coefficient $\eta_{n}$ must be provided.
+%
+% *Notation*:
+%
+% $\hat{n}$: Normal direction between elements
+%
+% $\delta_{n}$: Normal overlap
+%
+% $\dot{\delta_{n}}$: Time rate of change of normal overlap
+%
+% $R_{eff}$: Effective contact radius
+%
+% $E_{eff}$: Effective Young modulus
+%
+% $m_{eff}$: Effective mass
+%
+% $e$: Normal coefficient of restitution
+%
+% *References*:
+%
+% * <https://doi.org/10.1515/crll.1882.92.156 H. Hertz. Ueber die Beruhrung fester elastischer Korper, _J.f. reine u. Angewandte Math._, 92:156-171, 1882> (Hertz contact theory).
+%
+% * <https://www.cambridge.org/core/books/contact-mechanics/E3707F77C2EBCE727C3911AFBD2E4AC2 K.L. Johnson. _Contact Mechanics_, Cambridge University Press, 1985> (Hertz contact theory).
+%
+% * <https://doi.org/10.1016/0032-5910(92)88030-L Y. Tsuji, T. Tanaka and T. Ishida. Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, _Powder Technol._, 71(3):239-250, 1992> (TTI viscous model).
+%
+% * <https://iopscience.iop.org/article/10.1143/JJAP.26.1230/meta G. Kuwabara and K. Kono. Restitution coefficient in collision between two spheres, _Jpn. J. Appl. Phys._, 26:1230-1233, 1987> (KK viscous model).
 %
 classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
     %% Public properties
@@ -49,7 +95,7 @@ classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
             
             % Damping coefficient
             if (this.damp_formula == this.TTI)
-                this.damp = -2.2664 * log(e) * sqrt(m * this.stiff) / sqrt(10.1354 + log(e)^2);
+                this.damp = -2.2664 * log(e) * sqrt(m * this.stiff) / sqrt(10.1354 + (log(e))^2);
             end
         end
         

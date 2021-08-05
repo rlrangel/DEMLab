@@ -7,7 +7,7 @@
 %
 % In a given time _t_, an oscillatory condition value _y_, is obtained as:
 %
-% $y(t) = y_{0} + \lambda sin(\frac{2\pi}{\tau}(t-t_{0}) + \phi)$
+% $$y(t) = y_{0} + \lambda sin \left (  \frac{2\pi}{\tau}(t-t_{0}) + \phi \right )$$
 %
 % Where:
 %

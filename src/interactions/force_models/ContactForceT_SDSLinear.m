@@ -6,11 +6,50 @@
 % the implementation of the *Linear Spring-Dashpot-Slider* tangent contact
 % force model.
 %
-% 
+% This model assumes that the tangent contact force has an elastic component
+% $F_{t}^{e}$, provided by a linear spring, a viscous component
+% $F_{t}^{v}$, provided by a linear dashpot, and a friction component
+% $F_{t}^{f}$, provided by a slider, which limits the total force according
+% to Coulomb law. 
 %
-% References:
+% $$\left \{ F_{t} \right \} = min(\left | F_{t}^{e}+F_{t}^{v} \right |,F_{t}^{f})(-\hat{t})$$
 %
-% * 
+% $$F_{t}^{e} = K_{t} \delta_{t}$$
+%
+% $$F_{t}^{v} = \eta_{t} \dot{\delta_{t}}$$
+%
+% $$F_{t}^{f} = \mu \left | F_{n} \right |$$
+%
+% The tangent stiffness coefficient $K_{t}$ can be computed as a function
+% of the normal stiffness coefficient $K_{n}$ and the effective Poisson
+% ratio $\nu_{eff}$:
+%
+% $$K_{t} = \frac{1-\nu_{eff}}{1-\frac{\nu_{eff}}{2}}K_{n}$$
+%
+% The tangent damping coefficient $\eta_{t}$ can be computes as:
+%
+% * If the tangent coefficient of restitution is zero ($e=0$):
+%
+% $$\eta_{t} = 2\sqrt{\frac{2m_{eff}K_{t}}{7}}$$
+%
+% * If the tangent coefficient of restitution is different than zero
+% ($e \not\equiv 0$):
+%
+% $$\eta_{t} = -2ln(e)\sqrt{\frac{2m_{eff}K_{t}}{7(ln(e)^{2} + \pi^{2})}}$$
+%
+% The friction coefficient $\mu$ must be provided.
+%
+% *Notation*:
+%
+% $\hat{t}$: Tangent direction between elements
+%
+% $\delta_{t}$: Tangent overlap
+%
+% $\dot{\delta_{t}}$: Time rate of change of tangent overlap
+%
+% $F_{n}$: Normal contact force vector
+%
+% $m_{eff}$: Effective mass
 %
 classdef ContactForceT_SDSLinear < ContactForceT
     %% Public properties
