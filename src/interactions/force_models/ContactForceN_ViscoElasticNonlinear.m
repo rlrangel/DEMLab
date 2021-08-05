@@ -50,13 +50,20 @@
 %
 % *References*:
 %
-% * <https://doi.org/10.1515/crll.1882.92.156 H. Hertz. Ueber die Beruhrung fester elastischer Korper, _J.f. reine u. Angewandte Math._, 92:156-171, 1882> (Hertz contact theory).
+% * <https://doi.org/10.1515/crll.1882.92.156 H. Hertz.
+% Ueber die Beruhrung fester elastischer Korper, _J.f. reine u. Angewandte Math._, 92:156-171, 1882> (Hertz contact theory).
 %
-% * <https://www.cambridge.org/core/books/contact-mechanics/E3707F77C2EBCE727C3911AFBD2E4AC2 K.L. Johnson. _Contact Mechanics_, Cambridge University Press, 1985> (Hertz contact theory).
+% * <https://www.cambridge.org/core/books/contact-mechanics/E3707F77C2EBCE727C3911AFBD2E4AC2 K.L. Johnson.
+% _Contact Mechanics_, Cambridge University Press, 1985> (Hertz contact theory).
 %
-% * <https://doi.org/10.1016/0032-5910(92)88030-L Y. Tsuji, T. Tanaka and T. Ishida. Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, _Powder Technol._, 71(3):239-250, 1992> (TTI viscous model).
+% * <https://doi.org/10.1016/0032-5910(92)88030-L Y. Tsuji, T. Tanaka and T. Ishida.
+% Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, _Powder Technol._, 71(3):239-250, 1992> (TTI viscous model).
 %
-% * <https://iopscience.iop.org/article/10.1143/JJAP.26.1230/meta G. Kuwabara and K. Kono. Restitution coefficient in collision between two spheres, _Jpn. J. Appl. Phys._, 26:1230-1233, 1987> (KK viscous model).
+% * <https://www.wiley.com/en-ai/Coupled+CFD+DEM+Modeling%3A+Formulation%2C+Implementation+and+Application+to+Multiphase+Flows-p-9781119005131
+% H.R. Norouzi, R. Zarghami, R. Sotudeh-Gharebagh and N. Mostoufi. _Coupled CFD-DEM Modeling: Formulation, Implementation and Application to Multiphase Flows_, Wiley, 2016> (damping coefficient formula in TTI viscous model).
+%
+% * <https://iopscience.iop.org/article/10.1143/JJAP.26.1230/meta G. Kuwabara and K. Kono.
+% Restitution coefficient in collision between two spheres, _Jpn. J. Appl. Phys._, 26:1230-1233, 1987> (KK viscous model).
 %
 classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
     %% Public properties

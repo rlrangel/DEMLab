@@ -15,7 +15,7 @@
 %
 % For more information, visit the
 % <https://gitlab.com/rafaelrangel/demlab GitLab repository>.
-
+%
 %% Instructions
 %
 % This is the main script file of the DEMLab program.
@@ -28,7 +28,7 @@
 %   script.
 % * Leave the string variable _file_ blank (file = '') and use the file
 %   selection dialog box.
-
+%
 %% OOP classes
 %
 % This program adopts an Object Oriented Programming (OOP) paradigm.
@@ -54,7 +54,7 @@
 % * <result.html Result>
 % * <animate.html Animate>
 % * <graph.html Graph>
-
+%
 %% Authors
 %
 % * Rafael Rangel (rrangel@cimne.upc.edu)
@@ -63,7 +63,7 @@
 % (<https://www.cimne.com/ CIMNE>)
 %
 % <<logo_cimne.png>>
-
+%
 %% History
 %
 % * Version 1.0 - August, 2021
@@ -72,7 +72,7 @@
 % <https://www.surrey.ac.uk/mathegram MATHEGRAM project>.
 %
 % <<logo_mathegram.png>>
-
+%
 %% Initialization
 clc; clearvars; close all;
 addpath('algorithms',...

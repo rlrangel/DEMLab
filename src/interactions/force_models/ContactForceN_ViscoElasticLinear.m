@@ -55,7 +55,11 @@
 %
 % *References*:
 %
-% * <https://doi.org/10.1680/geot.1979.29.1.47 P.A. Cundall and O.D.L. Strack. A discrete numerical model for granular assemblies, _Geotechnique_, 29:47-65, 1979> (proposal).
+% * <https://doi.org/10.1680/geot.1979.29.1.47 P.A. Cundall and O.D.L. Strack.
+% A discrete numerical model for granular assemblies, _Geotechnique_, 29:47-65, 1979> (proposal).
+%
+% * <https://www.wiley.com/en-ai/Coupled+CFD+DEM+Modeling%3A+Formulation%2C+Implementation+and+Application+to+Multiphase+Flows-p-9781119005131
+% H.R. Norouzi, R. Zarghami, R. Sotudeh-Gharebagh and N. Mostoufi. _Coupled CFD-DEM Modeling: Formulation, Implementation and Application to Multiphase Flows_, Wiley, 2016> (damping coefficient formula).
 %
 classdef ContactForceN_ViscoElasticLinear < ContactForceN
     %% Public properties

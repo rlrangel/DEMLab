@@ -77,11 +77,17 @@
 %
 % *References*:
 %
-% * <https://doi.org/10.1016/j.ces.2004.10.004 A. Di Renzo and F.P. Di Maio. An improved integral non?linear model for the contact of particles in distinct element simulations, _Chem. Eng. Sci._, 60(5):1303-1312, 2005> (DD model).
+% * <https://doi.org/10.1016/j.ces.2004.10.004 A. Di Renzo and F.P. Di Maio.
+% An improved integral non?linear model for the contact of particles in distinct element simulations, _Chem. Eng. Sci._, 60(5):1303-1312, 2005> (DD model).
 %
-% * <https://doi.org/10.1016/0009-2509(94)85095-X P.A. Langston, U. Tuzun and D.M.Heyes. Continuous potential discrete particle simulations of stress and velocity fields in hoppers: transition from fluid to granular flow, _Chem. Eng. Sci._, 49(8):1259-1275, 1994> (LTH model).
+% * <https://doi.org/10.1016/0009-2509(94)85095-X P.A. Langston, U. Tuzun and D.M.Heyes.
+% Continuous potential discrete particle simulations of stress and velocity fields in hoppers: transition from fluid to granular flow, _Chem. Eng. Sci._, 49(8):1259-1275, 1994> (LTH model).
 %
-% * <https://doi.org/10.1016/0032-5910(92)88030-L Y. Tsuji, T. Tanaka and T. Ishida. Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, _Powder Technol._, 71(3):239-250, 1992> (TTI model).
+% * <https://doi.org/10.1016/j.powtec.2012.04.032 Q.J. Zheng, H.P. Zhub and A.B. Yu.
+% Finite element analysis of the contact forces between a viscoelastic sphere and rigid plane, _Powder Technol._, 226:130-142, 2012> (ZZY model).
+%
+% * <https://doi.org/10.1016/0032-5910(92)88030-L Y. Tsuji, T. Tanaka and T. Ishida.
+% Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, _Powder Technol._, 71(3):239-250, 1992> (TTI model).
 %
 classdef ContactForceT_SDSNonlinear < ContactForceT
     %% Public properties
