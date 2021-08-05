@@ -4,13 +4,10 @@
 %
 % This is a sub-class of the <binkinematics.html BinKinematics> class for
 % the implementation of the *Cylinder-Cylinder* binary kinematics for
-% particle-particle interactions.
+% particle-particle interactions of type
+% <particle_cylinder.html Particle Cylinder>.
 %
-% 
-%
-% References:
-%
-% * 
+% <<kinematics_circles.png>>
 %
 classdef BinKinematics_CylinderCylinder < BinKinematics
     %% Constructor method

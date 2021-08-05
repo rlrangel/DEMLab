@@ -4,13 +4,9 @@
 %
 % This is a sub-class of the <binkinematics.html BinKinematics> class for
 % the implementation of the *Cylinder-Wall Circle* binary kinematics for
-% particle-wall interactions.
-%
-% 
-%
-% References:
-%
-% * 
+% particle-wall interactions of types
+% <particle_cylinder.html Particle Cylinder> and
+% <wall_circ.html Wall Circle>.
 %
 classdef BinKinematics_CylinderWcirc < BinKinematics
     %% Constructor method

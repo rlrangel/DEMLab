@@ -4,13 +4,10 @@
 %
 % This is a sub-class of the <binkinematics.html BinKinematics> class for
 % the implementation of the *Sphere-Sphere* binary kinematics for
-% particle-particle interactions.
+% particle-particle interactions of type
+% <particle_sphere.html Particle Sphere>.
 %
-% 
-%
-% References:
-%
-% * 
+% <<kinematics_circles.png>>
 %
 classdef BinKinematics_SphereSphere < BinKinematics
     %% Constructor method

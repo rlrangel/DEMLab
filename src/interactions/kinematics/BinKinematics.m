@@ -5,6 +5,9 @@
 % This is a value heterogeneous super-class for the definition of the
 % kinematics for binary interactions between elements.
 %
+% It deals with the calculation of distances, relative positions and
+% velocities, and contact geometry.
+%
 % This super-class defines abstracts methods that must be implemented in
 % the derived *sub-classes*:
 %

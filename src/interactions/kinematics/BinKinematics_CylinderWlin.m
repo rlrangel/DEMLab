@@ -4,13 +4,9 @@
 %
 % This is a sub-class of the <binkinematics.html BinKinematics> class for
 % the implementation of the *Cylinder-Wall Line* binary kinematics for
-% particle-wall interactions.
-%
-% 
-%
-% References:
-%
-% * 
+% particle-wall interactions of types
+% <particle_cylinder.html Particle Cylinder> and
+% <wall_line.html Wall Line>.
 %
 classdef BinKinematics_CylinderWlin < BinKinematics
     %% Constructor method
