@@ -94,12 +94,14 @@ classdef Driver_Thermal < Driver
                         int.kinemat.dir_n  =  int.kinemat.dir / int.kinemat.dist;
                         int.kinemat.ovlp_n = -int.kinemat.separ;
                         int.kinemat = int.kinemat.setContactArea(int);
-                        int.cconduc = int.cconduc.setParameters(int);
+                        int.setParamsTherm();
                     end
                     
-                    % Compute interaction results and add to particles
-                    int.cconduc = int.cconduc.evalHeatRate(int);
-                    int.kinemat.addContactConductionToParticles(int);
+                    % Compute interaction results
+                    int.evalResultsTherm();
+                    
+                    % Add interaction results to particles
+                    int.addResultsTherm();
                 end
             end
         end

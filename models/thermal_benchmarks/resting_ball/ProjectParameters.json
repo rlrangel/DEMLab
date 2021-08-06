@@ -18,7 +18,7 @@
 	},
 	"FixedCondition": {
 		"temperature": {
-			"type"        : "uniform",
+			"type"        : "constant",
 			"model_parts" : ["WALLS"],
 			"value"       : 400
 		}

@@ -66,7 +66,11 @@ classdef ContactForceT_DashpotSlider < ContactForceT
         function this = evalForce(this,int)
             % Force modulus (viscous and friction contributions)
             fv = this.damp * int.kinemat.vel_t;
-            ff = this.fric * norm(int.cforcen.total_force); 
+            if (~isempty(int.cforcen))
+                ff = this.fric * norm(int.cforcen.total_force);
+            else
+                ff = 0;
+            end
             
             % Limit elastic force by Coulomb law
             f = min(abs(fv),abs(ff));

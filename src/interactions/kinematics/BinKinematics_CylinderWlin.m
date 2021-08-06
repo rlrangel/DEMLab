@@ -146,41 +146,36 @@ classdef BinKinematics_CylinderWlin < BinKinematics
         end
         
         %------------------------------------------------------------------
-        function addContactForceToParticles(~,int)
-            p = int.elem1;
-            
-            % Total contact force from normal and tangential components
-            total_force = int.cforcen.total_force + int.cforcet.total_force;
-            
-            % Add total contact force to particle considering appropriate sign
-            p.force = p.force + total_force;
+        function addContactForceNormalToParticles(~,int)
+            int.elem1.force = int.elem1.force + int.cforcen.total_force;
         end
         
         %------------------------------------------------------------------
-        function addContactTorqueToParticles(this,int)
-            p = int.elem1;
-            f = int.cforcet.total_force;
-            
+        function addContactForceTangentToParticles(~,int)
+            int.elem1.force = int.elem1.force + int.cforcet.total_force;
+        end
+        
+        %------------------------------------------------------------------
+        function addContactTorqueTangentToParticles(this,int)
             % Lever arm
-            l = (p.radius-this.ovlp_n/2) * this.dir_n;
+            l = (int.elem1.radius-this.ovlp_n/2) * this.dir_n;
             
             % Torque from tangential contact force (3D due to cross-product)
+            f = int.cforcet.total_force;
             torque = cross([l(1);l(2);0],[f(1);f(2);0]);
             
             % Add torque from tangential contact force to particle
-            p.torque = p.torque + torque(3);
-            
-            % Torque from rolling resistance
-            if (~isempty(int.rollres))
-                p.torque = p.torque + int.rollres.torque;
-            end
+            int.elem1.torque = int.elem1.torque + torque(3);
+        end
+        
+        %------------------------------------------------------------------
+        function addRollResistTorqueToParticles(~,int)
+            int.elem1.torque = int.elem1.torque + int.rollres.torque;
         end
         
         %------------------------------------------------------------------
         function addContactConductionToParticles(~,int)
-            % Add contact conduction heat rate to particle considering appropriate sign
-            p = int.elem1;
-            p.heat_rate = p.heat_rate + int.cconduc.total_hrate;
+            int.elem1.heat_rate = int.elem1.heat_rate + int.cconduc.total_hrate;
         end
     end
 end

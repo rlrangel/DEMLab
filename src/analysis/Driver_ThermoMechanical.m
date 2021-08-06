@@ -126,26 +126,21 @@ classdef Driver_ThermoMechanical < Driver
                         % Initialize contact
                         int.kinemat = int.kinemat.setCollisionParams(this.time);
                         
-                        % Initialize interaction parameters values
-                        int.cforcen = int.cforcen.setParameters(int);
-                        int.cforcet = int.cforcet.setParameters(int);
-                        int.rollres = int.rollres.setParameters(int);
-                        int.cconduc = int.cconduc.setParameters(int);
+                        % Initialize constant interaction parameters values
+                        int.setParamsMech();
+                        int.setParamsTherm();
                     end
                     
                     % Update contact duration
                     int.kinemat.contact_time = this.time - int.kinemat.contact_start;
                     
-                    % Compute interaction results
-                    int.cforcen = int.cforcen.evalForce(int);
-                    int.cforcet = int.cforcet.evalForce(int);
-                    int.rollres = int.rollres.evalTorque(int);
-                    int.cconduc = int.cconduc.evalHeatRate(int);
+                    % Compute constant interaction results
+                    int.evalResultsMech();
+                    int.evalResultsTherm();
                     
                     % Add interaction results to particles
-                    int.kinemat.addContactForceToParticles(int);
-                    int.kinemat.addContactTorqueToParticles(int);
-                    int.kinemat.addContactConductionToParticles(int);
+                    int.addResultsMech();
+                    int.addResultsTherm();
                     
                 % Evaluate noncontact interactions
                 else

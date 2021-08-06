@@ -122,23 +122,18 @@ classdef Driver_Mechanical < Driver
                         % Initialize contact
                         int.kinemat = int.kinemat.setCollisionParams(this.time);
                         
-                        % Initialize interaction parameters values
-                        int.cforcen = int.cforcen.setParameters(int);
-                        int.cforcet = int.cforcet.setParameters(int);
-                        int.rollres = int.rollres.setParameters(int);
+                        % Initialize constant interaction parameters values
+                        int.setParamsMech();
                     end
                     
                     % Update contact duration
                     int.kinemat.contact_time = this.time - int.kinemat.contact_start;
                     
                     % Compute interaction results
-                    int.cforcen = int.cforcen.evalForce(int);
-                    int.cforcet = int.cforcet.evalForce(int);
-                    int.rollres = int.rollres.evalTorque(int);
+                    int.evalResultsMech();
                     
                     % Add interaction results to particles
-                    int.kinemat.addContactForceToParticles(int);
-                    int.kinemat.addContactTorqueToParticles(int);
+                    int.addResultsMech();
                     
                 % Evaluate noncontact interactions
                 else

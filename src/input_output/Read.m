@@ -2629,8 +2629,11 @@ classdef Read < handle
         function status = getInteractionModel(this,json,drv)
             status = 1;
             if (~isfield(json,'InteractionModel') || isempty(json.InteractionModel))
-                fprintf(2,'Missing data in project parameters file: InteractionModel.\n');
-                status = 0; return;
+                if (drv.n_particles > 1 || drv.n_walls > 0)
+                    this.warn('No interaction model was provided.');
+                end
+                drv.search.b_interact = Interact();
+                return;
             end
             
             % Single case: Only 1 interaction model provided
@@ -3609,8 +3612,8 @@ classdef Read < handle
             if (drv.type == drv.THERMAL)
                 return;
             elseif (~isfield(IM,'contact_force_normal'))
-                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.\n');
-                status = 0; return;
+                this.warn('No model for contact normal force was identified. This force component will not be considered.');
+                return;
             end
             
             % Model parameters
@@ -3667,8 +3670,8 @@ classdef Read < handle
             if (drv.type == drv.THERMAL)
                 return;
             elseif (~isfield(IM,'contact_force_tangent'))
-                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.\n');
-                status = 0; return;
+                this.warn('No model for contact tangent force was identified. This force component will not be considered.');
+                return;
             end
             
             % Model parameters
@@ -4343,62 +4346,66 @@ classdef Read < handle
                 end
                 
                 % Check material properties needed for contact normal force
-                switch drv.search.b_interact.cforcen.type
-                    case drv.search.b_interact.cforcen.VISCOELASTIC_LINEAR    ||...
-                         drv.search.b_interact.cforcen.VISCOELASTIC_NONLINEAR ||...
-                         drv.search.b_interact.cforcen.ELASTOPLASTIC_LINEAR
-                        if (isempty(m.young))
-                            fprintf(2,'Missing Young Modulus of material %s.',m.name);
-                            status = 0; return;
-                        end
-                end
-                
-                % Check material properties needed for contact tangent force
-                switch drv.search.b_interact.cforcet.type
-                    case drv.search.b_interact.cforcet.SPRING ||...
-                         drv.search.b_interact.cforcet.SPRING_SLIDER
-                        if (isempty(m.poisson))
-                            fprintf(2,'Missing Poisson ratio of material %s.',m.name);
-                            status = 0; return;
-                        end
-                    case drv.search.b_interact.cforcet.SDS_LINEAR
-                        if (isempty(m.poisson))
-                            fprintf(2,'Missing Poisson ratio of material %s.',m.name);
-                            status = 0; return;
-                        end
-                        if (drv.search.b_interact.cforcet.auto_damp && isempty(drv.search.b_interact.cforcet.restitution))
-                            fprintf(2,'Missing restitution coefficient of tangent contact force model');
-                            status = 0; return;
-                        end
-                    case drv.search.b_interact.cforcet.SDS_NONLINEAR
-                        if (drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.DD)
-                            if (isempty(m.shear))
-                                fprintf(2,'Missing Shear Modulus of material %s.',m.name);
-                                status = 0; return;
-                            end
-                        elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.LTH)
-                            if (isempty(m.poisson))
-                                fprintf(2,'Missing Poisson ratio of material %s.',m.name);
-                                status = 0; return;
-                            end
-                        elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.ZZY)
-                            if (isempty(m.shear))
-                                fprintf(2,'Missing Shear Modulus of material %s.',m.name);
-                                status = 0; return;
-                            elseif (isempty(m.poisson))
-                                fprintf(2,'Missing Poisson ratio of material %s.',m.name);
-                                status = 0; return;
-                            end
-                        elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.TTI)
+                if (~isempty(drv.search.b_interact.cforcen))
+                    switch drv.search.b_interact.cforcen.type
+                        case drv.search.b_interact.cforcen.VISCOELASTIC_LINEAR    ||...
+                             drv.search.b_interact.cforcen.VISCOELASTIC_NONLINEAR ||...
+                             drv.search.b_interact.cforcen.ELASTOPLASTIC_LINEAR
                             if (isempty(m.young))
                                 fprintf(2,'Missing Young Modulus of material %s.',m.name);
                                 status = 0; return;
                             end
+                    end
+                end
+                
+                % Check material properties needed for contact tangent force
+                if (~isempty(drv.search.b_interact.cforcet))
+                    switch drv.search.b_interact.cforcet.type
+                        case drv.search.b_interact.cforcet.SPRING ||...
+                             drv.search.b_interact.cforcet.SPRING_SLIDER
                             if (isempty(m.poisson))
                                 fprintf(2,'Missing Poisson ratio of material %s.',m.name);
                                 status = 0; return;
                             end
-                        end
+                        case drv.search.b_interact.cforcet.SDS_LINEAR
+                            if (isempty(m.poisson))
+                                fprintf(2,'Missing Poisson ratio of material %s.',m.name);
+                                status = 0; return;
+                            end
+                            if (drv.search.b_interact.cforcet.auto_damp && isempty(drv.search.b_interact.cforcet.restitution))
+                                fprintf(2,'Missing restitution coefficient of tangent contact force model');
+                                status = 0; return;
+                            end
+                        case drv.search.b_interact.cforcet.SDS_NONLINEAR
+                            if (drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.DD)
+                                if (isempty(m.shear))
+                                    fprintf(2,'Missing Shear Modulus of material %s.',m.name);
+                                    status = 0; return;
+                                end
+                            elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.LTH)
+                                if (isempty(m.poisson))
+                                    fprintf(2,'Missing Poisson ratio of material %s.',m.name);
+                                    status = 0; return;
+                                end
+                            elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.ZZY)
+                                if (isempty(m.shear))
+                                    fprintf(2,'Missing Shear Modulus of material %s.',m.name);
+                                    status = 0; return;
+                                elseif (isempty(m.poisson))
+                                    fprintf(2,'Missing Poisson ratio of material %s.',m.name);
+                                    status = 0; return;
+                                end
+                            elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.TTI)
+                                if (isempty(m.young))
+                                    fprintf(2,'Missing Young Modulus of material %s.',m.name);
+                                    status = 0; return;
+                                end
+                                if (isempty(m.poisson))
+                                    fprintf(2,'Missing Poisson ratio of material %s.',m.name);
+                                    status = 0; return;
+                                end
+                            end
+                    end
                 end
             end
         end

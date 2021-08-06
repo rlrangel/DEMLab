@@ -96,7 +96,11 @@ classdef ContactForceT_SDSLinear < ContactForceT
         %------------------------------------------------------------------
         function this = setParameters(this,int)
             if (this.auto_stiff)
-                this.stiff = (1-int.eff_poisson)/(1-int.eff_poisson/2) * int.cforcen.stiff;
+                if (~isempty(int.cforcen))
+                    this.stiff = (1-int.eff_poisson)/(1-int.eff_poisson/2) * int.cforcen.stiff;
+                else
+                    this.stiff = 0;
+                end
             end
             if (this.auto_damp)
                 if (this.restitution == 0)
@@ -113,7 +117,11 @@ classdef ContactForceT_SDSLinear < ContactForceT
             % Force modulus (viscoelastic and friction contributions)
             fe = this.stiff * int.kinemat.ovlp_t;
             fv = this.damp  * int.kinemat.vel_t;
-            ff = this.fric  * norm(int.cforcen.total_force);
+            if (~isempty(int.cforcen))
+                ff = this.fric * norm(int.cforcen.total_force);
+            else
+                ff = 0;
+            end
             
             % Limit viscoelastic force by Coulomb law
             f = min(abs(fe+fv),abs(ff));

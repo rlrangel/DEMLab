@@ -92,10 +92,16 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
         this = setContactArea(this,interact);
         
         %------------------------------------------------------------------
-        addContactForceToParticles(this,interact);
+        addContactForceNormalToParticles(this,interact);
         
         %------------------------------------------------------------------
-        addContactTorqueToParticles(this,interact);
+        addContactForceTangentToParticles(this,interact);
+        
+        %------------------------------------------------------------------
+        addContactTorqueTangentToParticles(this,interact);
+        
+        %------------------------------------------------------------------
+        addRollResistTorqueToParticles(this,interact);
         
         %------------------------------------------------------------------
         addContactConductionToParticles(this,interact);

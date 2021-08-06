@@ -113,30 +113,26 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
         end
         
         %------------------------------------------------------------------
-        function addContactForceToParticles(~,int)
-            p1 = int.elem1;
-            p2 = int.elem2;
-            
-            % Total contact force from normal and tangential components
-            total_force = int.cforcen.total_force + int.cforcet.total_force;
-            
-            % Add total contact force to particles considering appropriate sign
-            p1.force = p1.force + total_force;
-            p2.force = p2.force - total_force;
+        function addContactForceNormalToParticles(~,int)
+            int.elem1.force = int.elem1.force + int.cforcen.total_force;
+            int.elem2.force = int.elem2.force - int.cforcen.total_force;
         end
         
         %------------------------------------------------------------------
-        function addContactTorqueToParticles(this,int)
-            p1 = int.elem1;
-            p2 = int.elem2;
-            
+        function addContactForceTangentToParticles(~,int)
+            int.elem1.force = int.elem1.force + int.cforcet.total_force;
+            int.elem2.force = int.elem2.force - int.cforcet.total_force;
+        end
+        
+        %------------------------------------------------------------------
+        function addContactTorqueTangentToParticles(this,int)
             % Tangential force vector for each particle
             ft1 =  int.cforcet.total_force;
             ft2 = -ft1;
             
             % Lever arm for each particle
-            l1 =  (p1.radius-this.ovlp_n/2) * this.dir_n;
-            l2 = -(p2.radius-this.ovlp_n/2) * this.dir_n;
+            l1 =  (int.elem1.radius-this.ovlp_n/2) * this.dir_n;
+            l2 = -(int.elem2.radius-this.ovlp_n/2) * this.dir_n;
             
             % Torque from tangential contact force (3D due to cross-product)
             torque1 = cross([l1(1);l1(2);0],[ft1(1);ft1(2);0]);
@@ -145,24 +141,20 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             torque2 = torque2(3);
             
             % Add torque from tangential contact force to particles
-            p1.torque = p1.torque + torque1;
-            p2.torque = p2.torque + torque2;
-            
-            % Torque from rolling resistance
-            if (~isempty(int.rollres))
-                p1.torque = p1.torque + int.rollres.torque;
-                p2.torque = p2.torque + int.rollres.torque;
-            end
+            int.elem1.torque = int.elem1.torque + torque1;
+            int.elem2.torque = int.elem2.torque + torque2;
+        end
+        
+        %------------------------------------------------------------------
+        function addRollResistTorqueToParticles(~,int)
+            int.elem1.torque = int.elem1.torque + int.rollres.torque;
+            int.elem2.torque = int.elem2.torque + int.rollres.torque;
         end
         
         %------------------------------------------------------------------
         function addContactConductionToParticles(~,int)
-            p1 = int.elem1;
-            p2 = int.elem2;
-            
-            % Add contact conduction heat rate to particles considering appropriate sign
-            p1.heat_rate = p1.heat_rate + int.cconduc.total_hrate;
-            p2.heat_rate = p2.heat_rate - int.cconduc.total_hrate;
+            int.elem1.heat_rate = int.elem1.heat_rate + int.cconduc.total_hrate;
+            int.elem2.heat_rate = int.elem2.heat_rate - int.cconduc.total_hrate;
         end
     end
 end

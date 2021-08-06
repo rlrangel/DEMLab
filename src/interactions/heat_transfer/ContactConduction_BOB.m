@@ -54,6 +54,11 @@ classdef ContactConduction_BOB < ContactConduction
         end
         
         %------------------------------------------------------------------
+        function this = setParameters(this,~)
+            
+        end
+        
+        %------------------------------------------------------------------
         function this = evalHeatRate(this,int)
             t1 = int.elem1.temperature;
             t2 = int.elem2.temperature;

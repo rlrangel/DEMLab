@@ -48,6 +48,9 @@ classdef ContactConduction < matlab.mixin.Heterogeneous
         this = setDefaultProps(this);
         
         %------------------------------------------------------------------
+        this = setParameters(this,interact);
+        
+        %------------------------------------------------------------------
         this = evalHeatRate(this,interact);
     end
 end
