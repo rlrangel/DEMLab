@@ -163,11 +163,16 @@ classdef BinKinematics_SphereWlin < BinKinematics
             % Lever arm
             l = (p.radius-this.ovlp_n/2) * this.dir_n;
             
-            % Contact torque from tangential force (3D due to cross-product)
+            % Torque from tangential contact force (3D due to cross-product)
             torque = cross([l(1);l(2);0],[f(1);f(2);0]);
             
-            % Add contact torque to particle
+            % Add torque from tangential contact force to particle
             p.torque = p.torque + torque(3);
+            
+            % Torque from rolling resistance
+            if (~isempty(int.rollres))
+                p.torque = p.torque + int.rollres.torque;
+            end
         end
         
         %------------------------------------------------------------------

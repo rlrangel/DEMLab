@@ -27,11 +27,15 @@
 %
 % *References*:
 %
-% * <https://doi.org/10.1098/rspa.1977.0100 G.K. Batchelor and R.W. OBrien.
-% Thermal or electrical conduction through a granular material, _Proceedings of the Royal Society of London_, 355(1682):313-333, 1977> (proposal).
+% * <https://doi.org/10.1098/rspa.1977.0100
+% G.K. Batchelor and R.W. OBrien.
+% Thermal or electrical conduction through a granular material, _Proceedings of the Royal Society of London_, 355(1682):313-333, 1977>
+% (proposal).
 %
-% * <https://doi.org/10.1016/S0009-2509(99)00125-6 G.J. Cheng, A.B. Yu and P. Zulli.
-% Evaluation of effective thermal conductivity from the structure of a packed bed, _Chem. Eng. Sci._, 54(19):4199-4209, 1999> (alternative form).
+% * <https://doi.org/10.1016/S0009-2509(99)00125-6
+% G.J. Cheng, A.B. Yu and P. Zulli.
+% Evaluation of effective thermal conductivity from the structure of a packed bed, _Chem. Eng. Sci._, 54(19):4199-4209, 1999>
+% (alternative form).
 %
 classdef ContactConduction_BOB < ContactConduction
     %% Constructor method

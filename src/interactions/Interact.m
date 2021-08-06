@@ -24,10 +24,13 @@ classdef Interact < handle & matlab.mixin.Copyable
         eff_poisson double = double.empty;
         eff_conduct double = double.empty;
         
-        % Interaction models (value class objects)
-        kinemat BinKinematics     = BinKinematics.empty;       % general binary kinematics
-        cforcen ContactForceN     = ContactForceN.empty;       % contact force normal
-        cforcet ContactForceT     = ContactForceT.empty;       % contact force tangent
+        % Mechanical interaction models (value class objects)
+        kinemat BinKinematics = BinKinematics.empty;   % general binary kinematics
+        cforcen ContactForceN = ContactForceN.empty;   % contact force normal
+        cforcet ContactForceT = ContactForceT.empty;   % contact force tangent
+        rollres RollResist    = RollResist.empty;      % rolling resistance
+        
+        % Thermal interaction models (value class objects)
         cconduc ContactConduction = ContactConduction.empty;   % contact thermal conduction
     end
     

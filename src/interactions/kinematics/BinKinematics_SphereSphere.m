@@ -137,15 +137,21 @@ classdef BinKinematics_SphereSphere < BinKinematics
             l1 =  (p1.radius-this.ovlp_n/2) * this.dir_n;
             l2 = -(p2.radius-this.ovlp_n/2) * this.dir_n;
             
-            % Contact torque from tangential force (3D due to cross-product)
+            % Torque from tangential contact force (3D due to cross-product)
             torque1 = cross([l1(1);l1(2);0],[ft1(1);ft1(2);0]);
             torque2 = cross([l2(1);l2(2);0],[ft2(1);ft2(2);0]);
             torque1 = torque1(3);
             torque2 = torque2(3);
             
-            % Add contact torque to particles considering appropriate sign
+            % Add torque from tangential contact force to particles
             p1.torque = p1.torque + torque1;
             p2.torque = p2.torque + torque2;
+            
+            % Torque from rolling resistance
+            if (~isempty(int.rollres))
+                p1.torque = p1.torque + int.rollres.torque;
+                p2.torque = p2.torque + int.rollres.torque;
+            end
         end
         
         %------------------------------------------------------------------

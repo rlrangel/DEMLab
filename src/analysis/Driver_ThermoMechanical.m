@@ -129,6 +129,7 @@ classdef Driver_ThermoMechanical < Driver
                         % Initialize interaction parameters values
                         int.cforcen = int.cforcen.setParameters(int);
                         int.cforcet = int.cforcet.setParameters(int);
+                        int.rollres = int.rollres.setParameters(int);
                         int.cconduc = int.cconduc.setParameters(int);
                     end
                     
@@ -138,6 +139,7 @@ classdef Driver_ThermoMechanical < Driver
                     % Compute interaction results
                     int.cforcen = int.cforcen.evalForce(int);
                     int.cforcet = int.cforcet.evalForce(int);
+                    int.rollres = int.rollres.evalTorque(int);
                     int.cconduc = int.cconduc.evalHeatRate(int);
                     
                     % Add interaction results to particles

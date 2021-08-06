@@ -2648,6 +2648,10 @@ classdef Read < handle
                     status = 0;
                     return;
                 end
+                if (~this.interactRollResist(json.InteractionModel,drv))
+                    status = 0;
+                    return;
+                end
                 if (~this.interactContactConduction(json.InteractionModel,drv))
                     status = 0;
                     return;
@@ -3602,10 +3606,9 @@ classdef Read < handle
         %------------------------------------------------------------------
         function status = interactContactForceNormal(this,IM,drv)
             status = 1;
-            if (~isfield(IM,'contact_force_normal') && drv.type == drv.THERMAL)
+            if (drv.type == drv.THERMAL)
                 return;
-            elseif (~isfield(IM,'contact_force_normal') &&...
-                   (drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL))
+            elseif (~isfield(IM,'contact_force_normal'))
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.\n');
                 status = 0; return;
             end
@@ -3661,10 +3664,9 @@ classdef Read < handle
         %------------------------------------------------------------------
         function status = interactContactForceTangent(this,IM,drv)
             status = 1;
-            if (~isfield(IM,'contact_force_tangent') && drv.type == drv.THERMAL)
+            if (drv.type == drv.THERMAL)
                 return;
-            elseif (~isfield(IM,'contact_force_tangent') &&...
-                   (drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL))
+            elseif (~isfield(IM,'contact_force_tangent'))
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.\n');
                 status = 0; return;
             end
@@ -3740,12 +3742,46 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
+        function status = interactRollResist(this,IM,drv)
+            status = 1;
+            if (drv.type == drv.THERMAL || ~isfield(IM,'rolling_resistance'))
+                return;
+            end
+            
+            % Model parameters
+            if (~isfield(IM.rolling_resistance,'model'))
+                fprintf(2,'Missing data in project parameters file: InteractionModel.rolling_resistance.model.\n');
+                status = 0; return;
+            end
+            model = string(IM.rolling_resistance.model);
+            if (~this.isStringArray(model,1) ||...
+               (~strcmp(model,'constant')) &&...
+                ~strcmp(model,'viscous'))
+                fprintf(2,'Invalid data in project parameters file: InteractionModel.rolling_resistance.model.\n');
+                fprintf(2,'Available options: constant, viscous.\n');
+                status = 0; return;
+            end
+            
+            % Call sub-method for each type of model
+            if (strcmp(model,'constant'))
+                if (~this.rollingResist_Constant(IM.rolling_resistance,drv))
+                    status = 0;
+                    return;
+                end
+            elseif (strcmp(model,'viscous'))
+                if (~this.rollingResist_Viscous(IM.rolling_resistance,drv))
+                    status = 0;
+                    return;
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
         function status = interactContactConduction(this,IM,drv)
             status = 1;
-            if (~isfield(IM,'contact_conduction') && drv.type == drv.MECHANICAL)
+            if (drv.type == drv.MECHANICAL)
                 return;
-            elseif (~isfield(IM,'contact_conduction') &&...
-                   (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL))
+            elseif (~isfield(IM,'contact_conduction'))
                 this.warn('No model for contact thermal conduction was identified. This heat transfer mechanism will not be considered.');
                 return;
             end
@@ -4197,6 +4233,52 @@ classdef Read < handle
                 end
             else
                 fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.formula.\n');
+                status = 0; return;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = rollingResist_Constant(this,RR,drv)
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.rollres = RollResist_Constant();
+            
+            % Rolling resistance coefficient
+            if (isfield(RR,'resistance_coeff'))
+                if (~this.isDoubleArray(RR.resistance_coeff,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.rolling_resistance.resistance_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (RR.resistance_coeff <= 0)
+                    this.warn('Unphysical property value was found for InteractionModel.rolling_resistance.resistance_coeff');
+                end
+                drv.search.b_interact.rollres.resist = RR.resistance_coeff;
+            else
+                fprintf(2,'Missing data in project parameters file: InteractionModel.rolling_resistance.resistance_coeff.\n');
+                status = 0; return;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = rollingResist_Viscous(this,RR,drv)
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.rollres = RollResist_Viscous();
+            
+            % Rolling resistance coefficient
+            if (isfield(RR,'resistance_coeff'))
+                if (~this.isDoubleArray(RR.resistance_coeff,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.rolling_resistance.resistance_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (RR.resistance_coeff <= 0)
+                    this.warn('Unphysical property value was found for InteractionModel.rolling_resistance.resistance_coeff');
+                end
+                drv.search.b_interact.rollres.resist = RR.resistance_coeff;
+            else
+                fprintf(2,'Missing data in project parameters file: InteractionModel.rolling_resistance.resistance_coeff.\n');
                 status = 0; return;
             end
         end
