@@ -1,3 +1,0 @@
-en/home.html
-en/guide.html
-en/prod.html
