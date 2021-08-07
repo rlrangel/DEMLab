@@ -20,6 +20,12 @@
 %
 % $F_{n}$: Normal contact force vector
 %
+% *References*:
+%
+% * <https://doi.org/10.1016/0032-5910(86)80048-1
+% P.K. Haff and B.T. Werner.
+% Computer simulation of the mechanical sorting of grains, _Powder Techn._, 48(3):239-245, 1986>
+%
 classdef ContactForceT_Slider < ContactForceT
     %% Public properties
     properties (SetAccess = public, GetAccess = public)

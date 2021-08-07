@@ -39,12 +39,12 @@
 % * <https://doi.org/10.1680/geot.1979.29.1.47
 % P.A. Cundall and O.D.L. Strack.
 % A discrete numerical model for granular assemblies, _Geotechnique_, 29:47-65, 1979>
-% (proposal).
+% (proposal)
 %
 % * <https://doi.org/10.1115/1.4009973
 % R.D. Mindlin.
 % Compliance of elastic bodies in contact, _J. Appl. Mech._, 16(3):259-268, 1949>
-% (stiffness coefficient formula).
+% (stiffness coefficient formula)
 %
 classdef ContactForceT_SpringSlider < ContactForceT
     %% Public properties

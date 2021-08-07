@@ -26,12 +26,12 @@
 % * <https://doi.org/10.1016/S0378-4371(99)00183-1
 % Y.C. Zhou, B.D. Wright, R.Y. Yang, B.H. Xu and A.B. Yu.
 % Rolling friction in the dynamic simulation of sandpile formation, _Physica A_, 269(2-4):536-553, 1999>
-% (proposal).
+% (proposal)
 %
 % * <https://doi.org/10.1016/j.powtec.2010.09.030
 % J. Ai, J.F. Chen, J.M. Rotter and J.Y. Ooi.
 % Assessment of rolling resistance models in discrete element simulations, _Powder Technol._, 206(3):269-282, 2011>
-% (review).
+% (review)
 %
 classdef RollResist_Constant < RollResist
     %% Public properties

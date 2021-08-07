@@ -3871,15 +3871,32 @@ classdef Read < handle
             if (isfield(CFN,'damping_formula'))
                 if (~this.isStringArray(CFN.damping_formula,1) ||...
                    (~strcmp(CFN.damping_formula,'TTI') &&...
-                    ~strcmp(CFN.damping_formula,'KK')))
+                    ~strcmp(CFN.damping_formula,'KK')  &&...
+                    ~strcmp(CFN.damping_formula,'LH')))
                     fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.damping_formula.\n');
-                    fprintf(2,'Available options: TTI, KK.\n');
+                    fprintf(2,'Available options: TTI, KK, LH.\n');
                     status = 0; return;
                 end
                 if (strcmp(CFN.damping_formula,'TTI'))
                     drv.search.b_interact.cforcen.damp_formula = drv.search.b_interact.cforcen.TTI;
                 elseif (strcmp(CFN.damping_formula,'KK'))
                     drv.search.b_interact.cforcen.damp_formula = drv.search.b_interact.cforcen.KK;
+                    
+                    % Damping coefficient value
+                    if (~isfield(CFN,'damping_coeff'))
+                        fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.damping_coeff.\n');
+                        status = 0; return;
+                    end
+                    damp_coeff = CFN.damping_coeff;
+                    if (~this.isDoubleArray(damp_coeff,1))
+                        fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.damping_coeff.\n');
+                        fprintf(2,'It must be a numeric value.\n');
+                        status = 0; return;
+                    end
+                    drv.search.b_interact.cforcen.damp = damp_coeff;
+                    
+                elseif (strcmp(CFN.damping_formula,'LH'))
+                    drv.search.b_interact.cforcen.damp_formula = drv.search.b_interact.cforcen.LH;
                     
                     % Damping coefficient value
                     if (~isfield(CFN,'damping_coeff'))

@@ -57,12 +57,12 @@
 % * <https://doi.org/10.1115/1.4009973
 % R.D. Mindlin.
 % Compliance of elastic bodies in contact, _J. Appl. Mech._, 16(3):259-268, 1949>
-% (stiffness coefficient formula).
+% (stiffness coefficient formula)
 %
 % * <https://doi.org/10.1016/j.ces.2006.08.014
 % N.G. Deen, M. Van Sint Annaland, M.A. Van der Hoef and J.A.M. Kuipers.
 % Review of discrete particle modeling of fluidized beds, _Chem. Eng. Sci._, 62(1-2):28-44, 2007>
-% (damping coefficient formula).
+% (damping coefficient formula)
 %
 classdef ContactForceT_SDSLinear < ContactForceT
     %% Public properties

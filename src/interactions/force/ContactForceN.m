@@ -29,6 +29,7 @@ classdef ContactForceN < matlab.mixin.Heterogeneous
         % Types of nonlinear damping formulation
         TTI = uint8(1);
         KK  = uint8(2);
+        LH  = uint8(3);
         
         % Types of elastoplastic unloading stiffness formulation
         CONSTANT = uint8(1);

@@ -28,12 +28,12 @@
 % * <https://doi.org/10.1209/epl/i1998-00281-7
 % N.V. Brilliantov and T. poschel.
 % Rolling friction of a viscous sphere on a hard plane, _Europhysics Letters_, 42(5):511-516, 1998>
-% (proposal).
+% (proposal)
 %
 % * <https://doi.org/10.1016/j.powtec.2010.09.030
 % J. Ai, J.F. Chen, J.M. Rotter and J.Y. Ooi.
 % Assessment of rolling resistance models in discrete element simulations, _Powder Technol._, 206(3):269-282, 2011>
-% (review).
+% (review)
 %
 classdef RollResist_Viscous < RollResist
     %% Public properties

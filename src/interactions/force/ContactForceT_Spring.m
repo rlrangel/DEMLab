@@ -29,7 +29,7 @@
 % * <https://doi.org/10.1115/1.4009973
 % R.D. Mindlin.
 % Compliance of elastic bodies in contact, _J. Appl. Mech._, 16(3):259-268, 1949>
-% (stiffness coefficient formula).
+% (stiffness coefficient formula)
 %
 classdef ContactForceT_Spring < ContactForceT
     %% Public properties

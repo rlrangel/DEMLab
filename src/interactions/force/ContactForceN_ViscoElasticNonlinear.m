@@ -18,7 +18,7 @@
 %
 % $$K_{hz} = \frac{4}{3} E_{eff} \sqrt{R_{eff}}$$
 %
-% The viscous force can be computed by 2 different formulas:
+% The viscous force can be computed by 3 different formulas:
 %
 % * *TTI (Tsuji, Tanaka & Ishida)*:
 %
@@ -30,7 +30,11 @@
 %
 % $$F_{n}^{v} = \eta_{n} \delta_{n}^{\frac{1}{2}} \dot{\delta_{n}}$$
 %
-% The damping coefficient $\eta_{n}$ must be provided.
+% * *LH (Lee & Herrmann)*:
+%
+% $$F_{n}^{v} = \eta_{n} $m_{eff} \dot{\delta_{n}}$$
+%
+% The damping coefficient $\eta_{n}$ must be provided for models KK and LH.
 %
 % *Notation*:
 %
@@ -53,27 +57,32 @@
 % * <https://doi.org/10.1515/crll.1882.92.156
 % H. Hertz.
 % Ueber die Beruhrung fester elastischer Korper, _J.f. reine u. Angewandte Math._, 92:156-171, 1882>
-% (Hertz contact theory).
+% (Hertz contact theory)
 %
 % * <https://www.cambridge.org/core/books/contact-mechanics/E3707F77C2EBCE727C3911AFBD2E4AC2
 % K.L. Johnson.
 % _Contact Mechanics_, Cambridge University Press, 1985>
-% (Hertz contact theory).
+% (Hertz contact theory)
 %
 % * <https://doi.org/10.1016/0032-5910(92)88030-L
 % Y. Tsuji, T. Tanaka and T. Ishida.
 % Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, _Powder Technol._, 71(3):239-250, 1992>
-% (TTI viscous model).
+% (TTI viscous model)
 %
 % * <https://www.wiley.com/en-ai/Coupled+CFD+DEM+Modeling%3A+Formulation%2C+Implementation+and+Application+to+Multiphase+Flows-p-9781119005131
 % H.R. Norouzi, R. Zarghami, R. Sotudeh-Gharebagh and N. Mostoufi.
 % _Coupled CFD-DEM Modeling: Formulation, Implementation and Application to Multiphase Flows_, Wiley, 2016>
-% (damping coefficient formula in TTI viscous model).
+% (damping coefficient formula in TTI viscous model)
 %
 % * <https://iopscience.iop.org/article/10.1143/JJAP.26.1230/meta
 % G. Kuwabara and K. Kono.
 % Restitution coefficient in collision between two spheres, _Jpn. J. Appl. Phys._, 26:1230-1233, 1987>
-% (KK viscous model).
+% (KK viscous model)
+%
+% * <https://doi.org/10.1088/0305-4470/26/2/021
+% J. Lee and H.J. Herrmann.
+% Angle of repose and angle of marginal stability-molecular-dynamics of granular particles, _J. Phys. A: Math. Gen._, 26(2):373-383, 1993>
+% (LH viscous model)
 %
 classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
     %% Public properties
@@ -124,6 +133,7 @@ classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
             vel  = int.kinemat.vel_n;
             k    = this.stiff;
             d    = this.damp;
+            m    = int.eff_mass;
             
             % Elastic force
             fe = k * ovlp^(3/2);
@@ -134,6 +144,8 @@ classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
                     fv = d * ovlp^(1/4) * vel;
                 case this.KK
                     fv = d * ovlp^(1/2) * vel;
+                case this.LH
+                    fv = d * m * vel;
             end
             
             % Force modulus

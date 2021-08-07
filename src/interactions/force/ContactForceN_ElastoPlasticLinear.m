@@ -90,7 +90,7 @@
 % * <https://doi.org/10.1122/1.549893
 % O.R. Walton and R.L. Braun.
 % Viscosity, granular temperature, and stress calculations for shearing assemblies of inelastic, frictional disks, _J. Rheol._, 30:949, 1986>
-% (proposal).
+% (proposal)
 %
 classdef ContactForceN_ElastoPlasticLinear < ContactForceN
     %% Public properties
