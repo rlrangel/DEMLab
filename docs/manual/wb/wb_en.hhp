@@ -1,0 +1,18 @@
+[OPTIONS]
+  Binary Index=No
+  Compatibility=1.0
+  Compiled file=wb_en.chm
+  Contents file=wb_tree_en.hhc
+  Default topic=en/home.html
+  Display compile notes=Yes
+  Display compile progress=Yes
+  Full-text search=Yes
+  Language=0x0409 English - United States
+  Title=WebBook
+
+[FILES]
+  en/home.html
+  en/guide.html
+  en/prod.html
+[INFOTYPES]
+  

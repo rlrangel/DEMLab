@@ -1,0 +1,18 @@
+[OPTIONS]
+  Binary Index=No
+  Compatibility=1.0
+  Compiled file=wb_pt.chm
+  Contents file=wb_tree_pt.hhc
+  Default topic=pt/home.html
+  Display compile notes=Yes
+  Display compile progress=Yes
+  Full-text search=Yes
+  Language=0x0416 Portuguese - Brazil
+  Title=WebBook
+
+[FILES]
+  pt/home.html
+  pt/guide.html
+  pt/prod.html
+[INFOTYPES]
+  
