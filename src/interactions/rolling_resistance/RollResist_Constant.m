@@ -9,6 +9,18 @@
 % relative rotation velocity), but depending of normal force, is applied
 % against the relative rotation.
 %
+% $$M = - \hat{\omega} \mu R_{eff} \left | F_{n} \right |$$
+%
+% *Notation*:
+%
+% * $\hat{\omega}$: Relative angular velocity
+%
+% * $\mu$: Rolling resistance coefficient
+%
+% * $R_{eff}$: Effective contact radius
+%
+% * $F_{n}$: Normal contact force vector
+%
 % *References*:
 %
 % * <https://doi.org/10.1016/S0378-4371(99)00183-1

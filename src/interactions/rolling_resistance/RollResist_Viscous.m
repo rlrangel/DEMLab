@@ -9,9 +9,23 @@
 % rotation velocity and normal force and is applied against the relative
 % rotation.
 %
+% $$M = - \hat{\omega} \mu R_{eff} \left | F_{n} \right | \left | V_{\omega} \right |$$
+%
+% *Notation*:
+%
+% * $\hat{\omega}$: Relative angular velocity
+%
+% * $\mu$: Rolling resistance coefficient
+%
+% * $R_{eff}$: Effective contact radius
+%
+% * $F_{n}$: Normal contact force vector
+%
+% * $V_{\omega}$: Relative velocity due to rotation at contact point
+%
 % *References*:
 %
-% * <	https://doi.org/10.1209/epl/i1998-00281-7
+% * <https://doi.org/10.1209/epl/i1998-00281-7
 % N.V. Brilliantov and T. poschel.
 % Rolling friction of a viscous sphere on a hard plane, _Europhysics Letters_, 42(5):511-516, 1998>
 % (proposal).

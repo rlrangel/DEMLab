@@ -44,7 +44,7 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
         
         % Relative velocities
         vel_trl double = double.empty;   % relative translational velocity at contact point
-        vel_rot double = double.empty;   % relative rotational velocity at contact point
+        vel_rot double = double.empty;   % relative velocity due to rotation at contact point
         vel_ang double = double.empty;   % relative angular velocity
         
         % Normal overlap parameters
