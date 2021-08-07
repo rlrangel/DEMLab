@@ -70,17 +70,19 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             vc1 = p1.veloc_trl + w1(1:2);
             vc2 = p2.veloc_trl + w2(1:2);
             
-            % Relative velocity at contact point
-            vr = vc1 - vc2;
+            % Relative velocities
+            this.vel_trl = vc1 - vc2;
+            this.vel_rot = w1(1:2) + w2(1:2);
+            this.vel_ang = p1.veloc_rot - p2.veloc_rot;
             
             % Normal overlap rate of change
-            this.vel_n = dot(vr,this.dir_n);
+            this.vel_n = dot(this.vel_trl,this.dir_n);
             
             % Normal relative velocity
             vn = this.vel_n * this.dir_n;
             
             % Tangential relative velocity
-            vt = vr - vn;
+            vt = this.vel_trl - vn;
             
             % Tangential unit vector
             if (any(vt))
@@ -90,7 +92,7 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             end
             
             % Tangential overlap rate of change
-            this.vel_t = dot(vr,this.dir_t);
+            this.vel_t = dot(this.vel_trl,this.dir_t);
             
             % Tangential overlap
             this.ovlp_t = this.ovlp_t + this.vel_t * dt;

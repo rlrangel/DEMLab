@@ -44,6 +44,7 @@ classdef Driver_ThermoMechanical < Driver
             this.n_walls     = 0;
             this.n_interacts = 0;
             this.n_materials = 0;
+            this.auto_step   = false;
             this.search      = Search_SimpleLoop();
             this.scheme_trl  = Scheme_EulerForward();
             this.scheme_rot  = Scheme_EulerForward();
@@ -65,6 +66,26 @@ classdef Driver_ThermoMechanical < Driver
             if (~isempty(this.gravity))
                 p.setWeight(this.gravity);
             end
+        end
+        
+        %------------------------------------------------------------------
+        function dt = criticalTimeStep(p)
+            % Mechanical critical time step:
+            % Li et al. A comparison of discrete element simulations and experiments for sandpiles composed of spherical particles, 2005
+            dt_mech = pi * p.radius * sqrt(p.material.density / p.material.shear) / (0.8766 + 0.163 * p.material.poisson);
+            
+            % Apply reduction coefficient
+            dt_mech = dt_mech * 0.1;
+            
+            % Thermal critical time step:
+            % Rojek, Discrete element thermomechanical modelling of rock cutting with valuation of tool wear, 2014.
+            dt_therm = p.radius * p.material.density * p.material.hcapacity / p.material.conduct;
+            
+            % Apply reduction coefficient
+            dt_therm = dt_therm * 0.5;
+            
+            % Limit case
+            dt = min(dt_mech,dt_therm);
         end
         
         %------------------------------------------------------------------

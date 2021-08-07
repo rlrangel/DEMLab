@@ -58,11 +58,12 @@ classdef Driver < handle
         search Search = Search.empty;   % handle to object of Search class
         
         % Time advancing
-        time_step double  = double.empty;   % time step value
-        max_time  double  = double.empty;   % maximum simulation time
-        max_step  uint32  = uint32.empty;   % maximum step value allowed
-        time      double  = double.empty;   % current simulation time
-        step      uint32  = uint32.empty;   % current simulation step
+        auto_step logical = logical.empty;   % flag for computing time step automatically
+        time_step double  = double.empty;    % time step value
+        max_time  double  = double.empty;    % maximum simulation time
+        max_step  uint32  = uint32.empty;    % maximum step value allowed
+        time      double  = double.empty;    % current simulation time
+        step      uint32  = uint32.empty;    % current simulation step
         
         % Output generation
         result   Result  = Result.empty;    % handle to object of Result class
@@ -155,19 +156,37 @@ classdef Driver < handle
                 this.max_time = min(this.max_time,this.max_step*this.time_step);
             end
             
+            % Initialize critical time step
+            if (this.auto_step)
+                this.time_step = inf;
+            end
+            
             % Initialize result arrays
             this.result.initialize(this);
             
-            % Add initial values to result arrays
+            % Add initial global values to result arrays
             this.result.storeGlobalParams(this);
+            
             for i = 1:this.n_particles
                 p = this.particles(i);
+                
+                % Compute initial critical time step for current particle
+                if (this.auto_step)
+                    dt = this.criticalTimeStep(p);
+                    if (dt < this.time_step)
+                        this.time_step = dt;
+                    end
+                end
+                
+                % Add initial particle values to result arrays
                 this.result.storeParticleProp(p);
                 this.result.storeParticleMotion(p);
                 this.result.storeParticlePosition(p);
                 this.result.storeParticleForce(p);
                 this.result.storeParticleThermal(p);
             end
+            
+            % Add initial wall values to result arrays
             for i = 1:this.n_walls
                 w = this.walls(i);
                 this.result.storeWallPosition(w);

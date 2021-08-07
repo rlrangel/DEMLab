@@ -8,7 +8,9 @@
 % This super-class defines abstracts methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <rollresist_constanta.html RollResist_Constant> (default)
+% * <rollresist_constant.html RollResist_Constant> (default)
+%
+% * <rollresist_viscous.html RollResist_Viscous>
 %
 classdef RollResist < matlab.mixin.Heterogeneous
     %% Constant values

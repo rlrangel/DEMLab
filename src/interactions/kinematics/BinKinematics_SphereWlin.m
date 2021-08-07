@@ -94,7 +94,7 @@ classdef BinKinematics_SphereWlin < BinKinematics
             this.ovlp_n = -this.separ;
             this.dir_n  =  this.dir / this.dist;
             
-            % Position of contact point
+            % Positions of contact point
             cp = (p.radius - this.ovlp_n) * this.dir_n;
             cw = (p.coord+cp) - (w.coord_ini+w.coord_end)/2;
             
@@ -106,17 +106,19 @@ classdef BinKinematics_SphereWlin < BinKinematics
             ww  = cross([0;0;w.veloc_rot],[cw(1);cw(2);0]);
             vcw = w.veloc_trl + ww(1:2);
             
-            % Relative velocity at contact point
-            vr = vcp - vcw;
+            % Relative velocities
+            this.vel_trl = vcp - vcw;
+            this.vel_rot = wp(1:2);       % particle only
+            this.vel_ang = p.veloc_rot;   % particle only
             
             % Normal overlap rate of change
-            this.vel_n = dot(vr,this.dir_n);
+            this.vel_n = dot(this.vel_trl,this.dir_n);
             
             % Normal relative velocity
             vn = this.vel_n * this.dir_n;
             
             % Tangential relative velocity
-            vt = vr - vn;
+            vt = this.vel_trl - vn;
             
             % Tangential unit vector
             if (any(vt))
@@ -126,7 +128,7 @@ classdef BinKinematics_SphereWlin < BinKinematics
             end
             
             % Tangential overlap rate of change
-            this.vel_t = dot(vr,this.dir_t);
+            this.vel_t = dot(this.vel_trl,this.dir_t);
             
             % Tangential overlap
             this.ovlp_t = this.ovlp_t + this.vel_t * dt;

@@ -42,6 +42,7 @@ classdef Driver_Mechanical < Driver
             this.n_walls     = 0;
             this.n_interacts = 0;
             this.n_materials = 0;
+            this.auto_step   = false;
             this.search      = Search_SimpleLoop();
             this.scheme_trl  = Scheme_EulerForward();
             this.scheme_rot  = Scheme_EulerForward();
@@ -61,6 +62,15 @@ classdef Driver_Mechanical < Driver
             if (~isempty(this.gravity))
                 p.setWeight(this.gravity);
             end
+        end
+        
+        %------------------------------------------------------------------
+        function dt = criticalTimeStep(p)
+            % Li et al. A comparison of discrete element simulations and experiments for sandpiles composed of spherical particles, 2005
+            dt = pi * p.radius * sqrt(p.material.density / p.material.shear) / (0.8766 + 0.163 * p.material.poisson);
+            
+            % Apply reduction coefficient
+            dt = dt * 0.1;
         end
         
         %------------------------------------------------------------------

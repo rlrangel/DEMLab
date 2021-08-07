@@ -219,6 +219,16 @@ classdef Read < handle
                 status = 0; return;
             end
             
+             % Automatic time step
+            if (isfield(json.Solver,'auto_time_step'))
+                if (~this.isLogicalArray(json.Solver.auto_time_step,1))
+                    fprintf(2,'Invalid data in project parameters file: Solver.auto_time_step.\n');
+                    fprintf(2,'It must be a boolean: true or false.\n');
+                    status = 0; return;
+                end
+                drv.auto_step = true;
+            end
+            
             % Time step
             if (isfield(json.Solver,'time_step'))
                 if (~this.isDoubleArray(json.Solver.time_step,1) || json.Solver.time_step <= 0)
@@ -227,7 +237,12 @@ classdef Read < handle
                     status = 0; return;
                 end
                 drv.time_step = json.Solver.time_step;
-            else
+                if (drv.auto_step)
+                    this.warn('Automatic time step was selected, so the time step value will be ignored.');
+                end
+            elseif (~isfield(json.Solver,'auto_time_step'))
+                drv.auto_step = true;
+            elseif (~drv.auto_step)
                 fprintf(2,'Missing data in project parameters file: Solver.time_step.\n');
                 status = 0; return;
             end
@@ -4306,7 +4321,7 @@ classdef Read < handle
                 fprintf(2,'No integration scheme for temperature was provided.');
                 status = 0; return;
             end
-            if (isempty(drv.time_step))
+            if (isempty(drv.time_step) && ~drv.auto_step)
                 fprintf(2,'No time step was provided.');
                 status = 0; return;
             end

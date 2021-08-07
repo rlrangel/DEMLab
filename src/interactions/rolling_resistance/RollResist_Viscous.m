@@ -51,11 +51,11 @@ classdef RollResist_Viscous < RollResist
         %------------------------------------------------------------------
         function this = evalTorque(this,int)
             % Needed properties
+            dir = -int.kinemat.vel_ang;
             res = this.resist;
             r   = int.eff_radius;
             f   = norm(int.cforcen.total_force);
-            v   = 0;
-            dir = 1; % method in kinematics to compute wi - wj
+            v   = norm(int.kinemat.vel_rot);
             
             % Total torque  (against relative rotation)
             this.torque = dir * res * r * f * v;

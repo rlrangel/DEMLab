@@ -42,6 +42,11 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
         dist  double = double.empty;   % distance between centroids
         separ double = double.empty;   % separation between surfaces
         
+        % Relative velocities
+        vel_trl double = double.empty;   % relative translational velocity at contact point
+        vel_rot double = double.empty;   % relative rotational velocity at contact point
+        vel_ang double = double.empty;   % relative angular velocity
+        
         % Normal overlap parameters
         dir_n  double = double.empty;   % unit direction vector
         ovlp_n double = double.empty;   % overlap

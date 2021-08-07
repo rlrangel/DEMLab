@@ -36,6 +36,7 @@ classdef Driver_Thermal < Driver
             this.n_walls     = 0;
             this.n_interacts = 0;
             this.n_materials = 0;
+            this.auto_step   = false;
             this.search      = Search_SimpleLoop();
             this.scheme_temp = Scheme_EulerForward();
             this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
@@ -51,6 +52,15 @@ classdef Driver_Thermal < Driver
             p.setVolume();
             p.setMass();
             p.setTInertia();
+        end
+        
+        %------------------------------------------------------------------
+        function dt = criticalTimeStep(p)
+            % Rojek, Discrete element thermomechanical modelling of rock cutting with valuation of tool wear, 2014.
+            dt = p.radius * p.material.density * p.material.hcapacity / p.material.conduct;
+            
+            % Apply reduction coefficient
+            dt = dt * 0.5;
         end
         
         %------------------------------------------------------------------
