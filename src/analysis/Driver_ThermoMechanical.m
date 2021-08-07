@@ -78,7 +78,7 @@ classdef Driver_ThermoMechanical < Driver
             dt_mech = dt_mech * 0.1;
             
             % Thermal critical time step:
-            % Rojek, Discrete element thermomechanical modelling of rock cutting with valuation of tool wear, 2014.
+            % Rojek, Discrete element thermomechanical modelling of rock cutting with valuation of tool wear, 2014
             dt_therm = p.radius * p.material.density * p.material.hcapacity / p.material.conduct;
             
             % Apply reduction coefficient
