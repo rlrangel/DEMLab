@@ -18,7 +18,7 @@
 % * <binkinematics_cylinderwlin.html BinKinematics_CylinderWlin>
 % * <binkinematics_cylinderwcirc.html BinKinematics_CylinderWcirc>
 %
-classdef BinKinematics < matlab.mixin.Heterogeneous
+classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of binary kinematics between same particles
@@ -115,14 +115,14 @@ classdef BinKinematics < matlab.mixin.Heterogeneous
     %% Public methods
     methods
         %------------------------------------------------------------------
-        function this = setCollisionParams(this,time)
+        function this = setInitContactParams(this,time)
             this.is_contact    = true;
             this.contact_start = time;
             this.v0_n          = this.vel_n;
         end
         
         %------------------------------------------------------------------
-        function this = setEndParams(this)
+        function this = setEndContactParams(this)
             this.is_contact = false;
             this.ovlp_t     = 0;
         end

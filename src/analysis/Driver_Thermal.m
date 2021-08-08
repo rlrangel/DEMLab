@@ -55,12 +55,12 @@ classdef Driver_Thermal < Driver
         end
         
         %------------------------------------------------------------------
-        function dt = criticalTimeStep(p)
+        function dt = criticalTimeStep(~,p)
             % Rojek, Discrete element thermomechanical modelling of rock cutting with valuation of tool wear, 2014
             dt = p.radius * p.material.density * p.material.hcapacity / p.material.conduct;
             
             % Apply reduction coefficient
-            dt = dt * 0.5;
+            dt = dt * 0.1;
         end
         
         %------------------------------------------------------------------

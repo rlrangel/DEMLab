@@ -14,6 +14,17 @@
 % both elements.
 %
 classdef Search_SimpleLoop < Search
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Base objects for kinematics
+        kinpp_sph      BinKinematics = BinKinematics.empty;   % sphere particle and sphere particle
+        kinpw_sph_line BinKinematics = BinKinematics.empty;   % sphere particle and line wall
+        kinpw_sph_circ BinKinematics = BinKinematics.empty;   % sphere particle and circle wall
+        kinpp_cyl      BinKinematics = BinKinematics.empty;   % cylinder particle and sphere particle
+        kinpw_cyl_line BinKinematics = BinKinematics.empty;   % cylinder particle and line wall
+        kinpw_cyl_circ BinKinematics = BinKinematics.empty;   % cylinder particle and circle wall
+    end
+    
     %% Constructor method
     methods
         function this = Search_SimpleLoop()
@@ -26,9 +37,15 @@ classdef Search_SimpleLoop < Search
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
-            this.freq     = 1;
-            this.done     = false;
-            this.max_dist = 0;
+            this.freq           = 1;
+            this.done           = false;
+            this.max_dist       = 0;
+            this.kinpp_sph      = BinKinematics_SphereSphere();
+            this.kinpw_sph_line = BinKinematics_SphereWlin();
+            this.kinpw_sph_circ = BinKinematics_SphereWcirc();
+            this.kinpp_cyl      = BinKinematics_CylinderCylinder();
+            this.kinpw_cyl_line = BinKinematics_CylinderWlin();
+            this.kinpw_cyl_circ = BinKinematics_CylinderWcirc();
         end
         
         %------------------------------------------------------------------
@@ -39,7 +56,7 @@ classdef Search_SimpleLoop < Search
             
             % Set flags
             this.done = true;
-            removed   = false;
+            remove    = false;
             
             % Outer loop over reference particles
             for i = 1:drv.n_particles
@@ -53,22 +70,26 @@ classdef Search_SimpleLoop < Search
                     end
                     
                     % Check for existing interaction
-                    int = intersect(p1.interacts,p2.interacts);
-                    if (isempty(int))
-                        % Create new particle-particle interaction if needed
-                        this.createInteractPP(drv,p1,p2);
-                    else
+                    if (any(p1.neigh_p == p2.id))
+                        % Get interaction object
+                        int = findobj(p1.interacts,'elem2',p2);
+                        
                         % Compute and check separation between elements
                         int.kinemat = int.kinemat.setRelPos(p1,p2);
                         if (int.kinemat.separ >= this.max_dist)
-                            % Remove handles from interacting elements
+                            % Remove interaction references from elements
                             p1.interacts(p1.interacts==int) = [];
+                            p1.neigh_p(p1.neigh_p==p2.id)   = [];
                             p2.interacts(p2.interacts==int) = [];
+                            p2.neigh_p(p2.neigh_p==p1.id)   = [];
                             
                             % Delete interaction object
-                            removed = true;
+                            remove = true;
                             delete(int);
                         end
+                    else
+                        % Create new particle-particle interaction if needed
+                        this.createInteractPP(drv,p1,p2);
                     end
                 end
                 
@@ -77,28 +98,31 @@ classdef Search_SimpleLoop < Search
                     w = drv.walls(j);
                     
                     % Check for existing interaction
-                    int = intersect(p1.interacts,w.interacts);
-                    if (isempty(int))
-                        % Create new particle-wall interaction if needed
-                        this.createInteractPW(drv,p1,w);
-                    else
+                    if (any(p1.neigh_w == w.id))
+                        % Get interaction object
+                        int = findobj(p1.interacts,'elem2',w);
+                        
                         % Compute and check separation between elements
                         int.kinemat = int.kinemat.setRelPos(p1,w);
                         if (int.kinemat.separ >= this.max_dist)
-                            % Remove handles from interacting elements
+                            % Remove interaction references from elements
                             p1.interacts(p1.interacts==int) = [];
+                            p1.neigh_w(p1.neigh_w==w.id)    = [];
                             w.interacts(w.interacts==int)   = [];    
 
                             % Delete interaction object
-                            removed = true;
+                            remove = true;
                             delete(int);
                         end
+                    else
+                        % Create new particle-wall interaction if needed
+                        this.createInteractPW(drv,p1,w);
                     end
                 end
             end
             
             % Remove handle to deleted interactions from global list
-            if (removed)
+            if (remove)
                 drv.interacts(~isvalid(drv.interacts)) = [];
             end
             
@@ -111,45 +135,78 @@ classdef Search_SimpleLoop < Search
     methods
         %------------------------------------------------------------------
         function createInteractPP(this,drv,p1,p2)
-            % Create binary kinematic object
-            kin = this.createPPKinematic(p1,p2);
+            % Compute separation between particles surfaces
+            % PS: This is exclusive for round particles to avoid calling the
+            %     base kinematic object (a bit more slower).
+            %     For other shapes, the base kinematic object will be used.
+            dir   = p2.coord - p1.coord;
+            dist  = norm(dir);
+            separ = dist - p1.radius - p2.radius;
             
-            % Compute and check separation between elements
-            kin = kin.setRelPos(p1,p2);
-            if (kin.separ >= this.max_dist)
+            % Check if interaction exists
+            if (separ >= this.max_dist)
                 return;
             end
             
-            % Create new object by copying base object
+            % Create new interaction object by copying base object
             int = copy(this.b_interact);
             
-            % Set handles to interecting elements and kinematics model
-            int.elem1   = p1;
-            int.elem2   = p2;
+            % Set handles to interecting elements
+            int.elem1 = p1;
+            int.elem2 = p2;
+            
+            % Create binary kinematic object
+            kin = this.createPPKinematic(p1,dir,dist,separ);
+            
+            % Set kinematic-dependent parameters
+            kin = kin.setEndContactParams();
+            kin.setEffParams(int);
+            
+            % Set interaction handle to kinematics model
             int.kinemat = kin;
             
-            % Set kinematics parameters
-            int.kinemat.setEffParams(int);
-            int.kinemat = int.kinemat.setEndParams();
-            
-            % Add handle of new object to both elements and global list
+            % Add references of new object to both elements and global list
             p1.interacts(end+1)  = int;
+            p1.neigh_p(end+1)    = p2.id;
             p2.interacts(end+1)  = int;
+            p2.neigh_p(end+1)    = p1.id;
             drv.interacts(end+1) = int;
         end
         
         %------------------------------------------------------------------
         function createInteractPW(this,drv,p,w)
-            % Create binary kinematic object
-            kin = this.createPWKinematic(p,w);
-            
-            % Compute and check separation between elements
-            kin = kin.setRelPos(p,w);
-            if (kin.separ >= this.max_dist)
-                return;
+            % Check elements separation and copy kinematics object from base object
+            switch (this.pwInteractionType(p,w))
+                case 1
+                    this.kinpw_sph_line.setRelPos(p,w);
+                    if (this.kinpw_sph_line.separ >= this.max_dist)
+                        return;
+                    end
+                    kin = copy(this.kinpw_sph_line);
+                    
+                case 2
+                    this.kinpw_sph_circ.setRelPos(p,w);
+                    if (this.kinpw_sph_circ.separ >= this.max_dist)
+                        return;
+                    end
+                    kin = copy(this.kinpw_sph_circ);
+                    
+                case 3
+                    this.kinpw_cyl_line.setRelPos(p,w);
+                    if (this.kinpw_cyl_line.separ >= this.max_dist)
+                        return;
+                    end
+                    kin = copy(this.kinpw_cyl_line);
+                    
+                case 4
+                    this.kinpw_cyl_circ.setRelPos(p,w);
+                    if (this.kinpw_cyl_circ.separ >= this.max_dist)
+                        return;
+                    end
+                    kin = copy(this.kinpw_cyl_circ);
             end
             
-            % Create new object by copying base object
+            % Create new interaction object by copying base object
             int = copy(this.b_interact);
             
             % Set handles to interecting elements and kinematics model
@@ -159,46 +216,42 @@ classdef Search_SimpleLoop < Search
             
             % Set kinematics parameters
             int.kinemat.setEffParams(int);
-            int.kinemat = int.kinemat.setEndParams();
+            int.kinemat = int.kinemat.setEndContactParams();
             
-            % Add handle of new object to both elements and global list
+            % Add references of new object to both elements and global list
             p.interacts(end+1)   = int;
+            p.neigh_w(end+1)     = w.id;
             w.interacts(end+1)   = int;
             drv.interacts(end+1) = int;
         end
         
         %------------------------------------------------------------------
-        function kin = createPPKinematic(~,p1,p2)
+        function kin = createPPKinematic(~,p1,dir,dist,separ)
+            % Only sphere-sphere or cylinder-cylinder interactions
             switch p1.type
                 case p1.SPHERE
-                    switch p2.type
-                        case p2.SPHERE
-                            kin = BinKinematics_SphereSphere();
-                    end
+                    kin = BinKinematics_SphereSphere(dir,dist,separ);
                 case p1.CYLINDER
-                    switch p2.type
-                        case p2.CYLINDER
-                            kin = BinKinematics_CylinderCylinder();
-                    end
+                    kin = BinKinematics_CylinderCylinder(dir,dist,separ);
             end
         end
         
         %------------------------------------------------------------------
-        function kin = createPWKinematic(~,p,w)
+        function type = pwInteractionType(~,p,w)
             switch p.type
                 case p.SPHERE
                     switch w.type
                         case w.LINE
-                            kin = BinKinematics_SphereWlin();
+                            type = 1;
                         case w.CIRCLE
-                            kin = BinKinematics_SphereWcirc();
+                            type = 2;
                     end
                 case p.CYLINDER
                     switch w.type
                         case w.LINE
-                            kin = BinKinematics_CylinderWlin();
+                            type = 3;
                         case w.CIRCLE
-                            kin = BinKinematics_CylinderWcirc();
+                            type = 4;
                     end
             end
         end

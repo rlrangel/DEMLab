@@ -186,6 +186,11 @@ classdef Driver < handle
                 this.result.storeParticleThermal(p);
             end
             
+            % Limit auto time step
+            if (this.time_step > this.max_time/1000)
+                this.time_step = this.max_time/1000;
+            end
+                    
             % Add initial wall values to result arrays
             for i = 1:this.n_walls
                 w = this.walls(i);

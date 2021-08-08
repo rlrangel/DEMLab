@@ -12,8 +12,13 @@
 classdef BinKinematics_CylinderCylinder < BinKinematics
     %% Constructor method
     methods
-        function this = BinKinematics_CylinderCylinder()
+        function this = BinKinematics_CylinderCylinder(dir,dist,separ)
             this = this@BinKinematics(BinKinematics.CYLINDER_CYLINDER);
+            if (nargin == 3)
+                this.dir   = dir;
+                this.dist  = dist;
+                this.separ = separ;
+            end
         end
     end
     

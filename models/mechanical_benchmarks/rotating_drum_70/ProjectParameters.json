@@ -20,7 +20,7 @@
 	},
 	"FixedCondition": {
 		"velocity_rotation" : {
-			"type"        : "uniform",
+			"type"        : "constant",
 			"value"       : 1,
 			"model_parts" : ["WALLS"]
 		}

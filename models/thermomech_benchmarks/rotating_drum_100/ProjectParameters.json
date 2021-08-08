@@ -26,12 +26,12 @@
 	},
 	"FixedCondition": {
 		"velocity_rotation" : {
-			"type"        : "uniform",
+			"type"        : "constant",
 			"value"       : 1,
 			"model_parts" : ["WALLS"]
 		},
 		"temperature": {
-			"type"        : "uniform",
+			"type"        : "constant",
 			"model_parts" : ["WALLS"],
 			"value"       : 400
 		}

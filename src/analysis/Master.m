@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is the main class for running a simulation.
+% This is the main class for running a DEMLab simulation.
 %
 % The _execute_ method is responsible for managing the high-level tasks
 % and call the appropriate methods to perform each task, from the reading
@@ -62,6 +62,9 @@ classdef Master
                 return;
             end
             
+            % Start parallelization
+            this.startParallel(drv);
+            
             % Pre-process
             fprintf('\nPre-processing...\n');
             if (~drv.preProcess())
@@ -71,9 +74,6 @@ classdef Master
             
             % Print simulation information
             this.printSimulationInfo(drv);
-            
-            % Start parallelization
-            this.startParallel(drv);
             
             % Execute analysis
             fprintf('\nStarting analysis:\n');

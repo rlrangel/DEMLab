@@ -42,6 +42,8 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         
         % Neighbours Interactions
         interacts Interact = Interact.empty;   % handles to objects of Interact class
+        neigh_p   uint32   = uint32.empty;     % vector of neighbours particles IDs
+        neigh_w   uint32   = uint32.empty;     % vector of neighbours walls IDs
         
         % Prescribed conditions (handles to objects of Condition class)
         pc_force    Condition = Condition.empty;

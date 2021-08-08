@@ -69,7 +69,7 @@ classdef Driver_ThermoMechanical < Driver
         end
         
         %------------------------------------------------------------------
-        function dt = criticalTimeStep(p)
+        function dt = criticalTimeStep(~,p)
             % Mechanical critical time step:
             % Li et al. A comparison of discrete element simulations and experiments for sandpiles composed of spherical particles, 2005
             dt_mech = pi * p.radius * sqrt(p.material.density / p.material.shear) / (0.8766 + 0.163 * p.material.poisson);
@@ -82,7 +82,7 @@ classdef Driver_ThermoMechanical < Driver
             dt_therm = p.radius * p.material.density * p.material.hcapacity / p.material.conduct;
             
             % Apply reduction coefficient
-            dt_therm = dt_therm * 0.5;
+            dt_therm = dt_therm * 0.1;
             
             % Limit case
             dt = min(dt_mech,dt_therm);
@@ -145,7 +145,7 @@ classdef Driver_ThermoMechanical < Driver
                     % Set initial contact parameters
                     if (~int.kinemat.is_contact)
                         % Initialize contact
-                        int.kinemat = int.kinemat.setCollisionParams(this.time);
+                        int.kinemat = int.kinemat.setInitContactParams(this.time);
                         
                         % Initialize constant interaction parameters values
                         int.setParamsMech();
@@ -167,7 +167,7 @@ classdef Driver_ThermoMechanical < Driver
                 else
                     % Finalize contact
                     if (int.kinemat.is_contact)
-                        int.kinemat = int.kinemat.setEndParams();
+                        int.kinemat = int.kinemat.setEndContactParams();
                     end
                 end
             end

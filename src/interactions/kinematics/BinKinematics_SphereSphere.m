@@ -12,8 +12,13 @@
 classdef BinKinematics_SphereSphere < BinKinematics
     %% Constructor method
     methods
-        function this = BinKinematics_SphereSphere()
+        function this = BinKinematics_SphereSphere(dir,dist,separ)
             this = this@BinKinematics(BinKinematics.SPHERE_SPHERE);
+            if (nargin == 3)
+                this.dir   = dir;
+                this.dist  = dist;
+                this.separ = separ;
+            end
         end
     end
     

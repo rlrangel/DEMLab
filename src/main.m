@@ -21,7 +21,10 @@
 % This is the main script file of the DEMLab program.
 % To run a simulation, execute this script and select an appropriate input
 % parameters file.
-% 
+%
+% The input file is a _json_ file, which contains the model parameters and
+% the path to a _txt_ file with the model particles, walls and parts.
+%
 % There are two ways to select the input parameters file:
 %
 % * Provide its path thorugh the string variable _file_ in the end of this
@@ -42,7 +45,7 @@
 % * <wall.html Wall>
 % * <modelpart.html ModelPart>
 % * <material.html Material>
-% * <Condition.html Condition>
+% * <condition.html Condition>
 % * <bbox.html BBox>
 % * <sink.html Sink>
 % * <interact.html Interact>
@@ -87,5 +90,5 @@ addpath('algorithms',...
         'interactions/force',...
         'interactions/rolling_resistance',...
         'interactions/heat_transfer');
-file = '';
+file = 'C:\Users\rlr_5\gDrive\Work\Projects\DEMLab\DEMLab_git\models\test_time\ProjectParameters.json';
 Master().execute(file);
