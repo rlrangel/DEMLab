@@ -121,7 +121,8 @@ classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
             
             % Damping coefficient
             if (this.damp_formula == this.TTI)
-                this.damp = -2.2664 * log(e) * sqrt(m * this.stiff) / sqrt(10.1354 + (log(e))^2);
+                ln = log(e);
+                this.damp = -2.2664 * ln * sqrt(m * this.stiff) / sqrt(10.1354 + ln^2);
             end
         end
         

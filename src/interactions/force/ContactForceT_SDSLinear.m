@@ -106,8 +106,8 @@ classdef ContactForceT_SDSLinear < ContactForceT
                 if (this.restitution == 0)
                     this.damp = 2 * sqrt(2 * int.eff_mass * this.stiff / 7);
                 else
-                    lnrest = log(this.restitution);
-                    this.damp = -2 * lnrest * sqrt(2 * int.eff_mass * this.stiff / 7) / sqrt(lnrest^2 + pi^2);
+                    ln = log(this.restitution);
+                    this.damp = -2 * ln * sqrt(2 * int.eff_mass * this.stiff / 7) / sqrt(ln^2 + pi^2);
                 end
             end
         end
