@@ -33,9 +33,6 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         % Physical properties
         material Material = Material.empty;   % handle to object of Material class
         
-        % Neighbours Interactions
-        interacts Interact = Interact.empty;    % handles to objects of Interact class
-        
         % Fixed conditions (handles to objects of Condition class)
         fc_translation Condition = Condition.empty;
         fc_rotation    Condition = Condition.empty;

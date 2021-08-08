@@ -105,11 +105,10 @@ classdef Search_SimpleLoop < Search
                         % Compute and check separation between elements
                         int.kinemat = int.kinemat.setRelPos(p1,w);
                         if (int.kinemat.separ >= this.max_dist)
-                            % Remove interaction references from elements
+                            % Remove interaction references from particle
                             p1.interacts(p1.interacts==int) = [];
                             p1.neigh_w(p1.neigh_w==w.id)    = [];
-                            w.interacts(w.interacts==int)   = [];    
-
+                            
                             % Delete interaction object
                             remove = true;
                             delete(int);
@@ -218,10 +217,9 @@ classdef Search_SimpleLoop < Search
             int.kinemat.setEffParams(int);
             int.kinemat = int.kinemat.setEndContactParams();
             
-            % Add references of new object to both elements and global list
+            % Add references of new object to particle and global list
             p.interacts(end+1)   = int;
             p.neigh_w(end+1)     = w.id;
-            w.interacts(end+1)   = int;
             drv.interacts(end+1) = int;
         end
         
