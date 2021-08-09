@@ -88,7 +88,7 @@ classdef Driver_Mechanical < Driver
                 % Store current time and step to result arrays
                 if (this.storeResults())
                     this.store = true;
-                    this.result.storeGlobalParams(this);
+                    this.result.storeTime(this);
                 else
                     this.store = false;
                 end
@@ -137,7 +137,7 @@ classdef Driver_Mechanical < Driver
                         % Initialize contact
                         int.kinemat = int.kinemat.setInitContactParams(this.time);
                         
-                        % Initialize constant interaction parameters values
+                        % Initialize constant parameters values
                         int.setCteParamsMech();
                     end
                     

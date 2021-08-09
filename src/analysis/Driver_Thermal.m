@@ -81,7 +81,7 @@ classdef Driver_Thermal < Driver
                 % Store current time and step to result arrays
                 if (this.storeResults())
                     this.store = true;
-                    this.result.storeGlobalParams(this);
+                    this.result.storeTime(this);
                 else
                     this.store = false;
                 end

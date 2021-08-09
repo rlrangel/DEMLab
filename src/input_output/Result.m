@@ -234,7 +234,7 @@ classdef Result < handle
         end
         
         %------------------------------------------------------------------
-        function storeGlobalParams(this,drv)
+        function storeTime(this,drv)
             c = this.idx;
             if (this.has_time)
                 this.times(c) = drv.time;

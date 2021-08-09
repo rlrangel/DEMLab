@@ -5,10 +5,8 @@
 % This is a handle super-class for the definition of an analysis driver.
 %
 % An analysis driver is the core of the simulation, being responsible to
-% perform the time steps of particular types of analysis.
-%
-% It also does the pre and pos processing in public methods, since these
-% tasks are common to all types of analysis.
+% perform the time steps of the different types of analysis,
+% and also the pre and pos processing tasks.
 %
 % This super-class defines abstracts methods that must be implemented in
 % the derived *sub-classes*:
@@ -72,8 +70,8 @@ classdef Driver < handle
         
         % Output control
         nprog double  = double.empty;    % progress print frequency (% of total time)
-        nout  double  = double.empty;    % number of outputs
         tprog double  = double.empty;    % next time for printing progress
+        nout  double  = double.empty;    % number of outputs
         tout  double  = double.empty;    % next time for storing results
         store logical = logical.empty;   % flag for step to store results
     end
@@ -118,13 +116,14 @@ classdef Driver < handle
                     continue;
                 end
                 
-                % Set basic properties
+                % Set material and geometric properties
                 this.setParticleProps(p);
                 
                 % Initialize forcing terms
                 p.resetForcingTerms();
                 
-                % Set fixed temperature (fixed motion not set now)
+                % Set fixed temperature
+                % (fixed motion not set now, the initial positions are kept)
                 p.setFixedThermal(this.time);
                 p.setFCTemperature(this.time);
             end
@@ -154,8 +153,8 @@ classdef Driver < handle
             % Initialize result arrays
             this.result.initialize(this);
             
-            % Add initial global values to result arrays
-            this.result.storeGlobalParams(this);
+            % Add initial time and step values to result arrays
+            this.result.storeTime(this);
             
             for i = 1:this.n_particles
                 p = this.particles(i);
@@ -254,7 +253,7 @@ classdef Driver < handle
         function printProgress(this)
             if (this.time >= this.tprog)
                 fprintf('\n%.1f%%: time %.2f, step %d',100*this.tprog/this.max_time,this.time,this.step);
-                this.tprog = this.tprog + this.nprog;
+                this.tprog = this.tprog + this.nprog - 10e-15;
             end
         end
         
