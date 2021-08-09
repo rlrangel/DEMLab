@@ -27,7 +27,7 @@ classdef Driver_Thermal < Driver
         end
     end
     
-    %% Public methods
+    %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
@@ -61,10 +61,18 @@ classdef Driver_Thermal < Driver
             
             % Apply reduction coefficient
             dt = dt * 0.1;
+            
+            % Limit time step
+            if (dt > 0.01)
+                dt = 0.01;
+            end
         end
         
         %------------------------------------------------------------------
         function process(this)
+            % Interactions search (only once as particles do not move)
+            this.search.execute(this);
+            
             while (this.time < this.max_time)
                 % Update time and step
                 this.time = this.time + this.time_step;

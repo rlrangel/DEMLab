@@ -70,7 +70,12 @@ classdef Driver_Mechanical < Driver
             dt = pi * p.radius * sqrt(p.material.density / p.material.shear) / (0.8766 + 0.163 * p.material.poisson);
             
             % Apply reduction coefficient
-            dt = dt * 0.1;
+            dt = dt * 0.01;
+            
+            % Limit time step
+            if (dt > 0.001)
+                dt = 0.001;
+            end
         end
         
         %------------------------------------------------------------------
@@ -89,7 +94,7 @@ classdef Driver_Mechanical < Driver
                 end
                 
                 % Interactions search
-                if (this.step ~= 1)
+                if (mod(drv.step,this.freq) == 1)
                     this.search.execute(this);
                 end
                 
@@ -158,7 +163,7 @@ classdef Driver_Mechanical < Driver
         %------------------------------------------------------------------
         function particleLoop(this)
             % Initialize flags
-            removed = false;
+            rmv = false;
             
             % Loop over all particles
             for i = 1:this.n_particles
@@ -188,6 +193,12 @@ classdef Driver_Mechanical < Driver
                     p.setFCTranslation(this.time,this.time_step);
                 end
                 
+                % Remove particles not respecting bbox and sinks
+                if (this.removeParticle(p))
+                    rmv = true;
+                    continue;
+                end
+                
                 % Solve rotational motion
                 if (p.free_rot)
                     % Add global conditions
@@ -208,16 +219,10 @@ classdef Driver_Mechanical < Driver
                     p.setFCRotation(this.time,this.time_step);
                 end
                 
-                % Remove particles not respecting bbox and sinks
-                if (this.removeParticle(p))
-                    removed = true;
-                    continue;
-                end
-                
                 % Store results
                 if (this.store)
-                    this.result.storeParticleMotion(p);
                     this.result.storeParticlePosition(p);
+                    this.result.storeParticleMotion(p);
                     this.result.storeParticleForce(p);
                 end
                 
@@ -226,7 +231,7 @@ classdef Driver_Mechanical < Driver
             end
             
             % Erase handles to removed particles from global list and model parts
-            if (removed)
+            if (rmv)
                 this.eraseHandlesToRemovedParticle;
             end
         end

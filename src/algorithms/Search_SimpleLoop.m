@@ -53,13 +53,9 @@ classdef Search_SimpleLoop < Search
         
         %------------------------------------------------------------------
         function execute(this,drv)
-            if (mod(drv.step,this.freq) ~= 0)
-                return;
-            end
-            
             % Set flags
             this.done = true;
-            remove    = false;
+            rmv       = false;
             
             % Outer loop over reference particles
             for i = 1:drv.n_particles
@@ -87,7 +83,7 @@ classdef Search_SimpleLoop < Search
                             p2.neigh_p(p2.neigh_p==p1.id)   = [];
                             
                             % Delete interaction object
-                            remove = true;
+                            rmv = true;
                             delete(int);
                         end
                     else
@@ -113,7 +109,7 @@ classdef Search_SimpleLoop < Search
                             p1.neigh_w(p1.neigh_w==w.id)    = [];
                             
                             % Delete interaction object
-                            remove = true;
+                            rmv = true;
                             delete(int);
                         end
                     else
@@ -123,8 +119,8 @@ classdef Search_SimpleLoop < Search
                 end
             end
             
-            % Remove handle to deleted interactions from global list
-            if (remove)
+            % Erase handles to removed interactions from global list
+            if (rmv)
                 drv.interacts(~isvalid(drv.interacts)) = [];
             end
             
@@ -139,7 +135,7 @@ classdef Search_SimpleLoop < Search
         function createInteractPP(this,drv,p1,p2)
             % Compute separation between particles surfaces
             % PS: This is exclusive for round particles to avoid calling the
-            %     base kinematic object (a bit more slower).
+            %     base kinematic object (a bit slower).
             %     For other shapes, the base kinematic object will be used.
             dir   = p2.coord - p1.coord;
             dist  = norm(dir);
@@ -160,14 +156,14 @@ classdef Search_SimpleLoop < Search
             % Create binary kinematic object
             kin = this.createPPKinematic(p1,dir,dist,separ);
             
-            % Set kinematic-dependent parameters
+            % Set kinematic-related parameters
             kin = kin.setEndContactParams();
             kin.setEffParams(int);
             
-            % Set interaction handle to kinematics model
+            % Set handle to kinematics model
             int.kinemat = kin;
             
-            % Add references of new object to both elements and global list
+            % Add references of new interaction to both elements and global list
             p1.interacts(end+1)  = int;
             p1.neigh_p(end+1)    = p2.id;
             p2.interacts(end+1)  = int;
@@ -216,11 +212,11 @@ classdef Search_SimpleLoop < Search
             int.elem2   = w;
             int.kinemat = kin;
             
-            % Set kinematics parameters
-            int.kinemat.setEffParams(int);
+            % Set kinematic-related parameters
             int.kinemat = int.kinemat.setEndContactParams();
+            int.kinemat.setEffParams(int);
             
-            % Add references of new object to particle and global list
+            % Add references of new interaction to particle and global list
             p.interacts(end+1)   = int;
             p.neigh_w(end+1)     = w.id;
             drv.interacts(end+1) = int;

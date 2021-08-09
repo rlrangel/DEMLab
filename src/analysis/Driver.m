@@ -121,7 +121,7 @@ classdef Driver < handle
                 % Set basic properties
                 this.setParticleProps(p);
                 
-                % Reset forcing terms for next step
+                % Initialize forcing terms
                 p.resetForcingTerms();
                 
                 % Set fixed temperature (fixed motion not set now)
@@ -141,19 +141,9 @@ classdef Driver < handle
             % Erase handles to removed particles from global list and model parts
             this.eraseHandlesToRemovedParticle();
             if (this.n_particles == 0)
-                fprintf(2,'The model has no particle.\n');
+                fprintf(2,'The model has no particle inside the domain.\n');
                 status = 0;
                 return;
-            end
-            
-            % Interactions search
-            this.search.execute(this);
-            
-            % Compute ending time
-            if (isempty(this.max_time))
-                this.max_time = this.max_step * this.time_step;
-            elseif (~isempty(this.max_step))
-                this.max_time = min(this.max_time,this.max_step*this.time_step);
             end
             
             % Initialize critical time step
@@ -170,7 +160,7 @@ classdef Driver < handle
             for i = 1:this.n_particles
                 p = this.particles(i);
                 
-                % Compute initial critical time step for current particle
+                % Compute critical time step for current particle
                 if (this.auto_step)
                     dt = this.criticalTimeStep(p);
                     if (dt < this.time_step)
@@ -186,9 +176,11 @@ classdef Driver < handle
                 this.result.storeParticleThermal(p);
             end
             
-            % Limit auto time step
-            if (this.time_step > this.max_time/1000)
-                this.time_step = this.max_time/1000;
+            % Compute ending time
+            if (isempty(this.max_time))
+                this.max_time = this.max_step * this.time_step;
+            elseif (~isempty(this.max_step))
+                this.max_time = min(this.max_time,this.max_step*this.time_step);
             end
                     
             % Add initial wall values to result arrays

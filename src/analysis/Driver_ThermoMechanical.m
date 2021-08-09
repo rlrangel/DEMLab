@@ -75,7 +75,7 @@ classdef Driver_ThermoMechanical < Driver
             dt_mech = pi * p.radius * sqrt(p.material.density / p.material.shear) / (0.8766 + 0.163 * p.material.poisson);
             
             % Apply reduction coefficient
-            dt_mech = dt_mech * 0.1;
+            dt_mech = dt_mech * 0.01;
             
             % Thermal critical time step:
             % Rojek, Discrete element thermomechanical modelling of rock cutting with valuation of tool wear, 2014
@@ -84,8 +84,13 @@ classdef Driver_ThermoMechanical < Driver
             % Apply reduction coefficient
             dt_therm = dt_therm * 0.1;
             
-            % Limit case
+            % Critical case
             dt = min(dt_mech,dt_therm);
+            
+            % Limit time step
+            if (dt > 0.001)
+                dt = 0.001;
+            end
         end
         
         %------------------------------------------------------------------
@@ -104,7 +109,7 @@ classdef Driver_ThermoMechanical < Driver
                 end
             
                 % Interactions search
-                if (this.step ~= 1)
+                if (mod(drv.step,this.freq) == 1)
                     this.search.execute(this);
                 end
                 
@@ -176,7 +181,7 @@ classdef Driver_ThermoMechanical < Driver
         %------------------------------------------------------------------
         function particleLoop(this)
             % Initialize flags
-            removed = false;
+            rmv = false;
             
             % Loop over all particles
             for i = 1:this.n_particles
@@ -205,6 +210,12 @@ classdef Driver_ThermoMechanical < Driver
                 else
                     % Set fixed translation
                     p.setFCTranslation(this.time,this.time_step);
+                end
+                
+                % Remove particles not respecting bbox and sinks
+                if (this.removeParticle(p))
+                    rmv = true;
+                    continue;
                 end
                 
                 % Solve rotational motion
@@ -243,16 +254,10 @@ classdef Driver_ThermoMechanical < Driver
                     p.setFCTemperature(this.time);
                 end
                 
-                % Remove particles not respecting bbox and sinks
-                if (this.removeParticle(p))
-                    removed = true;
-                    continue;
-                end
-                
                 % Store results
                 if (this.store)
-                    this.result.storeParticleMotion(p);
                     this.result.storeParticlePosition(p);
+                    this.result.storeParticleMotion(p);
                     this.result.storeParticleForce(p);
                     this.result.storeParticleThermal(p);
                 end
@@ -262,7 +267,7 @@ classdef Driver_ThermoMechanical < Driver
             end
             
             % Erase handles to removed particles from global list and model parts
-            if (removed)
+            if (rmv)
                 this.eraseHandlesToRemovedParticle;
             end
         end
