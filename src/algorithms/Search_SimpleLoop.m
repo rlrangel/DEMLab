@@ -9,6 +9,9 @@
 % interacting particles and walls through inner loops over all particles
 % with a higher ID number and all walls.
 %
+% The reference element of each interaction (element 1) is the particle
+% with smaller ID number.
+%
 % For each interaction found, a binary <interact.html Interaction> object
 % is created to manage the mechanical and / or thermal interaction between
 % both elements.

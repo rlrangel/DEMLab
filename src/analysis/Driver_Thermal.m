@@ -142,8 +142,10 @@ classdef Driver_Thermal < Driver
                 
                 % Store results
                 if (this.store)
-                    this.result.storeParticlePosition(p);
                     this.result.storeParticleThermal(p);
+                end
+                if (this.step == 1)
+                    this.result.storeParticlePositionAll(p);
                 end
                 
                 % Reset forcing terms for next step
@@ -162,8 +164,10 @@ classdef Driver_Thermal < Driver
                 
                 % Store results
                 if (this.store)
-                    this.result.storeWallPosition(w);
                     this.result.storeWallThermal(w);
+                end
+                if (this.step == 1)
+                    this.result.storeWallPositionAll(w);
                 end
             end
         end

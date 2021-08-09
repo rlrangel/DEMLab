@@ -267,6 +267,20 @@ classdef Result < handle
         end
         
         %------------------------------------------------------------------
+        function storeParticlePositionAll(this,p)
+            r = p.id;
+            if (this.has_coord_x)
+                this.coord_x(r,:) = p.coord(1);
+            end
+            if (this.has_coord_y)
+                this.coord_y(r,:) = p.coord(2);
+            end
+            if (this.has_orientation)
+                this.orientation(r,:) = p.orient;
+            end
+        end
+        
+        %------------------------------------------------------------------
         function storeParticleForce(this,p)
             r = p.id;
             c = this.idx;
@@ -331,6 +345,23 @@ classdef Result < handle
                     this.wall_position(r+0,c) = w.center(1);
                     this.wall_position(r+1,c) = w.center(2);
                     this.wall_position(r+2,c) = w.radius;
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function storeWallPositionAll(this,w)
+            r = 4 * (w.id-1) + 1;
+            if (this.has_wall_position)
+                if (w.type == w.LINE)
+                    this.wall_position(r+0,:) = w.coord_ini(1);
+                    this.wall_position(r+1,:) = w.coord_ini(2);
+                    this.wall_position(r+2,:) = w.coord_end(1);
+                    this.wall_position(r+3,:) = w.coord_end(2);
+                elseif (w.type == w.CIRCLE)
+                    this.wall_position(r+0,:) = w.center(1);
+                    this.wall_position(r+1,:) = w.center(2);
+                    this.wall_position(r+2,:) = w.radius;
                 end
             end
         end
