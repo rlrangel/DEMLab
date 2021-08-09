@@ -3863,10 +3863,11 @@ classdef Read < handle
             end
             
             % Check which stiffness options were provided
-            if (~isempty(drv.search.b_interact.cforcen.stiff_coeff) &&...
-                ~isempty(drv.search.b_interact.cforcen.stiff_formula))
+            if (isfield(CFN,'stiff_coeff') &&...
+                isfield(CFN,'stiff_formula'))
                 this.warn('The value of InteractionModel.contact_force_normal.stiff_coeff was provided, so InteractionModel.contact_force_normal.stiff_formula will be ignored.');
-            else
+            elseif (~isfield(CFN,'stiff_coeff') &&...
+                    ~isfield(CFN,'stiff_formula'))
                 this.warn('Nor InteractionModel.contact_force_normal.stiff_coeff neither InteractionModel.contact_force_normal.stiff_formula was provided, so energy formulation will be assumed.');
             end
             
@@ -3979,10 +3980,11 @@ classdef Read < handle
             end
             
             % Check which damping options were provided
-            if (~isempty(drv.search.b_interact.cforcen.damping_coeff) &&...
-                ~isempty(drv.search.b_interact.cforcen.damping_formula))
+            if (isfield(CFN,'damping_coeff') &&...
+                isfield(CFN,'damping_formula'))
                 this.warn('The value of InteractionModel.contact_force_normal.damping_coeff was provided, so InteractionModel.contact_force_normal.damping_formula will be ignored and a linear viscous damping will be assumed.');
-            else
+            elseif (~isfield(CFN,'damping_coeff') &&...
+                    ~isfield(CFN,'damping_formula'))
                 this.warn('Nor InteractionModel.contact_force_normal.damping_coeff neither InteractionModel.contact_force_normal.damping_formula was provided, so TTI formulation will be assumed.');
             end
             
@@ -4037,10 +4039,11 @@ classdef Read < handle
             end
             
             % Check which loading stiffness options were provided
-            if (~isempty(drv.search.b_interact.cforcen.stiff_coeff) &&...
-                ~isempty(drv.search.b_interact.cforcen.load_stiff_formula))
+            if (isfield(CFN,'stiff_coeff') &&...
+                isfield(CFN,'load_stiff_formula'))
                 this.warn('The value of InteractionModel.contact_force_normal.stiff_coeff was provided, so InteractionModel.contact_force_normal.load_stiff_formula will be ignored.');
-            else
+            elseif (~isfield(CFN,'stiff_coeff') &&...
+                    ~isfield(CFN,'load_stiff_formula'))
                 this.warn('Nor InteractionModel.contact_force_normal.stiff_coeff neither InteractionModel.contact_force_normal.load_stiff_formula was provided, so energy formulation will be assumed.');
             end
             
@@ -4297,6 +4300,7 @@ classdef Read < handle
                 end
                 if (strcmp(CFT.formula,'DD'))
                     drv.search.b_interact.cforcet.formula = drv.search.b_interact.cforcet.DD;
+                    
                 elseif (strcmp(CFT.formula,'LTH'))
                     drv.search.b_interact.cforcet.formula = drv.search.b_interact.cforcet.LTH;
                     
@@ -4345,6 +4349,7 @@ classdef Read < handle
                             this.warn('Unphysical property value was found for InteractionModel.contact_force_tangent.damping_coeff');
                         end
                         drv.search.b_interact.cforcet.damp = CFT.damping_coeff;
+                        
                     elseif (drv.search.b_interact.cforcen.type ~= drv.search.b_interact.cforcen.VISCOELASTIC_NONLINEAR)
                         fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_tangent.damping_coeff.\n');
                         status = 0; return;

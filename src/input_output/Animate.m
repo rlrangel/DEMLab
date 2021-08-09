@@ -10,7 +10,7 @@
 % * *Motion*: Shows only the motion of particles and walls.
 %
 % * *Scalar*: Shows the motion of the elements and fills the particles with
-% colors to represent a scalar result.
+% a color scale to represent a scalar result.
 %
 % * *Vector*: Shows the motion of the elements and uses arrows to indicate
 % the direction and intensity of a vector result.
@@ -18,8 +18,8 @@
 classdef Animate < handle
     %% Constant values: animation types
     properties (Constant = true, Access = public)
-        MOTION = uint8(2);   % Particles motion with no result indication
-        SCALAR = uint8(1);   % Particles with color to indicate scalar result
+        MOTION = uint8(1);   % Particles motion with no result indication
+        SCALAR = uint8(2);   % Particles with color to indicate scalar result
         VECTOR = uint8(3);   % Particles with arrow to indicate vector result
     end
     
@@ -27,9 +27,9 @@ classdef Animate < handle
     properties (Constant = true, Access = public)
         % Colors
         col_pedge = char('k');   % color of particle edge
-        col_wall  = char('k');   % color of wall
-        col_bbox  = char('b');   % color of bounding box
-        col_sink  = char('r');   % color of sink
+        col_wall  = char('k');   % color of wall (when not showing scalar result)
+        col_bbox  = char('b');   % color of bounding box limit
+        col_sink  = char('r');   % color of sink limit
         
         % Line widths
         wid_pedge = double(0.1);   % width of particle edge
@@ -59,7 +59,7 @@ classdef Animate < handle
         np       uint32 = uint32.empty;   % total number of particles
         nf       uint32 = uint32.empty;   % total number of frames
         
-        % Results: common to all
+        % Results: motion (common to all animation types)
         times    double = double.empty;   % array of simulation times of each step
         coord_x  double = double.empty;   % array of particles x coordinates
         coord_y  double = double.empty;   % array of particles y coordinates
@@ -74,7 +74,7 @@ classdef Animate < handle
         % Results: vector
         res_vecx  double = double.empty;   % array of x vector result to be exhibited
         res_vecy  double = double.empty;   % array of y vector result to be exhibited
-        arrow_fct double = double.empty;   % multiplicator factor to define vetor arrow size
+        arrow_fct double = double.empty;   % Multiplication factor to define vetor arrow size
         
         % Options
         play logical = logical.empty;   % flag for playing animation in Matlab after creation
@@ -120,7 +120,7 @@ classdef Animate < handle
                 ylim(this.bbox(3:4))
             end
             
-            % Set common results (always needed to show model animation)
+            % Set motion results (always needed to show model animation)
             this.times    = drv.result.times;
             this.coord_x  = drv.result.coord_x;
             this.coord_y  = drv.result.coord_y;
@@ -145,125 +145,164 @@ classdef Animate < handle
             switch this.res_type
                 % Motion
                 case drv.result.MOTION
-                    this.res_part = drv.result.orientation;
                     this.type = this.MOTION;
+                    this.res_part = drv.result.orientation;
                 
                 % Scalar
                 case drv.result.RADIUS
+                    this.type = this.SCALAR;
                     this.res_part = drv.result.radius;
-                    this.type = this.SCALAR;
+                    
                 case drv.result.COORDINATE_X
+                    this.type = this.SCALAR;
                     this.res_part = drv.result.coord_x;
-                    this.type = this.SCALAR;
+                    
                 case drv.result.COORDINATE_Y
+                    this.type = this.SCALAR;
                     this.res_part = drv.result.coord_y;
-                    this.type = this.SCALAR;
+                    
                 case drv.result.ORIENTATION
-                    this.res_part = drv.result.orientation;
                     this.type = this.SCALAR;
+                    this.res_part = drv.result.orientation;
+                    
                 case drv.result.FORCE_MOD
+                    this.type = this.SCALAR;
                     x = drv.result.force_x;
                     y = drv.result.force_y;
-                    this.res_part = vecnorm([x;y]);
-                    this.type = this.SCALAR;
+                    this.res_part = sqrt(x.^2+y.^2);
+                    
                 case drv.result.FORCE_X
+                    this.type = this.SCALAR;
                     this.res_part = drv.result.force_x;
-                    this.type = this.SCALAR;
+                    
                 case drv.result.FORCE_Y
+                    this.type = this.SCALAR;
                     this.res_part = drv.result.force_y;
-                    this.type = this.SCALAR;
+                    
                 case drv.result.TORQUE
-                    this.res_part = drv.result.torque;
                     this.type = this.SCALAR;
+                    this.res_part = drv.result.torque;
+                    
                 case drv.result.VELOCITY_MOD
+                    this.type = this.SCALAR;
                     x = drv.result.velocity_x;
                     y = drv.result.velocity_y;
-                    this.res_part = vecnorm([x;y]);
-                    this.type = this.SCALAR;
+                    this.res_part = sqrt(x.^2+y.^2);
+                    
                 case drv.result.VELOCITY_X
+                    this.type = this.SCALAR;
                     this.res_part = drv.result.velocity_x;
-                    this.type = this.SCALAR;
+                    
                 case drv.result.VELOCITY_Y
+                    this.type = this.SCALAR;
                     this.res_part = drv.result.velocity_y;
-                    this.type = this.SCALAR;
+                    
                 case drv.result.VELOCITY_ROT
-                    this.res_part = drv.result.velocity_rot;
                     this.type = this.SCALAR;
+                    this.res_part = drv.result.velocity_rot;
+                    
                 case drv.result.ACCELERATION_MOD
+                    this.type = this.SCALAR;
                     x = drv.result.acceleration_x;
                     y = drv.result.acceleration_Y;
-                    this.res_part = vecnorm([x;y]);
-                    this.type = this.SCALAR;
+                    this.res_part = sqrt(x.^2+y.^2);
+                    
                 case drv.result.ACCELERATION_X
+                    this.type = this.SCALAR;
                     this.res_part = drv.result.acceleration_x;
-                    this.type = this.SCALAR;
+                    
                 case drv.result.ACCELERATION_Y
+                    this.type = this.SCALAR;
                     this.res_part = drv.result.acceleration_y;
-                    this.type = this.SCALAR;
+                    
                 case drv.result.ACCELERATION_ROT
-                    this.res_part = drv.result.acceleration_rot;
                     this.type = this.SCALAR;
+                    this.res_part = drv.result.acceleration_rot;
+                    
                 case drv.result.TEMPERATURE
+                    this.type = this.SCALAR;
                     this.res_part = drv.result.temperature;
                     this.res_wall = drv.result.wall_temperature;
-                    this.type = this.SCALAR;
+                    
                 case drv.result.HEAT_RATE
-                    this.res_part = drv.result.heat_rate;
                     this.type = this.SCALAR;
+                    this.res_part = drv.result.heat_rate;
+                    
                     
                 % Vector
                 case drv.result.FORCE_VEC
+                    this.type = this.VECTOR;
                     this.res_vecx = drv.result.force_x;
                     this.res_vecy = drv.result.force_y;
-                    this.type = this.VECTOR;
+                    
                 case drv.result.VELOCITY_VEC
+                    this.type = this.VECTOR;
                     this.res_vecx = drv.result.velocity_x;
                     this.res_vecy = drv.result.velocity_y;
-                    this.type = this.VECTOR;
+                    
                 case drv.result.ACCELERATION_VEC
+                    this.type = this.VECTOR;
                     this.res_vecx = drv.result.acceleration_x;
                     this.res_vecy = drv.result.acceleration_y;
-                    this.type = this.VECTOR;
             end
+        end
+        
+        %------------------------------------------------------------------
+        function [min_val,max_val] = scalarValueLimits(this)
+            if (~isempty(this.res_part))
+                min_val_p = min(this.res_part(:));
+                max_val_p = max(this.res_part(:));
+            else
+                min_val_p =  inf;
+                max_val_p = -inf;
+            end
+            if (~isempty(this.res_wall))
+                min_val_w = min(this.res_wall(:));
+                max_val_w = max(this.res_wall(:));
+            else
+                min_val_w =  inf;
+                max_val_w = -inf;
+            end
+            min_val = min([min_val_p,min_val_w]);
+            max_val = max([max_val_p,max_val_w]);
+            if (min_val == max_val)
+                min_val = min_val - 1;
+                max_val = max_val + 1;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function setArrowSize(this)
+            % Maximum vector norm value
+            x = this.res_vecx;
+            y = this.res_vecy;
+            max_vec = max(sqrt(x.^2+y.^2));
+            
+            % Figure size
+            limitx = xlim;
+            limity = ylim;
+            dx = limitx(2)-limitx(1);
+            dy = limity(2)-limity(1);
+            d  = sqrt(dx^2+dy^2);
+            
+            % Multiplication factor
+            this.arrow_fct = 0.1 * d/max_vec;
         end
         
         %------------------------------------------------------------------
         function createAnimation(this,drv)
             if (this.type == this.SCALAR)
-                % Get result range
-                min_val_p = min(this.res_part(:));
-                max_val_p = max(this.res_part(:));
-                min_val_w = min(this.res_wall(:));
-                max_val_w = max(this.res_wall(:));
-                min_val = min([min_val_p,min_val_w]);
-                max_val = max([max_val_p,max_val_w]);
-                if (min_val == max_val)
-                    min_val = min_val - 1;
-                    max_val = max_val + 1;
-                end
+                % Compute result range
+                [min_val,max_val] = this.scalarValueLimits();
                 this.res_range = linspace(min_val,max_val,256);
                 
                 % Set colormap
                 colormap jet;
                 caxis([min_val,max_val]);
                 colorbar;
-            
-            % Arrow size for vector results
+                
             elseif (this.type == this.VECTOR)
-                % Maximum vector norm value
-                x = this.res_vecx;
-                y = this.res_vecy;
-                max_vec = max(sqrt(x.^2+y.^2));
-                
-                % Figure size
-                limitx = xlim;
-                limity = ylim;
-                dx = limitx(2)-limitx(1);
-                dy = limity(2)-limity(1);
-                d  = sqrt(dx^2+dy^2);
-                
-                % Multiplicator factor
-                this.arrow_fct = 0.1 * d/max_vec;
+                this.setArrowSize();
             end
             
             % Number of particles and frames
