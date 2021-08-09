@@ -94,7 +94,7 @@ classdef Driver_Mechanical < Driver
                 end
                 
                 % Interactions search
-                if (mod(drv.step,this.freq) == 1)
+                if (mod(this.step,this.search.freq) == 1)
                     this.search.execute(this);
                 end
                 
