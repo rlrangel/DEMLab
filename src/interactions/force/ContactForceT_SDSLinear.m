@@ -94,7 +94,7 @@ classdef ContactForceT_SDSLinear < ContactForceT
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,int)
+        function this = setCteParams(this,int)
             if (this.auto_stiff)
                 if (~isempty(int.cforcen))
                     this.stiff = (1-int.eff_poisson)/(1-int.eff_poisson/2) * int.cforcen.stiff;

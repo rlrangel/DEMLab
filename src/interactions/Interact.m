@@ -44,22 +44,22 @@ classdef Interact < handle & matlab.mixin.Copyable
     %% Public methods
     methods
         %------------------------------------------------------------------
-        function setParamsMech(this)
+        function setCteParamsMech(this)
             if (~isempty(this.cforcen))
-                this.cforcen = this.cforcen.setParameters(this);
+                this.cforcen = this.cforcen.setCteParams(this);
             end
             if (~isempty(this.cforcet))
-                this.cforcet = this.cforcet.setParameters(this);
+                this.cforcet = this.cforcet.setCteParams(this);
             end
             if (~isempty(this.rollres))
-                this.rollres = this.rollres.setParameters(this);
+                this.rollres = this.rollres.setCteParams(this);
             end
         end
         
         %------------------------------------------------------------------
-        function setParamsTherm(this)
+        function setCteParamsTherm(this)
             if (~isempty(this.cconduc))
-                this.cconduc = this.cconduc.setParameters(this);
+                this.cconduc = this.cconduc.setCteParams(this);
             end
         end
         

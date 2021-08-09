@@ -100,7 +100,7 @@ classdef ContactForceN_ElastoPlasticLinear < ContactForceN
         unload_stiff_formula uint8 = uint8.empty;   % flag for type of unloading stiffness formulation
         
         % Contact parameters
-        unload_stiff double = double.empty;   % unloading spring stiffness coefficient
+        unload_stiff double = double.empty;   % unloading stiffness coefficient
         unload_param double = double.empty;   % variable unload stiffness coefficient parameter
         residue      double = double.empty;   % residual overlap
     end
@@ -122,7 +122,7 @@ classdef ContactForceN_ElastoPlasticLinear < ContactForceN
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,int)
+        function this = setCteParams(this,int)
             % Needed properties
             r    = int.eff_radius;
             m    = int.eff_mass;
@@ -133,7 +133,7 @@ classdef ContactForceN_ElastoPlasticLinear < ContactForceN
             S    = this.unload_param;
             beta = pi/log(e);
             
-            % Loading spring stiffness coefficient
+            % Loading stiffness coefficient
             switch this.load_stiff_formula
                 case this.ENERGY
                     this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5);
@@ -143,7 +143,7 @@ classdef ContactForceN_ElastoPlasticLinear < ContactForceN
                     this.stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+1/beta^2);
             end
             
-            % Unloading spring stiffness coefficient
+            % Unloading stiffness coefficient
             switch this.unload_stiff_formula
                 case this.CONSTANT
                     this.unload_stiff = this.stiff / e2;

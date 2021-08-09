@@ -51,7 +51,7 @@ classdef RollResist < matlab.mixin.Heterogeneous
         this = setDefaultProps(this);
         
         %------------------------------------------------------------------
-        this = setParameters(this,interact);
+        this = setCteParams(this,interact);
         
         %------------------------------------------------------------------
         this = evalTorque(this,interact);

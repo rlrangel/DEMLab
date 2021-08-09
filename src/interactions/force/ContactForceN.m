@@ -21,15 +21,16 @@ classdef ContactForceN < matlab.mixin.Heterogeneous
         ELASTOPLASTIC_LINEAR   = uint8(3);
         
         % Types of linear stiffness formulation
-        NONE    = uint8(1);
-        TIME    = uint8(2);
-        OVERLAP = uint8(3);
-        ENERGY  = uint8(4);
+        NONE_STIFF = uint8(0);
+        ENERGY     = uint8(1);
+        OVERLAP    = uint8(2);
+        TIME       = uint8(3);
         
         % Types of nonlinear damping formulation
-        TTI = uint8(1);
-        KK  = uint8(2);
-        LH  = uint8(3);
+        NONE_DAMP = uint8(0);
+        TTI       = uint8(1);
+        KK        = uint8(2);
+        LH        = uint8(3);
         
         % Types of elastoplastic unloading stiffness formulation
         CONSTANT = uint8(1);
@@ -43,7 +44,7 @@ classdef ContactForceN < matlab.mixin.Heterogeneous
         
         % Contact parameters
         restitution double = double.empty;   % normal coefficient of restitution
-        stiff       double = double.empty;   % spring stiffness coefficient
+        stiff       double = double.empty;   % stiffness coefficient
         damp        double = double.empty;   % damping coefficient
         
         % Force results
@@ -72,7 +73,7 @@ classdef ContactForceN < matlab.mixin.Heterogeneous
         this = setDefaultProps(this);
         
         %------------------------------------------------------------------
-        this = setParameters(this,interact);
+        this = setCteParams(this,interact);
         
         %------------------------------------------------------------------
         this = evalForce(this,interact);

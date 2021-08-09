@@ -43,7 +43,7 @@ classdef ContactForceT_Dashpot < ContactForceT
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,~)
+        function this = setCteParams(this,~)
             
         end
         

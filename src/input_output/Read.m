@@ -2599,7 +2599,7 @@ classdef Read < handle
                     fprintf(2,'Properties must be numerical values.\n');
                     status = 0; return;
                 elseif(msg > 0)
-                    this.warn('Unphysical value was found for material property.');
+                    this.warn('Unphysical value found for material property.');
                 end
                 
                 % Apply material to selected elements
@@ -3674,7 +3674,7 @@ classdef Read < handle
                 fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.restitution_coeff.\n');
                 fprintf(2,'It must be a numeric value.\n');
             elseif (rest < 0 || rest > 1)
-                this.warn('Unphysical value was found for InteractionModel.contact_force_normal.restitution_coeff.');
+                this.warn('Unphysical value found for InteractionModel.contact_force_normal.restitution_coeff.');
             end
             drv.search.b_interact.cforcen.restitution = rest;
         end
@@ -3753,7 +3753,7 @@ classdef Read < handle
                     fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_tangent.restitution_coeff.\n');
                     fprintf(2,'It must be a numeric value.\n');
                 elseif (rest < 0 || rest > 1)
-                    this.warn('Unphysical value was found for InteractionModel.contact_force_tangent.restitution_coeff.');
+                    this.warn('Unphysical value found for InteractionModel.contact_force_tangent.restitution_coeff.');
                 end
                 drv.search.b_interact.cforcet.restitution = rest;
             end
@@ -3830,23 +3830,57 @@ classdef Read < handle
             % Create object
             drv.search.b_interact.cforcen = ContactForceN_ViscoElasticLinear();
             
+            % Stiffness coefficient value
+            if (isfield(CFN,'stiff_coeff'))
+                val = CFN.stiff_coeff;
+                if (~this.isDoubleArray(val,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.stiff_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (val <= 0)
+                    this.warn('Unphysical value found for InteractionModel.contact_force_normal.stiff_coeff.');
+                end
+                drv.search.b_interact.cforcen.stiff = val;
+                drv.search.b_interact.cforcen.stiff_formula = drv.search.b_interact.cforcen.NONE_STIFF;
+            
             % Stiffness formulation
-            if (isfield(CFN,'stiff_coeff_formula'))
-                if (~this.isStringArray(CFN.stiff_coeff_formula,1) ||...
-                   (~strcmp(CFN.stiff_coeff_formula,'time')        &&...
-                    ~strcmp(CFN.stiff_coeff_formula,'overlap')     &&...
-                    ~strcmp(CFN.stiff_coeff_formula,'energy')))
-                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.stiff_coeff_formula.\n');
-                    fprintf(2,'Available options: time, overlap, energy.\n');
+            elseif (isfield(CFN,'stiff_formula'))
+                if (~this.isStringArray(CFN.stiff_formula,1) ||...
+                   (~strcmp(CFN.stiff_formula,'energy')      &&...
+                    ~strcmp(CFN.stiff_formula,'overlap')     &&...
+                    ~strcmp(CFN.stiff_formula,'time')))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.stiff_formula.\n');
+                    fprintf(2,'Available options: energy, overlap, time.\n');
                     status = 0; return;
                 end
-                if (strcmp(CFN.stiff_coeff_formula,'time'))
-                    drv.search.b_interact.cforcen.stiff_formula = drv.search.b_interact.cforcen.TIME;
-                elseif (strcmp(CFN.stiff_coeff_formula,'overlap'))
-                    drv.search.b_interact.cforcen.stiff_formula = drv.search.b_interact.cforcen.OVERLAP;
-                elseif (strcmp(CFN.stiff_coeff_formula,'energy'))
+                if (strcmp(CFN.stiff_formula,'energy'))
                     drv.search.b_interact.cforcen.stiff_formula = drv.search.b_interact.cforcen.ENERGY;
+                elseif (strcmp(CFN.stiff_formula,'overlap'))
+                    drv.search.b_interact.cforcen.stiff_formula = drv.search.b_interact.cforcen.OVERLAP;
+                elseif (strcmp(CFN.stiff_formula,'time'))
+                    drv.search.b_interact.cforcen.stiff_formula = drv.search.b_interact.cforcen.TIME;
                 end
+            end
+            
+            % Check which stiffness options were provided
+            if (~isempty(drv.search.b_interact.cforcen.stiff_coeff) &&...
+                ~isempty(drv.search.b_interact.cforcen.stiff_formula))
+                this.warn('The value of InteractionModel.contact_force_normal.stiff_coeff was provided, so InteractionModel.contact_force_normal.stiff_formula will be ignored.');
+            else
+                this.warn('Nor InteractionModel.contact_force_normal.stiff_coeff neither InteractionModel.contact_force_normal.stiff_formula was provided, so energy formulation will be assumed.');
+            end
+            
+            % Damping coefficient value
+            if (isfield(CFN,'damping_coeff'))
+                val = CFN.damping_coeff;
+                if (~this.isDoubleArray(val,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.damping_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (val <= 0)
+                    this.warn('Unphysical value found for InteractionModel.contact_force_normal.damping_coeff.');
+                end
+                drv.search.b_interact.cforcen.damp = val;
             end
             
             % Artificial cohesion
@@ -3867,8 +3901,21 @@ classdef Read < handle
             % Create object
             drv.search.b_interact.cforcen = ContactForceN_ViscoElasticNonlinear();
             
+            % Damping coefficient value
+            if (isfield(CFN,'damping_coeff'))
+                val = CFN.damping_coeff;
+                if (~this.isDoubleArray(val,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.damping_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (val <= 0)
+                    this.warn('Unphysical value found for InteractionModel.contact_force_normal.damping_coeff.');
+                end
+                drv.search.b_interact.cforcen.damp = val;
+                drv.search.b_interact.cforcen.damp_formula = drv.search.b_interact.cforcen.NONE_DAMP;
+            
             % Damping formulation
-            if (isfield(CFN,'damping_formula'))
+            elseif (isfield(CFN,'damping_formula'))
                 if (~this.isStringArray(CFN.damping_formula,1) ||...
                    (~strcmp(CFN.damping_formula,'TTI') &&...
                     ~strcmp(CFN.damping_formula,'KK')  &&...
@@ -3879,38 +3926,64 @@ classdef Read < handle
                 end
                 if (strcmp(CFN.damping_formula,'TTI'))
                     drv.search.b_interact.cforcen.damp_formula = drv.search.b_interact.cforcen.TTI;
+                    
+                    % Damping coefficient value (optional)
+                    if (isfield(CFN,'damping_coeff'))
+                        val = CFN.damping_coeff;
+                        if (~this.isDoubleArray(val,1))
+                            fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.damping_coeff.\n');
+                            fprintf(2,'It must be a numeric value.\n');
+                            status = 0; return;
+                        elseif (val <= 0)
+                            this.warn('Unphysical value found for InteractionModel.contact_force_normal.damping_coeff.');
+                        end
+                        drv.search.b_interact.cforcen.damp = val;
+                    end
+                    
                 elseif (strcmp(CFN.damping_formula,'KK'))
                     drv.search.b_interact.cforcen.damp_formula = drv.search.b_interact.cforcen.KK;
                     
-                    % Damping coefficient value
+                    % Damping coefficient value (mandatory)
                     if (~isfield(CFN,'damping_coeff'))
                         fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.damping_coeff.\n');
                         status = 0; return;
                     end
-                    damp_coeff = CFN.damping_coeff;
-                    if (~this.isDoubleArray(damp_coeff,1))
+                    val = CFN.damping_coeff;
+                    if (~this.isDoubleArray(val,1))
                         fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.damping_coeff.\n');
                         fprintf(2,'It must be a numeric value.\n');
                         status = 0; return;
+                    elseif (val <= 0)
+                        this.warn('Unphysical value found for InteractionModel.contact_force_normal.damping_coeff.');
                     end
-                    drv.search.b_interact.cforcen.damp = damp_coeff;
+                    drv.search.b_interact.cforcen.damp = val;
                     
                 elseif (strcmp(CFN.damping_formula,'LH'))
                     drv.search.b_interact.cforcen.damp_formula = drv.search.b_interact.cforcen.LH;
                     
-                    % Damping coefficient value
+                    % Damping coefficient value (mandatory)
                     if (~isfield(CFN,'damping_coeff'))
                         fprintf(2,'Missing data in project parameters file: InteractionModel.contact_force_normal.damping_coeff.\n');
                         status = 0; return;
                     end
-                    damp_coeff = CFN.damping_coeff;
-                    if (~this.isDoubleArray(damp_coeff,1))
+                    val = CFN.damping_coeff;
+                    if (~this.isDoubleArray(val,1))
                         fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.damping_coeff.\n');
                         fprintf(2,'It must be a numeric value.\n');
                         status = 0; return;
+                    elseif (val <= 0)
+                        this.warn('Unphysical value found for InteractionModel.contact_force_normal.damping_coeff.');
                     end
-                    drv.search.b_interact.cforcen.damp = damp_coeff;
+                    drv.search.b_interact.cforcen.damp = val;
                 end
+            end
+            
+            % Check which damping options were provided
+            if (~isempty(drv.search.b_interact.cforcen.damping_coeff) &&...
+                ~isempty(drv.search.b_interact.cforcen.damping_formula))
+                this.warn('The value of InteractionModel.contact_force_normal.damping_coeff was provided, so InteractionModel.contact_force_normal.damping_formula will be ignored and a linear viscous damping will be assumed.');
+            else
+                this.warn('Nor InteractionModel.contact_force_normal.damping_coeff neither InteractionModel.contact_force_normal.damping_formula was provided, so TTI formulation will be assumed.');
             end
             
             % Artificial cohesion
@@ -3931,23 +4004,44 @@ classdef Read < handle
             % Create object
             drv.search.b_interact.cforcen = ContactForceN_ElastoPlasticLinear();
             
+            % Loading stiffness coefficient value
+            if (isfield(CFN,'stiff_coeff'))
+                val = CFN.stiff_coeff;
+                if (~this.isDoubleArray(val,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.stiff_coeff.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                elseif (val <= 0)
+                    this.warn('Unphysical value found for InteractionModel.contact_force_normal.stiff_coeff.');
+                end
+                drv.search.b_interact.cforcen.stiff = val;
+                drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.NONE_STIFF;
+            
             % Loading stiffness formulation
-            if (isfield(CFN,'load_stiff_formula'))
+            elseif (isfield(CFN,'load_stiff_formula'))
                 if (~this.isStringArray(CFN.load_stiff_formula,1) ||...
-                   (~strcmp(CFN.load_stiff_formula,'time')        &&...
+                   (~strcmp(CFN.load_stiff_formula,'energy')      &&...
                     ~strcmp(CFN.load_stiff_formula,'overlap')     &&...
-                    ~strcmp(CFN.load_stiff_formula,'energy')))
+                    ~strcmp(CFN.load_stiff_formula,'time')))
                     fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.load_stiff_formula.\n');
-                    fprintf(2,'Available options: time, overlap, energy.\n');
+                    fprintf(2,'Available options: energy, overlap, time.\n');
                     status = 0; return;
                 end
-                if (strcmp(CFN.load_stiff_formula,'time'))
-                    drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.TIME;
+                if (strcmp(CFN.load_stiff_formula,'energy'))
+                    drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.ENERGY;
                 elseif (strcmp(CFN.load_stiff_formula,'overlap'))
                     drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.OVERLAP;
-                elseif (strcmp(CFN.load_stiff_formula,'energy'))
-                    drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.ENERGY;
+                elseif (strcmp(CFN.load_stiff_formula,'time'))
+                    drv.search.b_interact.cforcen.load_stiff_formula = drv.search.b_interact.cforcen.TIME;
                 end
+            end
+            
+            % Check which loading stiffness options were provided
+            if (~isempty(drv.search.b_interact.cforcen.stiff_coeff) &&...
+                ~isempty(drv.search.b_interact.cforcen.load_stiff_formula))
+                this.warn('The value of InteractionModel.contact_force_normal.stiff_coeff was provided, so InteractionModel.contact_force_normal.load_stiff_formula will be ignored.');
+            else
+                this.warn('Nor InteractionModel.contact_force_normal.stiff_coeff neither InteractionModel.contact_force_normal.load_stiff_formula was provided, so energy formulation will be assumed.');
             end
             
             % Unloading stiffness formulation
@@ -3961,6 +4055,7 @@ classdef Read < handle
                 end
                 if (strcmp(CFN.unload_stiff_formula,'constant'))
                     drv.search.b_interact.cforcen.unload_stiff_formula = drv.search.b_interact.cforcen.CONSTANT;
+                    
                 elseif (strcmp(CFN.unload_stiff_formula,'variable'))
                     drv.search.b_interact.cforcen.unload_stiff_formula = drv.search.b_interact.cforcen.VARIABLE;
                     
@@ -3974,9 +4069,13 @@ classdef Read < handle
                         fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_force_normal.unload_param.\n');
                         fprintf(2,'It must be a numeric value.\n');
                         status = 0; return;
+                    elseif (unload_param <= 0)
+                        this.warn('Unphysical value found for InteractionModel.contact_force_normal.unload_param.');
                     end
                     drv.search.b_interact.cforcen.unload_param = unload_param;
                 end
+            else
+                this.warn('InteractionModel.contact_force_normal.unload_stiff_formula was provided, so constant formulation will be assumed.');
             end
         end
         

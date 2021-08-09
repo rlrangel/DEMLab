@@ -58,7 +58,7 @@ classdef RollResist_Viscous < RollResist
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,~)
+        function this = setCteParams(this,~)
             
         end
         

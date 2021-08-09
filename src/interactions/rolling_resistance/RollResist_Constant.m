@@ -56,7 +56,7 @@ classdef RollResist_Constant < RollResist
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,~)
+        function this = setCteParams(this,~)
             
         end
         

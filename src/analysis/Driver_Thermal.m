@@ -112,7 +112,7 @@ classdef Driver_Thermal < Driver
                         int.kinemat.dir_n  =  int.kinemat.dir / int.kinemat.dist;
                         int.kinemat.ovlp_n = -int.kinemat.separ;
                         int.kinemat = int.kinemat.setContactArea(int);
-                        int.setParamsTherm();
+                        int.setCteParamsTherm();
                     end
                     
                     % Compute interaction results

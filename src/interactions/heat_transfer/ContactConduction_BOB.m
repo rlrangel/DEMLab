@@ -54,7 +54,7 @@ classdef ContactConduction_BOB < ContactConduction
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,~)
+        function this = setCteParams(this,~)
             
         end
         

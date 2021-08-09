@@ -153,8 +153,8 @@ classdef Driver_ThermoMechanical < Driver
                         int.kinemat = int.kinemat.setInitContactParams(this.time);
                         
                         % Initialize constant interaction parameters values
-                        int.setParamsMech();
-                        int.setParamsTherm();
+                        int.setCteParamsMech();
+                        int.setCteParamsTherm();
                     end
                     
                     % Update contact duration

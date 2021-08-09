@@ -109,14 +109,14 @@ classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,int)
+        function this = setCteParams(this,int)
             % Needed properties
             r = int.eff_radius;
             m = int.eff_mass;
             y = int.eff_young;
             e = this.restitution;
             
-            % Spring stiffness coefficient (Hertz model)
+            % Stiffness coefficient (Hertz model)
             this.stiff = 4 * y * sqrt(r) / 3;
             
             % Damping coefficient
@@ -136,11 +136,13 @@ classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
             d    = this.damp;
             m    = int.eff_mass;
             
-            % Elastic force
+            % Elastic force (Hertz model)
             fe = k * ovlp^(3/2);
             
             % Viscous force
             switch this.damp_formula
+                case this.NONE_DAMP
+                    fv = d * vel;
                 case this.TTI
                     fv = d * ovlp^(1/4) * vel;
                 case this.KK

@@ -129,6 +129,14 @@ classdef Driver < handle
                 p.setFCTemperature(this.time);
             end
             
+            % Erase handles to removed particles from global list and model parts
+            this.eraseHandlesToRemovedParticle();
+            if (this.n_particles == 0)
+                fprintf(2,'The model has no particle inside the domain.\n');
+                status = 0;
+                return;
+            end
+            
             % loop over all walls
             for i = 1:this.n_walls
                 w = this.walls(i);
@@ -136,14 +144,6 @@ classdef Driver < handle
                 % Set fixed temperature (fixed motion not set now)
                 w.setFixedThermal(this.time);
                 w.setFCTemperature(this.time);
-            end
-            
-            % Erase handles to removed particles from global list and model parts
-            this.eraseHandlesToRemovedParticle();
-            if (this.n_particles == 0)
-                fprintf(2,'The model has no particle inside the domain.\n');
-                status = 0;
-                return;
             end
             
             % Initialize critical time step

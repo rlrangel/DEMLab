@@ -138,7 +138,7 @@ classdef Driver_Mechanical < Driver
                         int.kinemat = int.kinemat.setInitContactParams(this.time);
                         
                         % Initialize constant interaction parameters values
-                        int.setParamsMech();
+                        int.setCteParamsMech();
                     end
                     
                     % Update contact duration

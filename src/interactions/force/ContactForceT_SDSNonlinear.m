@@ -125,7 +125,7 @@ classdef ContactForceT_SDSNonlinear < ContactForceT
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,int)
+        function this = setCteParams(this,int)
             if (this.formula == this.TTI && isempty(this.damp))
                 if (~isempty(int.cforcen))
                     this.damp = int.cforcen.damp;

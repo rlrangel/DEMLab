@@ -90,7 +90,7 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,int)
+        function this = setCteParams(this,int)
             % Needed properties
             r    = int.eff_radius;
             m    = int.eff_mass;
@@ -99,7 +99,7 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
             e    = this.restitution;
             beta = pi/log(e);
             
-            % Spring stiffness coefficient
+            % Stiffness coefficient
             switch this.stiff_formula
                 case this.ENERGY
                     this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5);
@@ -110,7 +110,9 @@ classdef ContactForceN_ViscoElasticLinear < ContactForceN
             end
             
             % Damping coefficient
-            this.damp = sqrt(4*m*this.stiff/(1+beta^2));
+            if (isempty(this.damp))
+                this.damp = sqrt(4*m*this.stiff/(1+beta^2));
+            end
         end
         
         %------------------------------------------------------------------

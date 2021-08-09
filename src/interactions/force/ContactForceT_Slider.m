@@ -49,7 +49,7 @@ classdef ContactForceT_Slider < ContactForceT
         end
         
         %------------------------------------------------------------------
-        function this = setParameters(this,~)
+        function this = setCteParams(this,~)
             
         end
         
