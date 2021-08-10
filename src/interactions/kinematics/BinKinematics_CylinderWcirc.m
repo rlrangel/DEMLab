@@ -28,20 +28,24 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             int.eff_radius = p.radius;
             int.eff_mass   = p.mass;
             
-            % Wall with no material set
+            % Wall with no material
             if (isempty(mw))
+                % Effective parameters
                 if (~isempty(mp.young) && ~isempty(mp.poisson))
                     int.eff_young = mp.young / (1 - mp.poisson^2);
                 end
                 if (~isempty(mp.shear) && ~isempty(mp.poisson))
                     int.eff_shear = mp.shear / (2 - mp.poisson^2);
                 end
+                
+                % Average parameters
                 if (~isempty(mp.poisson))
-                    int.eff_poisson = mp.poisson;
+                    int.avg_poisson = mp.poisson;
                 end
                 
-            % Wall with material set
+            % Wall with material
             else
+                % Effective parameters
                 if (~isempty(mp.young) && ~isempty(mp.poisson) &&...
                     ~isempty(mw.young) && ~isempty(mw.poisson))
                     int.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
@@ -50,8 +54,10 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
                     ~isempty(mw.shear) && ~isempty(mw.poisson))
                     int.eff_shear = 1 / ((2-mp.poisson^2)/mp.shear + (2-mw.poisson^2)/mw.shear);
                 end
+                
+                % Average parameters
                 if (~isempty(mp.poisson) && ~isempty(mw.poisson))
-                    int.eff_poisson = (mp.poisson + mw.poisson) / 2;
+                    int.avg_poisson = (mp.poisson + mw.poisson) / 2;
                 end
             end
             

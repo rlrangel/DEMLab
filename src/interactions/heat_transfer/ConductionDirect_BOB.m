@@ -23,7 +23,7 @@
 %
 % $R_{c}$: Contact radius
 %
-% $\Delta T = T_{j} - T_{i}$: Temperature difference between elements _i_ and _j_
+% $\Delta T = T_{j}-T_{i}$: Temperature difference between elements _i_ and _j_
 %
 % *References*:
 %

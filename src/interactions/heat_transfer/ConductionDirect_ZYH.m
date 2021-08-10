@@ -50,7 +50,7 @@
 %
 % $\dot{\delta}_{n}^{0}$: Time rate of change of normal overlap at the impact moment
 %
-% $\Delta T = T_{j} - T_{i}$: Temperature difference between elements _i_ and _j_
+% $\Delta T = T_{j}-T_{i}$: Temperature difference between elements _i_ and _j_
 %
 % $\rho$: Density of elements _i_ and _j_
 %

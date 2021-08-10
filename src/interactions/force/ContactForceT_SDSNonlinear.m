@@ -150,19 +150,19 @@ classdef ContactForceT_SDSNonlinear < ContactForceT
                     this.stiff = 16 * int.eff_shear * sqrt(int.eff_radius * int.kinemat.ovlp_n) / 3;
                     f = this.stiff * int.kinemat.ovlp_t;
                 case this.LTH
-                    max_ovlp = this.fric * int.kinemat.ovlp_n * (2 - int.eff_poisson) / (2 - 2 * int.eff_poisson);
+                    max_ovlp = this.fric * int.kinemat.ovlp_n * (2 - int.avg_poisson) / (2 - 2 * int.avg_poisson);
                     a  = 1 - min(abs(int.kinemat.ovlp_t),max_ovlp) / max_ovlp;
                     fe = ff * (1 - a^(3/2));
                     fv = this.damp * sqrt(6 * int.eff_mass * ff * sqrt(a) / max_ovlp) * int.kinemat.vel_t;
                     f  = fe + fv;
                 case this.ZZY
-                    max_ovlp = this.fric * int.kinemat.ovlp_n * (2 - int.eff_poisson) / (2 - 2 * int.eff_poisson);
+                    max_ovlp = this.fric * int.kinemat.ovlp_n * (2 - int.avg_poisson) / (2 - 2 * int.avg_poisson);
                     a  = 1 - min(abs(int.kinemat.ovlp_t),max_ovlp) / max_ovlp;
                     fe = ff * (1 - a^(3/2));
                     fv = this.damp / (2 * int.eff_shear * max_ovlp) * (1 - 0.4 * this.damp * abs(int.kinemat.vel_t) / (2 * int.eff_shear * max_ovlp)) * (1.5 * ff * sqrt(a)) * int.kinemat.vel_t;
                     f  = fe + fv;
                 case this.TTI
-                    this.stiff = sqrt(2 * int.eff_radius) * int.eff_young * sqrt(int.kinemat.ovlp_n) / ((2 - int.eff_poisson) * (1 + int.eff_poisson));
+                    this.stiff = sqrt(2 * int.eff_radius) * int.eff_young * sqrt(int.kinemat.ovlp_n) / ((2 - int.avg_poisson) * (1 + int.avg_poisson));
                     fe = this.stiff * int.kinemat.ovlp_t;
                     fv = this.damp  * int.kinemat.vel_t;
                     f  = fe + fv;

@@ -21,8 +21,10 @@ classdef Interact < handle & matlab.mixin.Copyable
         eff_mass    double = double.empty;
         eff_young   double = double.empty;
         eff_shear   double = double.empty;
-        eff_poisson double = double.empty;
         eff_conduct double = double.empty;
+        
+        % Average contact parameters
+        avg_poisson double = double.empty;
         
         % Mechanical interaction models (value class objects)
         kinemat BinKinematics = BinKinematics.empty;   % general binary kinematics (always exist)

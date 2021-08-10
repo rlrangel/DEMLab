@@ -31,6 +31,7 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             m1 = p1.material;
             m2 = p2.material;
             
+            % Effective parameters
             int.eff_radius = p1.radius * p2.radius / (p1.radius + p2.radius);
             int.eff_mass   = p1.mass   * p2.mass   / (p1.mass   + p2.mass);
             if (~isempty(m1.young) && ~isempty(m1.poisson) &&...
@@ -41,11 +42,13 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
                 ~isempty(m2.shear) && ~isempty(m2.poisson))
                 int.eff_shear = 1 / ((2-m1.poisson^2)/m1.shear + (2-m2.poisson^2)/m2.shear);
             end
-            if (~isempty(m1.poisson) && ~isempty(m2.poisson))
-                int.eff_poisson = (m1.poisson + m2.poisson) / 2;
-            end
             if (~isempty(m1.conduct) && ~isempty(m2.conduct))
                 int.eff_conduct = m1.conduct * m2.conduct / (m1.conduct + m2.conduct);
+            end
+            
+            % Average parameters
+            if (~isempty(m1.poisson) && ~isempty(m2.poisson))
+                int.avg_poisson = (m1.poisson + m2.poisson) / 2;
             end
         end
         
