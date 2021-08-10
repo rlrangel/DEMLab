@@ -23,6 +23,10 @@ classdef Driver_Mechanical < Driver
         % Time integration
         scheme_trl Scheme = Scheme.empty;   % handle to object of Scheme class for translation integration
         scheme_rot Scheme = Scheme.empty;   % handle to object of Scheme class for rotation integration
+        
+        % Forces / torques evaluation
+        eval_freq uint32  = uint32.empty;    % evaluation frequency (in steps)
+        eval      logical = logical.empty;   % flag for evaluating in current step
     end
     
     %% Constructor method
@@ -42,11 +46,13 @@ classdef Driver_Mechanical < Driver
             this.n_walls     = 0;
             this.n_interacts = 0;
             this.n_materials = 0;
+            this.eval_freq   = 1;
+            this.eval        = true;
             this.auto_step   = false;
             this.search      = Search_SimpleLoop();
             this.scheme_trl  = Scheme_EulerForward();
             this.scheme_rot  = Scheme_EulerForward();
-            this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
+            this.parallel    = false;
             this.workers     = parcluster('local').NumWorkers;
             this.result      = Result();
             this.nprog       = 1;
@@ -94,8 +100,12 @@ classdef Driver_Mechanical < Driver
                     this.search.execute(this);
                 end
                 
-                % Loop over all interactions, particles and walls
-                this.interactionLoop();
+                % Loop over all interactions
+                if (this.eval)
+                    this.interactionLoop();
+                end
+                
+                % Loop over all particles and walls
                 this.particleLoop();
                 this.wallLoop();
                 
@@ -140,9 +150,6 @@ classdef Driver_Mechanical < Driver
                         int.setCteParamsMech();
                     end
                     
-                    % Update contact duration
-                    int.kinemat.contact_time = this.time - int.kinemat.contact_start;
-                    
                     % Compute interaction results
                     int.evalResultsMech();
                     
@@ -173,14 +180,17 @@ classdef Driver_Mechanical < Driver
                 
                 % Solve translational motion
                 if (p.free_trl)
-                    % Add global conditions
-                    p.addWeight();
-                    if (~isempty(this.damp_trl))
-                        p.addGblDampTransl(this.damp_trl);
+                    % Evaluate particle forces
+                    if (this.eval)
+                        % Add global conditions
+                        p.addWeight();
+                        if (~isempty(this.damp_trl))
+                            p.addGblDampTransl(this.damp_trl);
+                        end
+
+                        % Add prescribed conditions
+                        p.addPCForce(this.time);
                     end
-                    
-                    % Add prescribed conditions
-                    p.addPCForce(this.time);
                     
                     % Evaluate equation of motion (update acceleration)
                     p.setAccelTrl();
@@ -200,13 +210,16 @@ classdef Driver_Mechanical < Driver
                 
                 % Solve rotational motion
                 if (p.free_rot)
-                    % Add global conditions
-                    if (~isempty(this.damp_rot))
-                        p.addGblDampRot(this.damp_rot);
+                    % Evaluate particle torques
+                    if (this.eval)
+                        % Add global conditions
+                        if (~isempty(this.damp_rot))
+                            p.addGblDampRot(this.damp_rot);
+                        end
+                        
+                        % Add prescribed conditions
+                        p.addPCTorque(this.time);
                     end
-                    
-                    % Add prescribed conditions
-                    p.addPCTorque(this.time);
                     
                     % Evaluate equation of motion (update acceleration)
                     p.setAccelRot();
@@ -230,7 +243,14 @@ classdef Driver_Mechanical < Driver
                 end
                 
                 % Reset forcing terms for next step
-                p.resetForcingTerms();
+                if (this.eval_freq == 1)
+                    p.resetForcingTerms();
+                elseif (mod(this.step+1,this.eval_freq) == 0)
+                    p.resetForcingTerms();
+                    this.eval = true;
+                else
+                    this.eval = false;
+                end
             end
             
             % Erase handles to removed particles from global list and model parts

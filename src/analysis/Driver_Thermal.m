@@ -39,7 +39,7 @@ classdef Driver_Thermal < Driver
             this.auto_step   = false;
             this.search      = Search_SimpleLoop();
             this.scheme_temp = Scheme_EulerForward();
-            this.parallel    = any(any(contains(struct2cell(ver),'Parallel Computing Toolbox')));
+            this.parallel    = false;
             this.workers     = parcluster('local').NumWorkers;
             this.result      = Result();
             this.nprog       = 1;

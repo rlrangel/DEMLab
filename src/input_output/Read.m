@@ -219,7 +219,7 @@ classdef Read < handle
                 status = 0; return;
             end
             
-             % Automatic time step
+            % Automatic time step
             if (isfield(json.Solver,'auto_time_step'))
                 if (~this.isLogicalArray(json.Solver.auto_time_step,1))
                     fprintf(2,'Invalid data in project parameters file: Solver.auto_time_step.\n');
@@ -324,6 +324,20 @@ classdef Read < handle
                 end
                 if (strcmp(scheme,'forward_euler'))
                     drv.scheme_temp = Scheme_EulerForward();
+                end
+            end
+            
+            % Forcing terms evaluation frequency
+            if (isfield(json.Solver,'eval_frequency'))
+                if (~this.isIntArray(json.Solver.eval_frequency,1) || json.Solver.eval_frequency <= 0)
+                    fprintf(2,'Invalid data in project parameters file: Solver.eval_frequency.\n');
+                    fprintf(2,'It must be a positive integer.\n');
+                    status = 0; return;
+                end
+                if (drv.type == drv.THERMAL)
+                    this.warn('Solver.eval_frequency is not available for thermal analysis. It will be ignored.');
+                else
+                    drv.eval_freq = json.Solver.eval_frequency;
                 end
             end
             
