@@ -113,6 +113,7 @@ classdef Driver_Thermal < Driver
                 this.time = this.time + this.time_step;
                 this.step = this.step + 1;
             end
+            this.printProgress(); % last step (100%)
         end
     end
     
