@@ -17,7 +17,7 @@
 % it is able to simulate the plastic deformation of elements during
 % collisions.
 %
-% $$\left \{ F_{n} \right \} = -F_{n}^{e}\hat{n}$$
+% $$\left \{ F_{n} \right \} = -F_{n}^{e} \{-\hat{n}\}$$
 %
 % * *Loading* ($\dot{\delta_{n}}>0$):
 %
@@ -27,24 +27,24 @@
 %
 % $$F_{n}^{e} = K_{n}^{U} \left ( \delta_{n}-\delta_{n}^{res} \right )$$
 %
-% * *Unloading (after detachment)* ($\dot{\delta_{n}}<0, \delta_{n}\leq \delta_{n}^{res}$):
+% * *Unloading (after detachment)* ($\dot{\delta_{n}}<0, \delta_{n}\leq\delta_{n}^{res}$):
 %
 % $$F_{n}^{e} = 0$$
 %
 % The loading stiffness coefficient $K_{n}^{L}$ can be computed by 3
-% different formulas:
+% different formulas, if its value is not provided:
 %
 % * *Equivalent energy*:
 %
-% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}}$$
+% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5}$$
 %
 % * *Equivalent overlap*:
 %
-% $$K_{n} = 1.053\left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}}\left ( 1+ \beta^{-2} \right )$$
+% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( 1+\beta^{-2} \right )$$
 %
 % * *Equivalent time*:
 %
-% $$K_{n} = 1.198\left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}} \left ( exp \left ( -\frac{tg^{-1}(\beta)}{\beta} \right ) \right )^{2}$$
+% $$K_{n} = 1.198 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( exp \left ( -\frac{tg^{-1}(\beta)}{\beta} \right ) \right )^{2}$$
 %
 % The unloading stiffness coefficient $K_{n}^{U}$ can be computed by 2
 % different formulas:
@@ -55,13 +55,13 @@
 %
 % * *Variable*:
 %
-% $$K_{n}^{U} = K_{n}^{L}+SF_{n}^{max}$$
+% $$K_{n}^{U} = K_{n}^{L} + SF_{n}^{max}$$
 %
 % $$F_{n}^{max} = K_{n}^{L}\dot{\delta}_{n}^{0}\sqrt{\frac{m_{eff}}{K_{n}^{L}}}$$
 %
 % The residual overlap due to palstic deformation is computed as:
 %
-% $$\delta_{n}^{res} = \dot{\delta}_{n}^{0} \sqrt{\frac{m_{eff}}{K_{n}^{L}}} (1-e^{2})$$
+% $$\delta_{n}^{res} = \dot{\delta}_{n}^{0} \sqrt{\frac{m_{eff}}{K_{n}^{L}}}(1-e^{2})$$
 %
 % *Notation*:
 %

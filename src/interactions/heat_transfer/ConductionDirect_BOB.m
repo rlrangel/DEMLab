@@ -13,7 +13,7 @@
 % particles thermal conductivity is much higher than the conductivity of
 % the interstitial fluid.
 %
-% The heat transfer is given by:
+% The rate of heat transfer is given by:
 %
 % $$Q = 4k_{eff}R_{c}\Delta T$$
 %
@@ -23,7 +23,7 @@
 %
 % $R_{c}$: Contact radius
 %
-% $\Delta T$: Temperature difference between elements
+% $\Delta T = T_{j} - T_{i}$: Temperature difference between elements _i_ and _j_
 %
 % *References*:
 %

@@ -76,9 +76,12 @@ classdef Driver_Thermal < Driver
             % Set constant interaction parameters
             for i = 1:this.n_interacts
                 int = this.interacts(i);
-                int.kinemat.is_contact = true;
-                int.kinemat.dir_n  =  int.kinemat.dir / int.kinemat.dist;
-                int.kinemat.ovlp_n = -int.kinemat.separ;
+                int.kinemat.is_contact    = true;
+                int.kinemat.v0_n          = 0;
+                int.kinemat.contact_start = 0;
+                int.kinemat.contact_time  = inf;
+                int.kinemat.dir_n         = int.kinemat.dir / int.kinemat.dist;
+                int.kinemat.ovlp_n        = -int.kinemat.separ;
                 int.kinemat = int.kinemat.setContactArea(int);
                 int.setCteParamsTherm();
             end

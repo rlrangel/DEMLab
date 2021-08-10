@@ -12,7 +12,7 @@
 % $F_{t}^{f}$, provided by a slider, which limits the total force according
 % to Coulomb law. 
 %
-% $$\left \{ F_{t} \right \} = min(\left | F_{t}^{e}+F_{t}^{v} \right |,F_{t}^{f})(-\hat{t})$$
+% $$\left \{ F_{t} \right \} = min\left ( \left | F_{t}^{e}+F_{t}^{v} \right |,F_{t}^{f} \right ) \{-\hat{t}\}$$
 %
 % $$F_{t}^{e} = K_{t} \delta_{t}$$
 %
@@ -28,17 +28,16 @@
 %
 % The tangent damping coefficient $\eta_{t}$ can be computes as:
 %
-% * If the tangent coefficient of restitution is zero ($e=0$):
+% * If the tangent coefficient of restitution is zero:
 %
 % $$\eta_{t} = 2\sqrt{\frac{2m_{eff}K_{t}}{7}}$$
 %
-% * If the tangent coefficient of restitution is different than zero
-% ($e \not\equiv 0$):
+% * If the tangent coefficient of restitution is different than zero:
 %
 % $$\eta_{t} = -2ln(e)\sqrt{\frac{2m_{eff}K_{t}}{7(ln(e)^{2} + \pi^{2})}}$$
 %
-% The tangent coefficient of restitution and the friction coefficient $\mu$
-% must be provided.
+% The tangent coefficient of restitution $e$ and the friction coefficient
+% $\mu$ must be provided.
 %
 % *Notation*:
 %

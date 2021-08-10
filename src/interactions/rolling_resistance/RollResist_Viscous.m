@@ -9,7 +9,7 @@
 % rotation velocity and normal force and is applied against the relative
 % rotation.
 %
-% $$M = - \hat{\omega} \mu R_{eff} \left | F_{n} \right | \left | V_{\omega} \right |$$
+% $$M = -\hat{\omega} \mu R_{eff} \left | F_{n} \right | \left | V_{\omega} \right |$$
 %
 % *Notation*:
 %

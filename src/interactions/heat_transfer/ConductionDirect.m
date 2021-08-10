@@ -1,4 +1,4 @@
-%% ConductionDirect class
+%% ConductionDirect (Direct Heat Conduction) class
 %
 %% Description
 %
@@ -13,13 +13,15 @@
 %
 % * <conductiondirect_bob.html ConductionDirect_BOB> (default)
 % * <conductiondirect_pipe.html ConductionDirect_Pipe>
+% * <conductiondirect_zyh.html ConductionDirect_ZYH>
 %
 classdef ConductionDirect < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of model
         BOB  = uint8(1);
-        PIPE = uint8(2);
+        PIPE = uint8(3);
+        ZYH  = uint8(2);
     end
     
     %% Public properties

@@ -8,7 +8,7 @@
 % This model assumes that the tangent contact force has only a friction
 % component $F_{t}^{f}$, provided by a slider.
 %
-% $$\left \{ F_{t} \right \} = -F_{t}^{f}\hat{t}$$
+% $$\left \{ F_{t} \right \} = -F_{t}^{f} \{-\hat{t}\}$$
 %
 % $$F_{t}^{f} = \mu \left | F_{n} \right |$$
 %

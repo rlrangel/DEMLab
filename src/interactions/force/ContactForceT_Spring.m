@@ -8,7 +8,7 @@
 % This model assumes that the tangent contact force has only an elastic
 % component $F_{t}^{e}$, provided by a linear spring.
 %
-% $$\left \{ F_{t} \right \} = -F_{t}^{e}\hat{t}$$
+% $$\left \{ F_{t} \right \} = -F_{t}^{e} \{-\hat{t}\}$$
 %
 % $$F_{t}^{e} = K_{t} \delta_{t}$$
 %

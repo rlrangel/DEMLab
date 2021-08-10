@@ -3829,10 +3829,11 @@ classdef Read < handle
             end
             model = string(IM.direct_conduction.model);
             if (~this.isStringArray(model,1) ||...
-               (~strcmp(model,'bob')         &&...
-                ~strcmp(model,'thermal_pipe')))
+               (~strcmp(model,'bob')          &&...
+                ~strcmp(model,'thermal_pipe') &&...
+                ~strcmp(model,'zyh')))
                 fprintf(2,'Invalid data in project parameters file: InteractionModel.direct_conduction.model.\n');
-                fprintf(2,'Available options: bob, thermal_pipe.\n');
+                fprintf(2,'Available options: bob, thermal_pipe, zyh.\n');
                 status = 0; return;
             end
             
@@ -3841,6 +3842,8 @@ classdef Read < handle
                 drv.search.b_interact.dconduc = ConductionDirect_BOB();
             elseif (strcmp(model,'thermal_pipe'))
                 drv.search.b_interact.dconduc = ConductionDirect_Pipe();
+            elseif (strcmp(model,'zyh'))
+                drv.search.b_interact.dconduc = ConductionDirect_ZYH();
             end
         end
         

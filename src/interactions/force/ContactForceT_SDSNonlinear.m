@@ -11,7 +11,7 @@
 % provided by a dashpot, and a friction component $F_{t}^{f}$, provided by
 % a slider, which limits the total force according to Coulomb law. 
 %
-% $$\left \{ F_{t} \right \} = min(\left | F_{t}^{e}+F_{t}^{v} \right |,F_{t}^{f})(-\hat{t})$$
+% $$\left \{ F_{t} \right \} = min\left ( \left | F_{t}^{e}+F_{t}^{v} \right |,F_{t}^{f} \right ) \{-\hat{t}\}$$
 %
 % $$F_{t}^{f} = \mu \left | F_{n} \right |$$
 %
@@ -26,23 +26,23 @@
 %
 % $$F_{t}^{v} = 0$$
 %
-% * *LTH (Langston, Tuzun & Heyes)*:
+% * *LTH (Langston, Tuzun, Heyes)*:
 %
-% $$F_{t}^{e} = \mu \left | F_{n} \right | \left ( 1 - \left ( 1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}) \right )^{\frac{3}{2}} \right )$$
+% $$F_{t}^{e} = \mu \left | F_{n} \right | \left ( 1 - \left ( 1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}) \right )^{3/2} \right )$$
 %
-% $$F_{t}^{v} = \eta_{t} \left ( \frac{6m_{eff} \mu \left | F_{n} \right |}{\delta_{t}^{max}} \sqrt{1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}} \right )^{\frac{1}{2}} \dot{\delta_{t}}$$
+% $$F_{t}^{v} = \eta_{t} \left ( \frac{6m_{eff} \mu \left | F_{n} \right |}{\delta_{t}^{max}} \sqrt{1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}} \right )^{1/2} \dot{\delta_{t}}$$
 %
 % The tangent damping coefficient $\eta_{t}$ must be provided.
 %
-% * *ZZY (Zheng, Zhu & Yu)*:
+% * *ZZY (Zheng, Zhu, Yu)*:
 %
-% $$F_{t}^{e} = \mu \left | F_{n} \right | \left ( 1 - \left ( 1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}) \right )^{\frac{3}{2}} \right )$$
+% $$F_{t}^{e} = \mu \left | F_{n} \right | \left ( 1 - \left ( 1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}) \right )^{3/2} \right )$$
 %
 % $$F_{t}^{v} = \frac{\eta_{t}}{2G_{eff}\delta_{t}^{max}} \left ( 1 - \frac{0.4\eta_{t} \left | \dot{\delta_{t}} \right | }{2G_{eff}\delta_{t}^{max}} \right ) \left ( 1.5\mu \left | F_{n} \right | \sqrt{1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}} \right ) \dot{\delta_{t}}$$
 %
 % The tangent damping coefficient $\eta_{t}$ must be provided.
 %
-% * *TTI (Tsuji, Tanaka & Ishida)*:
+% * *TTI (Tsuji, Tanaka, Ishida)*:
 %
 % $$F_{t}^{e} = \frac{\sqrt{2R_{eff}}E_{eff}}{(2-\nu_{eff})(1+\nu_{eff})} \sqrt{\delta_{n}} \delta_{t}$$
 %

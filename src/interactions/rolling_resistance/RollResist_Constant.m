@@ -6,10 +6,10 @@
 % implementation of the *Constant* rolling resistance torque model.
 %
 % This model assumes that a constant resistance torque (not dependent on
-% relative rotation velocity), but depending of normal force, is applied
+% relative rotation velocity), but depending on normal force, is applied
 % against the relative rotation.
 %
-% $$M = - \hat{\omega} \mu R_{eff} \left | F_{n} \right |$$
+% $$M = -\hat{\omega} \mu R_{eff} \left | F_{n} \right |$$
 %
 % *Notation*:
 %

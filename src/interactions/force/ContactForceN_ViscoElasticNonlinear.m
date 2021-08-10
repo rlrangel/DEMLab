@@ -10,29 +10,29 @@
 % $F_{n}^{e}$ and a viscous $F_{n}^{v}$ component, provided by a nonlinear
 % spring and dashpot, respectively.
 %
-% $$\left \{ F_{n} \right \} = (F_{n}^{e} + F_{n}^{v})(-\hat{n})$$
+% $$\left \{ F_{n} \right \} = (F_{n}^{e} + F_{n}^{v}) \{-\hat{n}\}$$
 %
 % The elastic force is always computed according to Hertz contact theory:
 %
-% $$F_{n}^{e} = K_{hz} \delta_{n}^{\frac{3}{2}}$$
+% $$F_{n}^{e} = K_{hz} \delta_{n}^{3/2}$$
 %
 % $$K_{hz} = \frac{4}{3} E_{eff} \sqrt{R_{eff}}$$
 %
 % The viscous force can be computed by 3 different formulas:
 %
-% * *TTI (Tsuji, Tanaka & Ishida)*:
+% * *TTI (Tsuji, Tanaka, Ishida)*:
 %
-% $$F_{n}^{v} = \eta_{n} \delta_{n}^{\frac{1}{4}} \dot{\delta_{n}}$$
+% $$F_{n}^{v} = \eta_{n} \delta_{n}^{1/4} \dot{\delta_{n}}$$
 %
 % $$\eta_{n} = -2.2664\frac{ln(e)\sqrt{m_{eff}K_{hz}}}{\sqrt{ln(e)^{2}+10.1354}}$$
 %
 % * *KK (Kuwabara & Kono)*:
 %
-% $$F_{n}^{v} = \eta_{n} \delta_{n}^{\frac{1}{2}} \dot{\delta_{n}}$$
+% $$F_{n}^{v} = \eta_{n} \delta_{n}^{1/2} \dot{\delta_{n}}$$
 %
 % * *LH (Lee & Herrmann)*:
 %
-% $$F_{n}^{v} = \eta_{n} $m_{eff} \dot{\delta_{n}}$$
+% $$F_{n}^{v} = \eta_{n} m_{eff} \dot{\delta_{n}}$$
 %
 % The damping coefficient $\eta_{n}$ must be provided for models KK and LH.
 %

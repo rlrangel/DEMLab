@@ -8,7 +8,7 @@
 % This model assumes that the tangent contact force has only a viscous
 % component $F_{t}^{v}$, provided by a linear dashpot.
 %
-% $$\left \{ F_{t} \right \} = -F_{t}^{v}\hat{t}$$
+% $$\left \{ F_{t} \right \} = -F_{t}^{v} \{-\hat{t}\}$$
 %
 % $$F_{t}^{v} = \eta_{t} \dot{\delta_{t}}$$
 %

@@ -10,28 +10,28 @@
 % $F_{n}^{e}$ and a viscous $F_{n}^{v}$ component, provided by a linear
 % spring and dashpot, respectively.
 %
-% $$\left \{ F_{n} \right \} = (F_{n}^{e} + F_{n}^{v})(-\hat{n})$$
+% $$\left \{ F_{n} \right \} = (F_{n}^{e} + F_{n}^{v}) \{-\hat{n}\}$$
 %
 % $$F_{n}^{e} = K_{n} \delta_{n}$$
 %
 % $$F_{n}^{v} = \eta_{n} \dot{\delta_{n}}$$
 %
-% The stiffness coefficient $K_{n}$ can be computed by 3 different
-% formulas:
+% The stiffness coefficient $K_{n}$ can be computed by 3
+% different formulas, if its value is not provided:
 %
 % * *Equivalent energy*:
 %
-% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}}$$
+% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5}$$
 %
 % * *Equivalent overlap*:
 %
-% $$K_{n} = 1.053\left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}}\left ( 1+ \beta^{-2} \right )$$
+% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( 1+\beta^{-2} \right )$$
 %
 % * *Equivalent time*:
 %
-% $$K_{n} = 1.198\left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{\frac{2}{5}} \left ( exp \left ( -\frac{tg^{-1}(\beta)}{\beta} \right ) \right )^{2}$$
+% $$K_{n} = 1.198 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( exp \left ( -\frac{tg^{-1}(\beta)}{\beta} \right ) \right )^{2}$$
 %
-% The damping coefficient $\eta_{n}$ is computed as:
+% The damping coefficient $\eta_{n}$ is computed with the following formula, if its value is not provided:
 %
 % $$\eta_{n} = \sqrt{\frac{4m_{eff}K_{n}}{1+\beta^{2}}}$$
 %

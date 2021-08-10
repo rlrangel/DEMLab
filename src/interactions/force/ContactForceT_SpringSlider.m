@@ -10,7 +10,7 @@
 % $F_{t}^{f}$, provided by a slider, which limits the total force according
 % to Coulomb law. 
 %
-% $$\left \{ F_{t} \right \} = min(F_{t}^{e},F_{t}^{f})(-\hat{t})$$
+% $$\left \{ F_{t} \right \} = min\left ( F_{t}^{e},F_{t}^{f} \right ) \{-\hat{t}\}$$
 %
 % $$F_{t}^{e} = K_{t} \delta_{t}$$
 %
