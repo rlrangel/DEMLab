@@ -320,12 +320,18 @@ classdef Result < handle
         end
         
         %------------------------------------------------------------------
-        function storeParticleThermal(this,p)
+        function storeParticleTemperature(this,p)
             r = p.id;
             c = this.idx;
             if (this.has_temperature)
                 this.temperature(r,c) = p.temperature;
             end
+        end
+        
+        %------------------------------------------------------------------
+        function storeParticleHeatRate(this,p)
+            r = p.id;
+            c = this.idx;
             if (this.has_heat_rate)
                 this.heat_rate(r,c) = p.heat_rate;
             end
@@ -367,7 +373,7 @@ classdef Result < handle
         end
         
         %------------------------------------------------------------------
-        function storeWallThermal(this,w)
+        function storeWallTemperature(this,w)
             r = w.id;
             c = this.idx;
             if (this.has_wall_temperature)

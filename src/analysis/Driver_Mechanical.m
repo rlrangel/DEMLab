@@ -81,10 +81,6 @@ classdef Driver_Mechanical < Driver
         %------------------------------------------------------------------
         function process(this)
             while (this.time < this.max_time)
-                % Update time and step
-                this.time = this.time + this.time_step;
-                this.step = this.step + 1;
-                
                 % Store current time and step to result arrays
                 if (this.storeResults())
                     this.store = true;
@@ -94,7 +90,7 @@ classdef Driver_Mechanical < Driver
                 end
                 
                 % Interactions search
-                if (mod(this.step,this.search.freq) == 1)
+                if (mod(this.step,this.search.freq) == 0)
                     this.search.execute(this);
                 end
                 
@@ -103,11 +99,13 @@ classdef Driver_Mechanical < Driver
                 this.particleLoop();
                 this.wallLoop();
                 
-                % Adjustments before next step
-                this.search.done = false;
-                
                 % Print progress
                 this.printProgress();
+                
+                % Update variables for next step
+                this.time = this.time + this.time_step;
+                this.step = this.step + 1;
+                this.search.done = false;
             end
         end
     end
@@ -115,7 +113,7 @@ classdef Driver_Mechanical < Driver
    %% Public methods: sub-class specifics
     methods
         %------------------------------------------------------------------
-        function interactionLoop(this)            
+        function interactionLoop(this)
             for i = 1:this.n_interacts
                 int = this.interacts(i);
                 
@@ -183,13 +181,13 @@ classdef Driver_Mechanical < Driver
                     % Add prescribed conditions
                     p.addPCForce(this.time);
                     
-                    % Evaluate equation of motion
+                    % Evaluate equation of motion (update acceleration)
                     p.setAccelTrl();
                     
-                    % Numerical integration
+                    % Numerical integration (update vel, coord)
                     this.scheme_trl.updatePosition(p,this.time_step);
                 else
-                    % Set fixed translation
+                    % Set fixed translation (update accel, vel, coord)
                     p.setFCTranslation(this.time,this.time_step);
                 end
                 
@@ -209,21 +207,25 @@ classdef Driver_Mechanical < Driver
                     % Add prescribed conditions
                     p.addPCTorque(this.time);
                     
-                    % Evaluate equation of motion
+                    % Evaluate equation of motion (update acceleration)
                     p.setAccelRot();
                     
-                    % Numerical integration
+                    % Numerical integration (update vel, orientation)
                     this.scheme_rot.updateOrientation(p,this.time_step);
                 else
-                    % Set fixed rotation
+                    % Set fixed rotation (update accel, vel, orientation)
                     p.setFCRotation(this.time,this.time_step);
                 end
                 
                 % Store results
-                if (this.store)
-                    this.result.storeParticlePosition(p);
-                    this.result.storeParticleMotion(p);
+                if (this.step == 0)
+                    % Work-around to fill null initial values stored in pre-process
                     this.result.storeParticleForce(p);
+                    this.result.storeParticleMotion(p);
+                elseif (this.store)
+                    this.result.storeParticlePosition(p);
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticleMotion(p);
                 end
                 
                 % Reset forcing terms for next step
@@ -241,7 +243,7 @@ classdef Driver_Mechanical < Driver
             for i = 1:this.n_walls
                 w = this.walls(i);
                 
-                % Set fixed motion
+                % Set fixed motion (also update vel, coord)
                 w.setFixedMotion(this.time);
                 w.setFCMotion(this.time,this.time_step);
                 

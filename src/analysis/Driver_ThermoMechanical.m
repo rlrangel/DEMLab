@@ -96,10 +96,6 @@ classdef Driver_ThermoMechanical < Driver
         %------------------------------------------------------------------
         function process(this)
             while (this.time < this.max_time)
-                % Update time and step
-                this.time = this.time + this.time_step;
-                this.step = this.step + 1;
-                
                 % Store current time and step to result arrays
                 if (this.storeResults())
                     this.store = true;
@@ -109,7 +105,7 @@ classdef Driver_ThermoMechanical < Driver
                 end
             
                 % Interactions search
-                if (mod(this.step,this.search.freq) == 1)
+                if (mod(this.step,this.search.freq) == 0)
                     this.search.execute(this);
                 end
                 
@@ -118,11 +114,13 @@ classdef Driver_ThermoMechanical < Driver
                 this.particleLoop();
                 this.wallLoop();
                 
-                % Adjustments before next step
-                this.search.done = false;
-                
                 % Print progress
                 this.printProgress();
+                
+                % Update variables for next step
+                this.time = this.time + this.time_step;
+                this.step = this.step + 1;
+                this.search.done = false;
             end
         end
     end
@@ -202,13 +200,13 @@ classdef Driver_ThermoMechanical < Driver
                     % Add prescribed conditions
                     p.addPCForce(this.time);
                     
-                    % Evaluate equation of motion
+                    % Evaluate equation of motion (update acceleration)
                     p.setAccelTrl();
                     
-                    % Numerical integration
+                    % Numerical integration (update vel, coord)
                     this.scheme_trl.updatePosition(p,this.time_step);
                 else
-                    % Set fixed translation
+                    % Set fixed translation (update accel, vel, coord)
                     p.setFCTranslation(this.time,this.time_step);
                 end
                 
@@ -228,13 +226,13 @@ classdef Driver_ThermoMechanical < Driver
                     % Add prescribed conditions
                     p.addPCTorque(this.time);
                     
-                    % Evaluate equation of motion
+                    % Evaluate equation of motion (update acceleration)
                     p.setAccelRot();
                     
-                    % Numerical integration
+                    % Numerical integration (update vel, orientation)
                     this.scheme_rot.updateOrientation(p,this.time_step);
                 else
-                    % Set fixed rotation
+                    % Set fixed rotation (update accel, vel, orientation)
                     p.setFCRotation(this.time,this.time_step);
                 end
                 
@@ -244,10 +242,10 @@ classdef Driver_ThermoMechanical < Driver
                     p.addPCHeatFlux(this.time);
                     p.addPCHeatRate(this.time);
                     
-                    % Evaluate equation of energy balance
+                    % Evaluate equation of energy balance (update temp. rate of change)
                     p.setTempChange();
                     
-                    % Numerical integration
+                    % Numerical integration (update temperature)
                     this.scheme_temp.updateTemperature(p,this.time_step);
                 else
                     % Set fixed temperature
@@ -255,11 +253,17 @@ classdef Driver_ThermoMechanical < Driver
                 end
                 
                 % Store results
-                if (this.store)
-                    this.result.storeParticlePosition(p);
-                    this.result.storeParticleMotion(p);
+                if (this.step == 0)
+                    % Work-around to fill null initial values stored in pre-process
                     this.result.storeParticleForce(p);
-                    this.result.storeParticleThermal(p);
+                    this.result.storeParticleMotion(p);
+                    this.result.storeParticleHeatRate(p);
+                elseif (this.store)
+                    this.result.storeParticlePosition(p);
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticleMotion(p);
+                    this.result.storeParticleTemperature(p);
+                    this.result.storeParticleHeatRate(p);
                 end
                 
                 % Reset forcing terms for next step
@@ -288,7 +292,7 @@ classdef Driver_ThermoMechanical < Driver
                 % Store results
                 if (this.store)
                     this.result.storeWallPosition(w);
-                    this.result.storeWallThermal(w);
+                    this.result.storeWallTemperature(w);
                 end
             end
         end

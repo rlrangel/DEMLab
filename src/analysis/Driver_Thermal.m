@@ -73,11 +73,26 @@ classdef Driver_Thermal < Driver
             % Interactions search (only once as particles do not move)
             this.search.execute(this);
             
+            % Set constant interaction parameters
+            for i = 1:this.n_interacts
+                int = this.interacts(i);
+                int.kinemat.is_contact = true;
+                int.kinemat.dir_n  =  int.kinemat.dir / int.kinemat.dist;
+                int.kinemat.ovlp_n = -int.kinemat.separ;
+                int.kinemat = int.kinemat.setContactArea(int);
+                int.setCteParamsTherm();
+            end
+            
+            % Store fixed particle and wall positions to result arrays
+            for i = 1:this.n_particles
+                this.result.storeParticlePositionAll(this.particles(i));
+            end
+            for i = 1:this.n_walls
+                this.result.storeWallPositionAll(this.walls(i));
+            end
+            
+            % Time advancing
             while (this.time < this.max_time)
-                % Update time and step
-                this.time = this.time + this.time_step;
-                this.step = this.step + 1;
-                
                 % Store current time and step to result arrays
                 if (this.storeResults())
                     this.store = true;
@@ -93,6 +108,10 @@ classdef Driver_Thermal < Driver
                 
                 % Print progress
                 this.printProgress();
+                
+                % Update time and step
+                this.time = this.time + this.time_step;
+                this.step = this.step + 1;
             end
         end
     end
@@ -106,19 +125,7 @@ classdef Driver_Thermal < Driver
                 
                 % Evaluate contact interactions
                 if (int.kinemat.separ < 0)
-                    % Constant parameters needed to be set only once
-                    if (this.step == 1)
-                        int.kinemat.is_contact = true;
-                        int.kinemat.dir_n  =  int.kinemat.dir / int.kinemat.dist;
-                        int.kinemat.ovlp_n = -int.kinemat.separ;
-                        int.kinemat = int.kinemat.setContactArea(int);
-                        int.setCteParamsTherm();
-                    end
-                    
-                    % Compute interaction results
                     int.evalResultsTherm();
-                    
-                    % Add interaction results to particles
                     int.addResultsTherm();
                 end
             end
@@ -138,10 +145,10 @@ classdef Driver_Thermal < Driver
                     p.addPCHeatFlux(this.time);
                     p.addPCHeatRate(this.time);
                     
-                    % Evaluate equation of energy balance
+                    % Evaluate equation of energy balance (update temp. rate of change)
                     p.setTempChange();
                     
-                    % Numerical integration
+                    % Numerical integration (update temperature)
                     this.scheme_temp.updateTemperature(p,this.time_step);
                 else
                     % Set fixed temperature
@@ -149,11 +156,12 @@ classdef Driver_Thermal < Driver
                 end
                 
                 % Store results
-                if (this.store)
-                    this.result.storeParticleThermal(p);
-                end
-                if (this.step == 1)
-                    this.result.storeParticlePositionAll(p);
+                if (this.step == 0)
+                    % Work-around to fill null initial values stored in pre-process
+                    this.result.storeParticleHeatRate(p);
+                elseif (this.store)
+                    this.result.storeParticleTemperature(p);
+                    this.result.storeParticleHeatRate(p);
                 end
                 
                 % Reset forcing terms for next step
@@ -166,16 +174,13 @@ classdef Driver_Thermal < Driver
             for i = 1:this.n_walls
                 w = this.walls(i);
                 
-                % Set flag for fixed temperature
+                % Set fixed temperature
                 w.setFixedThermal(this.time);
                 w.setFCTemperature(this.time);
                 
                 % Store results
                 if (this.store)
-                    this.result.storeWallThermal(w);
-                end
-                if (this.step == 1)
-                    this.result.storeWallPositionAll(w);
+                    this.result.storeWallTemperature(w);
                 end
             end
         end

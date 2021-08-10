@@ -64,9 +64,9 @@ classdef Driver < handle
         step      uint32  = uint32.empty;    % current simulation step
         
         % Output generation
-        result   Result  = Result.empty;    % handle to object of Result class
-        graphs   Graph   = Graph.empty;     % handles to objects of Graph class
-        animates Animate = Animate.empty;   % handles to objects of Animate class
+        result     Result    = Result.empty;      % handle to object of Result class
+        graphs     Graph     = Graph.empty;       % handles to objects of Graph class
+        animations Animation = Animation.empty;   % handles to objects of Animation class
         
         % Output control
         nprog double  = double.empty;    % progress print frequency (% of total time)
@@ -122,8 +122,9 @@ classdef Driver < handle
                 % Initialize forcing terms
                 p.resetForcingTerms();
                 
-                % Set fixed temperature
-                % (fixed motion not set now, the initial positions are kept)
+                % Set fixed conditions (overlap initial conditions):
+                % Only fixed temperature is set because fixed motion
+                % also updates the particle kinematics (coordinates, etc).
                 p.setFixedThermal(this.time);
                 p.setFCTemperature(this.time);
             end
@@ -138,16 +139,12 @@ classdef Driver < handle
             
             % loop over all walls
             for i = 1:this.n_walls
+                % Set fixed conditions (overlap initial conditions):
+                % Only fixed temperature is set because fixed motion
+                % also updates the wall kinematics (coordinates, etc).
                 w = this.walls(i);
-                
-                % Set fixed temperature (fixed motion not set now)
                 w.setFixedThermal(this.time);
                 w.setFCTemperature(this.time);
-            end
-            
-            % Initialize critical time step
-            if (this.auto_step)
-                this.time_step = inf;
             end
             
             % Initialize result arrays
@@ -156,8 +153,25 @@ classdef Driver < handle
             % Add initial time and step values to result arrays
             this.result.storeTime(this);
             
+            % Initialize critical time step
+            if (this.auto_step)
+                this.time_step = inf;
+            end
+            
+            % loop over all particles
             for i = 1:this.n_particles
                 p = this.particles(i);
+                
+                % Add initial particle values to result arrays:
+                % Some results are not available yet and are zero, such as
+                % forcing terms, but will receive a copy of the next step
+                % (work-around).
+                this.result.storeParticleProp(p);          % fixed all steps
+                this.result.storeParticlePosition(p);      % initial
+                this.result.storeParticleTemperature(p);   % initial
+                this.result.storeParticleForce(p);         % zero (reset after 1st step)
+                this.result.storeParticleMotion(p);        % zero (reset after 1st step)
+                this.result.storeParticleHeatRate(p);      % zero (reset after 1st step)
                 
                 % Compute critical time step for current particle
                 if (this.auto_step)
@@ -166,13 +180,14 @@ classdef Driver < handle
                         this.time_step = dt;
                     end
                 end
-                
-                % Add initial particle values to result arrays
-                this.result.storeParticleProp(p);
-                this.result.storeParticleMotion(p);
-                this.result.storeParticlePosition(p);
-                this.result.storeParticleForce(p);
-                this.result.storeParticleThermal(p);
+            end
+            
+            % loop over all walls
+            for i = 1:this.n_walls
+                % Add initial wall values to result arrays
+                w = this.walls(i);
+                this.result.storeWallPosition(w);      % initial
+                this.result.storeWallTemperature(w);   % initial
             end
             
             % Compute ending time
@@ -181,17 +196,10 @@ classdef Driver < handle
             elseif (~isempty(this.max_step))
                 this.max_time = min(this.max_time,this.max_step*this.time_step);
             end
-                    
-            % Add initial wall values to result arrays
-            for i = 1:this.n_walls
-                w = this.walls(i);
-                this.result.storeWallPosition(w);
-                this.result.storeWallThermal(w);
-            end
             
             % Initialize output control variables
-            this.nprog = this.nprog * this.max_time / 100;
-            this.nout  = this.max_time / this.nout;
+            this.nprog = this.nprog * this.max_time / 100; % convert to time per print
+            this.nout  = this.max_time / this.nout;        % convert to time per output
             this.tprog = this.nprog;
             this.tout  = this.nout;
         end
@@ -253,7 +261,7 @@ classdef Driver < handle
         function printProgress(this)
             if (this.time >= this.tprog)
                 fprintf('\n%.1f%%: time %.2f, step %d',100*this.tprog/this.max_time,this.time,this.step);
-                this.tprog = this.tprog + this.nprog - 10e-15;
+                this.tprog = this.tprog + this.nprog - 10e-15; % small value to deal with garbages
             end
         end
         
@@ -261,7 +269,7 @@ classdef Driver < handle
         function do = storeResults(this)
             if (this.time >= this.tout)
                 do = true;
-                this.tout = this.tout + this.nout;
+                this.tout = this.tout + this.nout - 10e-10; % small value to deal with garbages
                 this.result.updateIndex();
             else
                 do = false;
@@ -279,15 +287,15 @@ classdef Driver < handle
             end
             
             % Create and show animations
-            if (~isempty(this.animates))
-                for i = 1:length(this.animates)
-                    fprintf('\nCreating animation %s...',this.animates(i).atitle);
-                    this.animates(i).execute(this);
+            if (~isempty(this.animations))
+                for i = 1:length(this.animations)
+                    fprintf('\nCreating animation %s...',this.animations(i).atitle);
+                    this.animations(i).execute(this);
                 end
                 fprintf('\n');
-                for i = 1:length(this.animates)
-                    fprintf('\nShowing animation %s...\n',this.animates(i).atitle);
-                    this.animates(i).show();
+                for i = 1:length(this.animations)
+                    fprintf('\nShowing animation %s...\n',this.animations(i).atitle);
+                    this.animations(i).show();
                 end
             end
         end

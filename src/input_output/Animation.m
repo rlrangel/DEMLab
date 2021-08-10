@@ -1,4 +1,4 @@
-%% Animate class
+%% Animation class
 %
 %% Description
 %
@@ -15,7 +15,7 @@
 % * *Vector*: Shows the motion of the elements and uses arrows to indicate
 % the direction and intensity of a vector result.
 %
-classdef Animate < handle
+classdef Animation < handle
     %% Constant values: animation types
     properties (Constant = true, Access = public)
         MOTION = uint8(1);   % Particles motion with no result indication
@@ -89,7 +89,7 @@ classdef Animate < handle
     
     %% Constructor method
     methods
-        function this = Animate()
+        function this = Animation()
             this.setDefaultProps();
         end
     end

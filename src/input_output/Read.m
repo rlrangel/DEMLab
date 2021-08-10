@@ -3006,8 +3006,8 @@ classdef Read < handle
                 ANM = json.Animation(i);
                 
                 % Create animation object
-                anm = Animate();
-                drv.animates(i) = anm;
+                anm = Animation();
+                drv.animations(i) = anm;
                 
                 % Set model path to save animations
                 anm.path = path;

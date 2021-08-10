@@ -56,7 +56,7 @@
 % * <contactconduction.html ContactConduction>
 % * <read.html Read>
 % * <result.html Result>
-% * <animate.html Animate>
+% * <animation.html Animation>
 % * <graph.html Graph>
 %
 %% Authors
@@ -90,5 +90,5 @@ addpath('algorithms',...
         'interactions/force',...
         'interactions/rolling_resistance',...
         'interactions/heat_transfer');
-file = 'C:\Users\rlr_5\gDrive\Work\Projects\DEMLab\DEMLab_git\models\test_time\therm\ProjectParameters.json';
+file = 'C:\Users\rlr_5\gDrive\Work\Projects\DEMLab\DEMLab_git\models\test_time\ProjectParameters.json';
 Master().execute(file);
