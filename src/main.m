@@ -53,7 +53,7 @@
 % * <contactforcen.html ContactForceN>
 % * <contactforcet.html ContactForceT>
 % * <rollresist.html RollResist>
-% * <contactconduction.html ContactConduction>
+% * <conductiondirect.html ConductionDirect>
 % * <read.html Read>
 % * <result.html Result>
 % * <animation.html Animation>
@@ -90,5 +90,5 @@ addpath('algorithms',...
         'interactions/force',...
         'interactions/rolling_resistance',...
         'interactions/heat_transfer');
-file = 'C:\Users\rlr_5\gDrive\Work\Projects\DEMLab\DEMLab_git\models\test_time\ProjectParameters.json';
+file = '';
 Master().execute(file);

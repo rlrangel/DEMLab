@@ -158,9 +158,14 @@ classdef BinKinematics_SphereSphere < BinKinematics
         end
         
         %------------------------------------------------------------------
-        function addContactConductionToParticles(~,int)
-            int.elem1.heat_rate = int.elem1.heat_rate + int.cconduc.total_hrate;
-            int.elem2.heat_rate = int.elem2.heat_rate - int.cconduc.total_hrate;
+        function addDirectConductionToParticles(~,int)
+            int.elem1.heat_rate = int.elem1.heat_rate + int.dconduc.total_hrate;
+            int.elem2.heat_rate = int.elem2.heat_rate - int.dconduc.total_hrate;
+        end
+        
+        %------------------------------------------------------------------
+        function addIndirectConductionToParticles(~,int)
+            
         end
     end
 end

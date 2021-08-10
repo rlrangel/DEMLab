@@ -2684,7 +2684,11 @@ classdef Read < handle
                     status = 0;
                     return;
                 end
-                if (~this.interactContactConduction(json.InteractionModel,drv))
+                if (~this.interactConductionDirect(json.InteractionModel,drv))
+                    status = 0;
+                    return;
+                end
+                if (~this.interactConductionIndirect(json.InteractionModel,drv))
                     status = 0;
                     return;
                 end
@@ -3809,31 +3813,45 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = interactContactConduction(this,IM,drv)
+        function status = interactConductionDirect(this,IM,drv)
             status = 1;
             if (drv.type == drv.MECHANICAL)
                 return;
-            elseif (~isfield(IM,'contact_conduction'))
-                this.warn('No model for contact thermal conduction was identified. This heat transfer mechanism will not be considered.');
+            elseif (~isfield(IM,'direct_conduction'))
+                this.warn('No model for direct thermal conduction was identified. This heat transfer mechanism will not be considered.');
                 return;
             end
             
             % Model parameters
-            if (~isfield(IM.contact_conduction,'model'))
-                fprintf(2,'Missing data in project parameters file: InteractionModel.contact_conduction.model.\n');
+            if (~isfield(IM.direct_conduction,'model'))
+                fprintf(2,'Missing data in project parameters file: InteractionModel.direct_conduction.model.\n');
                 status = 0; return;
             end
-            model = string(IM.contact_conduction.model);
+            model = string(IM.direct_conduction.model);
             if (~this.isStringArray(model,1) ||...
-               (~strcmp(model,'batchelor_obrien')))
-                fprintf(2,'Invalid data in project parameters file: InteractionModel.contact_conduction.model.\n');
-                fprintf(2,'Available options: batchelor_obrien.\n');
+               (~strcmp(model,'bob')         &&...
+                ~strcmp(model,'thermal_pipe')))
+                fprintf(2,'Invalid data in project parameters file: InteractionModel.direct_conduction.model.\n');
+                fprintf(2,'Available options: bob, thermal_pipe.\n');
                 status = 0; return;
             end
             
             % Create object
-            if (strcmp(model,'batchelor_obrien'))
-                drv.search.b_interact.cconduc = ContactConduction_BOB();
+            if (strcmp(model,'bob'))
+                drv.search.b_interact.dconduc = ConductionDirect_BOB();
+            elseif (strcmp(model,'thermal_pipe'))
+                drv.search.b_interact.dconduc = ConductionDirect_Pipe();
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = interactConductionIndirect(this,IM,drv)
+            status = 1;
+            if (drv.type == drv.MECHANICAL)
+                return;
+            elseif (~isfield(IM,'indirect_conduction'))
+                this.warn('No model for indirect thermal conduction was identified. This heat transfer mechanism will not be considered.');
+                return;
             end
         end
         

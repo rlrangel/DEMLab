@@ -1,20 +1,25 @@
-%% ContactConduction class
+%% ConductionDirect class
 %
 %% Description
 %
 % This is a value heterogeneous super-class for the definition of models
-% for the contact heat conduction between elements.
+% for the direct heat conduction between elements.
+%
+% Direct heat conduction happens through the contact area of two touching
+% bodies.
 %
 % This super-class defines abstracts methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <contactconduction_bob.html ContactConduction_BOB> (default)
+% * <conductiondirect_bob.html ConductionDirect_BOB> (default)
+% * <conductiondirect_pipe.html ConductionDirect_Pipe>
 %
-classdef ContactConduction < matlab.mixin.Heterogeneous
+classdef ConductionDirect < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of model
-        BATCHELOR_OBRIEN = uint8(1);
+        BOB  = uint8(1);
+        PIPE = uint8(2);
     end
     
     %% Public properties
@@ -28,7 +33,7 @@ classdef ContactConduction < matlab.mixin.Heterogeneous
     
     %% Constructor method
     methods
-        function this = ContactConduction(type)
+        function this = ConductionDirect(type)
             if (nargin > 0)
                 this.type = type;
             end
@@ -38,7 +43,7 @@ classdef ContactConduction < matlab.mixin.Heterogeneous
     %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
-            defaultObject = ContactConduction_BOB;
+            defaultObject = ConductionDirect_BOB;
         end
     end
     

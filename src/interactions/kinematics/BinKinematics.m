@@ -109,7 +109,10 @@ classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
         addRollResistTorqueToParticles(this,interact);
         
         %------------------------------------------------------------------
-        addContactConductionToParticles(this,interact);
+        addDirectConductionToParticles(this,interact);
+        
+        %------------------------------------------------------------------
+        addIndirectConductionToParticles(this,interact);
     end
     
     %% Public methods

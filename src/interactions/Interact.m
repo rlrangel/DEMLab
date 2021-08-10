@@ -31,7 +31,8 @@ classdef Interact < handle & matlab.mixin.Copyable
         rollres RollResist    = RollResist.empty;      % rolling resistance (may be empty)
         
         % Thermal interaction models (value class objects)
-        cconduc ContactConduction = ContactConduction.empty;   % contact thermal conduction
+        dconduc ConductionDirect   = ConductionDirect.empty;     % direct thermal conduction
+        iconduc ConductionIndirect = ConductionIndirect.empty;   % indirect thermal conduction
     end
     
     %% Constructor method
@@ -58,8 +59,11 @@ classdef Interact < handle & matlab.mixin.Copyable
         
         %------------------------------------------------------------------
         function setCteParamsTherm(this)
-            if (~isempty(this.cconduc))
-                this.cconduc = this.cconduc.setCteParams(this);
+            if (~isempty(this.dconduc))
+                this.dconduc = this.dconduc.setCteParams(this);
+            end
+            if (~isempty(this.iconduc))
+                this.iconduc = this.iconduc.setCteParams(this);
             end
         end
         
@@ -78,8 +82,11 @@ classdef Interact < handle & matlab.mixin.Copyable
         
         %------------------------------------------------------------------
         function evalResultsTherm(this)
-            if (~isempty(this.cconduc))
-                this.cconduc = this.cconduc.evalHeatRate(this);
+            if (~isempty(this.dconduc))
+                this.dconduc = this.dconduc.evalHeatRate(this);
+            end
+            if (~isempty(this.iconduc))
+                this.iconduc = this.iconduc.evalHeatRate(this);
             end
         end
         
@@ -99,8 +106,11 @@ classdef Interact < handle & matlab.mixin.Copyable
         
         %------------------------------------------------------------------
         function addResultsTherm(this)
-            if (~isempty(this.cconduc))
-                this.kinemat.addContactConductionToParticles(this);
+            if (~isempty(this.dconduc))
+                this.kinemat.addDirectConductionToParticles(this);
+            end
+            if (~isempty(this.iconduc))
+                this.kinemat.addIndirectConductionToParticles(this);
             end
         end
     end

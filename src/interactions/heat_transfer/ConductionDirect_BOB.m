@@ -1,9 +1,9 @@
-%% ContactConduction_BOB class
+%% ConductionDirect_BOB class
 %
 %% Description
 %
-% This is a sub-class of the <contactconduction.html ContactConduction>
-% class for the implementation of the *Batchelor & O'Brien* contact heat
+% This is a sub-class of the <conductiondirect.html ConductionDirect>
+% class for the implementation of the *Batchelor & O'Brien* direct heat
 % conduction model.
 %
 % This model assumes a steady-state thermal flux between two smooth-elastic
@@ -37,11 +37,11 @@
 % Evaluation of effective thermal conductivity from the structure of a packed bed, _Chem. Eng. Sci._, 54(19):4199-4209, 1999>
 % (alternative form)
 %
-classdef ContactConduction_BOB < ContactConduction
+classdef ConductionDirect_BOB < ConductionDirect
     %% Constructor method
     methods
-        function this = ContactConduction_BOB()
-            this = this@ContactConduction(ContactConduction.BATCHELOR_OBRIEN);
+        function this = ConductionDirect_BOB()
+            this = this@ConductionDirect(ConductionDirect.BOB);
             this = this.setDefaultProps();
         end
     end
