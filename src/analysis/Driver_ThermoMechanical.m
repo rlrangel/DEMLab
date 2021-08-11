@@ -167,13 +167,9 @@ classdef Driver_ThermoMechanical < Driver
                     % Update contact duration
                     int.kinemat.contact_time = this.time - int.kinemat.contact_start;
                     
-                    % Compute constant interaction results
+                    % Compute and add interaction results to particles
                     int.evalResultsMech();
                     int.evalResultsTherm();
-                    
-                    % Add interaction results to particles
-                    int.addResultsMech();
-                    int.addResultsTherm();
                     
                 % Evaluate noncontact interactions
                 else

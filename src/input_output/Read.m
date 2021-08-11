@@ -4608,6 +4608,12 @@ classdef Read < handle
                     fprintf(2,'Wall %d has no length.',w.id);
                     status = 0; return;
                 end
+                
+                % Set wall as adiabatic if it has no material
+                % (by default it is false)
+                if (isempty(w.material))
+                    w.adiabatic = true;
+                end
             end
         end
     end

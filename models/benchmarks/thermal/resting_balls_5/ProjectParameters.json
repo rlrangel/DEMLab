@@ -35,7 +35,7 @@
 	},
 	"Material": {
 		"name"        : "material_1",
-		"model_parts" : ["PARTICLES"],
+		"model_parts" : ["PARTICLES","WALLS"],
 		"properties"  : {
 			"density"              : 100.0,
 			"young_modulus"        : 10000000,

@@ -137,7 +137,7 @@ classdef Master
         %------------------------------------------------------------------
         function drawInitConfig(~,drv)
             % Create figure
-            fig = figure;
+            fig = figure('Name','Initial Configuration');
             fig.Units = 'normalized';
             fig.Position = [0.1 0.1 0.8 0.8];
             axis(gca,'equal');
@@ -150,17 +150,14 @@ classdef Master
             anim.radius   = drv.result.radius(:,1);
             anim.wall_pos = drv.result.wall_position(:,1);
             
-            % Show initial temperature when analysis is thermal
+            % Show initial temperature for thermal analysis
             if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
                 title(gca,'Initial Temperature');
                 anim.res_part = drv.result.temperature(:,1);
                 anim.res_wall = drv.result.wall_temperature(:,1);
-                min_val = min([anim.res_part;anim.res_wall]);
-                max_val = max([anim.res_part;anim.res_wall]);
-                if (min_val == max_val)
-                    min_val = min_val - 1;
-                    max_val = max_val + 1;
-                end
+                
+                % Set color scale
+                [min_val,max_val] = anim.scalarValueLimits();
                 anim.res_range = linspace(min_val,max_val,256);
                 colormap jet;
                 caxis([min_val,max_val]);
@@ -169,7 +166,7 @@ classdef Master
                 title(gca,'Initial Positions');
             end
             
-            % Draw particles / walls / bounding box / sinks
+            % Draw model components
             for i = 1:drv.n_particles
                 if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
                     anim.drawParticleScalar(i,1);

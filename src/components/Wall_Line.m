@@ -31,6 +31,7 @@ classdef Wall_Line < Wall
             % Behavior flags
             this.fixed_motion = false;
             this.fixed_therm  = false;
+            this.adiabatic    = false;
             
             % Mechanical state variables
             this.veloc_trl = [0;0];

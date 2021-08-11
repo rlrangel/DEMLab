@@ -73,9 +73,23 @@ classdef Driver_Thermal < Driver
             % Interactions search (only once as particles do not move)
             this.search.execute(this);
             
-            % Set constant interaction parameters
+            % Prepare interactions (never change during analysis)
+            rmv = false;
             for i = 1:this.n_interacts
                 int = this.interacts(i);
+                
+                % Remove adiabatic interactions
+                if (int.adiabatic)
+                    p = int.elem1;
+                    w = int.elem2;
+                    p.interacts(p.interacts==int) = [];
+                    p.neigh_w(p.neigh_w==w.id)    = [];
+                    delete(int);
+                    rmv = true;
+                    continue;
+                end
+                
+                % Set constant parameters
                 int.kinemat.is_contact    = true;
                 int.kinemat.v0_n          = 0;
                 int.kinemat.contact_start = 0;
@@ -84,6 +98,12 @@ classdef Driver_Thermal < Driver
                 int.kinemat.ovlp_n        = -int.kinemat.separ;
                 int.kinemat = int.kinemat.setContactArea(int);
                 int.setCteParamsTherm();
+            end
+            
+            % Erase handles to removed interactions from global list
+            if (rmv)
+                this.interacts(~isvalid(this.interacts)) = [];
+                this.n_interacts = length(this.interacts);
             end
             
             % Store fixed particle and wall positions to result arrays
@@ -123,13 +143,7 @@ classdef Driver_Thermal < Driver
         %------------------------------------------------------------------
         function interactionLoop(this)
             for i = 1:this.n_interacts
-                int = this.interacts(i);
-                
-                % Evaluate contact interactions
-                if (int.kinemat.separ < 0)
-                    int.evalResultsTherm();
-                    int.addResultsTherm();
-                end
+                this.interacts(i).evalResultsTherm();
             end
         end
         

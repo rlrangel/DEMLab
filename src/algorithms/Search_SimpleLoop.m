@@ -83,8 +83,8 @@ classdef Search_SimpleLoop < Search
                             p2.neigh_p(p2.neigh_p==p1.id)   = [];
                             
                             % Delete interaction object
-                            rmv = true;
                             delete(int);
+                            rmv = true;
                         end
                     else
                         % Create new particle-particle interaction if needed
@@ -109,8 +109,8 @@ classdef Search_SimpleLoop < Search
                             p1.neigh_w(p1.neigh_w==w.id)    = [];
                             
                             % Delete interaction object
-                            rmv = true;
                             delete(int);
+                            rmv = true;
                         end
                     else
                         % Create new particle-wall interaction if needed
@@ -215,6 +215,9 @@ classdef Search_SimpleLoop < Search
             % Set kinematic-related parameters
             int.kinemat = int.kinemat.setEndContactParams();
             int.kinemat.setEffParams(int);
+            
+            % Set flag for adiabatic interaction
+            int.adiabatic = w.adiabatic;
             
             % Add references of new interaction to particle and global list
             p.interacts(end+1)   = int;

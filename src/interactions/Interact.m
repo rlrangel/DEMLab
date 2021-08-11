@@ -16,6 +16,9 @@ classdef Interact < handle & matlab.mixin.Copyable
         elem1;   % handle to object of the 1st interaction element (defines the sign convection)
         elem2;   % handle to object of the 2nd interaction element
         
+        % Behavior flags
+        adiabatic logical = logical.empty;   % flag for adiabatic interaction (no heat exchange)
+        
         % Effective contact parameters
         eff_radius  double = double.empty;
         eff_mass    double = double.empty;
@@ -61,6 +64,9 @@ classdef Interact < handle & matlab.mixin.Copyable
         
         %------------------------------------------------------------------
         function setCteParamsTherm(this)
+            if (this.adiabatic)
+                return;
+            end
             if (~isempty(this.dconduc))
                 this.dconduc = this.dconduc.setCteParams(this);
             end
@@ -73,45 +79,30 @@ classdef Interact < handle & matlab.mixin.Copyable
         function evalResultsMech(this)
             if (~isempty(this.cforcen))
                 this.cforcen = this.cforcen.evalForce(this);
-            end
-            if (~isempty(this.cforcet))
-                this.cforcet = this.cforcet.evalForce(this);
-            end
-            if (~isempty(this.rollres))
-                this.rollres = this.rollres.evalTorque(this);
-            end
-        end
-        
-        %------------------------------------------------------------------
-        function evalResultsTherm(this)
-            if (~isempty(this.dconduc))
-                this.dconduc = this.dconduc.evalHeatRate(this);
-            end
-            if (~isempty(this.iconduc))
-                this.iconduc = this.iconduc.evalHeatRate(this);
-            end
-        end
-        
-        %------------------------------------------------------------------
-        function addResultsMech(this)
-            if (~isempty(this.cforcen))
                 this.kinemat.addContactForceNormalToParticles(this);
             end
             if (~isempty(this.cforcet))
+                this.cforcet = this.cforcet.evalForce(this);
                 this.kinemat.addContactForceTangentToParticles(this);
                 this.kinemat.addContactTorqueTangentToParticles(this);
             end
             if (~isempty(this.rollres))
+                this.rollres = this.rollres.evalTorque(this);
                 this.kinemat.addRollResistTorqueToParticles(this);
             end
         end
         
         %------------------------------------------------------------------
-        function addResultsTherm(this)
+        function evalResultsTherm(this)
+            if (this.adiabatic)
+                return;
+            end
             if (~isempty(this.dconduc))
+                this.dconduc = this.dconduc.evalHeatRate(this);
                 this.kinemat.addDirectConductionToParticles(this);
             end
             if (~isempty(this.iconduc))
+                this.iconduc = this.iconduc.evalHeatRate(this);
                 this.kinemat.addIndirectConductionToParticles(this);
             end
         end

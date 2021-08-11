@@ -376,7 +376,7 @@ classdef Result < handle
         function storeWallTemperature(this,w)
             r = w.id;
             c = this.idx;
-            if (this.has_wall_temperature)
+            if (this.has_wall_temperature && ~w.adiabatic)
                 this.wall_temperature(r,c) = w.temperature;
             end
         end

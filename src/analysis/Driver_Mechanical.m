@@ -148,11 +148,8 @@ classdef Driver_Mechanical < Driver
                         int.setCteParamsMech();
                     end
                     
-                    % Compute interaction results
+                    % Compute and add interaction results to particles
                     int.evalResultsMech();
-                    
-                    % Add interaction results to particles
-                    int.addResultsMech();
                     
                 % Evaluate noncontact interactions
                 else

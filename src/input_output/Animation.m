@@ -105,7 +105,7 @@ classdef Animation < handle
         %------------------------------------------------------------------
         function execute(this,drv)
             % Create new figure
-            this.fig = figure;
+            this.fig = figure('Name',this.atitle);
             
             % Set figure properties
             this.fig.Visible  = 'off';
@@ -268,6 +268,13 @@ classdef Animation < handle
             if (min_val == max_val)
                 min_val = min_val - 1;
                 max_val = max_val + 1;
+            elseif (isnan(min_val) && isnan(max_val))
+                min_val = - 1;
+                max_val = + 1;
+            elseif (isnan(min_val))
+                min_val = max_val - 1;
+            elseif (isnan(max_val))
+                max_val = min_val + 1;
             end
         end
         
@@ -316,6 +323,7 @@ classdef Animation < handle
             tim = this.times;
             tit = this.atitle;
             for i = 1:this.nf
+                set(0,'CurrentFigure',this.fig)
                 cla;
                 title(gca,strcat(tit,sprintf(' - Time: %.3f',tim(i))));
                 this.drawMovieFrame(drv,i);
@@ -452,7 +460,7 @@ classdef Animation < handle
             s = this.sty_wall;
             
             % Set wall color
-            if (isempty(this.res_wall))
+            if (isempty(this.res_wall) || wall.adiabatic)
                 c = this.col_wall;
             else
                 c = interp1(this.res_range,colormap,this.res_wall(wall.id,j));
