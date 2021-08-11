@@ -331,17 +331,6 @@ classdef Animation < handle
         end
         
         %------------------------------------------------------------------
-        function show(this)
-            if(this.play)
-                this.fig.Visible = 'on';
-                movie(this.fig,this.frames,99999,this.fps);
-            end
-        end
-    end
-    
-    %% Public methods: plotting methods
-    methods
-        %------------------------------------------------------------------
         function drawMovieFrame(this,drv,f)
             if (isnan(this.times(1,f)))
                 return;
@@ -387,6 +376,17 @@ classdef Animation < handle
         end
         
         %------------------------------------------------------------------
+        function show(this)
+            if(this.play)
+                this.fig.Visible = 'on';
+                movie(this.fig,this.frames,99999,this.fps);
+            end
+        end
+    end
+    
+    %% Public methods: plotting methods
+    methods
+        %------------------------------------------------------------------
         function drawParticleMotion(this,i,j)
             % Position
             x = this.coord_x(i,j);
@@ -401,9 +401,11 @@ classdef Animation < handle
             rectangle('Position',pos,'Curvature',[1 1],'EdgeColor',c,'LineWidth',w,'LineStyle',s,'FaceColor','none');
             
             % Plot orientation
-            o = this.res_part(i,j);
-            p = [x,y]+[r*cos(o),r*sin(o)];
-            line([x,p(1)],[y,p(2)],'Color',c,'LineWidth',w,'LineStyle',s);
+            if (~isempty(this.res_part))
+                o = this.res_part(i,j);
+                p = [x,y]+[r*cos(o),r*sin(o)];
+                line([x,p(1)],[y,p(2)],'Color',c,'LineWidth',w,'LineStyle',s);
+            end
         end
         
         %------------------------------------------------------------------
@@ -456,21 +458,21 @@ classdef Animation < handle
                 c = interp1(this.res_range,colormap,this.res_wall(wall.id,j));
             end
             
-            % Column ID
-            col = 4 * (wall.id-1) + 1;
+            % Line ID
+            lin = 4 * (wall.id-1) + 1;
             
             switch wall.type
                 case wall.LINE
-                    x1 = this.wall_pos(col+0,j);
-                    y1 = this.wall_pos(col+1,j);
-                    x2 = this.wall_pos(col+2,j);
-                    y2 = this.wall_pos(col+3,j);
+                    x1 = this.wall_pos(lin+0,j);
+                    y1 = this.wall_pos(lin+1,j);
+                    x2 = this.wall_pos(lin+2,j);
+                    y2 = this.wall_pos(lin+3,j);
                     line([x1,x2],[y1,y2],'Color',c,'LineWidth',w,'LineStyle',s);
                 
                 case wall.CIRCLE
-                    x = this.wall_pos(col+0,j);
-                    y = this.wall_pos(col+1,j);
-                    r = this.wall_pos(col+2,j);
+                    x = this.wall_pos(lin+0,j);
+                    y = this.wall_pos(lin+1,j);
+                    r = this.wall_pos(lin+2,j);
                     this.drawCircle(x,y,r,c,w,s);
             end
         end

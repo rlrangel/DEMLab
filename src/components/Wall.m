@@ -33,6 +33,9 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         % Physical properties
         material Material = Material.empty;   % handle to object of Material class
         
+        % Behavior flags
+        fixed_motion logical = logical.empty;   % flag for fixed motion wall
+        fixed_therm  logical = logical.empty;   % flag for fixed temperature wall
         % Fixed conditions (handles to objects of Condition class)
         fc_translation Condition = Condition.empty;
         fc_rotation    Condition = Condition.empty;

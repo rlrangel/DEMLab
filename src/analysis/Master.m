@@ -16,7 +16,7 @@ classdef Master
         end
     end
     
-    %% Public methods
+    %% Public methods: main function
     methods
         %------------------------------------------------------------------
         function execute(this,file_fullname)
@@ -62,8 +62,8 @@ classdef Master
                 return;
             end
             
-            % Start parallelization
-            this.startParallel(drv);
+            % Start parallelization (currently not available)
+            %this.startParallel(drv);
             
             % Pre-process
             fprintf('\nPre-processing...\n');
@@ -71,6 +71,9 @@ classdef Master
                 fprintf('\nExiting program...\n');
                 return;
             end
+            
+            % Show initial configuration
+            this.drawInitConfig(drv);
             
             % Print simulation information
             this.printSimulationInfo(drv);
@@ -88,7 +91,10 @@ classdef Master
             drv.posProcess()
             fprintf('\nFinished!\n\n');
         end
-        
+    end
+    
+    %% Public methods: auxiliary functions
+    methods
         %------------------------------------------------------------------
         function printHeader(~)
             fprintf('==================================================================\n');
@@ -126,6 +132,70 @@ classdef Master
             fprintf('\n\nAnalysis finished:\n');
             fprintf('%s\n',datestr(now));
             fprintf('Total time: %s\n',string(t));
+        end
+        
+        %------------------------------------------------------------------
+        function drawInitConfig(~,drv)
+            % Create figure
+            fig = figure;
+            fig.Units = 'normalized';
+            fig.Position = [0.1 0.1 0.8 0.8];
+            axis(gca,'equal');
+            hold on;
+            
+            % Create and set animation object (use it to support drawing)
+            anim          = Animation();
+            anim.coord_x  = drv.result.coord_x(:,1);
+            anim.coord_y  = drv.result.coord_y(:,1);
+            anim.radius   = drv.result.radius(:,1);
+            anim.wall_pos = drv.result.wall_position(:,1);
+            
+            % Show initial temperature when analysis is thermal
+            if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
+                title(gca,'Initial Temperature');
+                anim.res_part = drv.result.temperature(:,1);
+                anim.res_wall = drv.result.wall_temperature(:,1);
+                min_val = min([anim.res_part;anim.res_wall]);
+                max_val = max([anim.res_part;anim.res_wall]);
+                if (min_val == max_val)
+                    min_val = min_val - 1;
+                    max_val = max_val + 1;
+                end
+                anim.res_range = linspace(min_val,max_val,256);
+                colormap jet;
+                caxis([min_val,max_val]);
+                colorbar;
+            else
+                title(gca,'Initial Positions');
+            end
+            
+            % Draw particles / walls / bounding box / sinks
+            for i = 1:drv.n_particles
+                if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
+                    anim.drawParticleScalar(i,1);
+                else
+                    anim.drawParticleMotion(i,1);
+                end
+            end
+            for i = 1:drv.n_walls
+                anim.drawWall(drv.walls(i),1);
+            end
+            if (~isempty(drv.bbox))
+                if (drv.bbox.isActive(drv.time))
+                    anim.drawBBox(drv.bbox);
+                end
+            end
+            for i = 1:length(drv.sink)
+                if (drv.sink(i).isActive(drv.time))
+                    anim.drawSink(drv.sink(i));
+                end
+            end
+            
+            % Adjust figure bounding box
+            xmin = min(xlim);
+            xmax = max(xlim);
+            xlim([xmin-(xmax-xmin)/10,xmax+(xmax-xmin)/10]);
+            pause(3);
         end
         
         %------------------------------------------------------------------

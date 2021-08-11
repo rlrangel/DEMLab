@@ -27,7 +27,7 @@ classdef Particle_Sphere < Particle
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
-            % Flags for free/fixed particle
+            % Behavior flags
             this.free_trl   = true;
             this.free_rot   = true;
             this.free_therm = true;

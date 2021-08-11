@@ -45,6 +45,11 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         neigh_p   uint32   = uint32.empty;     % vector of neighbours particles IDs
         neigh_w   uint32   = uint32.empty;     % vector of neighbours walls IDs
         
+        % Behavior flags
+        free_trl   logical = logical.empty;   % flag for translational free particle
+        free_rot   logical = logical.empty;   % flag for rotational free particle
+        free_therm logical = logical.empty;   % flag for thermally free particle
+        
         % Prescribed conditions (handles to objects of Condition class)
         pc_force    Condition = Condition.empty;
         pc_torque   Condition = Condition.empty;
@@ -55,11 +60,6 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         fc_translation Condition = Condition.empty;
         fc_rotation    Condition = Condition.empty;
         fc_temperature Condition = Condition.empty;
-        
-        % Flags for free/fixed particle
-        free_trl   logical = logical.empty;   % flag for translational free particle
-        free_rot   logical = logical.empty;   % flag for rotational free particle
-        free_therm logical = logical.empty;   % flag for thermally free particle
         
         % Total forcing terms
         force     double = double.empty;

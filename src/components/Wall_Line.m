@@ -28,7 +28,7 @@ classdef Wall_Line < Wall
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
-            % Flags for fixed wall
+            % Behavior flags
             this.fixed_motion = false;
             this.fixed_therm  = false;
             
