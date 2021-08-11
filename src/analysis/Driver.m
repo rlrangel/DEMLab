@@ -258,14 +258,6 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
-        function printProgress(this)
-            if (this.time >= this.tprog)
-                fprintf('\n%.1f%%: time %.2f, step %d',100*this.tprog/this.max_time,this.time,this.step);
-                this.tprog = this.tprog + this.nprog - 10e-15; % small value to deal with garbages
-            end
-        end
-        
-        %------------------------------------------------------------------
         function storeResults(this)
             if (this.time >= this.tout)
                 this.store = true;
@@ -273,6 +265,14 @@ classdef Driver < handle
                 this.result.updateIndex();
             else
                 this.store = false;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function printProgress(this)
+            if (this.time >= this.tprog)
+                fprintf('\n%.1f%%: time %.2f, step %d',100*this.tprog/this.max_time,this.time,this.step);
+                this.tprog = this.tprog + this.nprog - 10e-15; % small value to deal with garbages
             end
         end
         

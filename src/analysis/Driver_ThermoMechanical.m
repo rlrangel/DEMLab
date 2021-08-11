@@ -148,18 +148,13 @@ classdef Driver_ThermoMechanical < Driver
                 
                 % Evaluate contact interactions
                 if (int.kinemat.separ < 0)
-                    % Update overlap parameters
+                    % Update overlap parameters and contact area
                     int.kinemat = int.kinemat.setOverlaps(int,this.time_step);
-                    
-                    % Update contact area
                     int.kinemat = int.kinemat.setContactArea(int);
                     
                     % Set initial contact parameters
                     if (~int.kinemat.is_contact)
-                        % Initialize contact
                         int.kinemat = int.kinemat.setInitContactParams(this.time);
-                        
-                        % Initialize constant parameters values
                         int.setCteParamsMech();
                         int.setCteParamsTherm();
                     end

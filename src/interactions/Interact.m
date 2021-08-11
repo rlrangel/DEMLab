@@ -17,7 +17,7 @@ classdef Interact < handle & matlab.mixin.Copyable
         elem2;   % handle to object of the 2nd interaction element
         
         % Behavior flags
-        adiabatic logical = logical.empty;   % flag for adiabatic interaction (no heat exchange)
+        insulated logical = logical.empty;   % flag for insulated interaction (no heat exchange)
         
         % Effective contact parameters
         eff_radius  double = double.empty;
@@ -64,7 +64,7 @@ classdef Interact < handle & matlab.mixin.Copyable
         
         %------------------------------------------------------------------
         function setCteParamsTherm(this)
-            if (this.adiabatic)
+            if (this.insulated)
                 return;
             end
             if (~isempty(this.dconduc))
@@ -94,7 +94,7 @@ classdef Interact < handle & matlab.mixin.Copyable
         
         %------------------------------------------------------------------
         function evalResultsTherm(this)
-            if (this.adiabatic)
+            if (this.insulated)
                 return;
             end
             if (~isempty(this.dconduc))

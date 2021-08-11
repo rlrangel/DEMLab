@@ -4609,10 +4609,10 @@ classdef Read < handle
                     status = 0; return;
                 end
                 
-                % Set wall as adiabatic if it has no material
+                % Set wall as insulated if it has no material
                 % (by default it is false)
                 if (isempty(w.material))
-                    w.adiabatic = true;
+                    w.insulated = true;
                 end
             end
         end

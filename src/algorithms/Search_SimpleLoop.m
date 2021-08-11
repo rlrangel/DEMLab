@@ -216,8 +216,8 @@ classdef Search_SimpleLoop < Search
             int.kinemat = int.kinemat.setEndContactParams();
             int.kinemat.setEffParams(int);
             
-            % Set flag for adiabatic interaction
-            int.adiabatic = w.adiabatic;
+            % Set flag for insulated interaction
+            int.insulated = w.insulated;
             
             % Add references of new interaction to particle and global list
             p.interacts(end+1)   = int;

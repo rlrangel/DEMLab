@@ -460,7 +460,7 @@ classdef Animation < handle
             s = this.sty_wall;
             
             % Set wall color
-            if (isempty(this.res_wall) || wall.adiabatic)
+            if (isempty(this.res_wall) || wall.insulated)
                 c = this.col_wall;
             else
                 c = interp1(this.res_range,colormap,this.res_wall(wall.id,j));

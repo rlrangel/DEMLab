@@ -123,6 +123,8 @@ classdef Driver_Mechanical < Driver
     methods
         %------------------------------------------------------------------
         function interactionLoop(this)
+            % Evaluate interactions:
+            % Only contact interactions available in mechanical analysis
             for i = 1:this.n_interacts
                 int = this.interacts(i);
                 
@@ -131,33 +133,18 @@ classdef Driver_Mechanical < Driver
                     int.kinemat = int.kinemat.setRelPos(int.elem1,int.elem2);
                 end
                 
-                % Evaluate contact interactions
-                if (int.kinemat.separ < 0)
-                    % Update overlap parameters
-                    int.kinemat = int.kinemat.setOverlaps(int,this.time_step);
-                    
-                    % Update contact area
-                    int.kinemat = int.kinemat.setContactArea(int);
-                    
-                    % Set initial contact parameters
-                    if (~int.kinemat.is_contact)
-                        % Initialize contact
-                        int.kinemat = int.kinemat.setInitContactParams(this.time);
-                        
-                        % Initialize constant parameters values
-                        int.setCteParamsMech();
-                    end
-                    
-                    % Compute and add interaction results to particles
-                    int.evalResultsMech();
-                    
-                % Evaluate noncontact interactions
-                else
-                    % Finalize contact
-                    if (int.kinemat.is_contact)
-                        int.kinemat = int.kinemat.setEndContactParams();
-                    end
+                % Update overlap parameters and contact area
+                int.kinemat = int.kinemat.setOverlaps(int,this.time_step);
+                int.kinemat = int.kinemat.setContactArea(int);
+                
+                % Set initial contact parameters
+                if (~int.kinemat.is_contact)
+                    int.kinemat = int.kinemat.setInitContactParams(this.time);
+                    int.setCteParamsMech();
                 end
+                
+                % Compute and add interaction results to particles
+                int.evalResultsMech();
             end
         end
         

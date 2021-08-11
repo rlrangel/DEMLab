@@ -78,8 +78,8 @@ classdef Driver_Thermal < Driver
             for i = 1:this.n_interacts
                 int = this.interacts(i);
                 
-                % Remove adiabatic interactions
-                if (int.adiabatic)
+                % Remove insulated interactions
+                if (int.insulated)
                     p = int.elem1;
                     w = int.elem2;
                     p.interacts(p.interacts==int) = [];

@@ -14,8 +14,8 @@
 % If it does, the effective interaction properties take into account the
 % material properties from both the wall and the particle.
 % Otherwise, the effective interaction properties for the mechanical
-% behavior are set as the particle material, and the wall is considered as
-% adiabatic (no heat exchange with particles).
+% behavior are set as the particle material, and the wall is considered
+% insulated (no heat exchange with particles).
 %
 % This super-class defines abstracts methods that must be implemented in
 % the derived *sub-classes*:
@@ -43,7 +43,7 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         % Behavior flags
         fixed_motion logical = logical.empty;   % flag for fixed motion wall
         fixed_therm  logical = logical.empty;   % flag for fixed temperature wall
-        adiabatic    logical = logical.empty;   % flag for adiabatic wall (no heat transfer with particles)
+        insulated    logical = logical.empty;   % flag for insulated wall (no heat transfer with particles)
         
         % Fixed conditions (handles to objects of Condition class)
         fc_translation Condition = Condition.empty;
