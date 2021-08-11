@@ -45,8 +45,8 @@
 		}
 	},
 	"InteractionModel": {
-		"contact_conduction": {
-			"model" : "batchelor_obrien"
+		"direct_conduction": {
+			"model" : "bob"
 		}
 	},
 	"Output": {

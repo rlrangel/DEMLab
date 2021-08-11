@@ -28,7 +28,7 @@ classdef Driver_ThermoMechanical < Driver
         
         % Forces / torques evaluation
         eval_freq uint32  = uint32.empty;    % evaluation frequency (in steps)
-        eval      logical = logical.empty;   % flag for evaluating in current step
+        eval      logical = logical.empty;   % flag for evaluating forces in current step
     end
     
     %% Constructor method
@@ -103,11 +103,9 @@ classdef Driver_ThermoMechanical < Driver
         function process(this)
             while (this.time < this.max_time)
                 % Store current time and step to result arrays
-                if (this.storeResults())
-                    this.store = true;
+                this.storeResults()
+                if (this.store)
                     this.result.storeTime(this);
-                else
-                    this.store = false;
                 end
             
                 % Interactions search

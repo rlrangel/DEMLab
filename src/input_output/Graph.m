@@ -34,7 +34,13 @@ classdef Graph < handle
     methods
         %------------------------------------------------------------------
         function execute(this,drv)
-            % Create a new figure
+            this.plotData(drv);
+            this.writeData(drv);
+        end
+        
+        %------------------------------------------------------------------
+        function plotData(this,drv)
+            % Create new figure
             fig = figure;
             
             % Set properties
@@ -46,34 +52,25 @@ classdef Graph < handle
             % Plot curves
             leg = strings(this.n_curves,1);
             for i = 1:this.n_curves
-                name = this.names(i);
-                
                 % Get X,Y data arrays
                 x = this.getData(drv,this.res_x,this.px(i));
                 y = this.getData(drv,this.res_y,this.py(i));
                 
                 % Remove NaN (Not a Number) and adjust array sizes
-                nanx = find(isnan(x),1);
-                nany = find(isnan(y),1);
-                idx  = length(x);
-                if (~isempty(nanx))
-                    idx = min(idx,nanx-1);
-                end
-                if (~isempty(nany))
-                    idx = min(idx,nany-1);
-                end
+                % (both vectors return with the same size)
+                [x,y,idx] = this.removeNaN(x,y);
+                
+                % Check data consistency
                 if (idx == 0)
                     warning('off','backtrace');
-                    warning('Curve %s of graph %s has no valid results and was not ploted.',name,this.gtitle);
+                    warning('Curve %s of graph %s has no valid results and was not ploted.',this.names(i),this.gtitle);
                     warning('on','backtrace');
                     continue;
                 end
-                x = x(1:idx);
-                y = y(1:idx);
                 
                 % Plot curve
                 plot(x,y);
-                leg(i) = name;
+                leg(i) = this.names(i);
             end
             
             % Set legend
@@ -82,6 +79,41 @@ classdef Graph < handle
             % Save picture
             file_name = strcat(this.path,'\',this.gtitle,'.png');
             saveas(gcf,file_name);
+        end
+        
+        %------------------------------------------------------------------
+        function writeData(this,drv)
+            % Create new file
+            file_name = strcat(this.path,'\',this.gtitle,'.txt');
+            fid = fopen(file_name,'w');
+            
+            % Write curves
+            for i = 1:this.n_curves
+                % Write curve name
+                fprintf(fid,'%s\n',this.names(i));
+                
+                % Get X,Y data arrays
+                x = this.getData(drv,this.res_x,this.px(i));
+                y = this.getData(drv,this.res_y,this.py(i));
+                
+                % Remove NaN (Not a Number) and adjust array sizes
+                % (both vectors return with the same size)
+                [x,y,idx] = this.removeNaN(x,y);
+                
+                % Check data consistency
+                if (idx == 0)
+                    continue;
+                end
+                
+                % Write values
+                for j = 1:length(x)
+                    fprintf(fid,'%.10f %.10f\n',x(j),y(j));
+                end
+                fprintf(fid,'\n');
+            end
+            
+            % Close file
+            fclose(fid);
         end
         
         %------------------------------------------------------------------
@@ -134,6 +166,21 @@ classdef Graph < handle
                 case drv.result.HEAT_RATE
                     R = drv.result.heat_rate(p,:);
             end
+        end
+        
+        %------------------------------------------------------------------
+        function [x,y,idx] = removeNaN(~,x,y)
+            nanx = find(isnan(x),1);
+            nany = find(isnan(y),1);
+            idx  = length(x);
+            if (~isempty(nanx))
+                idx = min(idx,nanx-1);
+            end
+            if (~isempty(nany))
+                idx = min(idx,nany-1);
+            end
+            x = x(1:idx);
+            y = y(1:idx);
         end
     end
 end

@@ -132,7 +132,7 @@ classdef Driver < handle
             % Erase handles to removed particles from global list and model parts
             this.eraseHandlesToRemovedParticle();
             if (this.n_particles == 0)
-                fprintf(2,'The model has no particle inside the domain.\n');
+                fprintf(2,'The model has no particle inside the domain to initialize the analysis.\n');
                 status = 0;
                 return;
             end
@@ -266,13 +266,13 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
-        function do = storeResults(this)
+        function storeResults(this)
             if (this.time >= this.tout)
-                do = true;
+                this.store = true;
                 this.tout = this.tout + this.nout - 10e-10; % small value to deal with garbages
                 this.result.updateIndex();
             else
-                do = false;
+                this.store = false;
             end
         end
         

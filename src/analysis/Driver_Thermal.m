@@ -97,11 +97,9 @@ classdef Driver_Thermal < Driver
             % Time advancing
             while (this.time < this.max_time)
                 % Store current time and step to result arrays
-                if (this.storeResults())
-                    this.store = true;
+                this.storeResults()
+                if (this.store)
                     this.result.storeTime(this);
-                else
-                    this.store = false;
                 end
                 
                 % Loop over all interactions, particles and walls
