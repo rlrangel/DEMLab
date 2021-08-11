@@ -3221,9 +3221,9 @@ classdef Read < handle
                 
                 % Read all values of current line
                 values = sscanf(line,'%f');
-                if (length(values) ~= 4 && length(values) ~= 5)
+                if (length(values) ~= 5)
                     fprintf(2,'Invalid data in model parts file: Number of parameters of PARTICLES.SPHERE.\n');
-                    fprintf(2,'It requires 5 parameters: ID, coord X, coord Y, orientation, radius (radius is optional in this file).\n');
+                    fprintf(2,'It requires 5 parameters: ID, coord X, coord Y, orientation, radius.\n');
                     status = 0; return;
                 end
                 
@@ -3252,13 +3252,11 @@ classdef Read < handle
                 end
                 
                 % Radius
-                if (length(values) == 5)
-                    radius = values(5);
-                    if (~this.isDoubleArray(radius,1) || radius <= 0)
-                        fprintf(2,'Invalid data in model parts file: Radius of PARTICLES.SPHERE with ID %d.\n',id);
-                        fprintf(2,'It must be a positive value.\n');
-                        status = 0; return;
-                    end
+                radius = values(5);
+                if (~this.isDoubleArray(radius,1) || radius <= 0)
+                    fprintf(2,'Invalid data in model parts file: Radius of PARTICLES.SPHERE with ID %d.\n',id);
+                    fprintf(2,'It must be a positive value.\n');
+                    status = 0; return;
                 end
                 
                 % Create new particle object
@@ -3266,9 +3264,7 @@ classdef Read < handle
                 particle.id     = id;
                 particle.coord  = coord;
                 particle.orient = orient;
-                if (length(values) == 5)
-                    particle.radius = radius;
-                end
+                particle.radius = radius;
                 
                 % Store handle to particle object
                 if (id <= length(drv.particles) && ~isempty(drv.particles(id).id))
@@ -3312,9 +3308,9 @@ classdef Read < handle
                 
                 % Read all values of current line
                 values = sscanf(line,'%f');
-                if (length(values) ~= 5 && length(values) ~= 6)
+                if (length(values) ~= 6)
                     fprintf(2,'Invalid data in model parts file: Number of parameters of PARTICLES.CYLINDER.\n');
-                    fprintf(2,'It requires 6 parameters: ID, coord X, coord Y, orientation, length, radius (radius is optional in this file).\n');
+                    fprintf(2,'It requires 6 parameters: ID, coord X, coord Y, orientation, length, radius.\n');
                     status = 0; return;
                 end
                 
@@ -3351,13 +3347,11 @@ classdef Read < handle
                 end
                 
                 % Radius
-                if (length(values) == 6)
-                    radius = values(6);
-                    if (~this.isDoubleArray(radius,1) || radius <= 0)
-                        fprintf(2,'Invalid data in model parts file: Radius of PARTICLES.CYLINDER with ID %d.\n',id);
-                        fprintf(2,'It must be a positive value.\n');
-                        status = 0; return;
-                    end
+                radius = values(6);
+                if (~this.isDoubleArray(radius,1) || radius <= 0)
+                    fprintf(2,'Invalid data in model parts file: Radius of PARTICLES.CYLINDER with ID %d.\n',id);
+                    fprintf(2,'It must be a positive value.\n');
+                    status = 0; return;
                 end
                 
                 % Create new particle object
@@ -3366,9 +3360,7 @@ classdef Read < handle
                 particle.coord  = coord;
                 particle.orient = orient;
                 particle.len    = length;
-                if (length(values) == 6)
-                    particle.radius = radius;
-                end
+                particle.radius = radius;
                 
                 % Store handle to particle object
                 if (id <= length(drv.particles) && ~isempty(drv.particles(id).id))
