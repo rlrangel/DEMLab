@@ -19,15 +19,16 @@ classdef Interact < handle & matlab.mixin.Copyable
         % Behavior flags
         insulated logical = logical.empty;   % flag for insulated interaction (no heat exchange)
         
-        % Effective contact parameters
+        % Effective parameters
         eff_radius  double = double.empty;
         eff_mass    double = double.empty;
         eff_young   double = double.empty;
         eff_shear   double = double.empty;
         eff_conduct double = double.empty;
         
-        % Average contact parameters
-        avg_poisson double = double.empty;
+        % Average parameters
+        avg_poisson double = double.empty;   % Simple average of Poisson ratios
+        avg_conduct double = double.empty;   % Weighted average of particles conductivity (not considering wall)
         
         % Mechanical interaction models (value class objects)
         kinemat BinKinematics = BinKinematics.empty;   % general binary kinematics (always exist)

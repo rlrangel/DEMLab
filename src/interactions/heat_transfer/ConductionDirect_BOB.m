@@ -28,7 +28,7 @@
 % *References*:
 %
 % * <https://doi.org/10.1098/rspa.1977.0100
-% G.K. Batchelor and R.W. OBrien.
+% G.K. Batchelor and R.W. O'Brien.
 % Thermal or electrical conduction through a granular material, _Proceedings of the Royal Society of London_, 355(1682):313-333, 1977>
 % (proposal)
 %

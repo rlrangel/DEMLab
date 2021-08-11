@@ -278,7 +278,7 @@ classdef Driver < handle
         
         %------------------------------------------------------------------
         function posProcess(this)
-            % Create graphs
+            % Create and write graphs
             if (~isempty(this.graphs))
                 fprintf('\nCreating graphs...\n');
                 for i = 1:length(this.graphs)

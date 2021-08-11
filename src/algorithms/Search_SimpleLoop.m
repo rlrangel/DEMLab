@@ -155,12 +155,8 @@ classdef Search_SimpleLoop < Search
             
             % Create binary kinematic object
             kin = this.createPPKinematic(p1,dir,dist,separ);
-            
-            % Set kinematic-related parameters
             kin = kin.setEndContactParams();
             kin.setEffParams(int);
-            
-            % Set handle to kinematics model
             int.kinemat = kin;
             
             % Add references of new interaction to both elements and global list
@@ -207,14 +203,14 @@ classdef Search_SimpleLoop < Search
             % Create new interaction object by copying base object
             int = copy(this.b_interact);
             
-            % Set handles to interecting elements and kinematics model
-            int.elem1   = p;
-            int.elem2   = w;
-            int.kinemat = kin;
+            % Set handles to interecting elements
+            int.elem1 = p;
+            int.elem2 = w;
             
-            % Set kinematic-related parameters
-            int.kinemat = int.kinemat.setEndContactParams();
-            int.kinemat.setEffParams(int);
+            % Set binary kinematic object
+            kin = kin.setEndContactParams();
+            kin.setEffParams(int);
+            int.kinemat = kin;
             
             % Set flag for insulated interaction
             int.insulated = w.insulated;

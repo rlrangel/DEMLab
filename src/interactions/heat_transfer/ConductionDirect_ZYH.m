@@ -18,7 +18,7 @@
 % 
 % When the contact time surpasses the expected collision time, a static
 % contact conduction model is employed. In this case, the
-% <conductiondirect_bob.html Batchelor & OBrien model> is used.
+% <conductiondirect_bob.html Batchelor & O'Brien model> is used.
 %
 % The rate of heat transfer for this collisional model is given by:
 %
@@ -26,7 +26,7 @@
 %
 % Where:
 %
-% $$C = \frac{0.435}{C_{1}} \left ( \sqrt{(C_{2})^{2} - 4C_{1}(C_{3}-F_{0})} - C_{2} \right )$$
+% $$C = \frac{0.435}{C_{1}} \left ( \sqrt{(C_{2})^{2} - 4C_{1}(C_{3}-F_{o})} - C_{2} \right )$$
 %
 % $$C_{1} = -2.300 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right )^{2} + 8.9090 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right ) - 4.235$$
 %
@@ -38,7 +38,7 @@
 %
 % $$t_{c} = 2.87 \left ( \frac{m_{eff}^{2}}{R_{eff}E_{eff}^{2}\dot{\delta}_{n}^{0}} \right )^{1/5}$$
 %
-% $$F_{0} = \frac{k_{i}t_{c}}{\rho_{i}c_{p,i} \left ( R_{c}^{max} \right )^{2}}$$
+% $$F_{o} = \frac{k_{i}t_{c}}{\rho_{i}c_{p,i} \left ( R_{c}^{max} \right )^{2}}$$
 %
 % *Notation*:
 %
@@ -46,7 +46,7 @@
 %
 % $t_{c}$: Collision duration
 %
-% $F_{0}$: Fourier number
+% $F_{o}$: Fourier number
 %
 % $\dot{\delta}_{n}^{0}$: Time rate of change of normal overlap at the impact moment
 %
@@ -81,7 +81,7 @@ classdef ConductionDirect_ZYH < ConductionDirect
     properties (SetAccess = public, GetAccess = public)
         % Contact parameters
         coeff    double = double.empty;   % heat transfer coefficient
-        col_time double = double.empty;   % expected total collision time
+        col_time double = double.empty;   % expected collision time
     end
     
     %% Constructor method
@@ -101,6 +101,12 @@ classdef ConductionDirect_ZYH < ConductionDirect
         
         %------------------------------------------------------------------
         function this = setCteParams(this,int)
+            % Static case (always the case of pure thermal analysis)
+            if (int.kinemat.v0_n == 0)
+                this.col_time = inf;
+                this.coeff    = 0;
+            end
+            
             % Individual properties
             rho1 = int.elem1.material.density;
             rho2 = int.elem2.material.density;
@@ -125,10 +131,8 @@ classdef ConductionDirect_ZYH < ConductionDirect
             Rc = (15 * m * r * v0^2 / (16 * y))^(1/5);
             tc = (m^2 / (r * e^2 * v0))^(1/5);
             
-            % Fourier number (assumption: average between elements)
-            F1 = k1 * tc / (rho1 * cp2 * Rc^2);
-            F2 = k2 * tc / (rho2 * cp1 * Rc^2);
-            F  = (F1 + F2) / 2;
+            % Fourier number
+            F = k1 * tc / (rho1 * cp1 * Rc^2);
             
             % Auxiliary coefficient
             C1 = -2.300*b2 + 8.9090*b - 4.2350;
@@ -151,7 +155,7 @@ classdef ConductionDirect_ZYH < ConductionDirect
                 % Collisional conduction: ZYH formula
                 this.total_hrate = this.coeff * (t2-t1);
             else
-                % Static conduction: Batchelor & OBrien formula
+                % Static conduction: Batchelor & O'Brien formula
                 this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius * (t2-t1);
             end
         end

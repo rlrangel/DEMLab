@@ -33,7 +33,7 @@
 % *References*:
 %
 % * <https://doi.org/10.1007/s40430-020-02465-5
-% O.D. Quintana?Ruiz and E.M.B. Campello.
+% O.D. Quintana-Ruiz and E.M.B. Campello.
 % A coupled thermo?mechanical model for the simulation of discrete particle systems, _J. Braz. Soc. Mech. Sci. Eng._, 42:387, 2020>
 %
 classdef ConductionDirect_Pipe < ConductionDirect
@@ -60,21 +60,14 @@ classdef ConductionDirect_Pipe < ConductionDirect
         
         %------------------------------------------------------------------
         function this = setCteParams(this,~)
-            % Needed properties
-            r1 = int.elem1.radius;
-            r2 = int.elem2.radius;
-            k1 = int.elem1.material.conduct;
-            k2 = int.elem2.material.conduct;
             
-            % Set heat transfer coefficient (constant part)
-            this.coeff = pi * (r1+r2)/(r1/k1+r2/k2);
         end
         
         %------------------------------------------------------------------
         function this = evalHeatRate(this,int)
             t1 = int.elem1.temperature;
             t2 = int.elem2.temperature;
-            this.total_hrate = this.coeff * int.kinemat.contact_radius^2 * (t2-t1) / int.kinemat.dist;
+            this.total_hrate = pi * int.avg_conduct * int.kinemat.contact_radius^2 * (t2-t1) / int.kinemat.dist;
         end
     end
 end
