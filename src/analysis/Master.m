@@ -50,7 +50,7 @@ classdef Master
             fprintf('\nReading input file...\n');
             [status,drv,storage] = read.execute(file_path,fid);
             
-            % 
+            % Pre analysis tasks
             if (status == 0)
                 fprintf('\nExiting program...\n');
                 return;
