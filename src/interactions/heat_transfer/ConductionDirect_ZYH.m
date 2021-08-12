@@ -147,16 +147,14 @@ classdef ConductionDirect_ZYH < ConductionDirect
         
         %------------------------------------------------------------------
         function this = evalHeatRate(this,int)
-            t1 = int.elem1.temperature;
-            t2 = int.elem2.temperature;
-            
             % Compute heat rate according to current contact time
             if (int.kinemat.contact_time < this.col_time)
                 % Collisional conduction: ZYH formula
-                this.total_hrate = this.coeff * (t2-t1);
+                this.total_hrate = this.coeff * (int.elem2.temperature-int.elem1.temperature);
             else
                 % Static conduction: Batchelor & O'Brien formula
-                this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius * (t2-t1);
+                this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius *...
+                                   (int.elem2.temperature-int.elem1.temperature);
             end
         end
     end

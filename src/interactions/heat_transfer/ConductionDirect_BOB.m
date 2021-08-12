@@ -60,9 +60,8 @@ classdef ConductionDirect_BOB < ConductionDirect
         
         %------------------------------------------------------------------
         function this = evalHeatRate(this,int)
-            t1 = int.elem1.temperature;
-            t2 = int.elem2.temperature;
-            this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius * (t2-t1);
+            this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius *...
+                              (int.elem2.temperature-int.elem1.temperature);
         end
     end
 end

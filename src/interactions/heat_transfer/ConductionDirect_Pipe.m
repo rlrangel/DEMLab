@@ -65,9 +65,8 @@ classdef ConductionDirect_Pipe < ConductionDirect
         
         %------------------------------------------------------------------
         function this = evalHeatRate(this,int)
-            t1 = int.elem1.temperature;
-            t2 = int.elem2.temperature;
-            this.total_hrate = pi * int.avg_conduct * int.kinemat.contact_radius^2 * (t2-t1) / int.kinemat.dist;
+            this.total_hrate = pi * int.avg_conduct * int.kinemat.contact_radius^2 *...
+                              (int.elem2.temperature-int.elem1.temperature) / int.kinemat.dist;
         end
     end
 end
