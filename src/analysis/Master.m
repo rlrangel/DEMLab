@@ -100,9 +100,9 @@ classdef Master
                     fprintf('%s\n',datestr(now));
                 end
 
-                % Show initial or current configuration
-                this.drawCurConfig(drv);
-
+                % Show starting configuration
+                Animation().startConfig(drv);
+                
                 % Execute analysis
                 tic;
                 drv.process();
@@ -179,70 +179,6 @@ classdef Master
                 fprintf('Current analysis time: %s\n',string(curr_time));
                 fprintf('Total simulation time: %s\n',string(total_time));
             end
-        end
-        
-        %------------------------------------------------------------------
-        function drawCurConfig(~,drv)
-            % Create figure
-            fig = figure;
-            fig.Units = 'normalized';
-            fig.Position = [0.1 0.1 0.8 0.8];
-            axis(gca,'equal');
-            hold on;
-            
-            % Create and set animation object (use it to support drawing)
-            anim = Animation();
-            
-            % Get last stored results
-            col = drv.result.idx;
-            anim.coord_x  = drv.result.coord_x(:,col);
-            anim.coord_y  = drv.result.coord_y(:,col);
-            anim.radius   = drv.result.radius(:,col);
-            anim.wall_pos = drv.result.wall_position(:,col);
-            
-            % Show initial temperature for thermal analysis
-            if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
-                title(gca,sprintf('Temperature - Time: %.3f',drv.time));                
-                anim.res_part = drv.result.temperature(:,col);
-                anim.res_wall = drv.result.wall_temperature(:,col);
-                
-                % Set color scale
-                [min_val,max_val] = anim.scalarValueLimits();
-                anim.res_range = linspace(min_val,max_val,256);
-                colormap jet;
-                caxis([min_val,max_val]);
-                colorbar;
-            else
-                title(gca,sprintf('Positions - Time: %.3f',drv.time)); 
-            end
-            
-            % Draw model components
-            for i = 1:drv.n_particles
-                if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
-                    anim.drawParticleScalar(i,1);
-                else
-                    anim.drawParticleMotion(i,1);
-                end
-            end
-            for i = 1:drv.n_walls
-                anim.drawWall(drv.walls(i),1);
-            end
-            if (~isempty(drv.bbox))
-                if (drv.bbox.isActive(drv.time))
-                    anim.drawBBox(drv.bbox);
-                end
-            end
-            for i = 1:length(drv.sink)
-                if (drv.sink(i).isActive(drv.time))
-                    anim.drawSink(drv.sink(i));
-                end
-            end
-            
-            % Adjust figure bounding box
-            xmin = min(xlim);
-            xmax = max(xlim);
-            xlim([xmin-(xmax-xmin)/10,xmax+(xmax-xmin)/10]);
-            pause(3);
         end
         
         %------------------------------------------------------------------

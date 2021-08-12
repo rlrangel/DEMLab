@@ -23,11 +23,12 @@ classdef Animation < handle
         VECTOR = uint8(3);   % Particles with arrow to indicate vector result
     end
     
-    %% Constant values: drawing properties
+    %% Constant values: default drawing properties
     properties (Constant = true, Access = public)
         % Colors
         col_pedge = char('k');   % color of particle edge
-        col_wall  = char('k');   % color of wall (when not showing scalar result)
+        col_pfill = char('w');   % color of particle interior when not showing scalar result
+        col_wall  = char('k');   % color of wall when not showing scalar result
         col_bbox  = char('b');   % color of bounding box limit
         col_sink  = char('r');   % color of sink limit
         
@@ -50,13 +51,9 @@ classdef Animation < handle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Identification
-        type   uint8  = uint8.empty;    % flag for type of animation
-        atitle string = string.empty;   % animation title
-        
-        % Results: general
-        res_type uint8  = uint8.empty;    % flag for type of result
-        np       uint32 = uint32.empty;   % total number of particles
-        nf       uint32 = uint32.empty;   % total number of frames
+        res_type   uint8  = uint8.empty;    % flag for result type
+        anim_type  uint8  = uint8.empty;    % flag for animation type 
+        anim_title string = string.empty;   % animation title
         
         % Results: motion (common to all animation types)
         times    double = double.empty;   % array of simulation times of each step
@@ -66,9 +63,10 @@ classdef Animation < handle
         wall_pos double = double.empty;   % array of wall positions
         
         % Results: scalar
-        res_range double = double.empty;   % array of results range (minimum to maximum value)
         res_part  double = double.empty;   % array of scalar result to be exhibited for particles
         res_wall  double = double.empty;   % array of scalar result to be exhibited for walls
+        res_range double = double.empty;   % array of results range (minimum to maximum value)
+        col_range double = double.empty;   % array of colorbar range (minimum to maximum value)
         
         % Results: vector
         res_vecx  double = double.empty;   % array of x vector result to be exhibited
@@ -102,9 +100,60 @@ classdef Animation < handle
         end
         
         %------------------------------------------------------------------
-        function execute(this,drv)
+        function startConfig(this,drv)
+            % Create figure
+            f = figure('name','Starting Configuration');
+            
+            % Set figure properties
+            f.Visible  = 'off';
+            f.Units    = 'normalized';
+            f.Position = [0.1 0.1 0.8 0.8];
+            
+            % Set axes properties
+            axis(gca,'equal');
+            hold on;
+            
+            % Get last stored results
+            col = drv.result.idx;
+            this.times    = drv.result.times(col);
+            this.coord_x  = drv.result.coord_x(:,col);
+            this.coord_y  = drv.result.coord_y(:,col);
+            this.radius   = drv.result.radius(:,col);
+            this.wall_pos = drv.result.wall_position(:,col);
+            
+            % Show starting temperature for thermal analysis
+            if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
+                title(gca,sprintf('Starting Temperature - Time: %.3f',drv.time));
+                this.anim_type = this.SCALAR;
+                
+                % Get last stored temperatures
+                this.res_part = drv.result.temperature(:,col);
+                this.res_wall = drv.result.wall_temperature(:,col);
+                
+                % Set result and colorbar ranges (always automatic for initial configuration)
+                this.setRange();
+            else
+                title(gca,sprintf('Starting Positions - Time: %.3f',drv.time)); 
+                this.anim_type = this.MOTION;
+            end
+            
+            % Draw model components
+            this.drawFrame(drv,1);
+            
+            % Adjust figure bounding box (always automatic for initial configuration)
+            xmin = min(xlim);
+            xmax = max(xlim);
+            xlim([xmin-(xmax-xmin)/10,xmax+(xmax-xmin)/10]);
+            
+            % Show figure
+            f.Visible = 'on';
+            pause(1);
+        end
+        
+        %------------------------------------------------------------------
+        function animate(this,drv)
             % Create new figure
-            this.fig = figure('Name',this.atitle);
+            this.fig = figure('Name',this.anim_title);
             
             % Set figure properties
             this.fig.Visible  = 'off';
@@ -131,7 +180,7 @@ classdef Animation < handle
             this.createAnimation(drv);
             
             % Save movie file
-            file_name = strcat(drv.path,'\',this.atitle);
+            file_name = strcat(drv.path,'\',this.anim_title);
             writer = VideoWriter(file_name,'MPEG-4');
             writer.FrameRate = this.fps;
             open(writer);
@@ -140,212 +189,53 @@ classdef Animation < handle
         end
         
         %------------------------------------------------------------------
-        function setType(this,drv)
-            switch this.res_type
-                % Motion
-                case drv.result.MOTION
-                    this.type = this.MOTION;
-                    this.res_part = drv.result.orientation;
-                
-                % Scalar
-                case drv.result.RADIUS
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.radius;
-                    
-                case drv.result.COORDINATE_X
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.coord_x;
-                    
-                case drv.result.COORDINATE_Y
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.coord_y;
-                    
-                case drv.result.ORIENTATION
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.orientation;
-                    
-                case drv.result.FORCE_MOD
-                    this.type = this.SCALAR;
-                    x = drv.result.force_x;
-                    y = drv.result.force_y;
-                    this.res_part = sqrt(x.^2+y.^2);
-                    
-                case drv.result.FORCE_X
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.force_x;
-                    
-                case drv.result.FORCE_Y
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.force_y;
-                    
-                case drv.result.TORQUE
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.torque;
-                    
-                case drv.result.VELOCITY_MOD
-                    this.type = this.SCALAR;
-                    x = drv.result.velocity_x;
-                    y = drv.result.velocity_y;
-                    this.res_part = sqrt(x.^2+y.^2);
-                    
-                case drv.result.VELOCITY_X
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.velocity_x;
-                    
-                case drv.result.VELOCITY_Y
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.velocity_y;
-                    
-                case drv.result.VELOCITY_ROT
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.velocity_rot;
-                    
-                case drv.result.ACCELERATION_MOD
-                    this.type = this.SCALAR;
-                    x = drv.result.acceleration_x;
-                    y = drv.result.acceleration_Y;
-                    this.res_part = sqrt(x.^2+y.^2);
-                    
-                case drv.result.ACCELERATION_X
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.acceleration_x;
-                    
-                case drv.result.ACCELERATION_Y
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.acceleration_y;
-                    
-                case drv.result.ACCELERATION_ROT
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.acceleration_rot;
-                    
-                case drv.result.TEMPERATURE
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.temperature;
-                    this.res_wall = drv.result.wall_temperature;
-                    
-                case drv.result.HEAT_RATE
-                    this.type = this.SCALAR;
-                    this.res_part = drv.result.heat_rate;
-                    
-                    
-                % Vector
-                case drv.result.FORCE_VEC
-                    this.type = this.VECTOR;
-                    this.res_vecx = drv.result.force_x;
-                    this.res_vecy = drv.result.force_y;
-                    
-                case drv.result.VELOCITY_VEC
-                    this.type = this.VECTOR;
-                    this.res_vecx = drv.result.velocity_x;
-                    this.res_vecy = drv.result.velocity_y;
-                    
-                case drv.result.ACCELERATION_VEC
-                    this.type = this.VECTOR;
-                    this.res_vecx = drv.result.acceleration_x;
-                    this.res_vecy = drv.result.acceleration_y;
-            end
-        end
-        
-        %------------------------------------------------------------------
-        function [min_val,max_val] = scalarValueLimits(this)
-            if (~isempty(this.res_part))
-                min_val_p = min(this.res_part(:));
-                max_val_p = max(this.res_part(:));
-            else
-                min_val_p =  inf;
-                max_val_p = -inf;
-            end
-            if (~isempty(this.res_wall))
-                min_val_w = min(this.res_wall(:));
-                max_val_w = max(this.res_wall(:));
-            else
-                min_val_w =  inf;
-                max_val_w = -inf;
-            end
-            min_val = min([min_val_p,min_val_w]);
-            max_val = max([max_val_p,max_val_w]);
-            if (min_val == max_val)
-                min_val = min_val - 1;
-                max_val = max_val + 1;
-            elseif (isnan(min_val) && isnan(max_val))
-                min_val = - 1;
-                max_val = + 1;
-            elseif (isnan(min_val))
-                min_val = max_val - 1;
-            elseif (isnan(max_val))
-                max_val = min_val + 1;
-            end
-        end
-        
-        %------------------------------------------------------------------
-        function setArrowSize(this)
-            % Maximum vector norm value
-            x = this.res_vecx;
-            y = this.res_vecy;
-            max_vec = max(sqrt(x.^2+y.^2));
-            
-            % Figure size
-            limitx = xlim;
-            limity = ylim;
-            dx = limitx(2)-limitx(1);
-            dy = limity(2)-limity(1);
-            d  = sqrt(dx^2+dy^2);
-            
-            % Multiplication factor
-            this.arrow_fct = 0.1 * d/max_vec;
-        end
-        
-        %------------------------------------------------------------------
         function createAnimation(this,drv)
-            if (this.type == this.SCALAR)
-                % Compute result range
-                [min_val,max_val] = this.scalarValueLimits();
-                this.res_range = linspace(min_val,max_val,256);
-                
-                % Set colormap
-                colormap jet;
-                caxis([min_val,max_val]);
-                colorbar;
-                
-            elseif (this.type == this.VECTOR)
+            if (this.anim_type == this.SCALAR)
+                this.setRange();
+            elseif (this.anim_type == this.VECTOR)
                 this.setArrowSize();
             end
             
-            % Number of particles and valid frames
-            this.np = size(this.radius,1);
-            this.nf = drv.result.idx-1;
-            
             % Preallocate movie frames array
-            frams(this.nf) = struct('cdata',[],'colormap',[]);
+            nf = drv.result.idx-1;
+            frams(nf) = struct('cdata',[],'colormap',[]);
             
             % Generate movie frames
             tim = this.times;
-            tit = this.atitle;
-            for i = 1:this.nf
+            tit = this.anim_title;
+            for i = 1:nf
                 set(0,'CurrentFigure',this.fig)
                 cla;
                 title(gca,strcat(tit,sprintf(' - Time: %.3f',tim(i))));
-                this.drawMovieFrame(drv,i);
+                this.drawFrame(drv,i);
                 frams(i) = getframe(this.fig);
             end
             this.frames = frams;
             
             % Compute frame rate (frames / second)
-            this.fps = this.nf/drv.time;
+            this.fps = nf/drv.time;
             if (this.fps > 100)
                 this.fps = 100;
             end
         end
         
         %------------------------------------------------------------------
-        function drawMovieFrame(this,drv,f)
+        function showAnimation(this)
+            if(this.play)
+                this.fig.Visible = 'on';
+                movie(this.fig,this.frames,999,this.fps);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function drawFrame(this,drv,f)
             if (isnan(this.times(1,f)))
                 return;
             end
             
             % Draw particles
-            for i = 1:this.np
-                switch this.type
+            for i = 1:drv.n_particles
+                switch this.anim_type
                     case this.MOTION
                         this.drawParticleMotion(i,f);
                     case this.SCALAR
@@ -381,13 +271,180 @@ classdef Animation < handle
                 end
             end
         end
+    end
+    
+    %% Public methods: auxiliary methods
+    methods
+        %------------------------------------------------------------------
+        function setType(this,drv)
+            switch this.res_type
+                % Motion
+                case drv.result.MOTION
+                    this.anim_type = this.MOTION;
+                    this.res_part  = drv.result.orientation;
+                
+                % Scalar
+                case drv.result.RADIUS
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.radius;
+                    
+                case drv.result.COORDINATE_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.coord_x;
+                    
+                case drv.result.COORDINATE_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.coord_y;
+                    
+                case drv.result.ORIENTATION
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.orientation;
+                    
+                case drv.result.FORCE_MOD
+                    this.anim_type = this.SCALAR;
+                    x = drv.result.force_x;
+                    y = drv.result.force_y;
+                    this.res_part = sqrt(x.^2+y.^2);
+                    
+                case drv.result.FORCE_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.force_x;
+                    
+                case drv.result.FORCE_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.force_y;
+                    
+                case drv.result.TORQUE
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.torque;
+                    
+                case drv.result.VELOCITY_MOD
+                    this.anim_type = this.SCALAR;
+                    x = drv.result.velocity_x;
+                    y = drv.result.velocity_y;
+                    this.res_part = sqrt(x.^2+y.^2);
+                    
+                case drv.result.VELOCITY_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.velocity_x;
+                    
+                case drv.result.VELOCITY_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.velocity_y;
+                    
+                case drv.result.VELOCITY_ROT
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.velocity_rot;
+                    
+                case drv.result.ACCELERATION_MOD
+                    this.anim_type = this.SCALAR;
+                    x = drv.result.acceleration_x;
+                    y = drv.result.acceleration_Y;
+                    this.res_part = sqrt(x.^2+y.^2);
+                    
+                case drv.result.ACCELERATION_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.acceleration_x;
+                    
+                case drv.result.ACCELERATION_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.acceleration_y;
+                    
+                case drv.result.ACCELERATION_ROT
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.acceleration_rot;
+                    
+                case drv.result.TEMPERATURE
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.temperature;
+                    this.res_wall  = drv.result.wall_temperature;
+                    
+                case drv.result.HEAT_RATE
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.heat_rate;
+                    
+                % Vector
+                case drv.result.FORCE_VEC
+                    this.anim_type = this.VECTOR;
+                    this.res_vecx  = drv.result.force_x;
+                    this.res_vecy  = drv.result.force_y;
+                    
+                case drv.result.VELOCITY_VEC
+                    this.anim_type = this.VECTOR;
+                    this.res_vecx  = drv.result.velocity_x;
+                    this.res_vecy  = drv.result.velocity_y;
+                    
+                case drv.result.ACCELERATION_VEC
+                    this.anim_type = this.VECTOR;
+                    this.res_vecx  = drv.result.acceleration_x;
+                    this.res_vecy  = drv.result.acceleration_y;
+            end
+        end
         
         %------------------------------------------------------------------
-        function show(this)
-            if(this.play)
-                this.fig.Visible = 'on';
-                movie(this.fig,this.frames,99999,this.fps);
+        function [min_val,max_val] = scalarValueLimits(this)
+            if (~isempty(this.res_part))
+                min_val_p = min(this.res_part(:));
+                max_val_p = max(this.res_part(:));
+            else
+                min_val_p =  inf;
+                max_val_p = -inf;
             end
+            if (~isempty(this.res_wall))
+                min_val_w = min(this.res_wall(:));
+                max_val_w = max(this.res_wall(:));
+            else
+                min_val_w =  inf;
+                max_val_w = -inf;
+            end
+            min_val = min([min_val_p,min_val_w]);
+            max_val = max([max_val_p,max_val_w]);
+            if (min_val == max_val)
+                min_val = min_val - 1;
+                max_val = max_val + 1;
+            elseif (isnan(min_val) && isnan(max_val))
+                min_val = - 1;
+                max_val = + 1;
+            elseif (isnan(min_val))
+                min_val = max_val - 1;
+            elseif (isnan(max_val))
+                max_val = min_val + 1;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function setRange(this)
+            % Compute result limits
+            [min_val,max_val] = this.scalarValueLimits();
+            
+            % Set result range
+            if (isempty(this.res_range))
+                this.res_range = [min_val,max_val];
+            end
+            
+            % Set colorbar range
+            this.col_range = linspace(this.res_range(1),this.res_range(2),256);
+            colormap jet;
+            caxis([this.res_range(1),this.res_range(2)]);
+            colorbar;
+        end
+        
+        %------------------------------------------------------------------
+        function setArrowSize(this)
+            % Maximum vector norm value
+            x = this.res_vecx;
+            y = this.res_vecy;
+            max_vec = max(sqrt(x.^2+y.^2));
+            
+            % Figure size
+            limitx = xlim;
+            limity = ylim;
+            dx = limitx(2)-limitx(1);
+            dy = limity(2)-limity(1);
+            d  = sqrt(dx^2+dy^2);
+            
+            % Multiplication factor
+            this.arrow_fct = 0.1 * d/max_vec;
         end
     end
     
@@ -421,10 +478,17 @@ classdef Animation < handle
             x   = this.coord_x(i,j);
             y   = this.coord_y(i,j);
             r   = this.radius(i,j);
+            rr  = this.res_range;
+            cr  = this.col_range;
             pos = [x-r,y-r,2*r,2*r];
             
             % Color according to result
-            clr = interp1(this.res_range,colormap,this.res_part(i,j));
+            if (~isempty(this.res_part) &&...
+                all(this.res_part(i,j) >= rr(1) & this.res_part(i,j) <= rr(2)))
+                clr = interp1(cr,colormap,this.res_part(i,j));
+            else
+                clr = this.col_pfill;
+            end
             
             % Plot (rectangle with rounded sides)
             c = this.col_pedge;
@@ -448,21 +512,27 @@ classdef Animation < handle
             rectangle('Position',pos,'Curvature',[1 1],'EdgeColor',c,'LineWidth',w,'LineStyle',s,'FaceColor','none');
             
             % Plot arrow
-            vx = this.arrow_fct * this.res_vecx(i,j);
-            vy = this.arrow_fct * this.res_vecy(i,j);
-            line([x,x+vx],[y,y+vy],'Color',c,'LineWidth',w,'LineStyle',s);
+            if (~isempty(this.res_vecx) && ~isempty(this.res_vecy))
+                vx = this.arrow_fct * this.res_vecx(i,j);
+                vy = this.arrow_fct * this.res_vecy(i,j);
+                line([x,x+vx],[y,y+vy],'Color',c,'LineWidth',w,'LineStyle',s);
+            end
         end
         
         %------------------------------------------------------------------
         function drawWall(this,wall,j)
-            w = this.wid_wall;
-            s = this.sty_wall;
+            w  = this.wid_wall;
+            s  = this.sty_wall;
+            rr = this.res_range;
+            cr = this.col_range;
             
-            % Set wall color
-            if (isempty(this.res_wall) || wall.insulated)
-                c = this.col_wall;
+            % Color according to result
+            if (~isempty(this.res_wall) &&...
+                ~wall.insulated         &&...
+                all(this.res_wall(wall.id,j) >= rr(1) & this.res_wall(wall.id,j) <= rr(2)))
+                c = interp1(cr,colormap,this.res_wall(wall.id,j));
             else
-                c = interp1(this.res_range,colormap,this.res_wall(wall.id,j));
+                c = this.col_wall;
             end
             
             % Line ID

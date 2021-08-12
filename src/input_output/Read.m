@@ -3055,8 +3055,8 @@ classdef Read < handle
                 ANM = json.Animation(i);
                 
                 % Create animation object
-                anm = Animation();
-                drv.animations(i) = anm;
+                anim = Animation();
+                drv.animations(i) = anim;
                 
                 % Title
                 if (isfield(ANM,'title'))
@@ -3066,10 +3066,21 @@ classdef Read < handle
                         fprintf(2,'It must be a string with the title of the animation.\n');
                         status = 0; return;
                     end
-                    anm.atitle = title;
+                    anim.anim_title = title;
                 else
                     fprintf(2,'Missing data in project parameters file: Animation.title.\n');
                     status = 0; return;
+                end
+                
+                % Results colorbar range (for scalar results)
+                if (isfield(ANM,'colorbar_range'))
+                    range = ANM.colorbar_range;
+                    if (~this.isDoubleArray(range,2) || range(1) >= range(2))
+                        fprintf(2,'Invalid data in project parameters file: Animation.colorbar_range.\n');
+                        fprintf(2,'It must be a pair of numeric values: [min,max] where min < max.\n');
+                        status = 0; return;
+                    end
+                    anim.res_range = range;
                 end
                 
                 % Automatic play
@@ -3080,7 +3091,7 @@ classdef Read < handle
                         fprintf(2,'It must be a boolean: true or false.\n');
                         status = 0; return;
                     end
-                    anm.play = play;
+                    anim.play = play;
                 end
                 
                 % Plot particles IDs
@@ -3091,7 +3102,7 @@ classdef Read < handle
                         fprintf(2,'It must be a boolean: true or false.\n');
                         status = 0; return;
                     end
-                    anm.pids = pids;
+                    anim.pids = pids;
                 end
                 
                 % Bounding box
@@ -3102,7 +3113,7 @@ classdef Read < handle
                         fprintf(2,'It must be a numeric array  with four values: Xmin, Xmax, Ymin, Ymax.\n');
                         status = 0; return;
                     end
-                    anm.bbox = bbox;
+                    anim.bbox = bbox;
                 else
                     this.warn('Animation has no fixed limits (bounding box). It may lead to unsatisfactory animation behavior.');
                 end
@@ -3142,77 +3153,77 @@ classdef Read < handle
                     fprintf(2,'Available result options can be checked in the documentation.\n');
                     status = 0; return;
                 elseif (strcmp(result,'radius'))
-                    anm.res_type = drv.result.RADIUS;
+                    anim.res_type = drv.result.RADIUS;
                     drv.result.has_radius = true;
                 elseif (strcmp(result,'motion'))
-                    anm.res_type = drv.result.MOTION;
+                    anim.res_type = drv.result.MOTION;
                     drv.result.has_orientation = true;
                 elseif (strcmp(result,'coordinate_x'))
-                    anm.res_type = drv.result.COORDINATE_X;
+                    anim.res_type = drv.result.COORDINATE_X;
                     drv.result.has_coord_x = true;
                 elseif (strcmp(result,'coordinate_y'))
-                    anm.res_type = drv.result.COORDINATE_Y;
+                    anim.res_type = drv.result.COORDINATE_Y;
                     drv.result.has_coord_y = true;
                 elseif (strcmp(result,'orientation'))
-                    anm.res_type = drv.result.ORIENTATION;
+                    anim.res_type = drv.result.ORIENTATION;
                     drv.result.has_orientation = true;
                 elseif (strcmp(result,'force_vector'))
-                    anm.res_type = drv.result.FORCE_VEC;
+                    anim.res_type = drv.result.FORCE_VEC;
                     drv.result.has_force_x = true;
                     drv.result.has_force_y = true;
                 elseif (strcmp(result,'force_modulus'))
-                    anm.res_type = drv.result.FORCE_MOD;
+                    anim.res_type = drv.result.FORCE_MOD;
                     drv.result.has_force_x = true;
                     drv.result.has_force_y = true;
                 elseif (strcmp(result,'force_x'))
-                    anm.res_type = drv.result.FORCE_X;
+                    anim.res_type = drv.result.FORCE_X;
                     drv.result.has_force_x = true;
                 elseif (strcmp(result,'force_y'))
-                    anm.res_type = drv.result.FORCE_Y;
+                    anim.res_type = drv.result.FORCE_Y;
                     drv.result.has_force_y = true;
                 elseif (strcmp(result,'torque'))
-                    anm.res_type = drv.result.TORQUE;
+                    anim.res_type = drv.result.TORQUE;
                     drv.result.has_torque = true;
                 elseif (strcmp(result,'velocity_vector'))
-                    anm.res_type = drv.result.VELOCITY_VEC;
+                    anim.res_type = drv.result.VELOCITY_VEC;
                     drv.result.has_velocity_x = true;
                     drv.result.has_velocity_y = true;
                 elseif (strcmp(result,'velocity_modulus'))
-                    anm.res_type = drv.result.VELOCITY_MOD;
+                    anim.res_type = drv.result.VELOCITY_MOD;
                     drv.result.has_velocity_x = true;
                     drv.result.has_velocity_y = true;
                 elseif (strcmp(result,'velocity_x'))
-                    anm.res_type = drv.result.VELOCITY_X;
+                    anim.res_type = drv.result.VELOCITY_X;
                     drv.result.has_velocity_x = true;
                 elseif (strcmp(result,'velocity_y'))
-                    anm.res_type = drv.result.VELOCITY_Y;
+                    anim.res_type = drv.result.VELOCITY_Y;
                     drv.result.has_velocity_y = true;
                 elseif (strcmp(result,'velocity_rot'))
-                    anm.res_type = drv.result.VELOCITY_ROT;
+                    anim.res_type = drv.result.VELOCITY_ROT;
                     drv.result.has_velocity_rot = true;
                 elseif (strcmp(result,'acceleration_vector'))
-                    anm.res_type = drv.result.ACCELERATION_VEC;
+                    anim.res_type = drv.result.ACCELERATION_VEC;
                     drv.result.has_acceleration_x = true;
                     drv.result.has_acceleration_y = true;
                 elseif (strcmp(result,'acceleration_modulus'))
-                    anm.res_type = drv.result.ACCELERATION_MOD;
+                    anim.res_type = drv.result.ACCELERATION_MOD;
                     drv.result.has_acceleration_x = true;
                     drv.result.has_acceleration_y = true;
                 elseif (strcmp(result,'acceleration_x'))
-                    anm.res_type = drv.result.ACCELERATION_X;
+                    anim.res_type = drv.result.ACCELERATION_X;
                     drv.result.has_acceleration_x = true;
                 elseif (strcmp(result,'acceleration_y'))
-                    anm.res_type = drv.result.ACCELERATION_Y;
+                    anim.res_type = drv.result.ACCELERATION_Y;
                     drv.result.has_acceleration_y = true;
                 elseif (strcmp(result,'acceleration_rot'))
-                    anm.res_type = drv.result.ACCELERATION_ROT;
+                    anim.res_type = drv.result.ACCELERATION_ROT;
                     drv.result.has_acceleration_rot = true;
                 elseif (strcmp(result,'temperature'))
-                    anm.res_type = drv.result.TEMPERATURE;
+                    anim.res_type = drv.result.TEMPERATURE;
                     drv.result.has_temperature = true;
                     drv.result.has_wall_temperature = true;
                 elseif (strcmp(result,'heat_rate'))
-                    anm.res_type = drv.result.HEAT_RATE;
+                    anim.res_type = drv.result.HEAT_RATE;
                     drv.result.has_heat_rate = true;
                 end
             end
