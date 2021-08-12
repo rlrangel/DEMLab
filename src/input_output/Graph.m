@@ -10,7 +10,6 @@ classdef Graph < handle
     properties (SetAccess = public, GetAccess = public)
         % Identification
         gtitle string = string.empty;   % graph title
-        path   string = string.empty;   % path to model folder
         
         % Axes data
         res_x uint8 = uint8.empty;   % flag for type of result in x axis
@@ -77,14 +76,14 @@ classdef Graph < handle
             legend(leg);
             
             % Save picture
-            file_name = strcat(this.path,'\',this.gtitle,'.png');
+            file_name = strcat(drv.path,'\',this.gtitle,'.png');
             saveas(gcf,file_name);
         end
         
         %------------------------------------------------------------------
         function writeData(this,drv)
             % Create new file
-            file_name = strcat(this.path,'\',this.gtitle,'.txt');
+            file_name = strcat(drv.path,'\',this.gtitle,'.txt');
             fid = fopen(file_name,'w');
             
             % Write curves

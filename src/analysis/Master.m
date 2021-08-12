@@ -48,44 +48,57 @@ classdef Master
             % Read input file
             read = Read();
             fprintf('\nReading input file...\n');
-            [status,drv] = read.execute(file_path,fid);
-            if (~status)
+            [status,drv,storage] = read.execute(file_path,fid);
+            
+            % 
+            if (status == 0)
                 fprintf('\nExiting program...\n');
                 return;
+                
+            elseif (status == 1) % start analysis from beggining
+                % Check input data
+                fprintf('\nChecking consistency of input data...\n');
+                status = read.check(drv);
+                if (~status)
+                    fprintf('\nExiting program...\n');
+                    return;
+                end
+                
+                % Pre-process
+                fprintf('\nPre-processing...\n');
+                if (~drv.preProcess())
+                    fprintf('\nExiting program...\n');
+                    return;
+                end
+                
+                % Print simulation information
+                this.printSimulationInfo(drv);
+                fprintf('\nStarting analysis:\n');
+                fprintf('%s\n',datestr(now));
+                
+            elseif (status == 2) % continue analysis from previous state
+                % Load stored results
+                fprintf('\nStored results were found in file:\n%s\n',storage)
+                load(storage,'drv');
+                
+                % Update starting elapsed time
+                drv.start_time = drv.total_time;
+                
+                % Print simulation information
+                this.printSimulationInfo(drv);
+                fprintf('\nStarting analysis from previous results:\n');
+                fprintf('%s\n',datestr(now));
             end
             
-            % Check input data
-            fprintf('\nChecking consistency of input data...\n');
-            status = read.check(drv);
-            if (~status)
-                fprintf('\nExiting program...\n');
-                return;
-            end
-            
-            % Start parallelization (currently not available)
-            %this.startParallel(drv);
-            
-            % Pre-process
-            fprintf('\nPre-processing...\n');
-            if (~drv.preProcess())
-                fprintf('\nExiting program...\n');
-                return;
-            end
-            
-            % Show initial configuration
-            this.drawInitConfig(drv);
-            
-            % Print simulation information
-            this.printSimulationInfo(drv);
+            % Show initial or current configuration
+            this.drawCurConfig(drv);
             
             % Execute analysis
-            fprintf('\nStarting analysis:\n');
-            fprintf('%s\n',datestr(now));
             tic;
             drv.process();
             
             % Print finished status
-            this.printFinishedStatus();
+            this.printFinishedStatus(drv,status);
             
             % Pos-process
             drv.posProcess()
@@ -116,6 +129,7 @@ classdef Master
                 fprintf('Type.................: Thermo-mechanical\n');
             end
             fprintf('Number of particles..: %d\n',drv.n_particles);
+            fprintf('Number of walls......: %d\n',drv.n_walls);
             fprintf('Time step............: %f\n',drv.time_step);
             if (~isempty(drv.max_time))
                 fprintf('Final time...........: %f\n',drv.max_time);
@@ -126,35 +140,47 @@ classdef Master
         end
         
         %------------------------------------------------------------------
-        function printFinishedStatus(~)
-            t = seconds(toc);
-            t.Format = 'hh:mm:ss.SS';
+        function printFinishedStatus(~,drv,status)
             fprintf('\n\nAnalysis finished:\n');
             fprintf('%s\n',datestr(now));
-            fprintf('Total time: %s\n',string(t));
+            if (status == 1)
+                time = seconds(toc);
+                time.Format = 'hh:mm:ss.SS';
+                fprintf('Total time: %s\n',string(time));
+            elseif (status == 2)
+                curr_time  = seconds(toc);
+                total_time = seconds(drv.total_time);
+                curr_time.Format  = 'hh:mm:ss.SS';
+                total_time.Format = 'hh:mm:ss.SS';
+                fprintf('Current analysis time: %s\n',string(curr_time));
+                fprintf('Total simulation time: %s\n',string(total_time));
+            end
         end
         
         %------------------------------------------------------------------
-        function drawInitConfig(~,drv)
+        function drawCurConfig(~,drv)
             % Create figure
-            fig = figure('Name','Initial Configuration');
+            fig = figure;
             fig.Units = 'normalized';
             fig.Position = [0.1 0.1 0.8 0.8];
             axis(gca,'equal');
             hold on;
             
             % Create and set animation object (use it to support drawing)
-            anim          = Animation();
-            anim.coord_x  = drv.result.coord_x(:,1);
-            anim.coord_y  = drv.result.coord_y(:,1);
-            anim.radius   = drv.result.radius(:,1);
-            anim.wall_pos = drv.result.wall_position(:,1);
+            anim = Animation();
+            
+            % Get last stored results
+            col = drv.result.idx;
+            anim.coord_x  = drv.result.coord_x(:,col);
+            anim.coord_y  = drv.result.coord_y(:,col);
+            anim.radius   = drv.result.radius(:,col);
+            anim.wall_pos = drv.result.wall_position(:,col);
             
             % Show initial temperature for thermal analysis
             if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
-                title(gca,'Initial Temperature');
-                anim.res_part = drv.result.temperature(:,1);
-                anim.res_wall = drv.result.wall_temperature(:,1);
+                title(gca,sprintf('Temperature - Time: %.3f',drv.time));                
+                anim.res_part = drv.result.temperature(:,col);
+                anim.res_wall = drv.result.wall_temperature(:,col);
                 
                 % Set color scale
                 [min_val,max_val] = anim.scalarValueLimits();
@@ -163,7 +189,7 @@ classdef Master
                 caxis([min_val,max_val]);
                 colorbar;
             else
-                title(gca,'Initial Positions');
+                title(gca,sprintf('Positions - Time: %.3f',drv.time)); 
             end
             
             % Draw model components
@@ -196,6 +222,7 @@ classdef Master
         end
         
         %------------------------------------------------------------------
+        % To be called before the analysis (currently not available)
         function startParallel(~,drv)
             p = gcp('nocreate');
             if (drv.parallel)

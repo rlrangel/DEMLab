@@ -29,6 +29,7 @@ classdef Driver < handle
         % Problem data
         name string = string.empty;   % problem name
         type uint8  = uint8.empty;    % flag for type of analysis
+        path string = string.empty;   % path to model folder
         
         % Model components: total numbers
         n_mparts    uint32 = uint32.empty;   % number of model parts
@@ -63,10 +64,15 @@ classdef Driver < handle
         time      double  = double.empty;    % current simulation time
         step      uint32  = uint32.empty;    % current simulation step
         
+        % Elapsed time control (real analysis time)
+        start_time double  = double.empty;   % starting elapsed time for current analysis run
+        total_time double  = double.empty;   % total elapsed time for all analysis runs
+        
         % Output generation
         result     Result    = Result.empty;      % handle to object of Result class
         graphs     Graph     = Graph.empty;       % handles to objects of Graph class
         animations Animation = Animation.empty;   % handles to objects of Animation class
+        save_ws    logical   = logical.empty;     % flag for saving workspace into a storage file
         
         % Output control
         nprog double  = double.empty;    % progress print frequency (% of total time)
@@ -104,8 +110,9 @@ classdef Driver < handle
             status = 1;
             
             % Initialize time and step
-            this.time = 0;
-            this.step = 0;
+            this.start_time = 0;
+            this.time       = 0;
+            this.step       = 0;
             
             % loop over all particles
             for i = 1:this.n_particles
@@ -258,20 +265,25 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
-        function storeResults(this)
-            if (this.time >= this.tout)
-                this.store = true;
-                this.tout = this.tout + this.nout - 10e-10; % small value to deal with garbages
-                this.result.updateIndex();
+        % Object must be called 'drv' here to load it from storage file.
+        function storeResults(drv)
+            if (drv.time >= drv.tout)
+                if (drv.save_ws)
+                    save(strcat(drv.path,'\',drv.name));
+                    drv.total_time = drv.start_time + toc;
+                end
+                drv.store = true;
+                drv.tout = drv.tout + drv.nout - 10e-10; % small value to deal with garbages
+                drv.result.updateIndex();
             else
-                this.store = false;
+                drv.store = false;
             end
         end
         
         %------------------------------------------------------------------
         function printProgress(this)
             if (this.time >= this.tprog)
-                fprintf('\n%.1f%%: time %.2f, step %d',100*this.tprog/this.max_time,this.time,this.step);
+                fprintf('\n%.1f%%: time %.3f, step %d',100*this.tprog/this.max_time,this.time,this.step);
                 this.tprog = this.tprog + this.nprog - 10e-15; % small value to deal with garbages
             end
         end

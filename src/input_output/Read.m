@@ -22,8 +22,7 @@ classdef Read < handle
     %% Public methods: main functions
     methods
         %------------------------------------------------------------------
-        function [status,drv] = execute(this,path,fid)
-            status = 1;
+        function [status,drv,storage] = execute(this,path,fid)
             drv = [];
             
             % Parse json file
@@ -35,12 +34,24 @@ classdef Read < handle
             end
             json = jsondecode(file_txt);
             
+            % Get problem name
+            [status,name] = this.getName(json);
+            
+            % Look for storage file to continue analysis from previous stage
+            if (status)
+                storage = fullfile(path,strcat(name,'.mat'));
+                if (exist(storage,'file') == 2)
+                    status = 2;
+                    return;
+                end
+            end
+            
             % Feed simulation data
             if (status)
-                [status,drv,model_parts_file] = this.getProblemData(json);
+                [status,drv,model_parts_file] = this.getProblemData(json,path,name);
             end
             if (status)
-                status = this.getModelParts(drv,path,model_parts_file);
+                status = this.getModelParts(drv,model_parts_file);
             end
             if (status)
                 status = this.getSolverParam(json,drv);
@@ -61,10 +72,10 @@ classdef Read < handle
                 status = this.getInitialCondition(json,drv);
             end
             if (status)
-                status = this.getPrescribedCondition(json,drv,path);
+                status = this.getPrescribedCondition(json,drv);
             end
             if (status)
-                status = this.getFixedCondition(json,drv,path);
+                status = this.getFixedCondition(json,drv);
             end
             if (status)
                 status = this.getMaterial(json,drv);
@@ -79,10 +90,10 @@ classdef Read < handle
                 status = this.getOutput(json,drv);
             end
             if (status)
-                status = this.getGraph(json,drv,path);
+                status = this.getGraph(json,drv);
             end
             if (status)
-                status = this.getAnimation(json,drv,path);
+                status = this.getAnimation(json,drv);
             end
         end
         
@@ -107,18 +118,35 @@ classdef Read < handle
     %% Public methods: project parameters file
     methods
         %------------------------------------------------------------------
-        function [status,drv,model_parts_file] = getProblemData(this,json)
+        function [status,name] = getName(this,json)
+            status = 1;
+            
+            % Check if name exist
+            if (~isfield(json,'ProblemData'))
+                fprintf(2,'Missing data in project parameters file: ProblemData.\n');
+                status = 0; return;
+            elseif (~isfield(json.ProblemData,'name'))
+                fprintf(2,'Missing data in project parameters file: ProblemData must have a name.\n');
+                status = 0; return;
+            end
+            
+            % Get name
+            name = string(json.ProblemData.name);
+            if (~this.isStringArray(name,1))
+                fprintf(2,'Invalid data in project parameters file: ProblemData.name.\n');
+                fprintf(2,'It must be a string with the name representing the simulation.\n');
+                status = 0; return;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function [status,drv,model_parts_file] = getProblemData(this,json,path,name)
             status = 1;
             drv = [];
             model_parts_file = [];
             
             % Check if all fields exist
-            if (~isfield(json,'ProblemData'))
-                fprintf(2,'Missing data in project parameters file: ProblemData.\n');
-                status = 0; return;
-            end
             PD = json.ProblemData;
-            
             if (~isfield(PD,'name') || ~isfield(PD,'analysis_type') || ~isfield(PD,'model_parts_file'))
                 fprintf(2,'Missing data in project parameters file: ProblemData must have name, analysis_type, and model_parts_file.\n');
                 status = 0; return;
@@ -139,13 +167,8 @@ classdef Read < handle
                 drv = Driver_ThermoMechanical();
             end
             
-            % Name
-            name = string(PD.name);
-            if (~this.isStringArray(name,1))
-                fprintf(2,'Invalid data in project parameters file: ProblemData.name.\n');
-                fprintf(2,'It must be a string with the name representing the simulation.\n');
-                status = 0; return;
-            end
+            % Set path to model folder and name
+            drv.path = path;
             drv.name = name;
             
             % Model parts file name
@@ -158,11 +181,11 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = getModelParts(this,drv,path,file)
+        function status = getModelParts(this,drv,file)
             status = 1;
             
             % Open model parts file
-            fullname = fullfile(path,file);
+            fullname = fullfile(drv.path,file);
             fid = fopen(fullname,'rt');
             if (fid < 0)
                 fprintf(2,'Error opening model parts file: %s\n', file);
@@ -871,7 +894,7 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = getPrescribedCondition(this,json,drv,path)
+        function status = getPrescribedCondition(this,json,drv)
             status = 1;
             if (~isfield(json,'PrescribedCondition'))
                 return;
@@ -1011,7 +1034,7 @@ classdef Read < handle
                                 fprintf(2,'It must be a string with the values file name.\n');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(path,file),3);
+                            [status,vals] = this.readTable(fullfile(drv.path,file),3);
                             if (status == 0)
                                 return;
                             end
@@ -1238,7 +1261,7 @@ classdef Read < handle
                                 fprintf(2,'It must be a string with the values file name.\n');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(path,file),2);
+                            [status,vals] = this.readTable(fullfile(drv.path,file),2);
                             if (status == 0)
                                 return;
                             end
@@ -1465,7 +1488,7 @@ classdef Read < handle
                                 fprintf(2,'It must be a string with the values file name.\n');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(path,file),2);
+                            [status,vals] = this.readTable(fullfile(drv.path,file),2);
                             if (status == 0)
                                 return;
                             end
@@ -1692,7 +1715,7 @@ classdef Read < handle
                                 fprintf(2,'It must be a string with the values file name.\n');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(path,file),2);
+                            [status,vals] = this.readTable(fullfile(drv.path,file),2);
                             if (status == 0)
                                 return;
                             end
@@ -1801,7 +1824,7 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = getFixedCondition(this,json,drv,path)
+        function status = getFixedCondition(this,json,drv)
             status = 1;
             if (~isfield(json,'FixedCondition'))
                 return;
@@ -1939,7 +1962,7 @@ classdef Read < handle
                                 fprintf(2,'It must be a string with the values file name.\n');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(path,file),3);
+                            [status,vals] = this.readTable(fullfile(drv.path,file),3);
                             if (status == 0)
                                 return;
                             end
@@ -2169,7 +2192,7 @@ classdef Read < handle
                                 fprintf(2,'It must be a string with the values file name.\n');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(path,file),2);
+                            [status,vals] = this.readTable(fullfile(drv.path,file),2);
                             if (status == 0)
                                 return;
                             end
@@ -2399,7 +2422,7 @@ classdef Read < handle
                                 fprintf(2,'It must be a string with the values file name.\n');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(path,file),2);
+                            [status,vals] = this.readTable(fullfile(drv.path,file),2);
                             if (status == 0)
                                 return;
                             end
@@ -2723,6 +2746,17 @@ classdef Read < handle
             end
             OUT = json.Output;
             
+            % Number of outputs
+            if (isfield(OUT,'number_output'))
+                nout = OUT.number_output;
+                if (~this.isIntArray(nout,1) || nout <= 0)
+                    fprintf(2,'Invalid data in project parameters file: Output.number_output.\n');
+                    fprintf(2,'It must be a positive integer.\n');
+                    status = 0; return;
+                end
+                drv.nout = nout;
+            end
+            
             % Progress print frequency
             if (isfield(OUT,'progress_print'))
                 prog = OUT.progress_print;
@@ -2734,20 +2768,20 @@ classdef Read < handle
                 drv.nprog = prog;
             end
             
-            % Number of outputs
-            if (isfield(OUT,'number_output'))
-                nout = OUT.number_output;
-                if (~this.isIntArray(nout,1) || nout <= 0)
-                    fprintf(2,'Invalid data in project parameters file: Output.number_output.\n');
-                    fprintf(2,'It must be a positive integer.\n');
+            % Save workspace
+            if (isfield(OUT,'save_workspace'))
+                save_ws = OUT.save_workspace;
+                if (~this.isLogicalArray(save_workspace,1))
+                    fprintf(2,'Invalid data in project parameters file: Output.save_workspace.\n');
+                    fprintf(2,'It must be a boolean: true or false.\n');
                     status = 0; return;
                 end
-                drv.nout = nout;
+                drv.save_ws = save_ws;
             end
         end
         
         %------------------------------------------------------------------
-        function status = getGraph(this,json,drv,path)
+        function status = getGraph(this,json,drv)
             status = 1;
             if (~isfield(json,'Graph'))
                 return;
@@ -2759,9 +2793,6 @@ classdef Read < handle
                 % Create graph object
                 gra = Graph();
                 drv.graphs(i) = gra;
-                
-                % Set example path to save images
-                gra.path = path;
                 
                 % Title
                 if (isfield(GRA,'title'))
@@ -3014,7 +3045,7 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = getAnimation(this,json,drv,path)
+        function status = getAnimation(this,json,drv)
             status = 1;
             if (~isfield(json,'Animation'))
                 return;
@@ -3026,9 +3057,6 @@ classdef Read < handle
                 % Create animation object
                 anm = Animation();
                 drv.animations(i) = anm;
-                
-                % Set model path to save animations
-                anm.path = path;
                 
                 % Title
                 if (isfield(ANM,'title'))

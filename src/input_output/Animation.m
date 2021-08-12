@@ -52,7 +52,6 @@ classdef Animation < handle
         % Identification
         type   uint8  = uint8.empty;    % flag for type of animation
         atitle string = string.empty;   % animation title
-        path   string = string.empty;   % path to model folder
         
         % Results: general
         res_type uint8  = uint8.empty;    % flag for type of result
@@ -132,7 +131,7 @@ classdef Animation < handle
             this.createAnimation(drv);
             
             % Save movie file
-            file_name = strcat(this.path,'\',this.atitle);
+            file_name = strcat(drv.path,'\',this.atitle);
             writer = VideoWriter(file_name,'MPEG-4');
             writer.FrameRate = this.fps;
             open(writer);

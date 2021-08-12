@@ -58,6 +58,7 @@ classdef Driver_ThermoMechanical < Driver
             this.parallel    = false;
             this.workers     = parcluster('local').NumWorkers;
             this.result      = Result();
+            this.save_ws     = true;
             this.nprog       = 1;
             this.nout        = 500;
         end
