@@ -100,9 +100,9 @@ classdef Animation < handle
         end
         
         %------------------------------------------------------------------
-        function startConfig(this,drv)
+        function curConfig(this,drv,prefix)
             % Create figure
-            f = figure('name','Starting Configuration');
+            f = figure('name',[prefix,' ','Configuration']);
             
             % Set figure properties
             f.Visible  = 'off';
@@ -121,26 +121,26 @@ classdef Animation < handle
             this.radius   = drv.result.radius(:,col);
             this.wall_pos = drv.result.wall_position(:,col);
             
-            % Show starting temperature for thermal analysis
+            % Show current temperature for thermal analysis
             if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
-                title(gca,sprintf('Starting Temperature - Time: %.3f',drv.time));
+                title(gca,[prefix,' ',sprintf('Temperature - Time: %.3f',drv.time)]);
                 this.anim_type = this.SCALAR;
                 
                 % Get last stored temperatures
                 this.res_part = drv.result.temperature(:,col);
                 this.res_wall = drv.result.wall_temperature(:,col);
                 
-                % Set result and colorbar ranges (always automatic for initial configuration)
+                % Set result and colorbar ranges (always automatic for current configuration)
                 this.setRange();
             else
-                title(gca,sprintf('Starting Positions - Time: %.3f',drv.time)); 
+                title(gca,[prefix,' ',sprintf('Positions - Time: %.3f',drv.time)]);
                 this.anim_type = this.MOTION;
             end
             
             % Draw model components
             this.drawFrame(drv,1);
             
-            % Adjust figure bounding box (always automatic for initial configuration)
+            % Adjust figure bounding box (always automatic for current configuration)
             xmin = min(xlim);
             xmax = max(xlim);
             xlim([xmin-(xmax-xmin)/10,xmax+(xmax-xmin)/10]);

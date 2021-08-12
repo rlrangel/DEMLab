@@ -101,7 +101,7 @@ classdef Master
                 end
 
                 % Show starting configuration
-                Animation().startConfig(drv);
+                Animation().curConfig(drv,'Starting');
                 
                 % Execute analysis
                 tic;
@@ -111,12 +111,16 @@ classdef Master
                 this.printFinishedStatus(drv,status);
                 
             elseif (strcmp(ext,'.mat'))
+                % Load results file
                 fprintf('Results file selected:\n%s\n',file_fullname);
                 load(file_fullname,'drv');
                 if (~exist('drv','var'))
                     fprintf(2,'n\Invalid results file.\n');
                     fprintf('\nExiting program...\n');
                 end
+                
+                % Show current configuration
+                Animation().curConfig(drv,'');
             else
                 fprintf(2,'n\Invalid input file.\n');
                 fprintf('\nExiting program...\n');
