@@ -2,8 +2,8 @@
 %
 %% Description
 %
-% This is a handle class responsible for reading the input files, building
-% the simulation objects, and checking the input data.
+% This is a handle class responsible for reading the input paremeters file,
+% building the simulation objects, and checking the input data.
 %
 % Two files are read for running a simulation:
 %
@@ -2771,7 +2771,7 @@ classdef Read < handle
             % Save workspace
             if (isfield(OUT,'save_workspace'))
                 save_ws = OUT.save_workspace;
-                if (~this.isLogicalArray(save_workspace,1))
+                if (~this.isLogicalArray(save_ws,1))
                     fprintf(2,'Invalid data in project parameters file: Output.save_workspace.\n');
                     fprintf(2,'It must be a boolean: true or false.\n');
                     status = 0; return;
@@ -3875,6 +3875,24 @@ classdef Read < handle
             elseif (~isfield(IM,'indirect_conduction'))
                 this.warn('No model for indirect thermal conduction was identified. This heat transfer mechanism will not be considered.');
                 return;
+            end
+            
+            % Model parameters
+            if (~isfield(IM.indirect_conduction,'model'))
+                fprintf(2,'Missing data in project parameters file: InteractionModel.indirect_conduction.model.\n');
+                status = 0; return;
+            end
+            model = string(IM.indirect_conduction.model);
+            if (~this.isStringArray(model,1) ||...
+               (~strcmp(model,'vononoi_a')))
+                fprintf(2,'Invalid data in project parameters file: InteractionModel.indirect_conduction.model.\n');
+                fprintf(2,'Available options: vononoi_a.\n');
+                status = 0; return;
+            end
+            
+            % Create object
+            if (strcmp(model,'vononoi_a'))
+                drv.search.b_interact.iconduc = ConductionIndirect_VoronoiA();
             end
         end
         

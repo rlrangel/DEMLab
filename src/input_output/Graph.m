@@ -62,7 +62,7 @@ classdef Graph < handle
                 % Check data consistency
                 if (idx == 0)
                     warning('off','backtrace');
-                    warning('Curve %s of graph %s has no valid results and was not ploted.',this.names(i),this.gtitle);
+                    warning('Curve "%s" of graph "%s" has no valid results and was not ploted.',this.names(i),this.gtitle);
                     warning('on','backtrace');
                     continue;
                 end

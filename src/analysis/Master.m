@@ -23,82 +23,105 @@ classdef Master
             % Print header
             this.printHeader();
             
-            % Get input file name and path
+            % Get input file name, path and extension
             if (isempty(file_fullname))
-                [file_name,file_path] = uigetfile('*.json','DEMLab - Input file','ProjectParameters');
-                file_fullname = fullfile(file_path,file_name);
+                filter  = {'*.json','Parameters File (*.json)';'*.mat','Results File (*.mat)'};
+                title   = 'DEMLab - Input file';
+                default = 'ProjectParameters.json';
+                [file_name,file_path] = uigetfile(filter,title,default);
                 if (isequal(file_name,0))
                     fprintf('No file selected.\n');
                     fprintf('\nExiting program...\n');
                     return;
                 end
+                file_fullname = fullfile(file_path,file_name);
+                [~,~,ext] = fileparts(file_fullname);
             else
-                file_path = fileparts(file_fullname);
-            end
-            fprintf('File selected:\n%s\n',file_fullname)
-            
-            % Open input file
-            fid = fopen(file_fullname,'rt');
-            if (fid < 0)
-                fprintf(2,'\nError opening input file.\n');
-                fprintf('\nExiting program...\n');
-                return;
+                [file_path,~,ext] = fileparts(file_fullname);
             end
             
-            % Read input file
-            read = Read();
-            fprintf('\nReading input file...\n');
-            [status,drv,storage] = read.execute(file_path,fid);
-            
-            % Pre analysis tasks
-            if (status == 0)
-                fprintf('\nExiting program...\n');
-                return;
-                
-            elseif (status == 1) % start analysis from beggining
-                % Check input data
-                fprintf('\nChecking consistency of input data...\n');
-                status = read.check(drv);
-                if (~status)
+            % Run according to input file type
+            if (strcmp(ext,'.json'))
+                % Open parameters file
+                fprintf('Parameters file selected:\n%s\n',file_fullname)
+                fid = fopen(file_fullname,'rt');
+                if (fid < 0)
+                    fprintf(2,'\nError opening parameters file.\n');
                     fprintf('\nExiting program...\n');
                     return;
                 end
-                
-                % Pre-process
-                fprintf('\nPre-processing...\n');
-                if (~drv.preProcess())
+
+                % Read parameters file
+                read = Read();
+                fprintf('\nReading parameters file...\n');
+                [status,drv,storage] = read.execute(file_path,fid);
+
+                % Pre analysis tasks
+                if (status == 0)
                     fprintf('\nExiting program...\n');
                     return;
+
+                elseif (status == 1) % start analysis from beggining
+                    % Check input data
+                    fprintf('\nChecking consistency of input data...\n');
+                    status = read.check(drv);
+                    if (~status)
+                        fprintf('\nExiting program...\n');
+                        return;
+                    end
+
+                    % Pre-process
+                    fprintf('\nPre-processing...\n');
+                    if (~drv.preProcess())
+                        fprintf('\nExiting program...\n');
+                        return;
+                    end
+
+                    % Print simulation information
+                    this.printSimulationInfo(drv);
+                    fprintf('\nStarting analysis:\n');
+                    fprintf('%s\n',datestr(now));
+
+                elseif (status == 2) % continue analysis from previous state
+                    % Load results file
+                    fprintf('\nResults file found:\n%s\n',storage)
+                    load(storage,'drv');
+                    if (~exist('drv','var'))
+                        fprintf(2,'n\Invalid results file.\n');
+                        fprintf('\nExiting program...\n');
+                    end
+                    
+                    % Update starting elapsed time
+                    drv.start_time = drv.total_time;
+
+                    % Print simulation information
+                    this.printSimulationInfo(drv);
+                    fprintf('\nStarting analysis from previous results:\n');
+                    fprintf('%s\n',datestr(now));
                 end
+
+                % Show initial or current configuration
+                this.drawCurConfig(drv);
+
+                % Execute analysis
+                tic;
+                drv.process();
+
+                % Print finished status
+                this.printFinishedStatus(drv,status);
                 
-                % Print simulation information
-                this.printSimulationInfo(drv);
-                fprintf('\nStarting analysis:\n');
-                fprintf('%s\n',datestr(now));
-                
-            elseif (status == 2) % continue analysis from previous state
-                % Load stored results
-                fprintf('\nStored results were found in file:\n%s\n',storage)
-                load(storage,'drv');
-                
-                % Update starting elapsed time
-                drv.start_time = drv.total_time;
-                
-                % Print simulation information
-                this.printSimulationInfo(drv);
-                fprintf('\nStarting analysis from previous results:\n');
-                fprintf('%s\n',datestr(now));
+            elseif (strcmp(ext,'.mat'))
+                fprintf('Results file selected:\n%s\n',file_fullname);
+                load(file_fullname,'drv');
+                if (~exist('drv','var'))
+                    fprintf(2,'n\Invalid results file.\n');
+                    fprintf('\nExiting program...\n');
+                end
+            else
+                fprintf(2,'n\Invalid input file.\n');
+                fprintf('\nExiting program...\n');
+                return;
             end
-            
-            % Show initial or current configuration
-            this.drawCurConfig(drv);
-            
-            % Execute analysis
-            tic;
-            drv.process();
-            
-            % Print finished status
-            this.printFinishedStatus(drv,status);
             
             % Pos-process
             drv.posProcess()

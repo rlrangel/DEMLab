@@ -19,18 +19,19 @@
 %% Instructions
 %
 % This is the main script file of the DEMLab program.
-% To run a simulation, execute this script and select an appropriate input
-% parameters file.
 %
-% The input file is a _json_ file, which contains the model parameters and
-% the path to a _txt_ file with the model particles, walls and parts.
+% To *run a simulation*, execute this script and select an appropriate
+% parameters file with a _.json_ extension.
 %
-% There are two ways to select the input parameters file:
+% To *generate results* from a previously run simulation, execute this
+% script and select an appropriate results file with a _.mat_ extension.
 %
-% * Provide its path thorugh the string variable _file_ in the end of this
-%   script.
-% * Leave the string variable _file_ blank (file = '') and use the file
-%   selection dialog box.
+% There are two ways to select an input file:
+%
+% * Provide its complete path thorugh the string variable _file_ in the end
+%   of this script (e.g. file = 'C:\...\ProjectParameters.json').
+% * Leave the string variable _file_ blank (file = '') and use the
+%   selection dialog box that will appear when running this script.
 %
 %% OOP classes
 %
@@ -54,6 +55,7 @@
 % * <contactforcet.html ContactForceT>
 % * <rollresist.html RollResist>
 % * <conductiondirect.html ConductionDirect>
+% * <conductionindirect.html ConductionIndirect>
 % * <read.html Read>
 % * <result.html Result>
 % * <animation.html Animation>
@@ -79,7 +81,7 @@
 %
 %% Initialization
 clc; clearvars; close all;
-file = 'C:\Users\rlr_5\gDrive\Work\Projects\DEMLab\DEMLab_git\models\benchmarks\thermal\packed_box_regular_400\ProjectParameters.json';
+file = '';
 addpath('algorithms',...
         'analysis',...
         'components',...

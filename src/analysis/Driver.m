@@ -301,12 +301,12 @@ classdef Driver < handle
             % Create and show animations
             if (~isempty(this.animations))
                 for i = 1:length(this.animations)
-                    fprintf('\nCreating animation %s...',this.animations(i).atitle);
+                    fprintf('\nCreating animation "%s"...',this.animations(i).atitle);
                     this.animations(i).execute(this);
                 end
                 fprintf('\n');
                 for i = 1:length(this.animations)
-                    fprintf('\nShowing animation %s...\n',this.animations(i).atitle);
+                    fprintf('\nShowing animation "%s"...\n',this.animations(i).atitle);
                     this.animations(i).show();
                 end
             end
