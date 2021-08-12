@@ -311,9 +311,9 @@ classdef Animation < handle
                 this.setArrowSize();
             end
             
-            % Number of particles and frames
+            % Number of particles and valid frames
             this.np = size(this.radius,1);
-            this.nf = size(this.radius,2);
+            this.nf = drv.result.idx-1;
             
             % Preallocate movie frames array
             frams(this.nf) = struct('cdata',[],'colormap',[]);
