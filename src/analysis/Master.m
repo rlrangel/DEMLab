@@ -121,12 +121,13 @@ classdef Master
         function printSimulationInfo(~,drv)
             fprintf('\nSimulation ready:\n');
             fprintf('Name.................: %s\n',drv.name);
-            if (drv.type == drv.MECHANICAL)
-                fprintf('Type.................: Mechanical\n');
-            elseif (drv.type == drv.THERMAL)
-                fprintf('Type.................: Thermal\n');
-            elseif (drv.type == drv.THERMO_MECHANICAL)
-                fprintf('Type.................: Thermo-mechanical\n');
+            switch drv.type
+                case drv.MECHANICAL
+                    fprintf('Type.................: Mechanical\n');
+                case drv.type == drv.THERMAL
+                    fprintf('Type.................: Thermal\n');
+                case drv.THERMO_MECHANICAL
+                    fprintf('Type.................: Thermo-mechanical\n');
             end
             fprintf('Number of particles..: %d\n',drv.n_particles);
             fprintf('Number of walls......: %d\n',drv.n_walls);
