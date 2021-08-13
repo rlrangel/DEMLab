@@ -273,7 +273,7 @@ classdef Driver < handle
                     drv.total_time = drv.start_time + toc;
                 end
                 drv.store = true;
-                drv.tout = drv.tout + drv.nout - 10e-10; % small value to deal with garbages
+                drv.tout = drv.tout + drv.nout - 10e-10; % tollerance to deal with precision
                 drv.result.updateIndex();
             else
                 drv.store = false;
@@ -284,12 +284,17 @@ classdef Driver < handle
         function printProgress(this)
             if (this.time >= this.tprog)
                 fprintf('\n%.1f%%: time %.3f, step %d',100*this.tprog/this.max_time,this.time,this.step);
-                this.tprog = this.tprog + this.nprog - 10e-15; % small value to deal with garbages
+                this.tprog = this.tprog + this.nprog - 10e-15; % tollerance to deal with precision
             end
         end
         
         %------------------------------------------------------------------
         function posProcess(this)
+            if (isnan(this.result.times(1)))
+                fprintf('\nNo valid results to show.\n');
+                return;
+            end
+            
             % Create and write graphs
             if (~isempty(this.graphs))
                 fprintf('\nCreating graphs...\n');

@@ -230,7 +230,10 @@ classdef Result < handle
         
         %------------------------------------------------------------------
         function updateIndex(this)
-            this.idx = this.idx + 1;
+            % Do not allow column index to be greater than the number of
+            % output steps to avoid erros accessing the results arrays
+            % (number of output steps = preallocated size of times vector)
+            this.idx = min(this.idx+1,length(this.times));
         end
         
         %------------------------------------------------------------------

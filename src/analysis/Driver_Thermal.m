@@ -116,7 +116,7 @@ classdef Driver_Thermal < Driver
             end
             
             % Time advancing
-            while (this.time < this.max_time)
+            while (this.time <= this.max_time)
                 % Store current time and step to result arrays
                 this.storeResults()
                 if (this.store)

@@ -102,7 +102,7 @@ classdef Driver_ThermoMechanical < Driver
         
         %------------------------------------------------------------------
         function process(this)
-            while (this.time < this.max_time)
+            while (this.time <= this.max_time)
                 % Store current time and step to result arrays
                 this.storeResults()
                 if (this.store)

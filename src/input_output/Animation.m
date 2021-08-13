@@ -112,6 +112,12 @@ classdef Animation < handle
             % Set axes properties
             axis(gca,'equal');
             hold on;
+            if (~isempty(this.bbox))
+                xlim(this.bbox(1:2))
+                ylim(this.bbox(3:4))
+            else
+                this.setBBox(drv);
+            end
             
             % Get last stored results
             col = drv.result.idx;
@@ -121,9 +127,29 @@ classdef Animation < handle
             this.radius   = drv.result.radius(:,col);
             this.wall_pos = drv.result.wall_position(:,col);
             
-            % Show current temperature for thermal analysis
-            if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
-                title(gca,[prefix,' ',sprintf('Temperature - Time: %.3f',drv.time)]);
+            % Check if there are results at current time
+            if (isnan(this.times))
+                close f;
+                return;
+            end
+            
+            % Get default result to show for each type of analysis
+            if (drv.type == drv.MECHANICAL)
+                title(gca,[prefix,' ',sprintf('Velocities - Time: %.3f',drv.time)]);
+                this.anim_type = this.VECTOR;
+                
+                % Get last stored velocities
+                this.res_vecx = drv.result.velocity_x(:,col);
+                this.res_vecy = drv.result.velocity_y(:,col);
+                
+                % Set vector arrow size
+                this.setArrowSize();
+                
+                % Draw model components
+                this.drawFrame(drv,1);
+                
+            elseif (drv.type == drv.THERMAL)
+                title(gca,[prefix,' ',sprintf('Temperatures - Time: %.3f',drv.time)]);
                 this.anim_type = this.SCALAR;
                 
                 % Get last stored temperatures
@@ -132,18 +158,27 @@ classdef Animation < handle
                 
                 % Set result and colorbar ranges (always automatic for current configuration)
                 this.setRange();
-            else
-                title(gca,[prefix,' ',sprintf('Positions - Time: %.3f',drv.time)]);
-                this.anim_type = this.MOTION;
+                
+                % Draw model components
+                this.drawFrame(drv,1);
+                
+            elseif (drv.type == drv.THERMO_MECHANICAL)
+                title(gca,[prefix,' ',sprintf('Temperatures & Velocities - Time: %.3f',drv.time)]);
+                
+                % Draw temperatures (color-filled particles)
+                this.anim_type = this.SCALAR;
+                this.res_part  = drv.result.temperature(:,col);
+                this.res_wall  = drv.result.wall_temperature(:,col);
+                this.setRange();
+                this.drawFrame(drv,1);
+                
+                % Draw velocities (vector arrows)
+                this.anim_type = this.VECTOR;
+                this.res_vecx  = drv.result.velocity_x(:,col);
+                this.res_vecy  = drv.result.velocity_y(:,col);
+                this.setArrowSize();
+                this.drawParticles(drv,1);
             end
-            
-            % Draw model components
-            this.drawFrame(drv,1);
-            
-            % Adjust figure bounding box (always automatic for current configuration)
-            xmin = min(xlim);
-            xmax = max(xlim);
-            xlim([xmin-(xmax-xmin)/10,xmax+(xmax-xmin)/10]);
             
             % Show figure
             f.Visible = 'on';
@@ -166,6 +201,8 @@ classdef Animation < handle
             if (~isempty(this.bbox))
                 xlim(this.bbox(1:2))
                 ylim(this.bbox(3:4))
+            else
+                this.setBBox(drv);
             end
             
             % Set motion results (always needed to show model animation)
@@ -196,17 +233,22 @@ classdef Animation < handle
                 this.setArrowSize();
             end
             
+            % Get total number of valid movie frames
+            nf = drv.result.idx;
+            if (isnan(this.times(nf)))
+                nf = find(isnan(this.times(nf))) - 1;
+            end
+            
             % Preallocate movie frames array
-            nf = drv.result.idx-1;
             frams(nf) = struct('cdata',[],'colormap',[]);
             
-            % Generate movie frames
-            tim = this.times;
+            % Generate movie frames (one for each results storage time)
+            tim = this.times(1:nf);
             tit = this.anim_title;
-            for i = 1:nf
+            for i = 1:nf                
                 set(0,'CurrentFigure',this.fig)
                 cla;
-                title(gca,strcat(tit,sprintf(' - Time: %.3f',tim(i))));
+                title(gca,[tit,' - ',sprintf('Time: %.3f',tim(i))]);
                 this.drawFrame(drv,i);
                 frams(i) = getframe(this.fig);
             end
@@ -229,28 +271,8 @@ classdef Animation < handle
         
         %------------------------------------------------------------------
         function drawFrame(this,drv,f)
-            if (isnan(this.times(1,f)))
-                return;
-            end
-            
             % Draw particles
-            for i = 1:drv.n_particles
-                switch this.anim_type
-                    case this.MOTION
-                        this.drawParticleMotion(i,f);
-                    case this.SCALAR
-                        this.drawParticleScalar(i,f);
-                    case this.VECTOR
-                        this.drawParticleVector(i,f);
-                end
-                
-                % Show ID number
-                if (this.pids)
-                    x = this.coord_x(i,f);
-                    y = this.coord_y(i,f);
-                    text(x,y,int2str(i),'FontSize',this.id_size);
-                end
-            end
+            this.drawParticles(drv,f);
             
             % Draw walls
             for i = 1:drv.n_walls
@@ -268,6 +290,35 @@ classdef Animation < handle
             for i = 1:length(drv.sink)
                 if (drv.sink(i).isActive(this.times(f)))
                     this.drawSink(drv.sink(i));
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function drawParticles(this,drv,f)
+            for i = 1:drv.n_particles
+                % Check if particle exists at this frame time
+                % (radius should be always available for existing particles)
+                if (isnan(this.radius(i,f)))
+                    continue
+                end
+                
+                % Draw particle with selected result
+                switch this.anim_type
+                    case this.MOTION
+                        this.drawParticleMotion(i,f);
+                    case this.SCALAR
+                        this.drawParticleScalar(i,f);
+                    case this.VECTOR
+                        this.drawParticleVector(i,f);
+                end
+                
+                % Show ID number
+                if (this.pids &&...
+                    ~isnan(this.coord_x(i,f)) && ~isnan(this.coord_y(i,f)))
+                    x = this.coord_x(i,f);
+                    y = this.coord_y(i,f);
+                    text(x,y,int2str(i),'FontSize',this.id_size);
                 end
             end
         end
@@ -382,7 +433,84 @@ classdef Animation < handle
         end
         
         %------------------------------------------------------------------
+        function setBBox(~,drv)
+            % Initialize axes limits
+            if (drv.n_particles ~= 0 || drv.n_walls ~= 0)
+                xmin =  inf;
+                ymin =  inf;
+                xmax = -inf;
+                ymax = -inf;
+            else
+                xmin = -1;
+                ymin = -1;
+                xmax =  1;
+                ymax =  1;
+            end
+            
+            % Compute axes limits
+            for i = 1:drv.n_particles
+                p = drv.particles(i);
+                xmin_p = p.coord(1) - p.radius;
+                ymin_p = p.coord(2) - p.radius;
+                xmax_p = p.coord(1) + p.radius;
+                ymax_p = p.coord(2) + p.radius;
+                if (xmin_p < xmin)
+                    xmin = xmin_p;
+                end
+                if (ymin_p < ymin)
+                    ymin = ymin_p;
+                end
+                if (xmax_p > xmax)
+                    xmax = xmax_p;
+                end
+                if (ymax_p > ymax)
+                    ymax = ymax_p;
+                end
+            end
+            for i = 1:drv.n_walls
+                w = drv.walls(i);
+                switch w.type
+                    case w.LINE
+                        xmin_w = min([w.coord_ini(1),w.coord_end(1)]);
+                        ymin_w = min([w.coord_ini(2),w.coord_end(2)]);
+                        xmax_w = max([w.coord_ini(1),w.coord_end(1)]);
+                        ymax_w = max([w.coord_ini(2),w.coord_end(2)]);
+                    case w.CIRCLE
+                        xmin_w = w.center(1) - w.radius;
+                        ymin_w = w.center(2) - w.radius;
+                        xmax_w = w.center(1) + w.radius;
+                        ymax_w = w.center(2) + w.radius;
+                end
+                if (xmin_w < xmin)
+                    xmin = xmin_w;
+                end
+                if (ymin_w < ymin)
+                    ymin = ymin_w;
+                end
+                if (xmax_w > xmax)
+                    xmax = xmax_w;
+                end
+                if (ymax_w > ymax)
+                    ymax = ymax_w;
+                end
+            end
+            
+            % Create margin
+            dx   = xmax-xmin;
+            dy   = ymax-ymin;
+            xmin = xmin - dx/10;
+            ymin = ymin - dx/10;
+            xmax = xmax + dy/10;
+            ymax = ymax + dy/10;
+            
+            % Set axes limits
+            xlim([xmin,xmax])
+            ylim([ymin,ymax])
+        end
+        
+        %------------------------------------------------------------------
         function [min_val,max_val] = scalarValueLimits(this)
+            % Limits of particles results
             if (~isempty(this.res_part))
                 min_val_p = min(this.res_part(:));
                 max_val_p = max(this.res_part(:));
@@ -390,6 +518,8 @@ classdef Animation < handle
                 min_val_p =  inf;
                 max_val_p = -inf;
             end
+            
+            % Limits of walls results
             if (~isempty(this.res_wall))
                 min_val_w = min(this.res_wall(:));
                 max_val_w = max(this.res_wall(:));
@@ -397,18 +527,25 @@ classdef Animation < handle
                 min_val_w =  inf;
                 max_val_w = -inf;
             end
+            
+            % Total limits of results
             min_val = min([min_val_p,min_val_w]);
             max_val = max([max_val_p,max_val_w]);
+            
+            % Treat inf and NaN values
+            if ((isinf(min_val) && isinf(max_val)) || (isnan(min_val) && isnan(max_val)))
+                min_val = -1;
+                max_val = +1;
+            elseif (isinf(min_val) || isnan(min_val))
+                min_val = max_val - 1;
+            elseif (isinf(max_val) || isnan(max_val))
+                max_val = min_val + 1;
+            end
+            
+            % Treat equal values
             if (min_val == max_val)
                 min_val = min_val - 1;
                 max_val = max_val + 1;
-            elseif (isnan(min_val) && isnan(max_val))
-                min_val = - 1;
-                max_val = + 1;
-            elseif (isnan(min_val))
-                min_val = max_val - 1;
-            elseif (isnan(max_val))
-                max_val = min_val + 1;
             end
         end
         
@@ -444,7 +581,11 @@ classdef Animation < handle
             d  = sqrt(dx^2+dy^2);
             
             % Multiplication factor
-            this.arrow_fct = 0.1 * d/max_vec;
+            if (max_vec ~= 0 && ~isnan(max_vec))
+                this.arrow_fct = 0.1 * d/max_vec;
+            else
+                this.arrow_fct = 0;
+            end
         end
     end
     
@@ -452,20 +593,25 @@ classdef Animation < handle
     methods
         %------------------------------------------------------------------
         function drawParticleMotion(this,i,j)
+            % Always check valid data for safety
+            if (isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+                return;
+            end
+            
             % Position
-            x = this.coord_x(i,j);
-            y = this.coord_y(i,j);
-            r = this.radius(i,j);
+            x   = this.coord_x(i,j);
+            y   = this.coord_y(i,j);
+            r   = this.radius(i,j);
             pos = [x-r,y-r,2*r,2*r];
             
-            % Plot (rectangle with rounded sides)
+            % Plot particle (rectangle with rounded sides)
             c = this.col_pedge;
             w = this.wid_pedge;
             s = this.sty_pedge;
             rectangle('Position',pos,'Curvature',[1 1],'EdgeColor',c,'LineWidth',w,'LineStyle',s,'FaceColor','none');
             
-            % Plot orientation
-            if (~isempty(this.res_part))
+            % Plot orientation (default particle result of motion animations)
+            if (~isempty(this.res_part) && ~isnan(this.res_part(i,j)))
                 o = this.res_part(i,j);
                 p = [x,y]+[r*cos(o),r*sin(o)];
                 line([x,p(1)],[y,p(2)],'Color',c,'LineWidth',w,'LineStyle',s);
@@ -474,6 +620,11 @@ classdef Animation < handle
         
         %------------------------------------------------------------------
         function drawParticleScalar(this,i,j)
+            % Always check valid data for safety
+            if (isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+                return;
+            end
+            
             % Position
             x   = this.coord_x(i,j);
             y   = this.coord_y(i,j);
@@ -490,7 +641,7 @@ classdef Animation < handle
                 clr = this.col_pfill;
             end
             
-            % Plot (rectangle with rounded sides)
+            % Plot particle (rectangle with rounded sides)
             c = this.col_pedge;
             w = this.wid_pedge;
             s = this.sty_pedge;
@@ -499,20 +650,26 @@ classdef Animation < handle
         
         %------------------------------------------------------------------
         function drawParticleVector(this,i,j)
+            % Always check valid data for safety
+            if (isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+                return;
+            end
+            
             % Position
-            x = this.coord_x(i,j);
-            y = this.coord_y(i,j);
-            r = this.radius(i,j);
+            x   = this.coord_x(i,j);
+            y   = this.coord_y(i,j);
+            r   = this.radius(i,j);
             pos = [x-r,y-r,2*r,2*r];
             
-            % Plot (rectangle with rounded sides)
+            % Plot particle (rectangle with rounded sides)
             c = this.col_pedge;
             w = this.wid_pedge;
             s = this.sty_pedge;
             rectangle('Position',pos,'Curvature',[1 1],'EdgeColor',c,'LineWidth',w,'LineStyle',s,'FaceColor','none');
             
-            % Plot arrow
-            if (~isempty(this.res_vecx) && ~isempty(this.res_vecy))
+            % Plot vector arrow
+            if (~isempty(this.res_vecx)    && ~isempty(this.res_vecy) &&...
+                ~isnan(this.res_vecx(i,j)) && ~isnan(this.res_vecy(i,j)))
                 vx = this.arrow_fct * this.res_vecx(i,j);
                 vy = this.arrow_fct * this.res_vecy(i,j);
                 line([x,x+vx],[y,y+vy],'Color',c,'LineWidth',w,'LineStyle',s);

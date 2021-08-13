@@ -3042,6 +3042,14 @@ classdef Read < handle
                     gra.n_curves = 0;
                 end
             end
+            
+            % Check for animations with same title
+            for i = 1:length(drv.graphs)
+                if (length(findobj(drv.graphs,'gtitle',drv.graphs(i).gtitle)) > 1)
+                    fprintf(2,'Invalid data in project parameters file: Repeated graph title "%s"\n', drv.graphs(i).gtitle);
+                    status = 0; return;
+                end
+            end
         end
         
         %------------------------------------------------------------------
@@ -3225,6 +3233,14 @@ classdef Read < handle
                 elseif (strcmp(result,'heat_rate'))
                     anim.res_type = drv.result.HEAT_RATE;
                     drv.result.has_heat_rate = true;
+                end
+            end
+            
+            % Check for animations with same title
+            for i = 1:length(drv.animations)
+                if (length(findobj(drv.animations,'anim_title',drv.animations(i).anim_title)) > 1)
+                    fprintf(2,'Invalid data in project parameters file: Repeated animation title "%s"\n', drv.animations(i).anim_title);
+                    status = 0; return;
                 end
             end
         end
