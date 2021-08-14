@@ -12,7 +12,7 @@ classdef BinKinematics_CylinderWlin < BinKinematics
     %% Constructor method
     methods
         function this = BinKinematics_CylinderWlin()
-            this = this@BinKinematics(BinKinematics.CYLINDER_WALL_LINE);
+            this = this@BinKinematics(BinKinematics.PARTICLE_WALL,BinKinematics.CYLINDER_WALL_LINE);
         end
     end
     
@@ -27,10 +27,6 @@ classdef BinKinematics_CylinderWlin < BinKinematics
             
             int.eff_radius = p.radius;
             int.eff_mass   = p.mass;
-            
-            if (~isempty(mp.conduct))
-                int.eff_conduct = mp.conduct;
-            end
             
             % Wall with no material
             if (isempty(mw))
@@ -188,7 +184,7 @@ classdef BinKinematics_CylinderWlin < BinKinematics
         
         %------------------------------------------------------------------
         function addIndirectConductionToParticles(~,int)
-            
+            int.elem1.heat_rate = int.elem1.heat_rate + int.iconduc.total_hrate;
         end
     end
 end

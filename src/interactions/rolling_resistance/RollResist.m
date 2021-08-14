@@ -41,7 +41,7 @@ classdef RollResist < matlab.mixin.Heterogeneous
     %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
-            defaultObject = RollResist_ConstantA;
+            defaultObject = RollResist_Constant;
         end
     end
     

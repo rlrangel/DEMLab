@@ -55,6 +55,13 @@ classdef ConductionDirect < matlab.mixin.Heterogeneous
         this = setDefaultProps(this);
         
         %------------------------------------------------------------------
+        % Set parameters that are fixed throughout the whole analysis
+        % (suposed to be called in thermal analysis).
+        this = setFixParams(this,interact);
+        
+        %------------------------------------------------------------------
+        % Set parameters that are constant over the interaction lifetime
+        % (suposed to be called in thermomechanical analysis).
         this = setCteParams(this,interact);
         
         %------------------------------------------------------------------

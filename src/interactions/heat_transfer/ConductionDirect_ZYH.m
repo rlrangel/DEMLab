@@ -79,7 +79,6 @@
 classdef ConductionDirect_ZYH < ConductionDirect
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        % Contact parameters
         coeff    double = double.empty;   % heat transfer coefficient
         col_time double = double.empty;   % expected collision time
     end
@@ -100,11 +99,15 @@ classdef ConductionDirect_ZYH < ConductionDirect
         end
         
         %------------------------------------------------------------------
+        function this = setFixParams(this,~)
+            this.coeff = 0;
+            this.col_time = inf;
+        end
+        
+        %------------------------------------------------------------------
         function this = setCteParams(this,int)
-            % Static case (always the case of pure thermal analysis)
-            if (int.kinemat.v0_n == 0)
-                this.col_time = inf;
-                this.coeff    = 0;
+            if (~isempty(this.coeff) && ~isempty(this.col_time))
+                return;
             end
             
             % Individual properties
@@ -131,8 +134,14 @@ classdef ConductionDirect_ZYH < ConductionDirect
             Rc = (15 * m * r * v0^2 / (16 * y))^(1/5);
             tc = (m^2 / (r * e^2 * v0))^(1/5);
             
-            % Fourier number
-            F = k1 * tc / (rho1 * cp1 * Rc^2);
+            % Fourier number (assumption: average for particles)
+            if (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                F1 = k1 * tc / (rho1 * cp1 * Rc^2);
+                F2 = k2 * tc / (rho2 * cp2 * Rc^2);
+                F  = (F1 + F2) / 2;
+            else 
+                F = k1 * tc / (rho1 * cp1 * Rc^2);
+            end
             
             % Auxiliary coefficient
             C1 = -2.300*b2 + 8.9090*b - 4.2350;
@@ -141,8 +150,8 @@ classdef ConductionDirect_ZYH < ConductionDirect
             C  =  0.435 * (sqrt(C2^2 - 4*C1*(C3-F)) - C2) / C1;
             
             % Set collision time and heat transfer coefficient
+            this.coeff = C * pi * Rc^2 * tc^(-1/2) / ((a1*k1)^(-1/2) + (a2*k2)^(-1/2));
             this.col_time = tc;
-            this.coeff    = C * pi * Rc^2 * tc^(-1/2) / ((a1*k1)^(-1/2) + (a2*k2)^(-1/2));
         end
         
         %------------------------------------------------------------------
@@ -153,8 +162,7 @@ classdef ConductionDirect_ZYH < ConductionDirect
                 this.total_hrate = this.coeff * (int.elem2.temperature-int.elem1.temperature);
             else
                 % Static conduction: Batchelor & O'Brien formula
-                this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius *...
-                                   (int.elem2.temperature-int.elem1.temperature);
+                this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius * (int.elem2.temperature-int.elem1.temperature);
             end
         end
     end

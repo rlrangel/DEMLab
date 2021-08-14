@@ -13,7 +13,7 @@ classdef BinKinematics_SphereSphere < BinKinematics
     %% Constructor method
     methods
         function this = BinKinematics_SphereSphere(dir,dist,separ)
-            this = this@BinKinematics(BinKinematics.SPHERE_SPHERE);
+            this = this@BinKinematics(BinKinematics.PARTICLE_PARTICLE,BinKinematics.SPHERE_SPHERE);
             if (nargin == 3)
                 this.dir   = dir;
                 this.dist  = dist;
@@ -114,7 +114,8 @@ classdef BinKinematics_SphereSphere < BinKinematics
             r2_2 = r2 * r2;
             
             % Contact radius and area
-            R2 = r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2;
+            % (abs to avoid imag. numbers when particles are inside each other)
+            R2 = abs(r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2);
             this.contact_radius = sqrt(R2);
             this.contact_area = pi * R2;
         end
@@ -166,7 +167,8 @@ classdef BinKinematics_SphereSphere < BinKinematics
         
         %------------------------------------------------------------------
         function addIndirectConductionToParticles(~,int)
-            
+            int.elem1.heat_rate = int.elem1.heat_rate + int.iconduc.total_hrate;
+            int.elem2.heat_rate = int.elem2.heat_rate - int.iconduc.total_hrate;
         end
     end
 end

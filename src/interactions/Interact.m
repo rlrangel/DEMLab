@@ -51,6 +51,19 @@ classdef Interact < handle & matlab.mixin.Copyable
     %% Public methods
     methods
         %------------------------------------------------------------------
+        function setFixParamsTherm(this)
+            if (this.insulated)
+                return;
+            end
+            if (~isempty(this.dconduc))
+                this.dconduc = this.dconduc.setFixParams(this);
+            end
+            if (~isempty(this.iconduc))
+                this.iconduc = this.iconduc.setFixParams(this);
+            end
+        end
+        
+        %------------------------------------------------------------------
         function setCteParamsMech(this)
             if (~isempty(this.cforcen))
                 this.cforcen = this.cforcen.setCteParams(this);

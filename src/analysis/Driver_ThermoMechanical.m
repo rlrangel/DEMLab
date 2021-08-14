@@ -153,7 +153,7 @@ classdef Driver_ThermoMechanical < Driver
                     int.kinemat = int.kinemat.setOverlaps(int,this.time_step);
                     int.kinemat = int.kinemat.setContactArea(int);
                     
-                    % Set initial contact parameters
+                    % Set constant parameters
                     if (~int.kinemat.is_contact)
                         int.kinemat = int.kinemat.setInitContactParams(this.time);
                         int.setCteParamsMech();

@@ -12,7 +12,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
     %% Constructor method
     methods
         function this = BinKinematics_CylinderWcirc()
-            this = this@BinKinematics(BinKinematics.CYLINDER_WALL_CIRCLE);
+            this = this@BinKinematics(BinKinematics.PARTICLE_WALL,BinKinematics.CYLINDER_WALL_CIRCLE);
         end
     end
     
@@ -27,10 +27,6 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             
             int.eff_radius = p.radius;
             int.eff_mass   = p.mass;
-            
-            if (~isempty(mp.conduct))
-                int.eff_conduct = mp.conduct;
-            end
             
             % Wall with no material
             if (isempty(mw))
@@ -78,13 +74,15 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             
             % particle inside circle
             if (d <= R)
-                this.dir = direction;
-                this.separ = R - d - r;
+                this.inside = true;
+                this.dir    = direction;
+                this.separ  = R - d - r;
                 
             % particle outside circle
             else
-                this.dir = -direction;
-                this.separ = d - R - r;
+                this.inside = false;
+                this.dir    = -direction;
+                this.separ  = d - R - r;
             end
         end
         
@@ -99,7 +97,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             
             % Positions of contact point
             cp = (p.radius - this.ovlp_n) * this.dir_n;
-            if (this.dist <= w.radius)
+            if (this.inside)
                 cw = w.radius * this.dir_n;
             else
                 cw = -w.radius * this.dir_n;
@@ -115,8 +113,8 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             
             % Relative velocities
             this.vel_trl = vcp - vcw;
-            this.vel_rot = wp(1:2);       % particle only
-            this.vel_ang = p.veloc_rot;   % particle only
+            this.vel_rot = wp(1:2);       % assumption: particle only
+            this.vel_ang = p.veloc_rot;   % assumption: particle only
             
             % Normal overlap rate of change
             this.vel_n = dot(this.vel_trl,this.dir_n);
@@ -192,7 +190,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
         
         %------------------------------------------------------------------
         function addIndirectConductionToParticles(~,int)
-            
+            int.elem1.heat_rate = int.elem1.heat_rate + int.iconduc.total_hrate;
         end
     end
 end

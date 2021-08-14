@@ -37,12 +37,6 @@
 % A coupled thermo?mechanical model for the simulation of discrete particle systems, _J. Braz. Soc. Mech. Sci. Eng._, 42:387, 2020>
 %
 classdef ConductionDirect_Pipe < ConductionDirect
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        % Contact parameters
-        coeff double = double.empty;   % heat transfer coefficient
-    end
-    
     %% Constructor method
     methods
         function this = ConductionDirect_Pipe()
@@ -59,14 +53,28 @@ classdef ConductionDirect_Pipe < ConductionDirect
         end
         
         %------------------------------------------------------------------
+        function this = setFixParams(this,~)
+            
+        end
+        
+        %------------------------------------------------------------------
         function this = setCteParams(this,~)
             
         end
         
         %------------------------------------------------------------------
         function this = evalHeatRate(this,int)
-            this.total_hrate = pi * int.avg_conduct * int.kinemat.contact_radius^2 *...
-                              (int.elem2.temperature-int.elem1.temperature) / int.kinemat.dist;
+            if (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                d = int.kinemat.dist;
+            else
+                switch int.elem2.type
+                    case int.elem2.LINE
+                        d = 2 * int.kinemat.dist;
+                    case int.elem2.CIRCLE
+                        d = 2 * abs(int.kinemat.dist - int.elem2.radius);
+                end
+            end
+            this.total_hrate = pi * int.avg_conduct * int.kinemat.contact_radius^2 * (int.elem2.temperature-int.elem1.temperature) / d;
         end
     end
 end

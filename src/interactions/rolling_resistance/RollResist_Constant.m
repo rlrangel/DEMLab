@@ -63,7 +63,7 @@ classdef RollResist_Constant < RollResist
         %------------------------------------------------------------------
         function this = evalTorque(this,int)
             % Needed properties
-            dir = -int.kinemat.vel_ang;
+            dir = -sign(int.kinemat.vel_ang);
             res = this.resist;
             r   = int.eff_radius;
             f   = norm(int.cforcen.total_force);

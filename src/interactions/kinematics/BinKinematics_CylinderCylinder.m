@@ -13,7 +13,7 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
     %% Constructor method
     methods
         function this = BinKinematics_CylinderCylinder(dir,dist,separ)
-            this = this@BinKinematics(BinKinematics.CYLINDER_CYLINDER);
+            this = this@BinKinematics(BinKinematics.PARTICLE_PARTICLE,BinKinematics.CYLINDER_CYLINDER);
             if (nargin == 3)
                 this.dir   = dir;
                 this.dist  = dist;
@@ -115,7 +115,8 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             r2_2 = r2 * r2;
             
             % Contact radius and area
-            r = sqrt(r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2);
+            % (abs to avoid imag. numbers when particles are inside each other)
+            r = sqrt(abs(r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2));
             this.contact_radius = r;
             this.contact_area   = 2 * r * l;
         end
@@ -167,7 +168,8 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
         
         %------------------------------------------------------------------
         function addIndirectConductionToParticles(~,int)
-            
+            int.elem1.heat_rate = int.elem1.heat_rate + int.iconduc.total_hrate;
+            int.elem2.heat_rate = int.elem2.heat_rate - int.iconduc.total_hrate;
         end
     end
 end

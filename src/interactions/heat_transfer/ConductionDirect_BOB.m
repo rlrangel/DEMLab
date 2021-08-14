@@ -54,14 +54,18 @@ classdef ConductionDirect_BOB < ConductionDirect
         end
         
         %------------------------------------------------------------------
+        function this = setFixParams(this,~)
+            
+        end
+        
+        %------------------------------------------------------------------
         function this = setCteParams(this,~)
             
         end
         
         %------------------------------------------------------------------
         function this = evalHeatRate(this,int)
-            this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius *...
-                              (int.elem2.temperature-int.elem1.temperature);
+            this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius * (int.elem2.temperature-int.elem1.temperature);
         end
     end
 end

@@ -61,5 +61,13 @@ classdef Wall_Circle < Wall
                 end
             end
         end
+        
+        %------------------------------------------------------------------
+        function [x1,y1,x2,y2] = getBBoxLimits(this)
+            x1 = this.center(1) - this.radius;
+            y1 = this.center(2) - this.radius;
+            x2 = this.center(1) + this.radius;
+            y2 = this.center(2) + this.radius;
+        end
     end
 end

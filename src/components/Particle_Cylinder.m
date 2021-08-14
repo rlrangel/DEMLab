@@ -63,5 +63,13 @@ classdef Particle_Cylinder < Particle
         function setMInertia(this)
             this.minertia = this.mass * this.radius^2/2;
         end
+        
+        %------------------------------------------------------------------
+        function [x1,y1,x2,y2] = getBBoxLimits(this)
+            x1 = this.coord(1) - this.radius;
+            y1 = this.coord(2) - this.radius;
+            x2 = this.coord(1) + this.radius;
+            y2 = this.coord(2) + this.radius;
+        end
     end
 end

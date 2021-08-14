@@ -72,7 +72,7 @@ classdef Driver < handle
         result     Result    = Result.empty;      % handle to object of Result class
         graphs     Graph     = Graph.empty;       % handles to objects of Graph class
         animations Animation = Animation.empty;   % handles to objects of Animation class
-        save_ws    logical   = logical.empty;     % flag for saving workspace into a storage file
+        save_ws    logical   = logical.empty;     % flag for saving workspace into a results file
         
         % Output control
         nprog double  = double.empty;    % progress print frequency (% of total time)
@@ -265,16 +265,16 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
-        % Object must be called 'drv' here to load it from storage file.
+        % Object must be called 'drv' here to load it from results file.
         function storeResults(drv)
             if (drv.time >= drv.tout)
                 if (drv.save_ws)
                     save(strcat(drv.path,'\',drv.name));
                     drv.total_time = drv.start_time + toc;
                 end
-                drv.store = true;
-                drv.tout = drv.tout + drv.nout - 10e-10; % tollerance to deal with precision
+                drv.tout = drv.tout + drv.nout - 10e-10; % tollerance to deal with precision issues
                 drv.result.updateIndex();
+                drv.store = true;
             else
                 drv.store = false;
             end
@@ -284,7 +284,7 @@ classdef Driver < handle
         function printProgress(this)
             if (this.time >= this.tprog)
                 fprintf('\n%.1f%%: time %.3f, step %d',100*this.tprog/this.max_time,this.time,this.step);
-                this.tprog = this.tprog + this.nprog - 10e-15; % tollerance to deal with precision
+                this.tprog = this.tprog + this.nprog - 10e-15; % tollerance to deal with precision issues
             end
         end
         

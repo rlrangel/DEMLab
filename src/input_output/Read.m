@@ -37,7 +37,7 @@ classdef Read < handle
             % Get problem name
             [status,name] = this.getName(json);
             
-            % Look for storage file to continue analysis from previous stage
+            % Look for results file to continue analysis from previous stage
             if (status)
                 storage = fullfile(path,strcat(name,'.mat'));
                 if (exist(storage,'file') == 2)
@@ -3917,9 +3917,12 @@ classdef Read < handle
                 status = 0; return;
             end
             
-            % Create object
+            % Call sub-method for each type of model
             if (strcmp(model,'vononoi_a'))
-                drv.search.b_interact.iconduc = ConductionIndirect_VoronoiA();
+                if (~this.indirectConduction_VoronoiA(IM.indirect_conduction,drv))
+                    status = 0;
+                    return;
+                end
             end
         end
         
@@ -4520,6 +4523,38 @@ classdef Read < handle
                 fprintf(2,'Missing data in project parameters file: InteractionModel.rolling_resistance.resistance_coeff.\n');
                 status = 0; return;
             end
+        end
+        
+        %------------------------------------------------------------------
+        function status = indirectConduction_VoronoiA(this,IC,drv)
+            % * Fluid conductivity;
+            % * Global porosity;
+            % * Non-contact interactions;
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.iconduc = ConductionIndirect_VoronoiA();
+            
+            % Tollerances for numerical integration
+            if (isfield(IC,'tolerance_absolute'))
+                if (~this.isDoubleArray(IC.tolerance_absolute,1) || IC.tolerance_absolute <= 0)
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.indirect_conduction.tolerance_absolute.\n');
+                    fprintf(2,'It must be a positive value.\n');
+                    status = 0; return;
+                end
+                drv.search.b_interact.iconduc.tol_abs = IC.tolerance_absolute;
+            end
+            if (isfield(IC,'tolerance_relative'))
+                if (~this.isDoubleArray(IC.tolerance_relative,1) || IC.tolerance_relative <= 0)
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.indirect_conduction.tolerance_relative.\n');
+                    fprintf(2,'It must be a positive value.\n');
+                    status = 0; return;
+                end
+                drv.search.b_interact.iconduc.tol_rel = IC.tolerance_relative;
+            end
+                
+            % 
+            
         end
     end
     

@@ -12,7 +12,7 @@ classdef BinKinematics_SphereWlin < BinKinematics
     %% Constructor method
     methods
         function this = BinKinematics_SphereWlin()
-            this = this@BinKinematics(BinKinematics.SPHERE_WALL_LINE);
+            this = this@BinKinematics(BinKinematics.PARTICLE_WALL,BinKinematics.SPHERE_WALL_LINE);
         end
     end
     
@@ -27,10 +27,6 @@ classdef BinKinematics_SphereWlin < BinKinematics
             
             int.eff_radius = p.radius;
             int.eff_mass   = p.mass;
-            
-            if (~isempty(mp.conduct))
-                int.eff_conduct = mp.conduct;
-            end
             
             % Wall with no material
             if (isempty(mw))
@@ -147,7 +143,7 @@ classdef BinKinematics_SphereWlin < BinKinematics
             ovlp = this.ovlp_n;
             
             % Contact radius and area
-            R2 = ovlp*(1+2*r);
+            R2 = ovlp*(2*r-ovlp);
             this.contact_radius = sqrt(R2);
             this.contact_area = pi * R2;
         end
@@ -187,7 +183,7 @@ classdef BinKinematics_SphereWlin < BinKinematics
         
         %------------------------------------------------------------------
         function addIndirectConductionToParticles(~,int)
-            
+            int.elem1.heat_rate = int.elem1.heat_rate + int.iconduc.total_hrate;
         end
     end
 end

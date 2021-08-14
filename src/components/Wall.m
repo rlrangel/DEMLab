@@ -81,6 +81,9 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         setFCMotion(this,time,dt);
+        
+        %------------------------------------------------------------------
+        [x1,y1,x2,y2] = getBBoxLimits(this);
     end
     
     %% Public methods

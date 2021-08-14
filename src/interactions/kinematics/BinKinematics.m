@@ -21,11 +21,15 @@
 classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
     %% Constant values
     properties (Constant = true, Access = public)
-        % Types of binary kinematics between same particles
+        % General types of binary kinematics
+        PARTICLE_PARTICLE = uint8(1);
+        PARTICLE_WALL     = uint8(2);
+        
+        % Specific types of binary kinematics between same particles
         SPHERE_SPHERE     = uint8(1);
         CYLINDER_CYLINDER = uint8(2);
         
-        % Types of binary kinematics between particles and walls
+        % Specific types of binary kinematics between particles and walls
         SPHERE_WALL_LINE     = uint8(3);
         SPHERE_WALL_CIRCLE   = uint8(4);
         CYLINDER_WALL_LINE   = uint8(5);
@@ -35,7 +39,8 @@ classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Identification
-        type uint8 = uint8.empty;   % flag for type of binary kinematics
+        gen_type uint8 = uint8.empty;   % flag for general type of binary kinematics
+        spc_type uint8 = uint8.empty;   % flag for specific type of binary kinematics
         
         % Relative position
         dir   double = double.empty;   % direction between centroids
@@ -68,9 +73,10 @@ classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
     
     %% Constructor method
     methods
-        function this = BinKinematics(type)
+        function this = BinKinematics(gen_type,spc_type)
             if (nargin > 0)
-                this.type = type;
+                this.gen_type = gen_type;
+                this.spc_type = spc_type;
             end
         end
     end

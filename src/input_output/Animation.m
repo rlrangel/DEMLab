@@ -248,7 +248,7 @@ classdef Animation < handle
             for i = 1:nf                
                 set(0,'CurrentFigure',this.fig)
                 cla;
-                title(gca,[tit,' - ',sprintf('Time: %.3f',tim(i))]);
+                title(gca,strcat(tit,sprintf(' - Time: %.3f',tim(i))));
                 this.drawFrame(drv,i);
                 frams(i) = getframe(this.fig);
             end
@@ -449,50 +449,18 @@ classdef Animation < handle
             
             % Compute axes limits
             for i = 1:drv.n_particles
-                p = drv.particles(i);
-                xmin_p = p.coord(1) - p.radius;
-                ymin_p = p.coord(2) - p.radius;
-                xmax_p = p.coord(1) + p.radius;
-                ymax_p = p.coord(2) + p.radius;
-                if (xmin_p < xmin)
-                    xmin = xmin_p;
-                end
-                if (ymin_p < ymin)
-                    ymin = ymin_p;
-                end
-                if (xmax_p > xmax)
-                    xmax = xmax_p;
-                end
-                if (ymax_p > ymax)
-                    ymax = ymax_p;
-                end
+                [xmin_p,ymin_p,xmax_p,ymax_p] = drv.particles(i).getBBoxLimits();
+                xmin = min(xmin,xmin_p);
+                ymin = min(ymin,ymin_p);
+                xmax = max(xmax,xmax_p);
+                ymax = max(ymax,ymax_p);
             end
             for i = 1:drv.n_walls
-                w = drv.walls(i);
-                switch w.type
-                    case w.LINE
-                        xmin_w = min([w.coord_ini(1),w.coord_end(1)]);
-                        ymin_w = min([w.coord_ini(2),w.coord_end(2)]);
-                        xmax_w = max([w.coord_ini(1),w.coord_end(1)]);
-                        ymax_w = max([w.coord_ini(2),w.coord_end(2)]);
-                    case w.CIRCLE
-                        xmin_w = w.center(1) - w.radius;
-                        ymin_w = w.center(2) - w.radius;
-                        xmax_w = w.center(1) + w.radius;
-                        ymax_w = w.center(2) + w.radius;
-                end
-                if (xmin_w < xmin)
-                    xmin = xmin_w;
-                end
-                if (ymin_w < ymin)
-                    ymin = ymin_w;
-                end
-                if (xmax_w > xmax)
-                    xmax = xmax_w;
-                end
-                if (ymax_w > ymax)
-                    ymax = ymax_w;
-                end
+                [xmin_w,ymin_w,xmax_w,ymax_w] = drv.walls(i).getBBoxLimits();
+                xmin = min(xmin,xmin_w);
+                ymin = min(ymin,ymin_w);
+                xmax = max(xmax,xmax_w);
+                ymax = max(ymax,ymax_w);
             end
             
             % Create margin
@@ -692,21 +660,21 @@ classdef Animation < handle
                 c = this.col_wall;
             end
             
-            % Line ID
-            lin = 4 * (wall.id-1) + 1;
+            % Row ID
+            row = 4 * (wall.id-1) + 1;
             
             switch wall.type
                 case wall.LINE
-                    x1 = this.wall_pos(lin+0,j);
-                    y1 = this.wall_pos(lin+1,j);
-                    x2 = this.wall_pos(lin+2,j);
-                    y2 = this.wall_pos(lin+3,j);
+                    x1 = this.wall_pos(row+0,j);
+                    y1 = this.wall_pos(row+1,j);
+                    x2 = this.wall_pos(row+2,j);
+                    y2 = this.wall_pos(row+3,j);
                     line([x1,x2],[y1,y2],'Color',c,'LineWidth',w,'LineStyle',s);
                 
                 case wall.CIRCLE
-                    x = this.wall_pos(lin+0,j);
-                    y = this.wall_pos(lin+1,j);
-                    r = this.wall_pos(lin+2,j);
+                    x = this.wall_pos(row+0,j);
+                    y = this.wall_pos(row+1,j);
+                    r = this.wall_pos(row+2,j);
                     this.drawCircle(x,y,r,c,w,s);
             end
         end

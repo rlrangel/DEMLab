@@ -86,5 +86,13 @@ classdef Wall_Line < Wall
             this.coord_ini = [x1;y1];
             this.coord_end = [x2;y2];
         end
+        
+        %------------------------------------------------------------------
+        function [x1,y1,x2,y2] = getBBoxLimits(this)
+            x1 = min([this.coord_ini(1),this.coord_end(1)]);
+            y1 = min([this.coord_ini(2),this.coord_end(2)]);
+            x2 = max([this.coord_ini(1),this.coord_end(1)]);
+            y2 = max([this.coord_ini(2),this.coord_end(2)]);
+        end
     end
 end
