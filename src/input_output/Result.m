@@ -142,6 +142,17 @@ classdef Result < handle
             % Index for columns
             this.idx = 1;
             
+            % Set results that always need to be stored to show model
+            this.has_time          = true;
+            this.has_coord_x       = true;
+            this.has_coord_y       = true;
+            this.has_radius        = true;
+            this.has_wall_position = true;
+            if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
+                this.has_temperature      = true;
+                this.has_wall_temperature = true;
+            end
+            
             % Number of columns: number of output steps (+initial conditions)
             c = drv.nout+1; 
             

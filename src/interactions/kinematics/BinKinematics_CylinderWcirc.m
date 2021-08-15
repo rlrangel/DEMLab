@@ -46,10 +46,10 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
                 
             % Wall with material
             else
-                if (~isempty(mp.young) && ~isempty(mp.poisson) && isempty(mw.young) && ~isempty(mw.poisson))
+                if (~isempty(mp.young) && ~isempty(mp.poisson) && ~isempty(mw.young) && ~isempty(mw.poisson))
                     int.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
                 end
-                if (~isempty(mp.shear) && ~isempty(mp.poisson) && isempty(mw.shear) && ~isempty(mw.poisson))
+                if (~isempty(mp.shear) && ~isempty(mp.poisson) && ~isempty(mw.shear) && ~isempty(mw.poisson))
                     int.eff_shear = 1 / ((2-mp.poisson^2)/mp.shear + (2-mw.poisson^2)/mw.shear);
                 end
                 if (~isempty(mp.poisson) && ~isempty(mw.poisson))

@@ -136,48 +136,26 @@ classdef Animation < handle
             % Get default result to show for each type of analysis
             if (drv.type == drv.MECHANICAL)
                 title(gca,[prefix,' ',sprintf('Velocities - Time: %.3f',drv.time)]);
-                this.anim_type = this.VECTOR;
-                
-                % Get last stored velocities
-                this.res_vecx = drv.result.velocity_x(:,col);
-                this.res_vecy = drv.result.velocity_y(:,col);
-                
-                % Set vector arrow size
-                this.setArrowSize();
-                
-                % Draw model components
+                this.anim_type = this.MOTION;
                 this.drawFrame(drv,1);
                 
-            elseif (drv.type == drv.THERMAL)
+            else
                 title(gca,[prefix,' ',sprintf('Temperatures - Time: %.3f',drv.time)]);
                 this.anim_type = this.SCALAR;
                 
-                % Get last stored temperatures
-                this.res_part = drv.result.temperature(:,col);
-                this.res_wall = drv.result.wall_temperature(:,col);
+                % Get last stored temperatures (must be available)
+                if (~isempty(drv.result.temperature(:,col)))
+                    this.res_part = drv.result.temperature(:,col);
+                end
+                if (~isempty(drv.result.wall_temperature(:,col)))
+                    this.res_wall = drv.result.wall_temperature(:,col);
+                end
                 
                 % Set result and colorbar ranges (always automatic for current configuration)
                 this.setRange();
                 
                 % Draw model components
                 this.drawFrame(drv,1);
-                
-            elseif (drv.type == drv.THERMO_MECHANICAL)
-                title(gca,[prefix,' ',sprintf('Temperatures & Velocities - Time: %.3f',drv.time)]);
-                
-                % Draw temperatures (color-filled particles)
-                this.anim_type = this.SCALAR;
-                this.res_part  = drv.result.temperature(:,col);
-                this.res_wall  = drv.result.wall_temperature(:,col);
-                this.setRange();
-                this.drawFrame(drv,1);
-                
-                % Draw velocities (vector arrows)
-                this.anim_type = this.VECTOR;
-                this.res_vecx  = drv.result.velocity_x(:,col);
-                this.res_vecy  = drv.result.velocity_y(:,col);
-                this.setArrowSize();
-                this.drawParticles(drv,1);
             end
             
             % Show figure

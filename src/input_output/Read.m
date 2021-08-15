@@ -302,9 +302,9 @@ classdef Read < handle
                 if (~this.isStringArray(scheme,1) ||...
                     ~strcmp(scheme,'forward_euler')  &&...
                     ~strcmp(scheme,'modified_euler') &&...
-                    ~strcmp(scheme,'taylor2'))
+                    ~strcmp(scheme,'taylor_2'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_trans.\n');
-                    fprintf(2,'Available options: forward_euler, modified_euler, taylor2.\n');
+                    fprintf(2,'Available options: forward_euler, modified_euler, taylor_2.\n');
                     status = 0; return;
                 end
                 if (strcmp(scheme,'forward_euler'))
@@ -322,7 +322,7 @@ classdef Read < handle
                 if (~this.isStringArray(scheme,1) ||...
                     ~strcmp(scheme,'forward_euler')  &&...
                     ~strcmp(scheme,'modified_euler') &&...
-                    ~strcmp(scheme,'taylor2'))
+                    ~strcmp(scheme,'taylor_2'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_rotat.\n');
                     fprintf(2,'Available options: forward_euler, modified_euler, taylor_2.\n');
                     status = 0; return;
@@ -342,7 +342,7 @@ classdef Read < handle
                 if (~this.isStringArray(scheme,1) ||...
                     ~strcmp(scheme,'forward_euler'))
                     fprintf(2,'Invalid data in project parameters file: Solver.integr_scheme_therm.\n');
-                    fprintf(2,'Available options: forward_euler, modified_euler, taylor_2.\n');
+                    fprintf(2,'Available options: forward_euler.\n');
                     status = 0; return;
                 end
                 if (strcmp(scheme,'forward_euler'))
@@ -3134,13 +3134,6 @@ classdef Read < handle
                                    "acceleration_vector","acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
                 results_therm   = ["heat_rate","temperature"];
                 
-                % Data needed in all animation types
-                drv.result.has_time          = true;
-                drv.result.has_coord_x       = true;
-                drv.result.has_coord_y       = true;
-                drv.result.has_radius        = true;
-                drv.result.has_wall_position = true;
-                
                 % Result type
                 if (~isfield(ANM,'result'))
                     fprintf(2,'Missing data in project parameters file: Animation.result.\n');
@@ -4529,7 +4522,6 @@ classdef Read < handle
         function status = indirectConduction_VoronoiA(this,IC,drv)
             % * Fluid conductivity;
             % * Global porosity;
-            % * Non-contact interactions;
             status = 1;
             
             % Create object
