@@ -214,7 +214,7 @@ classdef Animation < handle
             % Get total number of valid movie frames
             nf = drv.result.idx;
             if (isnan(this.times(nf)))
-                nf = find(isnan(this.times(nf))) - 1;
+                nf = find(isnan(this.times)) - 1;
             end
             
             % Preallocate movie frames array
@@ -233,15 +233,18 @@ classdef Animation < handle
             this.frames = frams;
             
             % Compute frame rate (frames / second)
-            this.fps = nf/drv.time;
+            this.fps = ceil(nf/drv.time);
             if (this.fps > 100)
                 this.fps = 100;
+            elseif (this.fps < 1)
+                this.fps = 1;
             end
         end
         
         %------------------------------------------------------------------
         function showAnimation(this)
             if(this.play)
+                fprintf('\nShowing animation "%s"...\n',this.anim_title);
                 this.fig.Visible = 'on';
                 movie(this.fig,this.frames,999,this.fps);
             end

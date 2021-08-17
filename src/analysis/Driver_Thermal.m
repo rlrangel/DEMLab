@@ -70,53 +70,109 @@ classdef Driver_Thermal < Driver
         end
         
         %------------------------------------------------------------------
-        function process(this)
+        function status = preProcess(this)
+            status = 1;
+            this.initTime();
+            
+            % Remove particles not respecting bbox and sinks
+            % (total number of particles needed for preallocating results)
+            this.cleanParticles();
+            if (this.n_particles == 0)
+                fprintf(2,'The model has no particle inside the domain to initialize the analysis.\n');
+                status = 0;
+                return;
+            end
+            
+            % Initialize result arrays and add initial time and step values
+            this.result.initialize(this);
+            this.result.storeTime(this);
+            
+            % Initialize critical time step
+            if (this.auto_step)
+                this.time_step = inf;
+            end
+            
+            % loop over all particles
+            for i = 1:this.n_particles
+                p = this.particles(i);
+                
+                % Initialize properties and forcing terms
+                this.setParticleProps(p);
+                p.resetForcingTerms();
+                
+                % Set fixed temperature (overlap initial condition)
+                p.setFixedThermal(this.time);
+                p.setFCTemperature(this.time);
+                
+                % Add initial/fixed particle values to result arrays:
+                % Some results are not available yet and are zero, such as
+                % forcing terms, but will receive a copy of the next step
+                % (work-around).
+                this.result.storeParticleProp(p);          % fixed all steps
+                this.result.storeParticlePositionAll(p);   % fixed all steps
+                this.result.storeParticleTemperature(p);   % initial
+                this.result.storeParticleHeatRate(p);      % zero (reset after 1st step)
+                
+                % Compute critical time step for current particle
+                if (this.auto_step)
+                    dt = this.criticalTimeStep(p);
+                    if (dt < this.time_step)
+                        this.time_step = dt;
+                    end
+                end
+            end
+            
+            % Loop over all walls
+            for i = 1:this.n_walls
+                w = this.walls(i);
+                
+                % Set fixed temperature (overlap initial condition)
+                w.setFixedThermal(this.time);
+                w.setFCTemperature(this.time);
+                
+                % Add initial/fixed wall values to result arrays
+                this.result.storeWallPositionAll(w);   % fixed all steps
+                this.result.storeWallTemperature(w);   % initial
+            end
+            
+            % Compute ending time
+            this.finalTime();
+            
+            % Initialize output control variables
+            this.initOutputVars();
+            
             % Interactions search (only once as particles do not move)
             this.search.execute(this);
             
-            % Prepare interactions (never change during analysis)
-            rmv = false;
+            % Prepare interactions for analysis
             for i = 1:this.n_interacts
                 int = this.interacts(i);
                 
                 % Remove insulated interactions
                 if (int.insulated)
-                    p = int.elem1;
-                    w = int.elem2;
+                    p = int.elem1; w = int.elem2;
                     p.interacts(p.interacts==int) = [];
                     p.neigh_w(p.neigh_w==w.id)    = [];
                     delete(int);
-                    rmv = true;
                     continue;
                 end
                 
-                % Set constant parameters
-                int.kinemat.is_contact    = true;
-                int.kinemat.v0_n          = 0;
-                int.kinemat.contact_start = 0;
+                % Set parameters
                 int.kinemat.contact_time  = inf;
-                int.kinemat.dir_n         = int.kinemat.dir / int.kinemat.dist;
-                int.kinemat.ovlp_n        = -int.kinemat.separ;
+                int.kinemat = int.kinemat.setOverlaps(int,this.time_step);
                 int.kinemat = int.kinemat.setContactArea(int);
+                int.kinemat = int.kinemat.setInitContactParams(this.time);
                 int.setFixParamsTherm();
                 int.setCteParamsTherm();
             end
             
             % Erase handles to removed interactions from global list
-            if (rmv)
-                this.interacts(~isvalid(this.interacts)) = [];
-                this.n_interacts = length(this.interacts);
-            end
-            
-            % Store fixed particle and wall positions to result arrays
-            for i = 1:this.n_particles
-                this.result.storeParticlePositionAll(this.particles(i));
-            end
-            for i = 1:this.n_walls
-                this.result.storeWallPositionAll(this.walls(i));
-            end
-            
-            % Time advancing
+            this.interacts(~isvalid(this.interacts)) = [];
+            this.n_interacts = length(this.interacts);
+        end
+        
+        %------------------------------------------------------------------
+        function process(this)
             while (this.time <= this.max_time)
                 % Store current time and step to result arrays
                 this.storeResults()

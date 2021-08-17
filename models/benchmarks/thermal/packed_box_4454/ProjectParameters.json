@@ -1,14 +1,13 @@
 {
 	"ProblemData": {
-		"name"             : "packed_box_regular_400",
+		"name"             : "packed box",
 		"analysis_type"    : "thermal",
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
-		"time_step"           : 10e-3,
-		"final_time"          : 10.0,
-		"integr_scheme_therm" : "forward_euler",
-		"parallelization"     : false
+		"time_step"           : 10e-4,
+		"final_time"          : 10,
+		"integr_scheme_therm" : "forward_euler"
 	},
 	"InitialCondition": {
 		"temperature": {
@@ -27,30 +26,34 @@
 		"name"        : "material_1",
 		"model_parts" : ["PARTICLES","WALLS"],
 		"properties"  : {
-			"density"              : 1000.0,
-			"young_modulus"        : 1000000,
-			"poisson_ratio"        : 0.3,
+			"density"              : 2500,
 			"thermal_conductivity" : 2000,
-			"heat_capacity"        : 50
+			"heat_capacity"        : 100
 		}
 	},
 	"InteractionModel": {
 		"direct_conduction": {
 			"model" : "bob"
-		},
-		"indirect_conduction": {
-			"model" : "vononoi_a"
 		}
 	},
 	"Output": {
-		"progress_print" : 1,
+		"progress_print" : 0.1,
 		"number_output"  : 20,
-		"save_workspace" : false
+		"save_workspace" : true
 	},
 	"Animation": {
-		"title"        : "Particle Temperature",
+		"title"        : "Temperature",
 		"result"       : "temperature",
-		"auto_play"    : true,
-		"bounding_box" : [-0.15,1.15,-0.15,1.15]
+		"auto_play"    : false,
+		"bounding_box" : [-0.5,1.5,-0.3,1.3]
+	},
+	"Graph": {
+		"title"  : "Particle Temperature",
+		"axis_x" : "time",
+		"axis_y" : "temperature",
+		"curve"  : {
+			"name"       : "p3260",
+			"particle_y" : 3260
+		}
 	}
 }

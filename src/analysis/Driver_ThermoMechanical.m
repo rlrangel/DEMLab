@@ -101,6 +101,85 @@ classdef Driver_ThermoMechanical < Driver
         end
         
         %------------------------------------------------------------------
+        function status = preProcess(this)
+            status = 1;
+            this.initTime();
+            
+            % Remove particles not respecting bbox and sinks
+            % (total number of particles needed for preallocating results)
+            this.cleanParticles();
+            if (this.n_particles == 0)
+                fprintf(2,'The model has no particle inside the domain to initialize the analysis.\n');
+                status = 0;
+                return;
+            end
+            
+            % Initialize result arrays and add initial time and step values
+            this.result.initialize(this);
+            this.result.storeTime(this);
+            
+            % Initialize critical time step
+            if (this.auto_step)
+                this.time_step = inf;
+            end
+            
+            % loop over all particles
+            for i = 1:this.n_particles
+                p = this.particles(i);
+                
+                % Initialize properties and forcing terms
+                this.setParticleProps(p);
+                p.resetForcingTerms();
+                
+                % Set fixed conditions (overlap initial conditions):
+                % Only fixed temperature is set because fixed motion
+                % also updates the particle kinematics (coordinates, etc).
+                p.setFixedThermal(this.time);
+                p.setFCTemperature(this.time);
+                
+                % Add initial particle values to result arrays:
+                % Some results are not available yet and are zero, such as
+                % forcing terms, but will receive a copy of the next step
+                % (work-around).
+                this.result.storeParticleProp(p);          % fixed all steps
+                this.result.storeParticlePosition(p);      % initial
+                this.result.storeParticleTemperature(p);   % initial
+                this.result.storeParticleForce(p);         % zero (reset after 1st step)
+                this.result.storeParticleMotion(p);        % zero (reset after 1st step)
+                this.result.storeParticleHeatRate(p);      % zero (reset after 1st step)
+                
+                % Compute critical time step for current particle
+                if (this.auto_step)
+                    dt = this.criticalTimeStep(p);
+                    if (dt < this.time_step)
+                        this.time_step = dt;
+                    end
+                end
+            end
+            
+            % Loop over all walls
+            for i = 1:this.n_walls
+                w = this.walls(i);
+                
+                % Set fixed conditions (overlap initial conditions):
+                % Only fixed temperature is set because fixed motion
+                % also updates the wall kinematics (coordinates, etc).
+                w.setFixedThermal(this.time);
+                w.setFCTemperature(this.time);
+                
+                % Add initial wall values to result arrays
+                this.result.storeWallPosition(w);      % initial
+                this.result.storeWallTemperature(w);   % initial
+            end
+            
+            % Compute ending time
+            this.finalTime();
+            
+            % Initialize output control variables
+            this.initOutputVars();
+        end
+        
+        %------------------------------------------------------------------
         function process(this)
             while (this.time <= this.max_time)
                 % Store current time and step to result arrays

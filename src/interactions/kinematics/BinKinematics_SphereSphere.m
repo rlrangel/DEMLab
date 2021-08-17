@@ -26,10 +26,8 @@ classdef BinKinematics_SphereSphere < BinKinematics
     methods
         %------------------------------------------------------------------
         function setEffParams(~,int)
-            p1 = int.elem1;
-            p2 = int.elem2;
-            m1 = p1.material;
-            m2 = p2.material;
+            p1 = int.elem1;   p2 = int.elem2;
+            m1 = p1.material; m2 = p2.material;
             
             % Effective and average parameters
             int.eff_radius = p1.radius * p2.radius / (p1.radius + p2.radius);
@@ -59,8 +57,7 @@ classdef BinKinematics_SphereSphere < BinKinematics
         
         %------------------------------------------------------------------
         function this = setOverlaps(this,int,dt)
-            p1 = int.elem1;
-            p2 = int.elem2;
+            p1 = int.elem1; p2 = int.elem2;
             
             % Normal overlap and unit vector
             this.ovlp_n = -this.separ;

@@ -20,10 +20,8 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
     methods
         %------------------------------------------------------------------
         function setEffParams(~,int)
-            p  = int.elem1;
-            w  = int.elem2;
-            mp = p.material;
-            mw = w.material;
+            p  = int.elem1;  w  = int.elem2;
+            mp = p.material; mw = w.material;
             
             int.eff_radius = p.radius;
             int.eff_mass   = p.mass;
@@ -88,8 +86,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
         
         %------------------------------------------------------------------
         function this = setOverlaps(this,int,dt)
-            p = int.elem1;
-            w = int.elem2;
+            p = int.elem1; w = int.elem2;
             
             % Normal overlap and unit vector
             this.ovlp_n = -this.separ;
