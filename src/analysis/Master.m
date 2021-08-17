@@ -85,9 +85,7 @@ classdef Master
                 elseif (status == 2) % continue analysis from previous state
                     % Load results file
                     fprintf('\nResults file found:\n%s\n',storage)
-                    tic
                     load(storage,'drv');
-                    toc
                     if (~exist('drv','var'))
                         fprintf(2,'n\Invalid results file.\n');
                         fprintf('\nExiting program...\n');
