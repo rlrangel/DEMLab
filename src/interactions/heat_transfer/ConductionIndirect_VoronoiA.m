@@ -85,7 +85,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
     %% Public methods: sub-class specifics
     methods
         %------------------------------------------------------------------
-        function y = evalIntegralMonosize(~,int)
+        function y = evalIntegralMonosize(this,int)
             % Needed properties
             Rp  = int.elem1.radius;
             Rc  = int.kinemat.contact_radius;
@@ -104,7 +104,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
         end
         
         %------------------------------------------------------------------
-        function y = evalIntegralMultisize(~,int)
+        function y = evalIntegralMultisize(this,int)
             % Needed properties
             R1  = int.elem1.radius;
             R2  = int.elem2.radius;

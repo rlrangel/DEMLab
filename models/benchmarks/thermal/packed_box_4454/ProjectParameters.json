@@ -1,6 +1,6 @@
 {
 	"ProblemData": {
-		"name"             : "packed box",
+		"name"             : "packed_box",
 		"analysis_type"    : "thermal",
 		"model_parts_file" : "ModelParts.txt"
 	},

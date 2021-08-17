@@ -18,8 +18,8 @@ classdef Graph < handle
         % Curves data
         n_curves uint8  = uint8.empty;    % number of curves in graph
         names    string = string.empty;   % vector of curves names
-        px       uint8  = uint8.empty;    % vector of particles IDs for x axis result
-        py       uint8  = uint8.empty;    % vector of particles IDs for y axis result
+        px       uint32 = uint32.empty;   % vector of particles IDs for x axis result
+        py       uint32 = uint32.empty;   % vector of particles IDs for y axis result
     end
     
     %% Constructor method

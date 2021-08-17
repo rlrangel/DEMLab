@@ -142,6 +142,7 @@ classdef Driver_Thermal < Driver
             this.initOutputVars();
             
             % Interactions search (only once as particles do not move)
+            fprintf('\nCreating particle interactions...\n');
             this.search.execute(this);
             
             % Prepare interactions for analysis
@@ -192,7 +193,10 @@ classdef Driver_Thermal < Driver
                 this.time = this.time + this.time_step;
                 this.step = this.step + 1;
             end
-            this.printProgress(); % last step (100%)
+            
+            % Ensure that last step was saved
+            this.printProgress();
+            this.storeResultsFinal();
         end
     end
     

@@ -133,6 +133,14 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
+        function printProgress(this)
+            if (this.time >= this.tprog)
+                fprintf('\n%.1f%%: time %.3f, step %d',100*this.time/this.max_time,this.time,this.step);
+                this.tprog = this.tprog + this.nprog - 10e-15; % tollerance to deal with precision issues
+            end
+        end
+        
+        %------------------------------------------------------------------
         % Object must be called 'drv' here to load it from results file.
         function storeResults(drv)
             if (drv.time >= drv.tout)
@@ -149,17 +157,31 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
-        function printProgress(this)
-            if (this.time >= this.tprog)
-                fprintf('\n%.1f%%: time %.3f, step %d',100*this.tprog/this.max_time,this.time,this.step);
-                this.tprog = this.tprog + this.nprog - 10e-15; % tollerance to deal with precision issues
+        function storeResultsFinal(this)
+            if (this.result.idx < length(this.result.times))
+                this.result.updateIndex();
+                this.result.storeTime(this);
+                for i = 1:this.n_particles
+                    p = this.particles(i);
+                    this.result.storeParticleProp(p);
+                    this.result.storeParticlePosition(p);
+                    this.result.storeParticleTemperature(p);
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticleMotion(p);
+                    this.result.storeParticleHeatRate(p);
+                end
+                for i = 1:this.n_walls
+                    w = this.walls(i);
+                    this.result.storeWallPosition(w);
+                    this.result.storeWallTemperature(w);
+                end
             end
         end
         
         %------------------------------------------------------------------
         function cleanParticles(this)
             for i = 1:this.n_particles
-                this.removeParticle(this.particles(i))
+                this.removeParticle(this.particles(i));
             end
             this.eraseHandlesToRemovedParticle();
         end
@@ -240,7 +262,6 @@ classdef Driver < handle
                 end
                 fprintf('\n');
                 for i = 1:length(this.animations)
-                    fprintf('\nShowing animation "%s"...\n',this.animations(i).anim_title);
                     this.animations(i).showAnimation();
                 end
             end

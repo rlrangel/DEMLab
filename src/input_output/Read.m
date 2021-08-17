@@ -23,7 +23,8 @@ classdef Read < handle
     methods
         %------------------------------------------------------------------
         function [status,drv,storage] = execute(this,path,fid)
-            drv = [];
+            drv     = [];
+            storage = [];
             
             % Parse json file
             file_txt = char(fread(fid,inf)');
@@ -132,9 +133,9 @@ classdef Read < handle
             
             % Get name
             name = string(json.ProblemData.name);
-            if (~this.isStringArray(name,1))
+            if (~this.isStringArray(name,1) || length(split(name)) > 1)
                 fprintf(2,'Invalid data in project parameters file: ProblemData.name.\n');
-                fprintf(2,'It must be a string with the name representing the simulation.\n');
+                fprintf(2,'It must be a string with no spaces.\n');
                 status = 0; return;
             end
         end
@@ -2746,17 +2747,6 @@ classdef Read < handle
             end
             OUT = json.Output;
             
-            % Number of outputs
-            if (isfield(OUT,'number_output'))
-                nout = OUT.number_output;
-                if (~this.isIntArray(nout,1) || nout <= 0)
-                    fprintf(2,'Invalid data in project parameters file: Output.number_output.\n');
-                    fprintf(2,'It must be a positive integer.\n');
-                    status = 0; return;
-                end
-                drv.nout = nout;
-            end
-            
             % Progress print frequency
             if (isfield(OUT,'progress_print'))
                 prog = OUT.progress_print;
@@ -2768,6 +2758,17 @@ classdef Read < handle
                 drv.nprog = prog;
             end
             
+            % Number of outputs
+            if (isfield(OUT,'number_output'))
+                nout = OUT.number_output;
+                if (~this.isIntArray(nout,1) || nout <= 0)
+                    fprintf(2,'Invalid data in project parameters file: Output.number_output.\n');
+                    fprintf(2,'It must be a positive integer.\n');
+                    status = 0; return;
+                end
+                drv.nout = nout;
+            end
+            
             % Save workspace
             if (isfield(OUT,'save_workspace'))
                 save_ws = OUT.save_workspace;
@@ -2777,6 +2778,82 @@ classdef Read < handle
                     status = 0; return;
                 end
                 drv.save_ws = save_ws;
+            end
+            
+            % Reults to store (besides those always saved and needed for graphs / animations)
+            if (isfield(OUT,'saved_results'))
+                % Possible results
+                results_general = ["time","step","radius","coord_x","coord_y","orientation","wall_position"];
+                results_mech    = ["force_x","force_y","torque",...
+                                   "velocity_x","velocity_y","velocity_rot",...
+                                   "acceleration_x","acceleration_y","acceleration_rot"];
+                results_therm   = ["heat_rate","temperature","wall_temperature"];
+                
+                for i = 1:length(OUT.saved_results)
+                    % Check data
+                    res = string(OUT.saved_results(i));
+                    if (~this.isStringArray(res,1))
+                        fprintf(2,'Invalid data in project parameters file: Output.saved_results.\n');
+                        fprintf(2,'It must be a list of pre-defined strings.\n');
+                        status = 0; return;
+                    elseif (~ismember(res,results_general) &&...
+                            ~ismember(res,results_mech)    &&...
+                            ~ismember(res,results_therm))
+                        this.warn('Result %s is not available is this type of analysis.',res);
+                        continue;
+                    elseif (drv.type == drv.MECHANICAL     &&...
+                            ~ismember(res,results_general) &&...
+                            ~ismember(res,results_mech))
+                        this.warn('Result %s is not available is this type of analysis.',res);
+                        continue;
+                    elseif (drv.type == drv.THERMAL        &&...
+                            ~ismember(res,results_general) &&...
+                            ~ismember(res,results_therm))
+                        this.warn('Result %s is not available is this type of analysis.',res);
+                        continue;
+                    end
+                    
+                    % Set flag
+                    if (strcmp(res,'time'))
+                        drv.result.has_time = true;
+                    elseif (strcmp(res,'step'))
+                        drv.result.has_step = true;
+                    elseif (strcmp(res,'radius'))
+                        drv.result.has_radius = true;
+                    elseif (strcmp(res,'coord_x'))
+                        drv.result.has_coord_x = true;
+                    elseif (strcmp(res,'coord_y'))
+                        drv.result.has_coord_y = true;
+                    elseif (strcmp(res,'orientation'))
+                        drv.result.has_orientation = true;
+                    elseif (strcmp(res,'wall_position'))
+                        drv.result.has_wall_position = true;
+                    elseif (strcmp(res,'force_x'))
+                        drv.result.has_force_x = true;
+                    elseif (strcmp(res,'force_y'))
+                        drv.result.has_force_y = true;
+                    elseif (strcmp(res,'torque'))
+                        drv.result.has_torque = true;
+                    elseif (strcmp(res,'velocity_x'))
+                        drv.result.has_velocity_x = true;
+                    elseif (strcmp(res,'velocity_y'))
+                        drv.result.has_velocity_y = true;
+                    elseif (strcmp(res,'velocity_rot'))
+                        drv.result.has_velocity_rot = true;
+                    elseif (strcmp(res,'acceleration_x'))
+                        drv.result.has_acceleration_x = true;
+                    elseif (strcmp(res,'acceleration_y'))
+                        drv.result.has_acceleration_y = true;
+                    elseif (strcmp(res,'acceleration_rot'))
+                        drv.result.has_acceleration_rot = true;
+                    elseif (strcmp(res,'heat_rate'))
+                        drv.result.has_heat_rate = true;
+                    elseif (strcmp(res,'temperature'))
+                        drv.result.has_temperature = true;
+                    elseif (strcmp(res,'wall_temperature'))
+                        drv.result.has_wall_temperature = true;
+                    end
+                end
             end
         end
         
@@ -2827,10 +2904,10 @@ classdef Read < handle
                 end
                 X = string(GRA.axis_x);
                 Y = string(GRA.axis_y);
-                if (~this.isStringArray(X,1)        ||...
-                       (~ismember(X,global_results) &&...
-                        ~ismember(X,results_mech)   &&...
-                        ~ismember(X,results_therm)))
+                if (~this.isStringArray(X,1)    ||...
+                   (~ismember(X,global_results) &&...
+                    ~ismember(X,results_mech)   &&...
+                    ~ismember(X,results_therm)))
                     fprintf(2,'Invalid data in project parameters file: Graph.axis_x.\n');
                     fprintf(2,'Available result options can be checked in the documentation.\n')
                     status = 0; return;

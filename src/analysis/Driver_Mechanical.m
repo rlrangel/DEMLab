@@ -179,7 +179,10 @@ classdef Driver_Mechanical < Driver
                 this.step = this.step + 1;
                 this.search.done = false;
             end
-            this.printProgress(); % last step (100%)
+            
+            % Ensure that last step was saved
+            this.printProgress();
+            this.storeResultsFinal();
         end
     end
     
