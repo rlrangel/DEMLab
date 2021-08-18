@@ -237,7 +237,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         end
         
         %------------------------------------------------------------------
-        function setFCRotationn(this,time,dt)
+        function setFCRotation(this,time,dt)
             if (this.free_rot)
                 return;
             end

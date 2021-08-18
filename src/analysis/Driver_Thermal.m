@@ -158,11 +158,16 @@ classdef Driver_Thermal < Driver
                     continue;
                 end
                 
-                % Set parameters
-                int.kinemat.contact_time  = inf;
-                int.kinemat = int.kinemat.setOverlaps(int,this.time_step);
-                int.kinemat = int.kinemat.setContactArea(int);
-                int.kinemat = int.kinemat.setInitContactParams(this.time);
+                % Set contact or non-contact parameters
+                if (int.kinemat.separ < 0)
+                    int.kinemat.contact_time = inf;
+                    int.kinemat = int.kinemat.setOverlaps(int,this.time_step);
+                    int.kinemat = int.kinemat.setContactArea(int);
+                    int.kinemat = int.kinemat.setInitContactParams(this.time);
+                else
+                    int.kinemat.contact_time = 0;
+                    int.kinemat = int.kinemat.setInitNoncontactParams();
+                end
                 int.setFixParamsTherm();
                 int.setCteParamsTherm();
             end
@@ -182,7 +187,9 @@ classdef Driver_Thermal < Driver
                 end
                 
                 % Loop over all interactions, particles and walls
-                this.interactionLoop();
+                for i = 1:this.n_interacts
+                    this.interacts(i).evalResultsTherm();
+                end
                 this.particleLoop();
                 this.wallLoop();
                 
@@ -202,13 +209,6 @@ classdef Driver_Thermal < Driver
     
    %% Public methods: sub-class specifics
     methods
-        %------------------------------------------------------------------
-        function interactionLoop(this)
-            for i = 1:this.n_interacts
-                this.interacts(i).evalResultsTherm();
-            end
-        end
-        
         %------------------------------------------------------------------
         function particleLoop(this)
             for i = 1:this.n_particles

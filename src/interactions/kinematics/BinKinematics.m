@@ -131,9 +131,13 @@ classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
         end
         
         %------------------------------------------------------------------
-        function this = setEndContactParams(this)
-            this.is_contact = false;
-            this.ovlp_t     = 0;
+        function this = setInitNoncontactParams(this)
+            this.is_contact     = false;
+            this.ovlp_n         = 0;
+            this.ovlp_t         = 0;
+            this.contact_time   = 0;
+            this.contact_radius = 0;
+            this.contact_area   = 0;
         end
     end
 end

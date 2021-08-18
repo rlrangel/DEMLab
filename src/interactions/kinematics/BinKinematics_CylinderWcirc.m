@@ -133,7 +133,11 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             this.vel_t = dot(this.vel_trl,this.dir_t);
             
             % Tangential overlap
-            this.ovlp_t = this.ovlp_t + this.vel_t * dt;
+            if (isempty(this.ovlp_t))
+                this.ovlp_t = this.vel_t * dt;
+            else
+                this.ovlp_t = this.ovlp_t + this.vel_t * dt;
+            end
         end
         
         %------------------------------------------------------------------

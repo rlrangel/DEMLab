@@ -31,8 +31,8 @@ classdef Search < handle & matlab.mixin.Heterogeneous
         done logical = logical.empty;   % flag for identifying if search has been done in current time step
         
         % Parameters
-        freq     uint32 = uint32.empty;   % search frequency (in steps)
-        max_dist double = double.empty;   % threshold neighbour distance (exclusive) to create an interaction
+        freq   uint32 = uint32.empty;   % search frequency (in steps)
+        cutoff double = double.empty;   % cut-off neighbour distance (radius multiplication factor)
         
         % Base object for common interactions
         b_interact Interact = Interact.empty;   % handle to object of Interact class for all interactions

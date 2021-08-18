@@ -30,6 +30,9 @@ classdef Interact < handle & matlab.mixin.Copyable
         avg_poisson double = double.empty;   % Simple average of Poisson ratios
         avg_conduct double = double.empty;   % Weighted average of particles conductivity (not considering wall)
         
+        % Interstitial fluid properties
+        fluid_conduct double = double.empty;   % thermal conductivity of interstitial fluid between elements
+        
         % Mechanical interaction models (value class objects)
         kinemat BinKinematics = BinKinematics.empty;   % general binary kinematics (always exist)
         cforcen ContactForceN = ContactForceN.empty;   % contact force normal (may be empty)
@@ -55,7 +58,7 @@ classdef Interact < handle & matlab.mixin.Copyable
             if (this.insulated)
                 return;
             end
-            if (~isempty(this.dconduc))
+            if (~isempty(this.dconduc) && this.kinemat.is_contact)
                 this.dconduc = this.dconduc.setFixParams(this);
             end
             if (~isempty(this.iconduc))
@@ -81,7 +84,7 @@ classdef Interact < handle & matlab.mixin.Copyable
             if (this.insulated)
                 return;
             end
-            if (~isempty(this.dconduc))
+            if (~isempty(this.dconduc) && this.kinemat.is_contact)
                 this.dconduc = this.dconduc.setCteParams(this);
             end
             if (~isempty(this.iconduc))
@@ -111,7 +114,7 @@ classdef Interact < handle & matlab.mixin.Copyable
             if (this.insulated)
                 return;
             end
-            if (~isempty(this.dconduc))
+            if (~isempty(this.dconduc) && this.kinemat.is_contact)
                 this.dconduc = this.dconduc.evalHeatRate(this);
                 this.kinemat.addDirectConductionToParticles(this);
             end

@@ -204,8 +204,8 @@ classdef Driver_Mechanical < Driver
                 int.kinemat = int.kinemat.setOverlaps(int,this.time_step);
                 int.kinemat = int.kinemat.setContactArea(int);
                 
-                % Set constant parameters
-                if (~int.kinemat.is_contact)
+                % Set initial and constant contact parameters
+                if (isempty(int.kinemat.is_contact))
                     int.kinemat = int.kinemat.setInitContactParams(this.time);
                     int.setCteParamsMech();
                 end

@@ -42,7 +42,7 @@ classdef Search_SimpleLoop < Search
         function setDefaultProps(this)
             this.freq           = 1;
             this.done           = false;
-            this.max_dist       = 0;
+            this.cutoff         = 0;
             this.kinpp_sph      = BinKinematics_SphereSphere();
             this.kinpw_sph_line = BinKinematics_SphereWlin();
             this.kinpw_sph_circ = BinKinematics_SphereWcirc();
@@ -75,7 +75,7 @@ classdef Search_SimpleLoop < Search
                         
                         % Compute and check separation between elements
                         int.kinemat = int.kinemat.setRelPos(p1,p2);
-                        if (int.kinemat.separ >= this.max_dist)
+                        if (int.kinemat.separ >= this.cutoff * (p1.radius + p2.radius)/2)
                             % Remove interaction references from elements
                             p1.interacts(p1.interacts==int) = [];
                             p1.neigh_p(p1.neigh_p==p2.id)   = [];
@@ -103,7 +103,7 @@ classdef Search_SimpleLoop < Search
                         
                         % Compute and check separation between elements
                         int.kinemat = int.kinemat.setRelPos(p1,w);
-                        if (int.kinemat.separ >= this.max_dist)
+                        if (int.kinemat.separ >= this.cutoff * p1.radius)
                             % Remove interaction references from particle
                             p1.interacts(p1.interacts==int) = [];
                             p1.neigh_w(p1.neigh_w==w.id)    = [];
@@ -139,10 +139,11 @@ classdef Search_SimpleLoop < Search
             %     For other shapes, the base kinematic object will be used.
             dir   = p2.coord - p1.coord;
             dist  = norm(dir);
-            separ = dist - p1.radius - p2.radius;
+            psum  = p1.radius + p2.radius;
+            separ = dist - psum;
             
             % Check if interaction exists
-            if (separ >= this.max_dist)
+            if (separ >= this.cutoff * psum/2)
                 return;
             end
             
@@ -155,7 +156,6 @@ classdef Search_SimpleLoop < Search
             
             % Create binary kinematic object
             kin = this.createPPKinematic(p1,dir,dist,separ);
-            kin = kin.setEndContactParams();
             kin.setEffParams(int);
             int.kinemat = kin;
             
@@ -173,28 +173,28 @@ classdef Search_SimpleLoop < Search
             switch (this.pwInteractionType(p,w))
                 case 1
                     this.kinpw_sph_line.setRelPos(p,w);
-                    if (this.kinpw_sph_line.separ >= this.max_dist)
+                    if (this.kinpw_sph_line.separ >= this.cutoff * p.radius)
                         return;
                     end
                     kin = copy(this.kinpw_sph_line);
                     
                 case 2
                     this.kinpw_sph_circ.setRelPos(p,w);
-                    if (this.kinpw_sph_circ.separ >= this.max_dist)
+                    if (this.kinpw_sph_circ.separ >= this.cutoff * p.radius)
                         return;
                     end
                     kin = copy(this.kinpw_sph_circ);
                     
                 case 3
                     this.kinpw_cyl_line.setRelPos(p,w);
-                    if (this.kinpw_cyl_line.separ >= this.max_dist)
+                    if (this.kinpw_cyl_line.separ >= this.cutoff * p.radius)
                         return;
                     end
                     kin = copy(this.kinpw_cyl_line);
                     
                 case 4
                     this.kinpw_cyl_circ.setRelPos(p,w);
-                    if (this.kinpw_cyl_circ.separ >= this.max_dist)
+                    if (this.kinpw_cyl_circ.separ >= this.cutoff * p.radius)
                         return;
                     end
                     kin = copy(this.kinpw_cyl_circ);
@@ -208,7 +208,6 @@ classdef Search_SimpleLoop < Search
             int.elem2 = w;
             
             % Set binary kinematic object
-            kin = kin.setEndContactParams();
             kin.setEffParams(int);
             int.kinemat = kin;
             

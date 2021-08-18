@@ -753,6 +753,17 @@ classdef Read < handle
                 end
                 drv.damp_rot = dr;
             end
+            
+            % Interstitial fluid properties
+            if (isfield(GC,'fluid_thermal_conductivity'))
+                fc = GC.fluid_thermal_conductivity;
+                if (~this.isDoubleArray(fc,1))
+                    fprintf(2,'Invalid data in project parameters file: GlobalCondition.fluid_thermal_conductivity.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                end
+                drv.search.b_interact.fluid_conduct = fc;
+            end
         end
         
         %------------------------------------------------------------------
@@ -3994,6 +4005,24 @@ classdef Read < handle
                     return;
                 end
             end
+            
+            % Cutoff distance (mechanical must be always 0)
+            if (isfield(IM,'cutoff_distance'))
+                if (~this.isDoubleArray(IM.cutoff_distance,1))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.indirect_conduction.cutoff_distance.\n');
+                    fprintf(2,'It must be a numeric value.\n');
+                    status = 0; return;
+                end
+                drv.search.cutoff = IM.cutoff_distance;
+            else
+                drv.search.cutoff = 1;
+            end
+            
+            % Check if fluid conductivity has been in global conditions
+            if (isempty(drv.search.b_interact.fluid_conduct))
+                this.warn('Thermal conductivity of interstitial fluid was not specified, it will be assumed as zero.');
+                drv.search.b_interact.fluid_conduct = 0;
+            end
         end
         
         %------------------------------------------------------------------
@@ -4597,8 +4626,6 @@ classdef Read < handle
         
         %------------------------------------------------------------------
         function status = indirectConduction_VoronoiA(this,IC,drv)
-            % * Fluid conductivity;
-            % * Global porosity;
             status = 1;
             
             % Create object
@@ -4621,9 +4648,6 @@ classdef Read < handle
                 end
                 drv.search.b_interact.iconduc.tol_rel = IC.tolerance_relative;
             end
-                
-            % 
-            
         end
     end
     
