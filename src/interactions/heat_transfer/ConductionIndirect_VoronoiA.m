@@ -94,7 +94,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             D   = int.kinemat.dist/2;
             ks  = int.eff_conduct;
             kf  = drv.fluid_conduct;
-            por = 0.5;
+            por = this.getPorosity(int,drv);
             
             % Parameters
             rij = 0.56 * Rp / (1-por)^(1/3);
@@ -115,7 +115,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             k1  = int.elem1.conduct;
             k2  = int.elem2.conduct;
             kf  = drv.fluid_conduct;
-            por = 0.5;
+            por = this.getPorosity(int,drv);
             
             % Parameters
             if (int.kinematic.is_contact)
@@ -136,6 +136,18 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             % Evaluate integral numerically
             fun = @(r) 2*pi*r / ((sqrt(R1^2-r^2)-r*D1/ri)/k1 + (sqrt(R2^2-r^2)-r*D2/rj)/k2 + (d-sqrt(R1^2-r^2)-sqrt(R2^2-r^2))/kf);
             y = integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
+        end
+        
+        %------------------------------------------------------------------
+        function por = gerPorosity(this,int,drv)
+            if (this.type == this.POROSITY_GLOBAL)
+                por = drv.porosity;
+            elseif (this.type == this.POROSITY_LOCAL && int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                % Assumption: average porosity
+                por = (int.elem1.porosity+int.elem2.porosity)/2;
+            else
+                por = int.elem1.porosity;
+            end
         end
     end
 end

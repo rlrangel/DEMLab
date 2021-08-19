@@ -45,6 +45,8 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         interacts Interact = Interact.empty;   % handles to objects of Interact class
         neigh_p   uint32   = uint32.empty;     % vector of neighbours particles IDs
         neigh_w   uint32   = uint32.empty;     % vector of neighbours walls IDs
+        porosity  double   = double.empty;     % average porosity (void ratio) around particle
+        por_freq  uint32   = uint32.empty;     % average porosity update frequency (in steps)
         
         % Behavior flags
         free_trl   logical = logical.empty;   % flag for translational free particle

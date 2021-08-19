@@ -51,7 +51,7 @@ classdef Driver_ThermoMechanical < Driver
             this.n_materials   = 0;
             this.fluid_conduct = 0;
             this.eval_freq     = 1;
-            this.vol_freq      = NaN;
+            this.por_freq      = NaN;
             this.alpha         = inf;
             this.eval          = true;
             this.auto_step     = false;
@@ -129,6 +129,7 @@ classdef Driver_ThermoMechanical < Driver
                 
                 % Initialize properties and forcing terms
                 this.setParticleProps(p);
+                this.setLocalPorosity(p);
                 p.resetForcingTerms();
                 
                 % Set fixed conditions (overlap initial conditions):
@@ -160,9 +161,9 @@ classdef Driver_ThermoMechanical < Driver
             % Set global properties
             this.setTotalParticlesProps();
             this.setRadiusDistrib();
-            this.setDomainVol();
+            this.setGlobalVol();
             if (isempty(this.porosity))
-                this.setDomainPorosity();
+                this.setGlobalPorosity();
             end
             
             % Loop over all walls
@@ -196,10 +197,10 @@ classdef Driver_ThermoMechanical < Driver
                     this.result.storeTime(this);
                 end
                 
-                % Update domain volume/porosity
-                if (mod(this.step,this.vol_freq) == 0)
-                    this.setDomainVol();
-                    this.setDomainPorosity();
+                % Update global volume/porosity
+                if (mod(this.step,this.por_freq) == 0)
+                    this.setGlobalVol();
+                    this.setGlobalPorosity();
                 end
                 
                 % Interactions search
@@ -358,6 +359,11 @@ classdef Driver_ThermoMechanical < Driver
                 else
                     % Set fixed temperature
                     p.setFCTemperature(this.time);
+                end
+                
+                % Update local porosity
+                if (mod(this.step,p.por_freq) == 0)
+                    this.setLocalPorosity(p);
                 end
                 
                 % Store results

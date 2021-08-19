@@ -40,7 +40,7 @@ classdef Driver_Thermal < Driver
             this.n_interacts   = 0;
             this.n_materials   = 0;
             this.fluid_conduct = 0;
-            this.vol_freq      = NaN;
+            this.por_freq      = NaN;
             this.alpha         = inf;
             this.auto_step     = false;
             this.search        = Search_SimpleLoop();
@@ -100,6 +100,7 @@ classdef Driver_Thermal < Driver
                 
                 % Initialize properties and forcing terms
                 this.setParticleProps(p);
+                this.setLocalPorosity(p);
                 p.resetForcingTerms();
                 
                 % Set fixed temperature (overlap initial condition)
@@ -127,9 +128,9 @@ classdef Driver_Thermal < Driver
             % Set global properties
             this.setTotalParticlesProps();
             this.setRadiusDistrib();
-            this.setDomainVol();
+            this.setGlobalVol();
             if (isempty(this.porosity))
-                this.setDomainPorosity();
+                this.setGlobalPorosity();
             end
             
             % Loop over all walls

@@ -4648,7 +4648,18 @@ classdef Read < handle
                 elseif (strcmp(method,'porosity_local'))
                     drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.POROSITY_LOCAL;
                     
-                    
+                    % Local porosity update frequency
+                    if (isfield(IC,'update_frequency'))
+                        freq = IC.update_frequency;
+                        if (~this.isIntArray(freq,1) || freq <= 0)
+                            fprintf(2,'Invalid data in project parameters file: InteractionModel.indirect_conduction.update_frequency.\n');
+                            fprintf(2,'It must be a positive integer.\n');
+                            status = 0; return;
+                        end
+                        [drv.particles.por_freq] = deal(freq);
+                    else
+                        [drv.particles.por_freq] = deal(drv.search.freq);
+                    end
                     
                 elseif (strcmp(method,'porosity_global'))
                     drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.POROSITY_GLOBAL;
@@ -4662,11 +4673,11 @@ classdef Read < handle
                             status = 0; return;
                         end
                         drv.porosity = por;
-                        drv.vol_freq = NaN;
+                        drv.por_freq = NaN;
                         
                     % Automatic computed global porosity
                     else
-                        % Volume/Porosity update frequency
+                        % Global porosity update frequency
                         if (isfield(IC,'update_frequency'))
                             freq = IC.update_frequency;
                             if (~this.isIntArray(freq,1) || freq <= 0)
@@ -4674,9 +4685,9 @@ classdef Read < handle
                                 fprintf(2,'It must be a positive integer.\n');
                                 status = 0; return;
                             end
-                            drv.vol_freq = freq;
+                            drv.por_freq = freq;
                         else
-                            drv.vol_freq = drv.search.freq;
+                            drv.por_freq = drv.search.freq;
                         end
                         
                         % Alpha radius

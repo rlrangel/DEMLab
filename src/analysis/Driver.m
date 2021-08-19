@@ -48,8 +48,8 @@ classdef Driver < handle
         % Model domain properties
         alpha      double = double.empty;   % alpha radius
         vol_domain double = double.empty;   % total volume (unity depth) of the alpha-shape polygon of all particles
-        vol_freq   uint32 = uint32.empty;   % total volume update frequency (in steps)
         porosity   double = double.empty;   % average porosity (void ratio) of the alpha-shape polygon
+        por_freq   uint32 = uint32.empty;   % average porosity update frequency (in steps)
         
         % Total particle properties
         surf_particle  double = double.empty;   % total surface area of all particles
@@ -197,13 +197,32 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
-        function setDomainVol(this)
+        function setGlobalVol(this)
             this.vol_domain = area(alphaShape([this.particles.coord]',this.alpha));
         end
         
         %------------------------------------------------------------------
-        function setDomainPorosity(this)
+        function setGlobalPorosity(this)
             this.porosity = this.vol_domain/this.cross_particle - 1;
+        end
+        
+        %------------------------------------------------------------------
+        function setLocalPorosity(this,p)
+            % Vector of interacting particles
+            P = this.particles([p.id,p.neigh_p]);
+            
+            % Total volume of alpha-shape polygon of interacting particles
+            % (unit depth: in-plane projection area)
+            vt = area(alphaShape([P.coord]',inf));
+            
+            % Total volume of particles (in-plane projection area)
+            % Assumes an average particles radius and polygon interior angle
+            ravg = mean([P.radius]);
+            n    = length(P);
+            vp   = (n-2) * pi^2 * ravg^2;
+            
+            % Local porosity
+            p.porosity = vt/vp - 1;
         end
         
         %------------------------------------------------------------------
