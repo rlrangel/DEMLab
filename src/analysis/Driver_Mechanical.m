@@ -15,7 +15,7 @@
 classdef Driver_Mechanical < Driver
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        % Global conditions
+        % Global properties
         gravity  double = double.empty;   % vector of gravity components value
         damp_trl double = double.empty;   % damping for translational motion
         damp_rot double = double.empty;   % damping for rotational motion
@@ -47,7 +47,9 @@ classdef Driver_Mechanical < Driver
             this.n_interacts = 0;
             this.n_materials = 0;
             this.eval_freq   = 1;
+            this.vol_freq    = NaN;
             this.eval        = true;
+            this.alpha       = inf;
             this.auto_step   = false;
             this.search      = Search_SimpleLoop();
             this.scheme_trl  = Scheme_EulerForward();
@@ -63,6 +65,7 @@ classdef Driver_Mechanical < Driver
         %------------------------------------------------------------------
         function setParticleProps(this,p)
             p.setSurface();
+            p.setCrossSec();
             p.setVolume();
             p.setMass();
             p.setMInertia();
@@ -103,11 +106,6 @@ classdef Driver_Mechanical < Driver
             this.result.initialize(this);
             this.result.storeTime(this);
             
-            % Initialize critical time step
-            if (this.auto_step)
-                this.time_step = inf;
-            end
-            
             % loop over all particles
             for i = 1:this.n_particles
                 p = this.particles(i);
@@ -128,10 +126,18 @@ classdef Driver_Mechanical < Driver
                 % Compute critical time step for current particle
                 if (this.auto_step)
                     dt = this.criticalTimeStep(p);
-                    if (dt < this.time_step)
+                    if (i == 1 || dt < this.time_step)
                         this.time_step = dt;
                     end
                 end
+            end
+            
+            % Set global properties
+            this.setTotalParticlesProps();
+            this.setRadiusDistrib();
+            this.setDomainVol();
+            if (isempty(this.porosity))
+                this.setDomainPorosity();
             end
             
             % Loop over all walls
@@ -155,6 +161,12 @@ classdef Driver_Mechanical < Driver
                 this.storeResults()
                 if (this.store)
                     this.result.storeTime(this);
+                end
+                
+                % Update domain volume/porosity
+                if (mod(this.step,this.vol_freq) == 0)
+                    this.setDomainVol();
+                    this.setDomainPorosity();
                 end
                 
                 % Interactions search
@@ -304,7 +316,7 @@ classdef Driver_Mechanical < Driver
             
             % Erase handles to removed particles from global list and model parts
             if (rmv)
-                this.eraseHandlesToRemovedParticle;
+                this.erasePropsOfRemovedParticle;
             end
         end
         

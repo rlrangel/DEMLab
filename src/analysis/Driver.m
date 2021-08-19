@@ -31,6 +31,13 @@ classdef Driver < handle
         type uint8  = uint8.empty;    % flag for type of analysis
         path string = string.empty;   % path to model folder
         
+        % Model components: handle to objects
+        mparts    ModelPart = ModelPart.empty;   % handles to objects of ModelPart class
+        particles Particle  = Particle.empty;    % handles to objects of Particle class
+        walls     Wall      = Wall.empty;        % handles to objects of Wall class
+        interacts Interact  = Interact.empty;    % handles to objects of Interact class
+        materials Material  = Material.empty;    % handles to objects of Material class
+        
         % Model components: total numbers
         n_mparts    uint32 = uint32.empty;   % number of model parts
         n_particles uint32 = uint32.empty;   % number of particles
@@ -38,12 +45,23 @@ classdef Driver < handle
         n_interacts uint32 = uint32.empty;   % number of binary interactions
         n_materials uint32 = uint32.empty;   % number of materials
         
-        % Model components: handle to objects
-        mparts    ModelPart = ModelPart.empty;   % handles to objects of ModelPart class
-        particles Particle  = Particle.empty;    % handles to objects of Particle class
-        walls     Wall      = Wall.empty;        % handles to objects of Wall class
-        interacts Interact  = Interact.empty;    % handles to objects of Interact class
-        materials Material  = Material.empty;    % handles to objects of Material class
+        % Model domain properties
+        alpha      double = double.empty;   % alpha radius
+        vol_domain double = double.empty;   % total volume (unity depth) of the alpha-shape polygon of all particles
+        vol_freq   uint32 = uint32.empty;   % total volume update frequency (in steps)
+        porosity   double = double.empty;   % average porosity (void ratio) of the alpha-shape polygon
+        
+        % Total particle properties
+        surf_particle  double = double.empty;   % total surface area of all particles
+        cross_particle double = double.empty;   % total cross-sectional area of all particles
+        vol_particle   double = double.empty;   % total volume of all particles
+        mass_particle  double = double.empty;   % total mass of all particles
+        
+        % Particles radius distribution
+        radius_min double = double.empty;   % minimum radius of all particles
+        radius_max double = double.empty;   % maximum radius of all particles
+        radius_avg double = double.empty;   % average radius of all particles
+        radius_dev double = double.empty;   % radius standard deviation of all particles
         
         % Model limits
         bbox BBox = BBox.empty;   % handle to object of BBox class
@@ -179,11 +197,42 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
+        function setDomainVol(this)
+            this.vol_domain = area(alphaShape([this.particles.coord]',this.alpha));
+        end
+        
+        %------------------------------------------------------------------
+        function setDomainPorosity(this)
+            this.porosity = this.vol_domain/this.cross_particle - 1;
+        end
+        
+        %------------------------------------------------------------------
+        function setTotalParticlesProps(this)
+            this.surf_particle  = sum([this.particles.surface]);
+            this.cross_particle = sum([this.particles.cross]);
+            this.vol_particle   = sum([this.particles.volume]);
+            this.mass_particle  = sum([this.particles.mass]);
+        end
+        
+        %------------------------------------------------------------------
+        function setRadiusDistrib(this)
+            this.radius_min = min([this.particles.radius]);
+            this.radius_max = max([this.particles.radius]);
+            this.radius_avg = mean([this.particles.radius]);
+            this.radius_dev = std([this.particles.radius]);
+        end
+        
+        %------------------------------------------------------------------
         function cleanParticles(this)
+            erase = false;
             for i = 1:this.n_particles
-                this.removeParticle(this.particles(i));
+                if (this.removeParticle(this.particles(i)))
+                    erase = true;
+                end
             end
-            this.eraseHandlesToRemovedParticle();
+            if (erase)
+                this.erasePropsOfRemovedParticle();
+            end
         end
         
         %------------------------------------------------------------------
@@ -226,7 +275,7 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
-        function eraseHandlesToRemovedParticle(this)
+        function erasePropsOfRemovedParticle(this)
             % Erase handles from global list
             this.particles(~isvalid(this.particles)) = [];
             this.n_particles = length(this.particles);
@@ -237,6 +286,10 @@ classdef Driver < handle
                 mp.particles(~isvalid(mp.particles)) = [];
                 mp.n_particles = length(mp.particles);
             end
+            
+            % Update global particles properties
+            this.setTotalParticlesProps();
+            this.setRadiusDistrib();
         end
         
         %------------------------------------------------------------------

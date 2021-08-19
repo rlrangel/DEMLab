@@ -15,6 +15,9 @@
 classdef Driver_Thermal < Driver
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
+        % Global properties
+        fluid_conduct double = double.empty;   % thermal conductivity of interstitial fluid
+        
         % Time integration
         scheme_temp Scheme = Scheme.empty;   % handle to object of Scheme class for temperature integration
     end
@@ -31,25 +34,29 @@ classdef Driver_Thermal < Driver
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
-            this.n_mparts    = 0;
-            this.n_particles = 0;
-            this.n_walls     = 0;
-            this.n_interacts = 0;
-            this.n_materials = 0;
-            this.auto_step   = false;
-            this.search      = Search_SimpleLoop();
-            this.scheme_temp = Scheme_EulerForward();
-            this.parallel    = false;
-            this.workers     = parcluster('local').NumWorkers;
-            this.result      = Result();
-            this.save_ws     = true;
-            this.nprog       = 1;
-            this.nout        = 500;
+            this.n_mparts      = 0;
+            this.n_particles   = 0;
+            this.n_walls       = 0;
+            this.n_interacts   = 0;
+            this.n_materials   = 0;
+            this.fluid_conduct = 0;
+            this.vol_freq      = NaN;
+            this.alpha         = inf;
+            this.auto_step     = false;
+            this.search        = Search_SimpleLoop();
+            this.scheme_temp   = Scheme_EulerForward();
+            this.parallel      = false;
+            this.workers       = parcluster('local').NumWorkers;
+            this.result        = Result();
+            this.save_ws       = true;
+            this.nprog         = 1;
+            this.nout          = 500;
         end
         
         %------------------------------------------------------------------
         function setParticleProps(~,p)
             p.setSurface();
+            p.setCrossSec();
             p.setVolume();
             p.setMass();
             p.setTInertia();
@@ -87,11 +94,6 @@ classdef Driver_Thermal < Driver
             this.result.initialize(this);
             this.result.storeTime(this);
             
-            % Initialize critical time step
-            if (this.auto_step)
-                this.time_step = inf;
-            end
-            
             % loop over all particles
             for i = 1:this.n_particles
                 p = this.particles(i);
@@ -116,10 +118,18 @@ classdef Driver_Thermal < Driver
                 % Compute critical time step for current particle
                 if (this.auto_step)
                     dt = this.criticalTimeStep(p);
-                    if (dt < this.time_step)
+                    if (i == 1 || dt < this.time_step)
                         this.time_step = dt;
                     end
                 end
+            end
+            
+            % Set global properties
+            this.setTotalParticlesProps();
+            this.setRadiusDistrib();
+            this.setDomainVol();
+            if (isempty(this.porosity))
+                this.setDomainPorosity();
             end
             
             % Loop over all walls
@@ -168,8 +178,8 @@ classdef Driver_Thermal < Driver
                     int.kinemat.contact_time = 0;
                     int.kinemat = int.kinemat.setInitNoncontactParams();
                 end
-                int.setFixParamsTherm();
-                int.setCteParamsTherm();
+                int.setFixParamsTherm(this);
+                int.setCteParamsTherm(this);
             end
             
             % Erase handles to removed interactions from global list
@@ -188,7 +198,7 @@ classdef Driver_Thermal < Driver
                 
                 % Loop over all interactions, particles and walls
                 for i = 1:this.n_interacts
-                    this.interacts(i).evalResultsTherm();
+                    this.interacts(i).evalResultsTherm(this);
                 end
                 this.particleLoop();
                 this.wallLoop();

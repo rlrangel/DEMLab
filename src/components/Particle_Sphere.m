@@ -54,6 +54,11 @@ classdef Particle_Sphere < Particle
         end
         
         %------------------------------------------------------------------
+        function setCrossSec(this)
+            this.cross = pi * this.radius^2;
+        end
+        
+        %------------------------------------------------------------------
         function setVolume(this)
             this.volume = 4 * pi * this.radius^3/3;
         end

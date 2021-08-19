@@ -28,6 +28,7 @@
 classdef ConductionIndirect_VoronoiA < ConductionIndirect
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
+        method  uint8  = uint8.empty;    % flag for type of method to compute cells size
         coeff   double = double.empty;   % heat transfer coefficient
         tol_abs double = double.empty;   % absolute tolerance for numerical integration
         tol_rel double = double.empty;   % relative tolerance for numerical integration
@@ -45,35 +46,36 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
     methods
         %------------------------------------------------------------------
         function this = setDefaultProps(this)
+            this.method  = this.POROSITY_GLOBAL;
             this.tol_abs = 1e-10;
             this.tol_rel = 1e-6;
         end
         
         %------------------------------------------------------------------
-        function this = setFixParams(this,int)
+        function this = setFixParams(this,int,drv)
             if (int.elem1.radius == int.elem2.radius ||...
                 int.kinemat.gen_type == int.kinemat.PARTICLE_WALL)
                 % Assumption: Particle-Wall is treated as 2 equal size particles
-                this.coeff = this.evalIntegralMonosize(int);
+                this.coeff = this.evalIntegralMonosize(int,drv);
             else
-                this.coeff = this.evalIntegralMultisize(int);
+                this.coeff = this.evalIntegralMultisize(int,drv);
             end
         end
         
         %------------------------------------------------------------------
-        function this = setCteParams(this,~)
+        function this = setCteParams(this,~,~)
             
         end
         
         %------------------------------------------------------------------
-        function this = evalHeatRate(this,int)
+        function this = evalHeatRate(this,int,drv)
             if (isempty(this.coeff))
                 if (int.elem1.radius == int.elem2.radius ||...
                     int.kinemat.gen_type == int.kinemat.PARTICLE_WALL)
                     % Assumption: Particle-Wall is treated as 2 equal size particles
-                    q = this.evalIntegralMonosize(int);
+                    q = this.evalIntegralMonosize(int,drv);
                 else
-                    q = this.evalIntegralMultisize(int);
+                    q = this.evalIntegralMultisize(int,drv);
                 end
             else
                 q = this.coeff;
@@ -85,13 +87,13 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
     %% Public methods: sub-class specifics
     methods
         %------------------------------------------------------------------
-        function y = evalIntegralMonosize(this,int)
+        function y = evalIntegralMonosize(this,int,drv)
             % Needed properties
             Rp  = int.elem1.radius;
             Rc  = int.kinemat.contact_radius;
             D   = int.kinemat.dist/2;
             ks  = int.eff_conduct;
-            kf  = 1;
+            kf  = drv.fluid_conduct;
             por = 0.5;
             
             % Parameters
@@ -104,7 +106,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
         end
         
         %------------------------------------------------------------------
-        function y = evalIntegralMultisize(this,int)
+        function y = evalIntegralMultisize(this,int,drv)
             % Needed properties
             R1  = int.elem1.radius;
             R2  = int.elem2.radius;
@@ -112,7 +114,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             d   = int.kinemat.dist;
             k1  = int.elem1.conduct;
             k2  = int.elem2.conduct;
-            kf  = 1;
+            kf  = drv.fluid_conduct;
             por = 0.5;
             
             % Parameters

@@ -156,9 +156,15 @@ classdef Master
                 case drv.THERMO_MECHANICAL
                     fprintf('Type.................: Thermo-mechanical\n');
             end
-            fprintf('Number of particles..: %d\n',drv.n_particles);
             fprintf('Number of walls......: %d\n',drv.n_walls);
-            fprintf('Time step............: %f\n',drv.time_step);
+            fprintf('Number of particles..: %d\n',drv.n_particles);
+            fprintf('Average radius.......: %.3e\n',drv.radius_avg);
+            fprintf('Radius deviation.....: %.3e\n',drv.radius_dev);
+            if (drv.radius_dev ~= 0)
+                fprintf('Min|Max radius.......: %.3e|%.3e\n',drv.radius_min,drv.radius_max);
+            end
+            fprintf('Total mass...........: %.3e\n',drv.mass_particle);
+            fprintf('Time step............: %.3e\n',drv.time_step);
             if (~isempty(drv.max_time))
                 fprintf('Final time...........: %f\n',drv.max_time);
             end

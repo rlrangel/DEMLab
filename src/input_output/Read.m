@@ -762,7 +762,7 @@ classdef Read < handle
                     fprintf(2,'It must be a numeric value.\n');
                     status = 0; return;
                 end
-                drv.search.b_interact.fluid_conduct = fc;
+                drv.fluid_conduct = fc;
             end
         end
         
@@ -4018,10 +4018,9 @@ classdef Read < handle
                 drv.search.cutoff = 1;
             end
             
-            % Check if fluid conductivity has been in global conditions
-            if (isempty(drv.search.b_interact.fluid_conduct))
-                this.warn('Thermal conductivity of interstitial fluid was not specified, it will be assumed as zero.');
-                drv.search.b_interact.fluid_conduct = 0;
+            % Check if fluid conductivity has been provided in global conditions
+            if (isempty(drv.fluid_conduct))
+                this.warn('Thermal conductivity of interstitial fluid is not specified, it will be assumed as zero.');
             end
         end
         
@@ -4630,6 +4629,77 @@ classdef Read < handle
             
             % Create object
             drv.search.b_interact.iconduc = ConductionIndirect_VoronoiA();
+            
+            % Method to compute cells size
+            if (isfield(IC,'cell_size_method'))
+                method = string(IC.cell_size_method);
+                if (~this.isStringArray(method,1)    ||...
+                   (~strcmp(model,'voronoi_diagram') &&...
+                    ~strcmp(model,'porosity_local')  &&...
+                    ~strcmp(model,'porosity_global')))
+                    fprintf(2,'Invalid data in project parameters file: InteractionModel.indirect_conduction.cell_size_method.\n');
+                    fprintf(2,'Available options: voronoi_diagram, porosity_local, porosity_global.\n');
+                    status = 0; return;
+                end
+                if (strcmp(method,'voronoi_diagram'))
+                    drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.VORONOI_DIAGRAM;
+                    
+                    
+                elseif (strcmp(method,'porosity_local'))
+                    drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.POROSITY_LOCAL;
+                    
+                    
+                    
+                elseif (strcmp(method,'porosity_global'))
+                    drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.POROSITY_GLOBAL;
+                    
+                    % Prescribed global porosity
+                    if (isfield(IC,'porosity'))
+                        por = IC.porosity;
+                        if (~this.isDoubleArray(por,1) || por < 0 || por > 1)
+                            fprintf(2,'Invalid data in project parameters file: InteractionModel.indirect_conduction.porosity.\n');
+                            fprintf(2,'It must be a value between 0 and 1.\n');
+                            status = 0; return;
+                        end
+                        drv.porosity = por;
+                        drv.vol_freq = NaN;
+                        
+                    % Automatic computed global porosity
+                    else
+                        % Volume/Porosity update frequency
+                        if (isfield(IC,'update_frequency'))
+                            freq = IC.update_frequency;
+                            if (~this.isIntArray(freq,1) || freq <= 0)
+                                fprintf(2,'Invalid data in project parameters file: InteractionModel.indirect_conduction.update_frequency.\n');
+                                fprintf(2,'It must be a positive integer.\n');
+                                status = 0; return;
+                            end
+                            drv.vol_freq = freq;
+                        else
+                            drv.vol_freq = drv.search.freq;
+                        end
+                        
+                        % Alpha radius
+                        if (isfield(IC,'alpha_radius'))
+                            alpha = IC.alpha_radius;
+                            if (~this.isDoubleArray(alpha,1) || alpha < 0)
+                                fprintf(2,'Invalid data in project parameters file: InteractionModel.indirect_conduction.alpha_radius.\n');
+                                fprintf(2,'It must be a positive value.\n');
+                                status = 0; return;
+                            end
+                            drv.alpha = alpha;
+                        else
+                            drv.alpha = inf; % convex hull
+                        end
+                    end
+                    
+                    % Check inconsistency of provided data
+                    if (~isempty(drv.porosity) &&...
+                       (isfield(IC,'update_frequency')) || (isfield(IC,'alpha_radius')))
+                        this.warn('A constant global porosity has been provided, so other parameters will be ignored.');
+                    end
+                end
+            end
             
             % Tollerances for numerical integration
             if (isfield(IC,'tolerance_absolute'))

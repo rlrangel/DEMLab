@@ -26,6 +26,11 @@ classdef ConductionIndirect < matlab.mixin.Heterogeneous
     properties (Constant = true, Access = public)
         % Types of model
         VORONOI_A = uint8(1);
+        
+        % Types of method to compute cells size
+        VORONOI_DIAGRAM = uint8(1);
+        POROSITY_LOCAL  = uint8(2);
+        POROSITY_GLOBAL = uint8(3);
     end
     
     %% Public properties
@@ -61,14 +66,14 @@ classdef ConductionIndirect < matlab.mixin.Heterogeneous
         %------------------------------------------------------------------
         % Set parameters that are fixed throughout the whole analysis
         % (suposed to be called in thermal analysis).
-        this = setFixParams(this,interact);
+        this = setFixParams(this,interact,drv);
         
         %------------------------------------------------------------------
         % Set parameters that are constant over the interaction lifetime
         % (suposed to be called in thermomechanical analysis).
-        this = setCteParams(this,interact);
+        this = setCteParams(this,interact,drv);
         
         %------------------------------------------------------------------
-        this = evalHeatRate(this,interact);
+        this = evalHeatRate(this,interact,drv);
     end
 end

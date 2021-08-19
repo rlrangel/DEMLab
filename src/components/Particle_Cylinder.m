@@ -55,6 +55,11 @@ classdef Particle_Cylinder < Particle
         end
         
         %------------------------------------------------------------------
+        function setCrossSec(this)
+            this.cross = pi * this.radius^2;
+        end
+        
+        %------------------------------------------------------------------
         function setVolume(this)
             this.volume = pi * this.radius^2 * this.len;
         end
