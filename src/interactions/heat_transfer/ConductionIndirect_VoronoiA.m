@@ -146,7 +146,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
         %------------------------------------------------------------------
         function r = getConductRadius(this,int,drv,Rp)
             if (this.method == this.VORONOI_DIAGRAM)
-                r = this.kinemat.vedge/2;
+                r = int.kinemat.vedge/2;
             else
                 if (this.method == this.POROSITY_GLOBAL)
                     por = drv.porosity;
