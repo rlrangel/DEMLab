@@ -123,6 +123,34 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
         end
         
         %------------------------------------------------------------------
+        function this = setVoronoiEdge(this,drv,int)
+            % Indices of common vertices between particles
+            common = intersect(drv.vor_idx{int.elem1.id},...
+                               drv.vor_idx{int.elem2.id});
+            
+            % Compute edge length according to number of common vertices
+            if (length(common) == 2)
+                if (common(1) == 1) % index of unbounded point is 1 (always the 1st element)
+                    % Assumption: the bounded side of the edge is mirroed to the unbounded side
+                    A = polyarea([int.elem1.coord(1),int.elem2.coord(1),drv.vor_vtx(common(2),1)],...
+                                 [int.elem1.coord(2),int.elem2.coord(2),drv.vor_vtx(common(2),2)]);
+                    this.vedge = 4 * A / this.dist;
+                else
+                    pt1 = drv.vor_vtx(common(1),:);
+                    pt2 = drv.vor_vtx(common(2),:);
+                    this.vedge = norm(pt1-pt2);
+                end
+            elseif (length(common) == 3) % always 1 unbounded point (index is 1)
+                idx = common(common~=1);
+                pt1 = drv.vor_vtx(idx(1),:);
+                pt2 = drv.vor_vtx(idx(2),:);
+                this.vedge = norm(pt1-pt2);
+            else
+                this.vedge = 0;
+            end
+        end
+        
+        %------------------------------------------------------------------
         function addContactForceNormalToParticles(~,int)
             int.elem1.force = int.elem1.force + int.cforcen.total_force;
             int.elem2.force = int.elem2.force - int.cforcen.total_force;

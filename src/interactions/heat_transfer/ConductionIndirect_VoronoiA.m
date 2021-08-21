@@ -53,13 +53,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
         
         %------------------------------------------------------------------
         function this = setFixParams(this,int,drv)
-            if (int.elem1.radius == int.elem2.radius ||...
-                int.kinemat.gen_type == int.kinemat.PARTICLE_WALL)
-                % Assumption: Particle-Wall is treated as 2 equal size particles
-                this.coeff = this.evalIntegralMonosize(int,drv);
-            else
-                this.coeff = this.evalIntegralMultisize(int,drv);
-            end
+            this.coeff = this.evalIntegral(int,drv);
         end
         
         %------------------------------------------------------------------
@@ -70,13 +64,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
         %------------------------------------------------------------------
         function this = evalHeatRate(this,int,drv)
             if (isempty(this.coeff))
-                if (int.elem1.radius == int.elem2.radius ||...
-                    int.kinemat.gen_type == int.kinemat.PARTICLE_WALL)
-                    % Assumption: Particle-Wall is treated as 2 equal size particles
-                    q = this.evalIntegralMonosize(int,drv);
-                else
-                    q = this.evalIntegralMultisize(int,drv);
-                end
+                q = this.evalIntegral(int,drv);
             else
                 q = this.coeff;
             end
@@ -87,66 +75,87 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
     %% Public methods: sub-class specifics
     methods
         %------------------------------------------------------------------
-        function y = evalIntegralMonosize(this,int,drv)
+        function q = evalIntegral(this,int,drv)
+            if (int.elem1.radius == int.elem2.radius ||...
+                int.kinemat.gen_type == int.kinemat.PARTICLE_WALL)
+                % Assumption: Particle-Wall is treated as 2 equal size particles
+                q = this.evalIntegralMonosize(int,drv);
+            else
+                q = this.evalIntegralMultisize(int,drv);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function q = evalIntegralMonosize(this,int,drv)
             % Needed properties
-            Rp  = int.elem1.radius;
-            Rc  = int.kinemat.contact_radius;
-            D   = int.kinemat.dist/2;
-            ks  = int.eff_conduct;
-            kf  = drv.fluid_conduct;
-            por = this.getPorosity(int,drv);
+            Rp = int.elem1.radius;
+            Rc = int.kinemat.contact_radius;
+            D  = int.kinemat.dist/2;
+            ks = int.eff_conduct;
+            kf = drv.fluid_conduct;
             
             % Parameters
-            rij = 0.56 * Rp / (1-por)^(1/3);
+            rij = this.getConductRadius(int,drv,Rp);
             rsf = Rp * rij / sqrt(rij^2 + D^2);            
             
             % Evaluate integral numerically
             fun = @(r) 2*pi*r / ((sqrt(Rp^2-r.^2) - r*D/rij)/ks + 2*(D - sqrt(Rp^2-r.^2))/kf);
-            y = integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
+            try
+                q = integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
+            catch
+                q = 0;
+            end
         end
         
         %------------------------------------------------------------------
-        function y = evalIntegralMultisize(this,int,drv)
+        function q = evalIntegralMultisize(this,int,drv)
             % Needed properties
-            R1  = int.elem1.radius;
-            R2  = int.elem2.radius;
-            Rc  = int.kinemat.contact_radius;
-            d   = int.kinemat.dist;
-            k1  = int.elem1.conduct;
-            k2  = int.elem2.conduct;
-            kf  = drv.fluid_conduct;
-            por = this.getPorosity(int,drv);
+            R1 = int.elem1.radius;
+            R2 = int.elem2.radius;
+            Rc = int.kinemat.contact_radius;
+            d  = int.kinemat.dist;
+            k1 = int.elem1.conduct;
+            k2 = int.elem2.conduct;
+            kf = drv.fluid_conduct;
             
             % Parameters
             if (int.kinematic.is_contact)
-                D1 = sqrt(R1^2-Rc^2);
+                D1 = sqrt(R1^2 - Rc^2);
             else
                 D1 = (R1^2 - R2^2 + d^2) / (2*d);
             end
             D2 = d - D1;
             
-            ri = 0.56 * ((R1+R2)/2) / (1-por)^(1/3); % Assumption: average radius
+            ri = this.getConductRadius(int,drv,(R1+R2)/2); % Assumption: average radius
             if (R1 <= R2)
-                rsf = R1*ri / sqrt(ri^2+D1^2);
+                rsf = R1*ri / sqrt(ri^2 + D1^2);
             else
-                rsf = R2*ri / sqrt(ri^2+D2^2);
+                rsf = R2*ri / sqrt(ri^2 + D2^2);
             end
-            rj = D2*rsf / sqrt(R2^2-rsf^2);
+            rj = D2*rsf / sqrt(R2^2 - rsf^2);
             
             % Evaluate integral numerically
             fun = @(r) 2*pi*r / ((sqrt(R1^2-r^2)-r*D1/ri)/k1 + (sqrt(R2^2-r^2)-r*D2/rj)/k2 + (d-sqrt(R1^2-r^2)-sqrt(R2^2-r^2))/kf);
-            y = integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
+            try
+                q = integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
+            catch
+                q = 0;
+            end
         end
         
         %------------------------------------------------------------------
-        function por = gerPorosity(this,int,drv)
-            if (this.type == this.POROSITY_GLOBAL)
-                por = drv.porosity;
-            elseif (this.type == this.POROSITY_LOCAL && int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
-                % Assumption: average porosity
-                por = (int.elem1.porosity+int.elem2.porosity)/2;
+        function r = getConductRadius(this,int,drv,Rp)
+            if (this.method == this.VORONOI_DIAGRAM)
+                r = this.kinemat.vedge/2;
             else
-                por = int.elem1.porosity;
+                if (this.method == this.POROSITY_GLOBAL)
+                    por = drv.porosity;
+                elseif (this.method == this.POROSITY_LOCAL && int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                    por = (int.elem1.porosity+int.elem2.porosity)/2; % Assumption: average porosity
+                else
+                    por = int.elem1.porosity; % Assumption: particle porosity only
+                end
+                r = 0.56 * Rp / (1-por)^(1/3);
             end
         end
     end

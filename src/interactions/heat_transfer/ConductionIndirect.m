@@ -17,7 +17,8 @@
 % This super-class defines abstracts methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <conductionindirect_voronoia.html ConductionIndirect_VoronoiA> (default)
+% * <conductionindirect_voronoi.html ConductionIndirect_Voronoi> (default)
+% * <conductionindirect_surrlayer.html ConductionIndirect_SurrLayer>
 %
 % <<indirect_conduction.png>>
 %

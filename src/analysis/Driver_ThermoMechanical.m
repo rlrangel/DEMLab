@@ -44,27 +44,31 @@ classdef Driver_ThermoMechanical < Driver
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
+            % Scalars
             this.n_mparts      = 0;
             this.n_particles   = 0;
             this.n_walls       = 0;
             this.n_interacts   = 0;
             this.n_materials   = 0;
             this.fluid_conduct = 0;
-            this.eval_freq     = 1;
-            this.por_freq      = NaN;
-            this.alpha         = inf;
-            this.eval          = true;
+            this.alpha         = inf; % convex hull
+            this.por_freq      = NaN; % never compute
+            this.vor_freq      = NaN; % never compute
+            this.eval_freq     = 1;   % always compute
+            this.workers       = parcluster('local').NumWorkers; % max. available
+            this.nprog         = 1;
+            this.nout          = 100;
+            % Booleans
             this.auto_step     = false;
+            this.eval          = true;  % according to eval_freq
+            this.parallel      = false; % according to workers
+            this.save_ws       = true;  % according to nout
+            % Objects
             this.search        = Search_SimpleLoop();
             this.scheme_trl    = Scheme_EulerForward();
             this.scheme_rot    = Scheme_EulerForward();
             this.scheme_temp   = Scheme_EulerForward();
-            this.parallel      = false;
-            this.workers       = parcluster('local').NumWorkers;
             this.result        = Result();
-            this.save_ws       = true;
-            this.nprog         = 1;
-            this.nout          = 500;
         end
         
         %------------------------------------------------------------------
@@ -161,6 +165,7 @@ classdef Driver_ThermoMechanical < Driver
             % Set global properties
             this.setTotalParticlesProps();
             this.setRadiusDistrib();
+            this.voronoiDiagram();
             this.setGlobalVol();
             if (isempty(this.porosity))
                 this.setGlobalPorosity();
@@ -197,15 +202,20 @@ classdef Driver_ThermoMechanical < Driver
                     this.result.storeTime(this);
                 end
                 
+                % Interactions search
+                if (mod(this.step,this.search.freq) == 0)
+                    this.search.execute(this);
+                end
+                
                 % Update global volume/porosity
                 if (mod(this.step,this.por_freq) == 0)
                     this.setGlobalVol();
                     this.setGlobalPorosity();
                 end
                 
-                % Interactions search
-                if (mod(this.step,this.search.freq) == 0)
-                    this.search.execute(this);
+                % Update voronoi diagram
+                if (mod(this.step,this.vor_freq) == 0)
+                    this.voronoiDiagram();
                 end
                 
                 % Loop over all interactions
@@ -242,6 +252,11 @@ classdef Driver_ThermoMechanical < Driver
                 % Update relative position (if not already done in search)
                 if (~this.search.done)
                     int.kinemat = int.kinemat.setRelPos(int.elem1,int.elem2);
+                end
+                
+                % Update voronoi edges
+                if (mod(this.step,this.vor_freq) == 0)
+                    int.kinemat = int.kinemat.setVoronoiEdge(drv,int);
                 end
                 
                 % Evaluate contact interactions

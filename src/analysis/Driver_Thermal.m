@@ -34,23 +34,25 @@ classdef Driver_Thermal < Driver
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
+            % Scalars
             this.n_mparts      = 0;
             this.n_particles   = 0;
             this.n_walls       = 0;
             this.n_interacts   = 0;
             this.n_materials   = 0;
             this.fluid_conduct = 0;
-            this.por_freq      = NaN;
-            this.alpha         = inf;
+            this.alpha         = inf; % convex hull
+            this.workers       = parcluster('local').NumWorkers; % max. available
+            this.nprog         = 1;
+            this.nout          = 100;
+            % Booleans
             this.auto_step     = false;
+            this.parallel      = false; % according to workers
+            this.save_ws       = true;  % according to nout
+            % Objects
             this.search        = Search_SimpleLoop();
             this.scheme_temp   = Scheme_EulerForward();
-            this.parallel      = false;
-            this.workers       = parcluster('local').NumWorkers;
             this.result        = Result();
-            this.save_ws       = true;
-            this.nprog         = 1;
-            this.nout          = 500;
         end
         
         %------------------------------------------------------------------
@@ -128,6 +130,7 @@ classdef Driver_Thermal < Driver
             % Set global properties
             this.setTotalParticlesProps();
             this.setRadiusDistrib();
+            this.voronoiDiagram();
             this.setGlobalVol();
             if (isempty(this.porosity))
                 this.setGlobalPorosity();
@@ -179,6 +182,7 @@ classdef Driver_Thermal < Driver
                     int.kinemat.contact_time = 0;
                     int.kinemat = int.kinemat.setInitNoncontactParams();
                 end
+                int.kinemat = int.kinemat.setVoronoiEdge(drv,int);
                 int.setFixParamsTherm(this);
                 int.setCteParamsTherm(this);
             end

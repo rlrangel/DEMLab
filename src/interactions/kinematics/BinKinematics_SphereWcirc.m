@@ -161,6 +161,12 @@ classdef BinKinematics_SphereWcirc < BinKinematics
         end
         
         %------------------------------------------------------------------
+        function this = setVoronoiEdge(this,~,int)
+            % Assumption: same as the particle diameter
+            this.vedge = 2*int.elem1.radius;
+        end
+        
+        %------------------------------------------------------------------
         function addContactForceNormalToParticles(~,int)
             int.elem1.force = int.elem1.force + int.cforcen.total_force;
         end

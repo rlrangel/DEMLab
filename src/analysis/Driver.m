@@ -49,7 +49,10 @@ classdef Driver < handle
         alpha      double = double.empty;   % alpha radius
         vol_domain double = double.empty;   % total volume (unity depth) of the alpha-shape polygon of all particles
         porosity   double = double.empty;   % average porosity (void ratio) of the alpha-shape polygon
-        por_freq   uint32 = uint32.empty;   % average porosity update frequency (in steps)
+        por_freq   double = double.empty;   % average porosity update frequency (in steps) (double to accept NaN)
+        vor_freq   double = double.empty;   % voronoi diagram update frequency (in steps) (double to accept NaN)
+        vor_vtx    double = double.empty;   % vertices coordinates of voronoi diagram
+        vor_idx    cell   = cell.empty;     % vertices indices of voronoi diagram cells
         
         % Total particle properties
         surf_particle  double = double.empty;   % total surface area of all particles
@@ -90,7 +93,7 @@ classdef Driver < handle
         result     Result    = Result.empty;      % handle to object of Result class
         graphs     Graph     = Graph.empty;       % handles to objects of Graph class
         animations Animation = Animation.empty;   % handles to objects of Animation class
-        save_ws    logical   = logical.empty;     % flag for saving workspace into a results file
+        save_ws    logical   = logical.empty;     % flag for saving workspace into a storage file
         
         % Output control
         nprog double  = double.empty;    % progress print frequency (% of total time)
@@ -159,7 +162,7 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
-        % Object must be called 'drv' here to load it from results file.
+        % Object must be called 'drv' here to load it from storage file.
         function storeResults(drv)
             if (drv.time >= drv.tout)
                 if (drv.save_ws)
@@ -197,13 +200,26 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
+        function voronoiDiagram(this)
+            try
+                [this.vor_vtx,this.vor_idx] = voronoiDiagram(delaunayTriangulation([this.particles.coord]'));
+            catch
+                fprintf(2,'Could not build Voronoi diagram in %d\n',this.step);
+            end
+        end
+        
+        %------------------------------------------------------------------
         function setGlobalVol(this)
             this.vol_domain = area(alphaShape([this.particles.coord]',this.alpha));
         end
         
         %------------------------------------------------------------------
         function setGlobalPorosity(this)
-            this.porosity = this.vol_domain/this.cross_particle - 1;
+            if (isempty(this.vol_domain))
+                this.setGlobalVol();
+            else
+                this.porosity = this.vol_domain/this.cross_particle - 1;
+            end
         end
         
         %------------------------------------------------------------------
@@ -218,8 +234,7 @@ classdef Driver < handle
             % Total volume of particles (in-plane projection area)
             % Assumes an average particles radius and polygon interior angle
             ravg = mean([P.radius]);
-            n    = length(P);
-            vp   = (n-2) * pi^2 * ravg^2;
+            vp   = (length(P)-2) * pi^2 * ravg^2;
             
             % Local porosity
             p.porosity = vt/vp - 1;
