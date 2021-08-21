@@ -17,7 +17,8 @@
 % This super-class defines abstracts methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <conductionindirect_voronoi.html ConductionIndirect_Voronoi> (default)
+% * <conductionindirect_voronoia.html ConductionIndirect_VoronoiA> (default)
+% * <conductionindirect_voronoib.html ConductionIndirect_VoronoiB>
 % * <conductionindirect_surrlayer.html ConductionIndirect_SurrLayer>
 %
 % <<indirect_conduction.png>>
@@ -26,9 +27,11 @@ classdef ConductionIndirect < matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of model
-        VORONOI_A = uint8(1);
+        VORONOI_A         = uint8(1);
+        VORONOI_B         = uint8(2);
+        SURROUNDING_LAYER = uint8(3);
         
-        % Types of method to compute cells size
+        % Types of method to compute voronoi cells size
         VORONOI_DIAGRAM = uint8(1);
         POROSITY_LOCAL  = uint8(2);
         POROSITY_GLOBAL = uint8(3);

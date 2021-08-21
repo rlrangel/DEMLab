@@ -1,9 +1,9 @@
-%% ConductionIndirect_VoronoiA class
+%% ConductionIndirect_VoronoiB class
 %
 %% Description
 %
 % This is a sub-class of the <conductionindirect.html ConductionIndirect>
-% class for the implementation of the *Voronoi Polyhedra A* indirect heat
+% class for the implementation of the *Voronoi Polyhedra B* indirect heat
 % conduction model.
 %
 % DESCRIPTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -15,9 +15,9 @@
 % Evaluation of effective thermal conductivity from the structure of a packed bed, _Chem. Eng. Sci._, 54(19):4199-4209, 1999>
 % (proposal)
 %
-% * <https://doi.org/10.1016/S0009-2509(99)00125-6
-% J. Gan, Z. Zhou and A. Yu.
-% Particle scale study of heat transfer in packed and fluidized beds of ellipsoidal particles, _Chem. Eng. Sci._, 144:201-215, 2016>
+% * <https://doi.org/10.1016/j.ijheatmasstransfer.2018.12.005
+% L. Chen, C. Wang, M. Moscardini, M. Kamlah and S. Liu.
+% A DEM-based heat transfer model for the evaluation of effective thermal conductivity of packed beds filled with stagnant fluid: Thermal contact theory and numerical simulation, _Int. J. Heat Mass Transfer_, 132:331-346, 2019>
 % (extension to multi-sized particles)
 %
 % * <https://doi.org/10.1103/PhysRevE.65.041302
@@ -25,19 +25,17 @@
 % Voronoi tessellation of the packing of fine uniform spheres, _Phys. Rev. E_, 65:041302, 2012>
 % (relationship between Voronoi diagram and porosity)
 %
-classdef ConductionIndirect_VoronoiA < ConductionIndirect
+classdef ConductionIndirect_VoronoiB < ConductionIndirect
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        method  uint8  = uint8.empty;    % flag for type of method to compute cells size
-        coeff   double = double.empty;   % heat transfer coefficient
-        tol_abs double = double.empty;   % absolute tolerance for numerical integration
-        tol_rel double = double.empty;   % relative tolerance for numerical integration
+        coeff double = double.empty;   % heat transfer coefficient
+        core  double = double.empty;   % radius of isothermal core (ratio of particle radius)
     end
     
     %% Constructor method
     methods
-        function this = ConductionIndirect_VoronoiA()
-            this = this@ConductionIndirect(ConductionIndirect.VORONOI_A);
+        function this = ConductionIndirect_VoronoiB()
+            this = this@ConductionIndirect(ConductionIndirect.VORONOI_B);
             this = this.setDefaultProps();
         end
     end
@@ -46,9 +44,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
     methods
         %------------------------------------------------------------------
         function this = setDefaultProps(this)
-            this.method  = this.POROSITY_GLOBAL;
-            this.tol_abs = 1e-10;
-            this.tol_rel = 1e-6;
+            this.core = 0.5;
         end
         
         %------------------------------------------------------------------
@@ -79,36 +75,35 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             if (int.elem1.radius == int.elem2.radius ||...
                 int.kinemat.gen_type == int.kinemat.PARTICLE_WALL)
                 % Assumption: Particle-Wall is treated as 2 equal size particles
-                q = this.evalIntegralMonosize(int,drv);
+                q = this.evalExpressionMonosize(int,drv);
             else
-                q = this.evalIntegralMultisize(int,drv);
+                q = this.evalExpressionMultisize(int,drv);
             end
         end
         
         %------------------------------------------------------------------
-        function q = evalIntegralMonosize(this,int,drv)
+        function q = evalExpressionMonosize(this,int,drv)
             % Needed properties
             Rp = int.elem1.radius;
             Rc = int.kinemat.contact_radius;
             D  = int.kinemat.dist/2;
             ks = int.eff_conduct;
             kf = drv.fluid_conduct;
+            c  = this.core;
             
             % Parameters
             rij = this.getConductRadius(int,drv,Rp);
-            rsf = Rp * rij / sqrt(rij^2 + D^2);            
+            a   = (1/c - 1/Rp)/(2*ks) + 1/(kf*Rp);
+            b   = 1/(kf*D);
+            c0  = D / sqrt(rij^2 + D^2);
+            c1  = D / sqrt(Rc^2  + D^2);
             
-            % Evaluate integral numerically
-            fun = @(r) 2*pi*r / ((sqrt(Rp^2-r.^2) - r*D/rij)/ks + 2*(D - sqrt(Rp^2-r.^2))/kf);
-            try
-                q = integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
-            catch
-                q = 0;
-            end
+            % Heat transfer coeff
+            q = pi * log((a-b*c0)/(a-b*c1)) / b;
         end
         
         %------------------------------------------------------------------
-        function q = evalIntegralMultisize(this,int,drv)
+        function q = evalExpressionMultisize(this,int,drv)
             % Needed properties
             R1 = int.elem1.radius;
             R2 = int.elem2.radius;
@@ -117,29 +112,35 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             k1 = int.elem1.conduct;
             k2 = int.elem2.conduct;
             kf = drv.fluid_conduct;
+            c  = this.core;
+            An = int.kinemat.vedge^2 * pi / 4;
             
             % Parameters
-            if (int.kinematic.is_contact)
-                D1 = sqrt(R1^2 - Rc^2);
-            else
-                D1 = (R1^2 - R2^2 + d^2) / (2*d);
-            end
-            D2 = d - D1;
+            gamma1 = R1/d;
+            gamma2 = R2/d;
+            dgamma = gamma2 - gamma1;
             
-            ri = this.getConductRadius(int,drv,(R1+R2)/2); % Assumption: average radius
-            if (R1 <= R2)
-                rsf = R1*ri / sqrt(ri^2 + D1^2);
-            else
-                rsf = R2*ri / sqrt(ri^2 + D2^2);
-            end
-            rj = D2*rsf / sqrt(R2^2 - rsf^2);
+            A = (k1+kf*(1/c-1))/(k1*gamma1);
+            B = (k2+kf*(1/c-1))/(k2*gamma2);
             
-            % Evaluate integral numerically
-            fun = @(r) 2*pi*r / ((sqrt(R1^2-r^2)-r*D1/ri)/k1 + (sqrt(R2^2-r^2)-r*D2/rj)/k2 + (d-sqrt(R1^2-r^2)-sqrt(R2^2-r^2))/kf);
-            try
-                q = integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
-            catch
-                q = 0;
+            lambda = (1+dgamma*A)*(1-dgamma*B);
+            
+            delmax = 0.5 * (sqrt((4*An)/(pi*d^2*(1-dgamma^2))+1) - dgamma);
+            delmin = 0.5 * (sqrt((4*Rc^2)/(d^2*(1-dgamma^2))+1) - dgamma);
+            
+            Xmax = ((A+B)*delmax + dgamma*B - 1) / sqrt(abs(lambda));
+            Xmin = ((A+B)*delmin + dgamma*B - 1) / sqrt(abs(lambda));
+            
+            Y1 = (Xmax-Xmin) / (1-Xmax*Xmin);
+            Y2 = (Xmax-Xmin) / (1+Xmax*Xmin);
+            
+            % Heat transfer coeff
+            if (lambda > 0)
+                q = pi * kf * d * (1-dgamma^2) * log(abs((1-Y1)/(1+Y1))) / (2*sqrt(abs(lambda)));
+            elseif (lambda < 0)
+                q = pi * kf * d * (1-dgamma^2) * atan(Y2) / (2*sqrt(abs(lambda)));
+            else
+                q = pi * kf * d * (1-dgamma^2) * (1/delmin-1/delmax) / (A+B);
             end
         end
         
