@@ -10,8 +10,8 @@
 %
 % The program is designed to be a modular and extensible tool to allow
 % testing of different models and formulations.
-% Code efficiency is not a priority and, therefore, only small problems
-% should be simulated.
+% Code efficiency is not a priority and, therefore, only small-scale
+% problems should be simulated.
 %
 % For more information, visit the
 % <https://gitlab.com/rafaelrangel/demlab GitLab repository>.
@@ -21,10 +21,10 @@
 % This is the main script file of the DEMLab program.
 %
 % To *run a simulation*, execute this script and select an appropriate
-% parameters file with a _.json_ extension.
+% parameters file with the _.json_ extension.
 %
-% To *generate results* from a previously run simulation, execute this
-% script and select an appropriate results file with a _.mat_ extension.
+% To *load results* from a previously run simulation, execute this
+% script and select an appropriate storage file with the _.mat_ extension.
 %
 % There are two ways to select an input file:
 %
@@ -81,7 +81,7 @@
 %
 %% Initialization
 clc; clearvars; close all;
-file = 'C:\Users\rlr_5\gDrive\Work\Projects\DEMLab\DEMLab_git\models\benchmarks\thermal\packed_box_4454\ProjectParameters.json';
+file = '';
 addpath('algorithms',...
         'analysis',...
         'components',...

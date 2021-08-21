@@ -5,8 +5,8 @@
 % This is the main class for running a DEMLab simulation.
 %
 % The _execute_ method is responsible for managing the high-level tasks
-% and call the appropriate methods to perform each task, from the reading
-% of the input files to the showing of the results.
+% and call the appropriate methods to perform each stage of the simulation,
+% from the reading of the input files to the showing of the results.
 %
 classdef Master
     %% Constructor method
@@ -25,7 +25,7 @@ classdef Master
             
             % Get input file name, path and extension
             if (isempty(file_fullname))
-                filter  = {'*.json','Parameters File (*.json)';'*.mat','Results File (*.mat)'};
+                filter  = {'*.json','Parameters File (*.json)';'*.mat','Storage File (*.mat)'};
                 title   = 'DEMLab - Input file';
                 default = 'ProjectParameters.json';
                 [file_name,file_path] = uigetfile(filter,title,default);
@@ -52,8 +52,8 @@ classdef Master
                 end
 
                 % Read parameters file
-                read = Read();
                 fprintf('\nReading parameters file...\n');
+                read = Read();
                 [status,drv,storage] = read.execute(file_path,fid);
 
                 % Pre analysis tasks
@@ -61,7 +61,7 @@ classdef Master
                     fprintf('\nExiting program...\n');
                     return;
 
-                elseif (status == 1) % start analysis from beggining
+                elseif (status == 1) % start analysis from the beggining
                     % Check input data
                     fprintf('\nChecking consistency of input data...\n');
                     status = read.check(drv);
@@ -83,11 +83,19 @@ classdef Master
                     fprintf('%s\n',datestr(now));
 
                 elseif (status == 2) % continue analysis from previous state
-                    % Load results file
-                    fprintf('\nResults file found:\n%s\n',storage)
-                    load(storage,'drv');
+                    f = dir(storage);
+                    fprintf('\nStorage file found (%.3f Mb):\n%s\n',f.bytes/10e5,storage)
+                    
+                    % Load storage file
+                    try
+                        load(storage,'drv');
+                    catch
+                        fprintf(2,'\nError loading storage file.\n');
+                        fprintf('\nExiting program...\n');
+                        return;
+                    end
                     if (~exist('drv','var'))
-                        fprintf(2,'n\Invalid results file.\n');
+                        fprintf(2,'n\Invalid stored data.\n');
                         fprintf('\nExiting program...\n');
                     end
                     
@@ -111,11 +119,19 @@ classdef Master
                 this.printFinishedStatus(drv,status);
                 
             elseif (strcmp(ext,'.mat'))
-                % Load results file
-                fprintf('Results file selected:\n%s\n',file_fullname);
-                load(file_fullname,'drv');
+                f = dir(file_fullname);
+                fprintf('\nStorage file selected (%.3f Mb):\n%s\n',f.bytes/10e5,file_fullname)
+                
+                % Load storage file
+                try
+                    load(file_fullname,'drv');
+                catch
+                    fprintf(2,'\nError loading storage file.\n');
+                    fprintf('\nExiting program...\n');
+                    return;
+                end
                 if (~exist('drv','var'))
-                    fprintf(2,'n\Invalid results file.\n');
+                    fprintf(2,'n\Invalid stored data.\n');
                     fprintf('\nExiting program...\n');
                 end
                 
@@ -147,7 +163,9 @@ classdef Master
         %------------------------------------------------------------------
         function printSimulationInfo(~,drv)
             fprintf('\nSimulation ready:\n');
-            fprintf('Name.................: %s\n',drv.name);
+            if (~isempty(drv.name))
+                fprintf('Name.................: %s\n',drv.name);
+            end
             switch drv.type
                 case drv.MECHANICAL
                     fprintf('Type.................: Mechanical\n');
@@ -156,19 +174,31 @@ classdef Master
                 case drv.THERMO_MECHANICAL
                     fprintf('Type.................: Thermo-mechanical\n');
             end
-            fprintf('Number of walls......: %d\n',drv.n_walls);
-            fprintf('Number of particles..: %d\n',drv.n_particles);
-            fprintf('Average radius.......: %.3e\n',drv.radius_avg);
-            fprintf('Radius deviation.....: %.3e\n',drv.radius_dev);
-            if (drv.radius_dev ~= 0)
+            if (~isempty(drv.n_walls))
+                fprintf('Number of walls......: %d\n',drv.n_walls);
+            end
+            if (~isempty(drv.n_particles))
+                fprintf('Number of particles..: %d\n',drv.n_particles);
+            end
+            if (~isempty(drv.radius_avg))
+                fprintf('Average radius.......: %.3e\n',drv.radius_avg);
+            end
+            if (~isempty(drv.radius_dev))
+                fprintf('Radius deviation.....: %.3e\n',drv.radius_dev);
+            end
+            if (~isempty(drv.radius_dev) && drv.radius_dev ~= 0)
                 fprintf('Min|Max radius.......: %.3e|%.3e\n',drv.radius_min,drv.radius_max);
             end
-            fprintf('Total mass...........: %.3e\n',drv.mass_particle);
-            fprintf('Time step............: %.3e\n',drv.time_step);
+            if (~isempty(drv.mass_particle))
+                fprintf('Total mass...........: %.3e\n',drv.mass_particle);
+            end
+            if (~isempty(drv.time_step))
+                fprintf('Time step............: %.3e\n',drv.time_step);
+            end
             if (~isempty(drv.max_time))
                 fprintf('Final time...........: %f\n',drv.max_time);
             end
-            if (~isempty(drv.max_step))     
+            if (~isempty(drv.max_step))
                 fprintf('Maximum steps........: %d\n',drv.max_step);
             end
         end
