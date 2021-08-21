@@ -31,7 +31,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         
         % Geometric properties
         surface  double = double.empty;   % surface area
-        cross    double = double.empty;   % cross-sectional area
+        cross    double = double.empty;   % in-plane cross-sectional area
         volume   double = double.empty;   % volume
         minertia double = double.empty;   % moment of inertia
         

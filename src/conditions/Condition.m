@@ -36,7 +36,7 @@ classdef Condition < handle & matlab.mixin.Heterogeneous
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         type      uint8  = uint8.empty;    % flag for type of condition variation
-        interval  double = double.empty;   % time interval of activation
+        interval  double = double.empty;   % time interval of activation (initial,final)
         init_time double = double.empty;   % time of activation
     end
     

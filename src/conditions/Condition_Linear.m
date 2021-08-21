@@ -5,7 +5,7 @@
 % This is a sub-class of the <Condition.html Condition> class for the
 % implementation of *Linear* conditions.
 %
-% In a given time _t_, a linear condition value _y_, is obtained as:
+% In a given time _t_, a linear condition value _y_ is obtained as:
 %
 % $$y(t) = y_{0} + s \times (t-t_{0})$$
 %
@@ -37,6 +37,7 @@ classdef Condition_Linear < Condition
         %------------------------------------------------------------------
         function setDefaultProps(this)
             this.init_value = 0;
+            this.slope      = 0;
         end
         
         %------------------------------------------------------------------

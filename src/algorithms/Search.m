@@ -8,8 +8,8 @@
 % A search algorithm is invoked frequently during the simulation to
 % identify the neighbours of each particle.
 %
-% Depending on the interaction models adopted, a threshold distance is
-% assumed for defining a neighbour (contact neighbours have a threshold
+% Depending on the interaction models adopted, a cutoff distance is
+% assumed for defining a neighbour (contact neighbours have a cutoff
 % distance of zero).
 %
 % This super-class defines abstracts methods that must be implemented in

@@ -22,6 +22,12 @@ classdef BBox_Circle < BBox
     %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
+        function setDefaultProps(this)
+            this.center = [0,0];
+            this.radius = inf;
+        end
+        
+        %------------------------------------------------------------------
         function do = removeParticle(this,p,time)
             if (~this.isActive(time))
                 do = false;

@@ -9,7 +9,6 @@
 % the derived *sub-classes*:
 %
 % * <rollresist_constant.html RollResist_Constant> (default)
-%
 % * <rollresist_viscous.html RollResist_Viscous>
 %
 classdef RollResist < matlab.mixin.Heterogeneous

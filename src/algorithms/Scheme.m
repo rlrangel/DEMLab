@@ -15,7 +15,7 @@
 classdef Scheme < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
-        % Types of scheme
+        % Types of time integration scheme
         EULER_FORWARD  = uint8(1);
         EULER_MODIFIED = uint8(2);
         TAYLOR_2       = uint8(3);
@@ -23,7 +23,7 @@ classdef Scheme < handle & matlab.mixin.Heterogeneous
     
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        type uint8 = uint8.empty;   % flag for type of scheme
+        type uint8 = uint8.empty;   % flag for type of time integration scheme
     end
     
     %% Constructor method

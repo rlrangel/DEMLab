@@ -22,6 +22,12 @@ classdef Sink_Rectangle < Sink
     %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
+        function setDefaultProps(this)
+            this.limit_min = [0,0];
+            this.limit_max = [0,0];
+        end
+        
+        %------------------------------------------------------------------
         function do = removeParticle(this,p,time)
             if (~this.isActive(time))
                 do = false;

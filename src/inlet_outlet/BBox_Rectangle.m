@@ -22,12 +22,18 @@ classdef BBox_Rectangle < BBox
     %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
+        function setDefaultProps(this)
+            this.limit_min = [-inf,-inf];
+            this.limit_max = [inf,inf];
+        end
+        
+        %------------------------------------------------------------------
         function do = removeParticle(this,p,time)
             if (~this.isActive(time))
                 do = false;
                 return;
             end
-            do = (any(p.coord > this.limit_min) && any(p.coord < this.limit_max));
+            do = (any(p.coord < this.limit_min) || any(p.coord > this.limit_max));
         end
     end
 end

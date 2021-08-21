@@ -27,11 +27,11 @@
 %
 % $a$: Translational acceleration
 %
-% $\theta$: angular orientation
+% $\theta$: Angular orientation
 %
-% $\omega$: angular velocity
+% $\omega$: Angular velocity
 %
-% $\alpha$: angular acceleration
+% $\alpha$: Angular acceleration
 %
 classdef Scheme_Taylor2 < Scheme
     %% Constructor method

@@ -5,9 +5,9 @@
 % This is a sub-class of the <Condition.html Condition> class for the
 % implementation of *Oscillatory* conditions.
 %
-% In a given time _t_, an oscillatory condition value _y_, is obtained as:
+% In a given time _t_, an oscillatory condition value _y_ is obtained as:
 %
-% $$y(t) = y_{0} + \lambda sin \left (  \frac{2\pi}{\tau}(t-t_{0}) + \phi \right )$$
+% $$y(t) = y_{0} + \lambda sin \left (  \frac{2pi}{\tau}(t-t_{0}) + \phi \right )$$
 %
 % Where:
 %
@@ -42,7 +42,10 @@ classdef Condition_Oscillatory < Condition
     methods
         %------------------------------------------------------------------
         function setDefaultProps(this)
-            this.shift = 0;
+            this.base_value = 0;
+            this.amplitude  = 0;
+            this.period     = inf;
+            this.shift      = 0;
         end
         
         %------------------------------------------------------------------

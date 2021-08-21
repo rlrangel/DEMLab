@@ -20,12 +20,12 @@ classdef Search_SimpleLoop < Search
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Base objects for kinematics
-        kinpp_sph      BinKinematics = BinKinematics.empty;   % sphere particle and sphere particle
-        kinpw_sph_line BinKinematics = BinKinematics.empty;   % sphere particle and line wall
-        kinpw_sph_circ BinKinematics = BinKinematics.empty;   % sphere particle and circle wall
-        kinpp_cyl      BinKinematics = BinKinematics.empty;   % cylinder particle and sphere particle
-        kinpw_cyl_line BinKinematics = BinKinematics.empty;   % cylinder particle and line wall
-        kinpw_cyl_circ BinKinematics = BinKinematics.empty;   % cylinder particle and circle wall
+        kinpp_sph      BinKinematics = BinKinematics.empty;   % sphere particle - sphere particle
+        kinpw_sph_line BinKinematics = BinKinematics.empty;   % sphere particle - line wall
+        kinpw_sph_circ BinKinematics = BinKinematics.empty;   % sphere particle - circle wall
+        kinpp_cyl      BinKinematics = BinKinematics.empty;   % cylinder particle - sphere particle
+        kinpw_cyl_line BinKinematics = BinKinematics.empty;   % cylinder particle - line wall
+        kinpw_cyl_circ BinKinematics = BinKinematics.empty;   % cylinder particle - circle wall
     end
     
     %% Constructor method
@@ -177,21 +177,18 @@ classdef Search_SimpleLoop < Search
                         return;
                     end
                     kin = copy(this.kinpw_sph_line);
-                    
                 case 2
                     this.kinpw_sph_circ.setRelPos(p,w);
                     if (this.kinpw_sph_circ.separ >= this.cutoff * p.radius)
                         return;
                     end
                     kin = copy(this.kinpw_sph_circ);
-                    
                 case 3
                     this.kinpw_cyl_line.setRelPos(p,w);
                     if (this.kinpw_cyl_line.separ >= this.cutoff * p.radius)
                         return;
                     end
                     kin = copy(this.kinpw_cyl_line);
-                    
                 case 4
                     this.kinpw_cyl_circ.setRelPos(p,w);
                     if (this.kinpw_cyl_circ.separ >= this.cutoff * p.radius)

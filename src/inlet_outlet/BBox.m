@@ -28,7 +28,7 @@ classdef BBox < handle & matlab.mixin.Heterogeneous
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         type     uint8  = uint8.empty;    % flag for type of bounding box shape
-        interval double = double.empty;   % time interval of activation
+        interval double = double.empty;   % time interval of activation (initial,final)
     end
     
     %% Constructor method
@@ -49,6 +49,9 @@ classdef BBox < handle & matlab.mixin.Heterogeneous
     
     %% Abstract methods: implemented in derived sub-classes
     methods (Abstract)
+        %------------------------------------------------------------------
+        setDefaultProps(this);
+        
         %------------------------------------------------------------------
         do = removeParticle(this,particle,time);
     end

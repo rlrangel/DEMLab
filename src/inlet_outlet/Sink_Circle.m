@@ -22,6 +22,12 @@ classdef Sink_Circle < Sink
     %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
+        function setDefaultProps(this)
+            this.center = [0,0];
+            this.radius = 0;
+        end
+        
+        %------------------------------------------------------------------
         function do = removeParticle(this,p,time)
             if (~this.isActive(time))
                 do = false;

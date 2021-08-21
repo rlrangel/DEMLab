@@ -22,7 +22,6 @@ classdef Material < handle
         % Thermal properties
         conduct   double = double.empty;
         hcapacity double = double.empty;
-        expansion double = double.empty;
     end
     
     %% Constructor method
