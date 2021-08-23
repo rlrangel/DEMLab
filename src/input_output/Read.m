@@ -3771,8 +3771,8 @@ classdef Read < handle
             if (~this.isStringArray(model,1)  ||...
                (~strcmp(model,'bob')          &&...
                 ~strcmp(model,'thermal_pipe') &&...
-                ~strcmp(model,'zyh')))
-                this.invalidOptError('InteractionModel.direct_conduction.model','bob, thermal_pipe, zyh');
+                ~strcmp(model,'collisional')))
+                this.invalidOptError('InteractionModel.direct_conduction.model','bob, thermal_pipe, collisional');
                 status = 0; return;
             end
             
@@ -3781,8 +3781,8 @@ classdef Read < handle
                 drv.search.b_interact.dconduc = ConductionDirect_BOB();
             elseif (strcmp(model,'thermal_pipe'))
                 drv.search.b_interact.dconduc = ConductionDirect_Pipe();
-            elseif (strcmp(model,'zyh'))
-                drv.search.b_interact.dconduc = ConductionDirect_ZYH();
+            elseif (strcmp(model,'collisional'))
+                drv.search.b_interact.dconduc = ConductionDirect_Collisional();
             end
         end
         

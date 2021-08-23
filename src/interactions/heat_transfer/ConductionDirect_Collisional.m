@@ -1,10 +1,10 @@
-%% ConductionDirect_ZYH class
+%% ConductionDirect_Collisional class
 %
 %% Description
 %
 % This is a sub-class of the <conductiondirect.html ConductionDirect>
-% class for the implementation of the *Zhou, Yu, Horio* direct heat
-% conduction model.
+% class for the implementation of the *Collisional* direct heat conduction
+% model.
 %
 % This model is based on FEM simulations of the transient heat conduction
 % between colliding spheres assuming elastic collisions according to Hertz
@@ -76,7 +76,7 @@
 % Finite element modeling of the transient heat conduction between colliding particles, _Chem. Eng. J._, 139(3):510-516, 2008>
 % (improvement)
 %
-classdef ConductionDirect_ZYH < ConductionDirect
+classdef ConductionDirect_Collisional < ConductionDirect
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         coeff    double = double.empty;   % heat transfer coefficient
@@ -85,8 +85,8 @@ classdef ConductionDirect_ZYH < ConductionDirect
     
     %% Constructor method
     methods
-        function this = ConductionDirect_ZYH()
-            this = this@ConductionDirect(ConductionDirect.ZYH);
+        function this = ConductionDirect_Collisional()
+            this = this@ConductionDirect(ConductionDirect.COLLISIONAL);
             this = this.setDefaultProps();
         end
     end
@@ -159,7 +159,7 @@ classdef ConductionDirect_ZYH < ConductionDirect
         function this = evalHeatRate(this,int)
             % Compute heat rate according to current contact time
             if (int.kinemat.contact_time < this.col_time)
-                % Collisional conduction: ZYH formula
+                % Collisional conduction: Collisional formula
                 this.total_hrate = this.coeff * (int.elem2.temperature-int.elem1.temperature);
             else
                 % Static conduction: Batchelor & O'Brien formula
