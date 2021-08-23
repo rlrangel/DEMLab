@@ -75,6 +75,7 @@ classdef Search_SimpleLoop < Search
                         
                         % Compute and check separation between elements
                         int.kinemat = int.kinemat.setRelPos(p1,p2);
+                        % Assumption: cutoff ratio applies to maximum radius
                         if (int.kinemat.separ >= this.cutoff * max(p1.radius,p2.radius))
                             % Remove interaction references from elements
                             p1.interacts(p1.interacts==int) = [];
@@ -103,6 +104,7 @@ classdef Search_SimpleLoop < Search
                         
                         % Compute and check separation between elements
                         int.kinemat = int.kinemat.setRelPos(p1,w);
+                        % Assumption: cutoff ratio applies to particle radius
                         if (int.kinemat.separ >= this.cutoff * p1.radius)
                             % Remove interaction references from particle
                             p1.interacts(p1.interacts==int) = [];
@@ -142,6 +144,7 @@ classdef Search_SimpleLoop < Search
             separ = dist - p1.radius + p2.radius;
             
             % Check if interaction exists
+            % (assumption: cutoff ratio applies to maximum radius)
             if (separ >= this.cutoff * max(p1.radius,p2.radius))
                 return;
             end
@@ -169,6 +172,7 @@ classdef Search_SimpleLoop < Search
         %------------------------------------------------------------------
         function createInteractPW(this,drv,p,w)
             % Check elements separation and copy kinematics object from base object
+            % (assumption: cutoff ratio applies to particle radius)
             switch (this.pwInteractionType(p,w))
                 case 1
                     this.kinpw_sph_line.setRelPos(p,w);

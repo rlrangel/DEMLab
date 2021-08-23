@@ -28,7 +28,7 @@ classdef Particle_Sphere < Particle
         %------------------------------------------------------------------
         function setDefaultProps(this)
             % Neighbours Interactions
-            this.por_freq = NaN;
+            this.por_freq = NaN; % never compute
             
             % Behavior flags
             this.free_trl   = true;

@@ -29,7 +29,7 @@ classdef Particle_Cylinder < Particle
         %------------------------------------------------------------------
         function setDefaultProps(this)
             % Neighbours Interactions
-            this.por_freq = NaN;
+            this.por_freq = NaN; % never compute
             
             % Behavior flags
             this.free_trl   = true;
@@ -54,6 +54,7 @@ classdef Particle_Cylinder < Particle
         
         %------------------------------------------------------------------
         function setSurface(this)
+            % Assumption: lateral area only
             this.surface = 2 * pi * this.radius * this.len;
         end
         
