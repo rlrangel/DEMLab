@@ -86,14 +86,16 @@ classdef Driver_ThermoMechanical < Driver
         
         %------------------------------------------------------------------
         function dt = criticalTimeStep(~,p)
-            % Mechanical critical time step:
+            % Mechanical critical time step
+            % Refs.:
             % Li et al. A comparison of discrete element simulations and experiments for sandpiles composed of spherical particles, 2005
             dt_mech = pi * p.radius * sqrt(p.material.density / p.material.shear) / (0.8766 + 0.163 * p.material.poisson);
             
             % Apply reduction coefficient
             dt_mech = dt_mech * 0.01;
             
-            % Thermal critical time step:
+            % Thermal critical time step
+            % Refs.:
             % Rojek, Discrete element thermomechanical modelling of rock cutting with valuation of tool wear, 2014
             dt_therm = p.radius * p.material.density * p.material.hcapacity / p.material.conduct;
             

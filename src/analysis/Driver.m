@@ -201,15 +201,17 @@ classdef Driver < handle
         
         %------------------------------------------------------------------
         function voronoiDiagram(this)
+            % Assumption: walls are ignored
             try
                 [this.vor_vtx,this.vor_idx] = voronoiDiagram(delaunayTriangulation([this.particles.coord]'));
             catch
-                fprintf(2,'Could not build Voronoi diagram in %d\n',this.step);
+                fprintf(2,'Could not build Voronoi diagram in step %d\n',this.step);
             end
         end
         
         %------------------------------------------------------------------
         function setGlobalVol(this)
+            % Assumption: in-plane projection area (unity depth)
             this.vol_domain = area(alphaShape([this.particles.coord]',this.alpha));
         end
         
@@ -218,6 +220,8 @@ classdef Driver < handle
             if (isempty(this.vol_domain))
                 this.setGlobalVol();
             else
+                % Assumption: total volume of particles computed as the
+                % in-plane cross-sectional area (unity depth)
                 this.porosity = this.vol_domain/this.cross_particle - 1;
             end
         end
@@ -225,14 +229,17 @@ classdef Driver < handle
         %------------------------------------------------------------------
         function setLocalPorosity(this,p)
             % Vector of interacting particles
+            % Assumption: porosity computed only with interacting neighbours
             P = this.particles([p.id,p.neigh_p]);
             
             % Total volume of alpha-shape polygon of interacting particles
-            % (unit depth: in-plane projection area)
+            % Assumption: in-plane projection area (unity depth)
             vt = area(alphaShape([P.coord]',inf));
             
-            % Total volume of particles (in-plane projection area)
-            % Assumes an average particles radius and polygon interior angle
+            % Total volume of particles
+            % Assumption:
+            % 1. In-plane cross-sectional area (unity depth).
+            % 2. Average particles radius and polygon interior angle.
             ravg = mean([P.radius]);
             vp   = (length(P)-2) * pi^2 * ravg^2;
             
@@ -259,11 +266,14 @@ classdef Driver < handle
         %------------------------------------------------------------------
         function cleanParticles(this)
             erase = false;
+            % Remove particles not respecting bbox and sinks
             for i = 1:this.n_particles
                 if (this.removeParticle(this.particles(i)))
                     erase = true;
                 end
             end
+            
+            % Update global properties depending on total number of particles 
             if (erase)
                 this.erasePropsOfRemovedParticle();
             end

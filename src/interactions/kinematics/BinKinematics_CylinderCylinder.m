@@ -64,6 +64,7 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             this.dir_n  =  this.dir / this.dist;
             
             % Positions of contact point relative to centroids
+            % Assumption: half of the overlap
             c1 =  (p1.radius - this.ovlp_n/2) * this.dir_n;
             c2 = -(p2.radius - this.ovlp_n/2) * this.dir_n;
             
@@ -81,11 +82,8 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             % Normal overlap rate of change
             this.vel_n = dot(this.vel_trl,this.dir_n);
             
-            % Normal relative velocity
-            vn = this.vel_n * this.dir_n;
-            
             % Tangential relative velocity
-            vt = this.vel_trl - vn;
+            vt = this.vel_trl - this.vel_n * this.dir_n;
             
             % Tangential unit vector
             if (any(vt))
@@ -116,6 +114,7 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             r2_2 = r2 * r2;
             
             % Contact radius and area
+            % Assumption: rectangular contact area
             % (abs to avoid imag. numbers when particles are inside each other)
             r = sqrt(abs(r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2));
             this.contact_radius = r;
@@ -131,7 +130,7 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             % Compute edge length according to number of common vertices
             if (length(common) == 2)
                 if (common(1) == 1) % index of unbounded point is 1 (always the 1st element)
-                    % Assumption: the bounded side of the edge is mirroed to the unbounded side
+                    % Assumption: bounded side of the edge is mirroed to the unbounded side
                     A = polyarea([int.elem1.coord(1),int.elem2.coord(1),drv.vor_vtx(common(2),1)],...
                                  [int.elem1.coord(2),int.elem2.coord(2),drv.vor_vtx(common(2),2)]);
                     this.vedge = 4 * A / this.dist;
@@ -169,6 +168,7 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             ft2 = -ft1;
             
             % Lever arm for each particle
+            % Assumption: half of the overlap
             l1 =  (int.elem1.radius-this.ovlp_n/2) * this.dir_n;
             l2 = -(int.elem2.radius-this.ovlp_n/2) * this.dir_n;
             

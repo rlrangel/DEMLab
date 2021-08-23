@@ -64,9 +64,20 @@ classdef ConductionDirect_Pipe < ConductionDirect
         
         %------------------------------------------------------------------
         function this = evalHeatRate(this,int)
+            % Assumption: pipe cross-section area is a circle for spherical
+            % particles and a rectangle for cylindrical particles
+            switch int.elem1.type
+                case int.elem1.SPHERE
+                    A = pi * int.kinemat.contact_radius^2;
+                case int.elem1.CYLINDER
+                    A = 2 * int.kinemat.contact_radius * int.elem1.len;
+            end
+            
             if (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
                 d = int.kinemat.dist;
             else
+                % Assumption: pipe length between particle and wall is
+                % twice the distance between particle center and wall
                 switch int.elem2.type
                     case int.elem2.LINE
                         d = 2 * int.kinemat.dist;
@@ -74,7 +85,7 @@ classdef ConductionDirect_Pipe < ConductionDirect
                         d = 2 * abs(int.kinemat.dist - int.elem2.radius);
                 end
             end
-            this.total_hrate = pi * int.avg_conduct * int.kinemat.contact_radius^2 * (int.elem2.temperature-int.elem1.temperature) / d;
+            this.total_hrate = A * int.avg_conduct * (int.elem2.temperature-int.elem1.temperature) / d;
         end
     end
 end

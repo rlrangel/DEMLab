@@ -43,13 +43,13 @@ classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
         spc_type uint8 = uint8.empty;   % flag for specific type of binary kinematics
         
         % Relative position
-        dir   double = double.empty;   % direction between centroids
+        dir   double = double.empty;   % direction vector between centroids
         dist  double = double.empty;   % distance between centroids
         separ double = double.empty;   % separation between surfaces
         
         % Relative velocities
         vel_trl double = double.empty;   % relative translational velocity at contact point
-        vel_rot double = double.empty;   % relative velocity due to rotation at contact point
+        vel_rot double = double.empty;   % relative velocity at contact point due to rotation only
         vel_ang double = double.empty;   % relative angular velocity
         
         % Normal overlap parameters

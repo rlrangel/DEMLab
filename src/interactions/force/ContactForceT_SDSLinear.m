@@ -96,6 +96,7 @@ classdef ContactForceT_SDSLinear < ContactForceT
         function this = setCteParams(this,int)
             if (this.auto_stiff)
                 if (~isempty(int.cforcen))
+                    % Assumption: average poisson ratio
                     this.stiff = (1-int.avg_poisson)/(1-int.avg_poisson/2) * int.cforcen.stiff;
                 else
                     this.stiff = 0;

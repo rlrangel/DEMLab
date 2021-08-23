@@ -23,10 +23,12 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             p  = int.elem1;  w  = int.elem2;
             mp = p.material; mw = w.material;
             
+            % Assumption: effective radius and mass consider particle only
             int.eff_radius = p.radius;
             int.eff_mass   = p.mass;
             
             % Wall with no material
+            % Assumption: effective and average properties are the particle values
             if (isempty(mw))
                 if (~isempty(mp.young) && ~isempty(mp.poisson))
                     int.eff_young = mp.young / (1 - mp.poisson^2);
@@ -55,7 +57,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
                 end
                 if (~isempty(mp.conduct) && ~isempty(mw.conduct))
                     int.eff_conduct = mp.conduct * mw.conduct / (mp.conduct + mw.conduct);
-                    int.avg_conduct = mp.conduct;
+                    int.avg_conduct = mp.conduct; % assumption: average conductivity considers particle only
                 end
             end
         end
@@ -70,13 +72,13 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             R = w.radius;
             r = p.radius;
             
-            % particle inside circle
+            % Particle inside circle
             if (d <= R)
                 this.inside = true;
                 this.dir    = direction;
                 this.separ  = R - d - r;
                 
-            % particle outside circle
+            % Particle outside circle
             else
                 this.inside = false;
                 this.dir    = -direction;
@@ -93,6 +95,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             this.dir_n  =  this.dir / this.dist;
             
             % Positions of contact point
+            % Assumption: discount the full overlap from particle
             cp = (p.radius - this.ovlp_n) * this.dir_n;
             if (this.inside)
                 cw = w.radius * this.dir_n;
@@ -109,18 +112,16 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             vcw = w.veloc_trl + ww(1:2);
             
             % Relative velocities
+            % Assumption: rotation and angular velocities consider the particle only
             this.vel_trl = vcp - vcw;
-            this.vel_rot = wp(1:2);       % assumption: particle only
-            this.vel_ang = p.veloc_rot;   % assumption: particle only
+            this.vel_rot = wp(1:2);       % particle only
+            this.vel_ang = p.veloc_rot;   % particle only
             
             % Normal overlap rate of change
             this.vel_n = dot(this.vel_trl,this.dir_n);
             
-            % Normal relative velocity
-            vn = this.vel_n * this.dir_n;
-            
             % Tangential relative velocity
-            vt = this.vel_trl - vn;
+            vt = this.vel_trl - this.vel_n * this.dir_n;
             
             % Tangential unit vector
             if (any(vt))
@@ -151,7 +152,8 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             r2_2 = r2 * r2;
             
             % Contact radius and area
-            r = sqrt(r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2);
+            % Assumption: rectangular contact area
+            r = sqrt(r1_2-((r1_2-r2_2+d^2)/(2*d))^2);
             this.contact_radius = r;
             this.contact_area   = 2 * r * l;
         end
@@ -175,6 +177,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
         %------------------------------------------------------------------
         function addContactTorqueTangentToParticles(this,int)
             % Lever arm
+            % Assumption: half of the overlap
             l = (int.elem1.radius-this.ovlp_n/2) * this.dir_n;
             
             % Torque from tangential contact force (3D due to cross-product)

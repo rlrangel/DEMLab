@@ -134,7 +134,8 @@ classdef ConductionDirect_ZYH < ConductionDirect
             Rc = (15 * m * r * v0^2 / (16 * y))^(1/5);
             tc = (m^2 / (r * e^2 * v0))^(1/5);
             
-            % Fourier number (assumption: average for particles)
+            % Fourier number
+            % Assumption: average for particles
             if (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
                 F1 = k1 * tc / (rho1 * cp1 * Rc^2);
                 F2 = k2 * tc / (rho2 * cp2 * Rc^2);

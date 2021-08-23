@@ -71,7 +71,7 @@ classdef RollResist_Viscous < RollResist
             f   = norm(int.cforcen.total_force);
             v   = norm(int.kinemat.vel_rot);
             
-            % Total torque  (against relative rotation)
+            % Total torque (against relative rotation)
             this.torque = dir * res * r * f * v;
         end
     end

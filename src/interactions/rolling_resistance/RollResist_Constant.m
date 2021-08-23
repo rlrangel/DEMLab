@@ -68,7 +68,7 @@ classdef RollResist_Constant < RollResist
             r   = int.eff_radius;
             f   = norm(int.cforcen.total_force);
             
-            % Total torque  (against relative rotation)
+            % Total torque (against relative rotation)
             this.torque = dir * res * r * f;
         end
     end

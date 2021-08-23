@@ -80,6 +80,7 @@ classdef Driver_Mechanical < Driver
         
         %------------------------------------------------------------------
         function dt = criticalTimeStep(~,p)
+            % Refs.:
             % Li et al. A comparison of discrete element simulations and experiments for sandpiles composed of spherical particles, 2005
             dt = pi * p.radius * sqrt(p.material.density / p.material.shear) / (0.8766 + 0.163 * p.material.poisson);
             

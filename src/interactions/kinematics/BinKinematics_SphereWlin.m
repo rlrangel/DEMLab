@@ -23,10 +23,12 @@ classdef BinKinematics_SphereWlin < BinKinematics
             p  = int.elem1;  w  = int.elem2;
             mp = p.material; mw = w.material;
             
+            % Assumption: effective radius and mass consider particle only
             int.eff_radius = p.radius;
             int.eff_mass   = p.mass;
             
             % Wall with no material
+            % Assumption: effective and average properties are the particle values
             if (isempty(mw))
                 if (~isempty(mp.young) && ~isempty(mp.poisson))
                     int.eff_young = mp.young / (1 - mp.poisson^2);
@@ -55,7 +57,7 @@ classdef BinKinematics_SphereWlin < BinKinematics
                 end
                 if (~isempty(mp.conduct) && ~isempty(mw.conduct))
                     int.eff_conduct = mp.conduct * mw.conduct / (mp.conduct + mw.conduct);
-                    int.avg_conduct = mp.conduct;
+                    int.avg_conduct = mp.conduct; % assumption: average conductivity considers particle only
                 end
             end
         end
@@ -82,7 +84,7 @@ classdef BinKinematics_SphereWlin < BinKinematics
             
             % Distance between particle surface and line segment
             this.dist  = norm(this.dir);
-            this.separ =  this.dist - p.radius;
+            this.separ = this.dist - p.radius;
         end
         
         %------------------------------------------------------------------
@@ -90,10 +92,12 @@ classdef BinKinematics_SphereWlin < BinKinematics
             p = int.elem1; w = int.elem2;
             
             % Normal overlap and unit vector
+            % Assumption: the ends of the wall are treated as a flat surface
             this.ovlp_n = -this.separ;
             this.dir_n  =  this.dir / this.dist;
             
             % Positions of contact point
+            % Assumption: discount the full overlap from particle
             cp = (p.radius - this.ovlp_n) * this.dir_n;
             cw = (p.coord+cp) - (w.coord_ini+w.coord_end)/2;
             
@@ -106,6 +110,7 @@ classdef BinKinematics_SphereWlin < BinKinematics
             vcw = w.veloc_trl + ww(1:2);
             
             % Relative velocities
+            % Assumption: rotation and angular velocities consider the particle only
             this.vel_trl = vcp - vcw;
             this.vel_rot = wp(1:2);       % particle only
             this.vel_ang = p.veloc_rot;   % particle only
@@ -113,11 +118,8 @@ classdef BinKinematics_SphereWlin < BinKinematics
             % Normal overlap rate of change
             this.vel_n = dot(this.vel_trl,this.dir_n);
             
-            % Normal relative velocity
-            vn = this.vel_n * this.dir_n;
-            
             % Tangential relative velocity
-            vt = this.vel_trl - vn;
+            vt = this.vel_trl - this.vel_n * this.dir_n;
             
             % Tangential unit vector
             if (any(vt))
@@ -168,6 +170,7 @@ classdef BinKinematics_SphereWlin < BinKinematics
         %------------------------------------------------------------------
         function addContactTorqueTangentToParticles(this,int)
             % Lever arm
+            % Assumption: half of the overlap
             l = (int.elem1.radius-this.ovlp_n/2) * this.dir_n;
             
             % Torque from tangential contact force (3D due to cross-product)
