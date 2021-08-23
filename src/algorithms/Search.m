@@ -16,12 +16,14 @@
 % the derived *sub-classes*:
 %
 % * <search_simpleloop.html Search_SimpleLoop> (default)
+% * <search_verletlist.html Search_VerletList>
 %
 classdef Search < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of search algorithm
         SIMPLE_LOOP = uint8(1);
+        VERLET_LIST = uint8(2);
     end
     
     %% Public properties
@@ -61,5 +63,39 @@ classdef Search < handle & matlab.mixin.Heterogeneous
         
         %------------------------------------------------------------------
         execute(this,drv);
+    end
+    
+    %% Public methods
+    methods
+        %------------------------------------------------------------------
+        function kin = createPPKinematic(~,p1,dir,dist,separ)
+            % Only sphere-sphere or cylinder-cylinder interactions
+            switch p1.type
+                case p1.SPHERE
+                    kin = BinKinematics_SphereSphere(dir,dist,separ);
+                case p1.CYLINDER
+                    kin = BinKinematics_CylinderCylinder(dir,dist,separ);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function type = pwInteractionType(~,p,w)
+            switch p.type
+                case p.SPHERE
+                    switch w.type
+                        case w.LINE
+                            type = 1;
+                        case w.CIRCLE
+                            type = 2;
+                    end
+                case p.CYLINDER
+                    switch w.type
+                        case w.LINE
+                            type = 3;
+                        case w.CIRCLE
+                            type = 4;
+                    end
+            end
+        end
     end
 end

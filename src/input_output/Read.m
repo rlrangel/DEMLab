@@ -396,23 +396,63 @@ classdef Read < handle
             end
             
             % Scheme
-            if (isfield(json.Search,'scheme'))
-                scheme = string(json.Search.scheme);
-                if (~this.isStringArray(scheme,1) || ~strcmp(scheme,'simple_loop'))
-                    this.invalidOptError('Search.scheme','simple_loop');
-                    status = 0; return;
-                elseif (strcmp(scheme,'simple_loop'))
-                    drv.search = Search_SimpleLoop();
-                end
+            if (~isfield(json.Search,'scheme'))
+                this.missingDataError('Search.scheme');
+                status = 0; return;
             end
-            
-            % Search frequency
-            if (isfield(json.Search,'search_frequency'))
-                if (~this.isIntArray(json.Search.search_frequency,1) || json.Search.search_frequency <= 0)
-                    this.invalidParamError('Search.search_frequency','It must be a positive integer');
-                    status = 0; return;
+            scheme = string(Search.scheme);
+            if (~this.isStringArray(scheme,1) ||...
+               (~strcmp(scheme,'simple_loop') &&...
+                ~strcmp(scheme,'verlet_list')))
+                this.invalidOptError('Search.scheme','simple_loop, verlet_list');
+                status = 0; return;
+                
+            elseif (strcmp(scheme,'simple_loop'))
+                drv.search = Search_SimpleLoop();
+                
+                % Search frequency
+                if (isfield(json.Search,'search_frequency'))
+                    if (~this.isIntArray(json.Search.search_frequency,1) || json.Search.search_frequency <= 0)
+                        this.invalidParamError('Search.search_frequency','It must be a positive integer');
+                        status = 0; return;
+                    end
+                    drv.search.freq = json.Search.search_frequency;
                 end
-                drv.search.freq = json.Search.search_frequency;
+
+            elseif (strcmp(scheme,'verlet_list'))
+                drv.search = Search_VerletList();
+                
+                % Search frequency
+                if (isfield(json.Search,'search_frequency'))
+                    if (~this.isIntArray(json.Search.search_frequency,1) || json.Search.search_frequency <= 0)
+                        this.invalidParamError('Search.search_frequency','It must be a positive integer');
+                        status = 0; return;
+                    end
+                    drv.search.freq = json.Search.search_frequency;
+                end
+                
+                % Verlet list update frequency
+                if (isfield(json.Search,'verlet_frequency'))
+                    if (~this.isIntArray(json.Search.verlet_frequency,1) || json.Search.verlet_frequency < drv.search.freq)
+                        this.invalidParamError('Search.verlet_frequency','It must be greater than the search frequency');
+                        status = 0; return;
+                    end
+                    drv.search.verlet_freq = json.Search.verlet_frequency;
+                else
+                    drv.search.verlet_freq = 10 * drv.search.freq;
+                end
+                
+                % Verlet distance
+                if (isfield(json.Search,'verlet_distance'))
+                    if (~this.isDoubleArray(json.Search.verlet_distance,1) || json.Search.verlet_distance <= 0)
+                        this.invalidParamError('Search.verlet_distance','It must be a positive value');
+                        status = 0; return;
+                    end
+                    drv.search.verlet_dist = json.Search.verlet_distance;
+                else
+                    Rmax = max([drv.particles.radius]);
+                    drv.search.verlet_dist = 5*Rmax;
+                end
             end
         end
         
@@ -4635,6 +4675,11 @@ classdef Read < handle
             if (isempty(drv.search))
                 this.missingDataError('No search scheme was provided.');
                 status = 0; return;
+            elseif (drv.search.type == drv.search.VERLET_LIST)
+                Rmax = max([drv.particles.radius]);
+                if (drv.search.verlet_dist <= 2*Rmax+drv.search.cutoff)
+                    this.warnMsg('Verlet distance may be too small');
+                end
             end
             if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) &&...
                 (isempty(drv.scheme_trl) || isempty(drv.scheme_rot)))

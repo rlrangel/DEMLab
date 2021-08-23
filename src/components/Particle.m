@@ -43,6 +43,8 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         
         % Neighbours Interactions
         interacts Interact = Interact.empty;   % handles to objects of Interact class
+        verlet_p  Particle = Particle.empty;   % handles to objects of Particle class in the verlet list
+        verlet_w  Wall     = Wall.empty;       % handles to objects of Wall class in the verlet list
         neigh_p   uint32   = uint32.empty;     % vector of neighbours particles IDs
         neigh_w   uint32   = uint32.empty;     % vector of neighbours walls IDs
         porosity  double   = double.empty;     % average porosity (void ratio) around particle
