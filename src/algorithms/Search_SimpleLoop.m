@@ -75,7 +75,7 @@ classdef Search_SimpleLoop < Search
                         
                         % Compute and check separation between elements
                         int.kinemat = int.kinemat.setRelPos(p1,p2);
-                        if (int.kinemat.separ >= this.cutoff * (p1.radius + p2.radius)/2)
+                        if (int.kinemat.separ >= this.cutoff * max(p1.radius,p2.radius))
                             % Remove interaction references from elements
                             p1.interacts(p1.interacts==int) = [];
                             p1.neigh_p(p1.neigh_p==p2.id)   = [];
@@ -139,11 +139,10 @@ classdef Search_SimpleLoop < Search
             %     For other shapes, the base kinematic object will be used.
             dir   = p2.coord - p1.coord;
             dist  = norm(dir);
-            psum  = p1.radius + p2.radius;
-            separ = dist - psum;
+            separ = dist - p1.radius + p2.radius;
             
             % Check if interaction exists
-            if (separ >= this.cutoff * psum/2)
+            if (separ >= this.cutoff * max(p1.radius,p2.radius))
                 return;
             end
             

@@ -6,7 +6,97 @@
 % class for the implementation of the *Voronoi Polyhedra A* indirect heat
 % conduction model.
 %
-% DESCRIPTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+% This model assumes that the indirect heat conduction between two
+% neighboring elements is restricted to the region delineated by the
+% double pyramid whose apexes are the particles' centers and base is the
+% Voronoi boundary plane shared by the particles' cells.
+% For simplicity, the double pyramid is treated as a double tapered cone
+% with the same base area _A_.
+% In 2D, the Voronoi edge shared by the cells of both particles represents
+% the diameter of the cone base.
+%
+% <<voronoi.png>>
+%
+% In model A, the following assumptions are made:
+%
+% * The surface of the double tapered cone is isothermal.
+% * Conduction is negligible in the outer region of the cone (region B).
+% * Heat flow paths are parallel to the normal direction between particles.
+%
+% For *mono-size particles*, the rate of heat transfer is given by:
+%
+% $$Q = \Delta T\int_{R_{c}}^{r_{sf}}\frac{2\pi.r.dr}{\left(\sqrt{R_{p}^{2}-r^{2}}-r.d/2r_{ij}\right)/k_{eff}+2\left(d/2-\sqrt{R_{p}^{2}-r^{2}}\right)/k_{f}}$$
+%
+% Where:
+%
+% $$r_{sf} = \frac{R_{p}r_{ij}}{\sqrt{r_{ij}^2+d^{2}/4}}$$
+%
+% For *multi-size particles*, the rate of heat transfer is given by:
+%
+% $$Q = \Delta T\int_{R_{c}}^{r_{sf}}\frac{2\pi.r.dr}{\left(\beta_{i}-rD_{i}/r_{ij}\right)/k_{i}+\left(\beta_{j}-rD_{j}/r_{ij}'\right)/k_{j}+\left(d-\beta_{i}-\beta_{j}\right)/k_{f}}$$
+%
+% Where:
+%
+% $$\beta_{i} = \sqrt{R_{i}^{2}-r^{2}}$$
+%
+% $$\beta_{j} = \sqrt{R_{j}^{2}-r^{2}}$$
+%
+% $D_{i} = \sqrt{R_{i}^{2}-R_{c}^{2}}$ (if contact)
+%
+% $D_{i} = \frac{R_{i}^{2}-R_{j}^{2}+d^{2}}{2d}$ (if non-contact)
+%
+% $$D_{j} = d-D_{i}$$
+%
+% $r_{sf} = R_{i}r_{ij}/\sqrt{r_{ij}^{2}+D_{i}^{2}}$ (if $R_{i} \leq R_{j}$)
+%
+% $r_{sf} = R_{j}r_{ij}/\sqrt{r_{ij}^{2}+D_{j}^{2}}$ (if $R_{i} > R_{j}$)
+%
+% $$r_{ij}' = \frac{D_{j}r_{sf}}{\sqrt{R_{j}^{2}-R_{f}^{2}}}$$
+%
+% In both cases, the heat transfer radius $r_{ij}$ depends on the shape and
+% size of the Voronoi cells. There are 3 methods to obtain its value:
+%
+% * *1. Voronoi Diagram*:
+%
+% The Voronoi diagram is built in a given frequency, and the heat transfer
+% radius is related to the volume _V_ and diameter _Le_ of the double
+% tapered cone as:
+%
+% $$r_{ij} = \sqrt{\frac{3V}{\pi d}} = \frac{L_{e}}{2}$$
+%
+% * *2. Local Porosity*:
+%
+% It has been shown that the average size of the Voronoi cells is related
+% to the porosity of the medium _e_, in such a way that the heat transfer
+% radius can be computed as:
+%
+% $$r_{ij} = 0.56R_{p}\left(1-e\right)^{-1/3}$$
+%
+% In this method, instead of building the Voronoi diagram, the local
+% porosity around each particle, considering its immediate neighbors,
+% is computed and updated in a given frequency.
+%
+% * *3. Global Porosity*:
+%
+% In this method, the value of the average global porosity is directly
+% provided and kept constant, or it is automatically computed by assuming
+% that the total volume of the domain is obtained by the applying the
+% <https://www.mathworks.com/help/matlab/ref/alphashape.html alpha-shape
+% method> over all particles.
+%
+% *Notation*:
+%
+% $\Delta T = T_{j}-T_{i}$: Temperature difference between elements _i_ and _j_
+%
+% $R$: Radius of particles _i_ and _j_ (or _p_ when mono-size)
+%
+% $R_{c}$: Contact radius
+%
+% $d$: Distance between the center of the particles
+%
+% $k$: Thermal conductivity of particles _i_ and _j_, and interstitial fluid _f_
+%
+% $k_{eff}$: Effective contact conductivity
 %
 % *References*:
 %
@@ -28,7 +118,7 @@
 classdef ConductionIndirect_VoronoiA < ConductionIndirect
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        method  uint8  = uint8.empty;    % flag for type of method to compute cells size
+        method  uint8  = uint8.empty;    % flag for type of method to compute voronoi cells size
         coeff   double = double.empty;   % heat transfer coefficient
         tol_abs double = double.empty;   % absolute tolerance for numerical integration
         tol_rel double = double.empty;   % relative tolerance for numerical integration
@@ -99,7 +189,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             rsf = Rp * rij / sqrt(rij^2 + D^2);            
             
             % Evaluate integral numerically
-            fun = @(r) 2*pi*r / ((sqrt(Rp^2-r.^2) - r*D/rij)/ks + 2*(D - sqrt(Rp^2-r.^2))/kf);
+            fun = @(r) 2*pi*r / ((sqrt(Rp^2-r.^2)-r*D/rij)/ks + 2*(D-sqrt(Rp^2-r.^2))/kf);
             try
                 q = integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
             catch

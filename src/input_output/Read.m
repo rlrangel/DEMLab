@@ -3760,8 +3760,10 @@ classdef Read < handle
             end
             model = string(IM.indirect_conduction.model);
             if (~this.isStringArray(model,1) ||...
-               (~strcmp(model,'vononoi_a')))
-                this.invalidOptError('InteractionModel.indirect_conduction.model','vononoi_a');
+               (~strcmp(model,'vononoi_a')   &&...
+                ~strcmp(model,'vononoi_b')   &&...
+                ~strcmp(model,'surrounding_layer')))
+                this.invalidOptError('InteractionModel.indirect_conduction.model','vononoi_a, vononoi_b, surrounding_layer');
                 status = 0; return;
             end
             
@@ -3771,17 +3773,16 @@ classdef Read < handle
                     status = 0;
                     return;
                 end
-            end
-            
-            % Cutoff distance (mechanical analysis must be always 0)
-            if (isfield(IM,'cutoff_distance'))
-                if (~this.isDoubleArray(IM.cutoff_distance,1))
-                    this.invalidParamError('InteractionModel.indirect_conduction.cutoff_distance','It must be a numeric value');
-                    status = 0; return;
+            elseif (strcmp(model,'vononoi_b'))
+                if (~this.indirectConduction_VoronoiB(IM.indirect_conduction,drv))
+                    status = 0;
+                    return;
                 end
-                drv.search.cutoff = IM.cutoff_distance;
-            else
-                drv.search.cutoff = 1;
+            elseif (strcmp(model,'surrounding_layer'))
+                if (~this.indirectConduction_SurrLayer(IM.indirect_conduction,drv))
+                    status = 0;
+                    return;
+                end
             end
         end
         
@@ -4452,6 +4453,173 @@ classdef Read < handle
                 end
                 drv.search.b_interact.iconduc.tol_rel = IC.tolerance_relative;
             end
+            
+            % Cutoff distance (ratio of particles radius)
+            if (isfield(IC,'cutoff_distance'))
+                if (~this.isDoubleArray(IC.cutoff_distance,1))
+                    this.invalidParamError('InteractionModel.indirect_conduction.cutoff_distance','It must be a numeric value');
+                    status = 0; return;
+                end
+                drv.search.cutoff = IC.cutoff_distance;
+            else
+                drv.search.cutoff = 1;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = indirectConduction_VoronoiB(this,IC,drv)
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.iconduc = ConductionIndirect_VoronoiB();
+            
+            % Method to compute cells size
+            if (isfield(IC,'cell_size_method'))
+                method = string(IC.cell_size_method);
+                if (~this.isStringArray(method,1)    ||...
+                   (~strcmp(model,'voronoi_diagram') &&...
+                    ~strcmp(model,'porosity_local')  &&...
+                    ~strcmp(model,'porosity_global')))
+                    this.invalidOptError('InteractionModel.indirect_conduction.cell_size_method','voronoi_diagram, porosity_local, porosity_global');
+                    status = 0; return;
+                end
+                if (strcmp(method,'voronoi_diagram'))
+                    drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.VORONOI_DIAGRAM;
+                    
+                    % Voronoi diagram update frequency
+                    if (isfield(IC,'update_frequency'))
+                        freq = IC.update_frequency;
+                        if (~this.isIntArray(freq,1) || freq < 0)
+                            this.invalidParamError('InteractionModel.indirect_conduction.update_frequency','It must be a positive integer');
+                            status = 0; return;
+                        end
+                        drv.vor_freq = freq;
+                    else
+                        drv.vor_freq = drv.search.freq;
+                    end
+                    
+                elseif (strcmp(method,'porosity_local'))
+                    drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.POROSITY_LOCAL;
+                    
+                    % Local porosity update frequency
+                    if (isfield(IC,'update_frequency'))
+                        freq = IC.update_frequency;
+                        if (~this.isIntArray(freq,1) || freq < 0)
+                            this.invalidParamError('InteractionModel.indirect_conduction.update_frequency','It must be a positive integer');
+                            status = 0; return;
+                        end
+                        [drv.particles.por_freq] = deal(freq);
+                    else
+                        [drv.particles.por_freq] = deal(drv.search.freq);
+                    end
+                    
+                elseif (strcmp(method,'porosity_global'))
+                    drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.POROSITY_GLOBAL;
+                    
+                    % Global porosity update frequency
+                    if (isfield(IC,'update_frequency'))
+                        freq = IC.update_frequency;
+                        if (~this.isIntArray(freq,1) || freq < 0)
+                            this.invalidParamError('InteractionModel.indirect_conduction.update_frequency','It must be a positive integer');
+                            status = 0; return;
+                        end
+                        drv.por_freq = freq;
+                    else
+                        drv.por_freq = drv.search.freq;
+                    end
+                    
+                    % Alpha radius
+                    if (isfield(IC,'alpha_radius'))
+                        alpha = IC.alpha_radius;
+                        if (~this.isDoubleArray(alpha,1) || alpha < 0)
+                            this.invalidParamError('InteractionModel.indirect_conduction.alpha_radius','It must be a positive value');
+                            status = 0; return;
+                        end
+                        drv.alpha = alpha;
+                    else
+                        drv.alpha = inf; % convex hull
+                    end
+                end
+            end            
+            
+            % Prescribed global porosity
+            if (isfield(IC,'porosity'))
+                % Check inconsistency of provided data
+                if (~isnan(drv.por_freq))
+                    this.warnMsg('A constant global porosity has been provided, so other parameters will be ignored.');
+                end
+                
+                por = IC.porosity;
+                if (~this.isDoubleArray(por,1) || por < 0 || por > 1)
+                    this.invalidParamError('InteractionModel.indirect_conduction.porosity','It must be a value between 0 and 1');
+                    status = 0; return;
+                end
+                drv.porosity = por;
+                drv.por_freq = NaN; % never updates global porosity (keep global value)
+            end
+            
+            % Isothermal core radius
+            if (isfield(IC,'core_radius'))
+                if (~this.isDoubleArray(IC.core_radius,1) || IC.core_radius <= 0 || IC.core_radius > 1)
+                    this.invalidParamError('InteractionModel.indirect_conduction.core_radius','It must be a value between 0 and 1');
+                    status = 0; return;
+                end
+                drv.search.b_interact.iconduc.core = IC.tolerance_absolute;
+            end
+            
+            % Cutoff distance (ratio of particles radius)
+            if (isfield(IC,'cutoff_distance'))
+                if (~this.isDoubleArray(IC.cutoff_distance,1))
+                    this.invalidParamError('InteractionModel.indirect_conduction.cutoff_distance','It must be a numeric value');
+                    status = 0; return;
+                end
+                drv.search.cutoff = IC.cutoff_distance;
+            else
+                drv.search.cutoff = 1;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = indirectConduction_SurrLayer(this,IC,drv)
+            status = 1;
+            
+            % Create object
+            drv.search.b_interact.iconduc = ConductionIndirect_SurrLayer();
+            
+            % Surrounding fluid layer thickness (cutoff distance)
+            if (isfield(IC,'layer_thick'))
+                if (~this.isDoubleArray(IC.layer_thick,1) || IC.layer_thick < 0)
+                    this.invalidParamError('InteractionModel.indirect_conduction.layer_thick','It must be a positive value');
+                    status = 0; return;
+                end
+                drv.search.b_interact.iconduc.layer = IC.layer_thick;
+            end
+            drv.search.cutoff = drv.search.b_interact.iconduc.layer;
+            
+            % Minimum separation distance
+            if (isfield(IC,'min_distance'))
+                if (~this.isDoubleArray(IC.min_distance,1) || IC.min_distance <= 0)
+                    this.invalidParamError('InteractionModel.indirect_conduction.min_distance','It must be a positive value');
+                    status = 0; return;
+                end
+                drv.search.b_interact.iconduc.dist_min = IC.min_distance;
+            end
+            
+            % Tollerances for numerical integration
+            if (isfield(IC,'tolerance_absolute'))
+                if (~this.isDoubleArray(IC.tolerance_absolute,1) || IC.tolerance_absolute <= 0)
+                    this.invalidParamError('InteractionModel.indirect_conduction.tolerance_absolute','It must be a positive value');
+                    status = 0; return;
+                end
+                drv.search.b_interact.iconduc.tol_abs = IC.tolerance_absolute;
+            end
+            if (isfield(IC,'tolerance_relative'))
+                if (~this.isDoubleArray(IC.tolerance_relative,1) || IC.tolerance_relative <= 0)
+                    this.invalidParamError('InteractionModel.indirect_conduction.tolerance_relative','It must be a positive value');
+                    status = 0; return;
+                end
+                drv.search.b_interact.iconduc.tol_rel = IC.tolerance_relative;
+            end
         end
     end
     
@@ -4650,6 +4818,20 @@ classdef Read < handle
                     if (drv.search.b_interact.iconduc.method == drv.search.b_interact.iconduc.VORONOI_DIAGRAM &&...
                         drv.n_particles < 3)
                         fprintf(2,'The selected indirect conduction model requires at least 3 particles to build the Voronoi diagram.');
+                        status = 0; return;
+                    end
+                end
+                if (drv.search.b_interact.iconduc.type == drv.search.b_interact.iconduc.VORONOI_B)
+                    if (drv.search.b_interact.iconduc.method == drv.search.b_interact.iconduc.VORONOI_DIAGRAM &&...
+                        drv.n_particles < 3)
+                        fprintf(2,'The selected indirect conduction model requires at least 3 particles to build the Voronoi diagram.');
+                        status = 0; return;
+                    end
+                end
+                if (drv.search.b_interact.iconduc.type == drv.search.b_interact.iconduc.SURROUNDING_LAYER)
+                    rmin = min([drv.particles.radius]);
+                    if (drv.search.b_interact.iconduc.dist_min >= rmin)
+                        fprintf(2,'The value of InteractionModel.indirect_conduction.min_distance is too high.');
                         status = 0; return;
                     end
                 end
