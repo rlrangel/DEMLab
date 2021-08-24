@@ -54,6 +54,7 @@
 % * <contactforcen.html ContactForceN>
 % * <contactforcet.html ContactForceT>
 % * <rollresist.html RollResist>
+% * <areacorrect.html AreaCorrect>
 % * <conductiondirect.html ConductionDirect>
 % * <conductionindirect.html ConductionIndirect>
 % * <read.html Read>
