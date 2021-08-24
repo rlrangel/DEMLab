@@ -32,6 +32,9 @@ classdef BinKinematics_SphereWlin < BinKinematics
             if (isempty(mw))
                 if (~isempty(mp.young) && ~isempty(mp.poisson))
                     int.eff_young = mp.young / (1 - mp.poisson^2);
+                    if (~isempty(mp.young0))
+                        int.eff_young0 = mp.young0 / (1 - mp.poisson^2);
+                    end
                 end
                 if (~isempty(mp.shear) && ~isempty(mp.poisson))
                     int.eff_shear = mp.shear / (2 - mp.poisson^2);
@@ -48,6 +51,9 @@ classdef BinKinematics_SphereWlin < BinKinematics
             else
                 if (~isempty(mp.young) && ~isempty(mp.poisson) && ~isempty(mw.young) && ~isempty(mw.poisson))
                     int.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
+                    if (~isempty(mp.young0) && ~isempty(mw.young0))
+                        int.eff_young0 = 1 / ((1-mp.poisson^2)/mp.young0 + (1-mw.poisson^2)/mw.young0);
+                    end
                 end
                 if (~isempty(mp.shear) && ~isempty(mp.poisson) && ~isempty(mw.shear) && ~isempty(mw.poisson))
                     int.eff_shear = 1 / ((2-mp.poisson^2)/mp.shear + (2-mw.poisson^2)/mw.shear);
@@ -145,10 +151,16 @@ classdef BinKinematics_SphereWlin < BinKinematics
             r = int.elem1.radius;
             ovlp = this.ovlp_n;
             
-            % Contact radius and area
-            R2 = ovlp*(2*r-ovlp);
-            this.contact_radius = sqrt(R2);
-            this.contact_area = pi * R2;
+            % Contact radius
+            this.contact_radius = sqrt(ovlp*(2*r-ovlp));
+            
+            % Contact radius correction
+            if (~isempty(int.corarea))
+                int.corarea.fixRadius(int);
+            end
+            
+            % Contact area
+            this.contact_area = pi * this.contact_radius^2;
         end
         
         %------------------------------------------------------------------

@@ -15,7 +15,7 @@ classdef Material < handle
         % Mechanical properties
         density    double = double.empty;
         young      double = double.empty;
-        young_real double = double.empty;
+        young0     double = double.empty;
         shear      double = double.empty;
         poisson    double = double.empty;
         

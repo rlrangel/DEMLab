@@ -2470,7 +2470,7 @@ classdef Read < handle
                     elseif (prop.young_modulus_real <= 0)
                         msg = msg + 1;
                     end
-                    mat.young_real = prop.young_modulus_real;
+                    mat.young0 = prop.young_modulus_real;
                 end
                 if (isfield(prop,'shear_modulus'))
                     if (~this.isDoubleArray(prop.shear_modulus,1))
@@ -2576,6 +2576,10 @@ classdef Read < handle
                     return;
                 end
                 if (~this.interactRollResist(json.InteractionModel,drv))
+                    status = 0;
+                    return;
+                end
+                if (~this.interactAreaCorrection(json.InteractionModel,drv))
                     status = 0;
                     return;
                 end
@@ -3601,9 +3605,9 @@ classdef Read < handle
             end
             model = string(IM.contact_force_normal.model);
             if (~this.isStringArray(model,1)            ||...
-               (~strcmp(model,'viscoelastic_linear'))   &&...
+               (~strcmp(model,'viscoelastic_linear')    &&...
                 ~strcmp(model,'viscoelastic_nonlinear') &&...
-                ~strcmp(model,'elastoplastic_linear'))
+                ~strcmp(model,'elastoplastic_linear')))
                 this.invalidOptError('InteractionModel.contact_force_normal.model','viscoelastic_linear, viscoelastic_nonlinear, elastoplastic_linear');
                 status = 0; return;
             end
@@ -3732,8 +3736,8 @@ classdef Read < handle
             end
             model = string(IM.rolling_resistance.model);
             if (~this.isStringArray(model,1) ||...
-               (~strcmp(model,'constant'))   &&...
-                ~strcmp(model,'viscous'))
+               (~strcmp(model,'constant')    &&...
+                ~strcmp(model,'viscous')))
                 this.invalidOptError('InteractionModel.rolling_resistance.model','constant, viscous');
                 status = 0; return;
             end
@@ -3749,6 +3753,37 @@ classdef Read < handle
                     status = 0;
                     return;
                 end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = interactAreaCorrection(this,IM,drv)
+            status = 1;
+            if (~isfield(IM,'area_correction'))
+                return;
+            end
+            
+            % Model parameters
+            if (~isfield(IM.area_correction,'model'))
+                this.missingDataError('InteractionModel.area_correction.model');
+                status = 0; return;
+            end
+            model = string(IM.area_correction.model);
+            if (~this.isStringArray(model,1) ||...
+               (~strcmp(model,'ZYZ')  &&...
+                ~strcmp(model,'LMLB') &&...
+                ~strcmp(model,'MPMH')))
+                this.invalidOptError('InteractionModel.area_correction.model','ZYZ, LMLB, MPMH');
+                status = 0; return;
+            end
+            
+            % Create object
+            if (strcmp(model,'ZYZ'))
+                drv.search.b_interact.corarea = AreaCorrect_ZYZ();
+            elseif (strcmp(model,'LMLB'))
+                drv.search.b_interact.corarea = AreaCorrect_LMLB();
+            elseif (strcmp(model,'MPMH'))
+                drv.search.b_interact.corarea = AreaCorrect_MPMH();
             end
         end
         
@@ -4722,6 +4757,10 @@ classdef Read < handle
                     fprintf(2,'Missing thermal properties of material %s.',m.name);
                     status = 0; return;
                 end
+                if (~isempty(m.young0) && isempty(m.young))
+                    this.warnMsg('The value of the real Young modulus was provided, but not the simulation value. Therefore, these values will be assumed as equal.');
+                    m.young = m.young0;
+                end
                 if (~isempty(m.young) && ~isempty(m.poisson))
                     shear_from_poisson = m.young / (2 + 2*m.poisson);
                     if (isempty(m.shear))
@@ -4845,6 +4884,14 @@ classdef Read < handle
             if (~isempty(drv.search.b_interact.rollres))
                 
             end
+            
+            % Area correction
+            if (~isempty(drv.search.b_interact.corarea))
+                if (length(findobj(drv.materials,'young0',[])) > 1)
+                    fprintf(2,'Area correction models require the real value of the Young modulus to be provided.');
+                    status = 0; return;
+                end
+            end         
             
             % Direct conduction
             if (~isempty(drv.search.b_interact.dconduc))

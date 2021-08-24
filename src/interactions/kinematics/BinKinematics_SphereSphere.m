@@ -35,6 +35,9 @@ classdef BinKinematics_SphereSphere < BinKinematics
             
             if (~isempty(m1.young) && ~isempty(m1.poisson) && ~isempty(m2.young) && ~isempty(m2.poisson))
                 int.eff_young = 1 / ((1-m1.poisson^2)/m1.young + (1-m2.poisson^2)/m2.young);
+                if (~isempty(m1.young0) && ~isempty(m2.young0))
+                    int.eff_young0 = 1 / ((1-m1.poisson^2)/m1.young0 + (1-m2.poisson^2)/m2.young0);
+                end
             end
             if (~isempty(m1.shear) && ~isempty(m1.poisson) && ~isempty(m2.shear) && ~isempty(m2.poisson))
                 int.eff_shear = 1 / ((2-m1.poisson^2)/m1.shear + (2-m2.poisson^2)/m2.shear);
@@ -112,11 +115,17 @@ classdef BinKinematics_SphereSphere < BinKinematics
             r1_2 = r1 * r1;
             r2_2 = r2 * r2;
             
-            % Contact radius and area
+            % Contact radius
             % (abs to avoid imag. numbers when particles are inside each other)
-            R2 = abs(r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2);
-            this.contact_radius = sqrt(R2);
-            this.contact_area = pi * R2;
+            this.contact_radius = sqrt(abs(r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2));
+            
+            % Contact radius correction
+            if (~isempty(int.corarea))
+                int.corarea.fixRadius(int);
+            end
+            
+            % Contact area
+            this.contact_area = pi * this.contact_radius^2;
         end
         
         %------------------------------------------------------------------

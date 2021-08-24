@@ -32,6 +32,9 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             if (isempty(mw))
                 if (~isempty(mp.young) && ~isempty(mp.poisson))
                     int.eff_young = mp.young / (1 - mp.poisson^2);
+                    if (~isempty(mp.young0))
+                        int.eff_young0 = mp.young0 / (1 - mp.poisson^2);
+                    end
                 end
                 if (~isempty(mp.shear) && ~isempty(mp.poisson))
                     int.eff_shear = mp.shear / (2 - mp.poisson^2);
@@ -48,6 +51,9 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             else
                 if (~isempty(mp.young) && ~isempty(mp.poisson) && ~isempty(mw.young) && ~isempty(mw.poisson))
                     int.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
+                    if (~isempty(mp.young0) && ~isempty(mw.young0))
+                        int.eff_young0 = 1 / ((1-mp.poisson^2)/mp.young0 + (1-mw.poisson^2)/mw.young0);
+                    end
                 end
                 if (~isempty(mp.shear) && ~isempty(mp.poisson) && ~isempty(mw.shear) && ~isempty(mw.poisson))
                     int.eff_shear = 1 / ((2-mp.poisson^2)/mp.shear + (2-mw.poisson^2)/mw.shear);
@@ -151,11 +157,17 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             r1_2 = r1 * r1;
             r2_2 = r2 * r2;
             
-            % Contact radius and area
-            % Assumption: rectangular contact area
-            r = sqrt(r1_2-((r1_2-r2_2+d^2)/(2*d))^2);
-            this.contact_radius = r;
-            this.contact_area   = 2 * r * l;
+            % Contact radius
+            this.contact_radius = sqrt(r1_2-((r1_2-r2_2+d^2)/(2*d))^2);
+            
+            % Contact radius correction
+            if (~isempty(int.corarea))
+                int.corarea.fixRadius(int);
+            end
+            
+            % Contact area
+            % Assumption: rectangular area
+            this.contact_area = 2 * this.contact_radius * l;
         end
         
         %------------------------------------------------------------------

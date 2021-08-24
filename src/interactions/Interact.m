@@ -23,6 +23,7 @@ classdef Interact < handle & matlab.mixin.Copyable
         eff_radius  double = double.empty;
         eff_mass    double = double.empty;
         eff_young   double = double.empty;
+        eff_young0  double = double.empty;
         eff_shear   double = double.empty;
         eff_conduct double = double.empty;
         
@@ -35,6 +36,7 @@ classdef Interact < handle & matlab.mixin.Copyable
         cforcen ContactForceN = ContactForceN.empty;   % contact force normal (may be empty)
         cforcet ContactForceT = ContactForceT.empty;   % contact force tangent (may be empty)
         rollres RollResist    = RollResist.empty;      % rolling resistance (may be empty)
+        corarea AreaCorrect   = AreaCorrect.empty;     % contact area correction (may be empty)
         
         % Thermal interaction models (value class objects)
         dconduc ConductionDirect   = ConductionDirect.empty;     % direct thermal conduction

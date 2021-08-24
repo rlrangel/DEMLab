@@ -13,13 +13,13 @@
 %
 % *Notation*:
 %
-% * $\hat{\omega}$: Relative angular velocity
+% $\hat{\omega}$: Relative angular velocity
 %
-% * $\mu$: Rolling resistance coefficient
+% $\mu$: Rolling resistance coefficient
 %
-% * $R_{eff}$: Effective contact radius
+% $R_{eff}$: Effective contact radius
 %
-% * $F_{n}$: Normal contact force vector
+% $F_{n}$: Normal contact force vector
 %
 % *References*:
 %
