@@ -258,7 +258,7 @@ classdef Driver_ThermoMechanical < Driver
                 
                 % Update voronoi edges
                 if (mod(this.step,this.vor_freq) == 0)
-                    int.kinemat = int.kinemat.setVoronoiEdge(drv,int);
+                    int.kinemat = int.kinemat.setVoronoiEdge(this,int);
                 end
                 
                 % Evaluate contact interactions

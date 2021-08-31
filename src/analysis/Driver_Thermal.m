@@ -183,7 +183,7 @@ classdef Driver_Thermal < Driver
                     int.kinemat.contact_time = 0;
                     int.kinemat = int.kinemat.setInitNoncontactParams();
                 end
-                int.kinemat = int.kinemat.setVoronoiEdge(drv,int);
+                int.kinemat = int.kinemat.setVoronoiEdge(this,int);
                 int.setFixParamsTherm(this);
                 int.setCteParamsTherm(this);
             end

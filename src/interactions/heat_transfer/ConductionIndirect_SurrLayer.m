@@ -149,8 +149,8 @@ classdef ConductionIndirect_SurrLayer < ConductionIndirect
     methods
         %------------------------------------------------------------------
         function q = heatTransCoeff(this,int,drv)
-            if (int.elem1.radius == int.elem2.radius ||...
-                int.kinemat.gen_type == int.kinemat.PARTICLE_WALL)
+            if (int.kinemat.gen_type == int.kinemat.PARTICLE_WALL ||...
+                int.elem1.radius == int.elem2.radius)
                 % Assumption: Particle-Wall is treated as 2 equal size particles
                 q = this.evalIntegralMonosize(int,drv);
             else
