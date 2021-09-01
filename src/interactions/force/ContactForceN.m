@@ -27,10 +27,11 @@ classdef ContactForceN < matlab.mixin.Heterogeneous
         TIME       = uint8(3);
         
         % Types of nonlinear damping formulation
-        NONE_DAMP = uint8(0);
-        TTI       = uint8(1);
-        KK        = uint8(2);
-        LH        = uint8(3);
+        NONE_DAMP      = uint8(0);
+        CRITICAL_RATIO = uint8(1);
+        TTI            = uint8(2);
+        KK             = uint8(3);
+        LH             = uint8(4);
         
         % Types of elastoplastic unloading stiffness formulation
         CONSTANT = uint8(1);

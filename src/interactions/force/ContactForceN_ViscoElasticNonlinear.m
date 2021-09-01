@@ -20,19 +20,27 @@
 %
 % The viscous force can be computed by 3 different formulas:
 %
+% * *Critical ratio*:
+%
+% $$F_{n}^{v} = \xi\sqrt{8m_{eff}E_{eff}\sqrt{R_{eff}}}\delta_{n}^{1/4}\dot{\delta_{n}}$$
+%
+% Perfectly elastic: $\xi = 0$
+%
+% Critically damped: $\xi = 1$
+%
 % * *TTI (Tsuji, Tanaka, Ishida)*:
 %
-% $$F_{n}^{v} = \eta_{n} \delta_{n}^{1/4} \dot{\delta_{n}}$$
+% $$F_{n}^{v} = \eta_{n}\delta_{n}^{1/4}\dot{\delta_{n}}$$
 %
 % $$\eta_{n} = -2.2664\frac{ln(e)\sqrt{m_{eff}K_{hz}}}{\sqrt{ln(e)^{2}+10.1354}}$$
 %
 % * *KK (Kuwabara & Kono)*:
 %
-% $$F_{n}^{v} = \eta_{n} \delta_{n}^{1/2} \dot{\delta_{n}}$$
+% $$F_{n}^{v} = \eta_{n}\delta_{n}^{1/2}\dot{\delta_{n}}$$
 %
 % * *LH (Lee & Herrmann)*:
 %
-% $$F_{n}^{v} = \eta_{n} m_{eff} \dot{\delta_{n}}$$
+% $$F_{n}^{v} = \eta_{n}m_{eff}\dot{\delta_{n}}$$
 %
 % The damping coefficient $\eta_{n}$ must be provided for models KK and LH.
 %
@@ -64,6 +72,11 @@
 % _Contact Mechanics_, Cambridge University Press, 1985>
 % (Hertz contact theory)
 %
+% * <https://link.springer.com/article/10.1007/s40430-020-02465-5
+% O. Quintana-Ruiz and E. Campello.
+% A coupled thermo?mechanical model for the simulation of discrete particle systems, _J. Braz. Soc. Mech. Sci._, 42:387, 2020>
+% (critical damping ratio model)
+%
 % * <https://doi.org/10.1016/0032-5910(92)88030-L
 % Y. Tsuji, T. Tanaka and T. Ishida.
 % Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, _Powder Technol._, 71(3):239-250, 1992>
@@ -89,6 +102,7 @@ classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
     properties (SetAccess = public, GetAccess = public)
         % Formulation options
         damp_formula    uint8   = uint8.empty;     % flag for type of damping formulation
+        damp_ratio      double  = double.empty;    % ratio of the critical damping
         remove_cohesion logical = logical.empty;   % flag for removing artificial cohesion
     end
     
@@ -105,24 +119,23 @@ classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
         %------------------------------------------------------------------
         function this = setDefaultProps(this)
             this.damp_formula    = this.TTI;
+            this.damp_ratio      = 0;
             this.remove_cohesion = true;
         end
         
         %------------------------------------------------------------------
         function this = setCteParams(this,int)
-            % Needed properties
-            r = int.eff_radius;
-            m = int.eff_mass;
-            y = int.eff_young;
-            e = this.restitution;
-            
             % Stiffness coefficient (Hertz model)
-            this.stiff = 4 * y * sqrt(r) / 3;
+            this.stiff = 4 * int.eff_young * sqrt(int.eff_radius) / 3;
             
             % Damping coefficient
-            if (this.damp_formula == this.TTI && isempty(this.damp))
-                ln = log(e);
-                this.damp = -2.2664 * ln * sqrt(m * this.stiff) / sqrt(10.1354 + ln^2);
+            if (isempty(this.damp))
+                if (this.damp_formula == this.CRITICAL_RATIO)
+                    this.damp = this.damp_ratio * sqrt(8 * int.eff_young * int.eff_mass * sqrt(int.eff_radius));
+                elseif (this.damp_formula == this.TTI)
+                    ln = log(this.restitution);
+                    this.damp = -2.2664 * ln * sqrt(int.eff_mass * this.stiff) / sqrt(10.1354 + ln^2);
+                end
             end
         end
         
@@ -143,6 +156,8 @@ classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
             switch this.damp_formula
                 case this.NONE_DAMP
                     fv = d * vel;
+                case this.CRITICAL_RATIO
+                    fv = d * ovlp^(1/4) * vel;
                 case this.TTI
                     fv = d * ovlp^(1/4) * vel;
                 case this.KK

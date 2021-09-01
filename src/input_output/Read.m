@@ -3938,15 +3938,33 @@ classdef Read < handle
             
             % Damping formulation
             if (isfield(CFN,'damping_formula'))
-                if (~this.isStringArray(CFN.damping_formula,1) ||...
-                   (~strcmp(CFN.damping_formula,'TTI')         &&...
-                    ~strcmp(CFN.damping_formula,'KK')          &&...
+                if (~this.isStringArray(CFN.damping_formula,1)    ||...
+                   (~strcmp(CFN.damping_formula,'critical_ratio') &&...
+                    ~strcmp(CFN.damping_formula,'TTI')            &&...
+                    ~strcmp(CFN.damping_formula,'KK')             &&...
                     ~strcmp(CFN.damping_formula,'LH')))
-                    this.invalidOptError('InteractionModel.contact_force_normal.damping_formula','TTI, KK, LH');
+                    this.invalidOptError('InteractionModel.contact_force_normal.damping_formula','critical_ratio, TTI, KK, LH');
                     status = 0; return;
                 end
                 
-                if (strcmp(CFN.damping_formula,'TTI'))
+                if (strcmp(CFN.damping_formula,'critical_ratio'))
+                    drv.search.b_interact.cforcen.damp_formula = drv.search.b_interact.cforcen.CRITICAL_RATIO;
+                    
+                    % Critical damping ratio (mandatory)
+                    if (~isfield(CFN,'ratio'))
+                        this.missingDataError('InteractionModel.contact_force_normal.ratio');
+                        status = 0; return;
+                    end
+                    val = CFN.ratio;
+                    if (~this.isDoubleArray(val,1))
+                        this.invalidParamError('InteractionModel.contact_force_normal.ratio','It must be a numeric value');
+                        status = 0; return;
+                    elseif (val < 0)
+                        this.warnMsg('Unphysical value found for InteractionModel.contact_force_normal.ratio.');
+                    end
+                    drv.search.b_interact.cforcen.damp_ratio = val;
+                    
+                elseif (strcmp(CFN.damping_formula,'TTI'))
                     drv.search.b_interact.cforcen.damp_formula = drv.search.b_interact.cforcen.TTI;
                     
                     % Damping coefficient value (optional)
