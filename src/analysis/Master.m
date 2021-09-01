@@ -164,42 +164,51 @@ classdef Master
         function printSimulationInfo(~,drv)
             fprintf('\nSimulation ready:\n');
             if (~isempty(drv.name))
-                fprintf('Name.................: %s\n',drv.name);
+                fprintf('Name...................: %s\n',drv.name);
             end
             switch drv.type
                 case drv.MECHANICAL
-                    fprintf('Type.................: Mechanical\n');
+                    fprintf('Type...................: Mechanical\n');
                 case drv.type == drv.THERMAL
-                    fprintf('Type.................: Thermal\n');
+                    fprintf('Type...................: Thermal\n');
                 case drv.THERMO_MECHANICAL
-                    fprintf('Type.................: Thermo-mechanical\n');
+                    fprintf('Type...................: Thermo-mechanical\n');
             end
             if (~isempty(drv.n_walls))
-                fprintf('Number of walls......: %d\n',drv.n_walls);
+                fprintf('Number of walls........: %d\n',drv.n_walls);
             end
             if (~isempty(drv.n_particles))
-                fprintf('Number of particles..: %d\n',drv.n_particles);
+                fprintf('Number of particles....: %d\n',drv.n_particles);
             end
             if (~isempty(drv.radius_avg))
-                fprintf('Average radius.......: %.3e\n',drv.radius_avg);
+                fprintf('Average radius.........: %.3e\n',drv.radius_avg);
             end
             if (~isempty(drv.radius_dev))
-                fprintf('Radius deviation.....: %.3e\n',drv.radius_dev);
+                fprintf('Radius deviation.......: %.3e\n',drv.radius_dev);
             end
             if (~isempty(drv.radius_dev) && drv.radius_dev ~= 0)
-                fprintf('Min|Max radius.......: %.3e|%.3e\n',drv.radius_min,drv.radius_max);
+                fprintf('Min|Max radius.........: %.3e|%.3e\n',drv.radius_min,drv.radius_max);
+            end
+            if (~isempty(drv.temp_avg))
+                fprintf('Average temperature....: %.3e\n',drv.temp_avg);
+            end
+            if (~isempty(drv.temp_dev))
+                fprintf('Temperature deviation..: %.3e\n',drv.temp_dev);
+            end
+            if (~isempty(drv.temp_dev) && drv.temp_dev ~= 0)
+                fprintf('Min|Max temperature....: %.3e|%.3e\n',drv.temp_min,drv.temp_max);
             end
             if (~isempty(drv.mass_particle))
-                fprintf('Total mass...........: %.3e\n',drv.mass_particle);
+                fprintf('Total mass.............: %.3e\n',drv.mass_particle);
             end
             if (~isempty(drv.time_step))
-                fprintf('Time step............: %.3e\n',drv.time_step);
+                fprintf('Time step..............: %.3e\n',drv.time_step);
             end
             if (~isempty(drv.max_time))
-                fprintf('Final time...........: %f\n',drv.max_time);
+                fprintf('Final time.............: %f\n',drv.max_time);
             end
             if (~isempty(drv.max_step))
-                fprintf('Maximum steps........: %d\n',drv.max_step);
+                fprintf('Maximum steps..........: %d\n',drv.max_step);
             end
         end
         
