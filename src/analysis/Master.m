@@ -180,23 +180,28 @@ classdef Master
             if (~isempty(drv.n_particles))
                 fprintf('Number of particles....: %d\n',drv.n_particles);
             end
-            if (~isempty(drv.radius_avg))
-                fprintf('Average radius.........: %.3e\n',drv.radius_avg);
+            if (~isempty(drv.particles))
+                ravg = mean([drv.particles.radius]);
+                rdev = std([drv.particles.radius]);
+                rmin = min([drv.particles.radius]);
+                rmax = max([drv.particles.radius]);
+                fprintf('Average radius.........: %.3e\n',ravg);
+                fprintf('Radius deviation.......: %.3e\n',rdev);
+                if (rdev ~= 0)
+                    fprintf('Min|Max radius.........: %.3e|%.3e\n',rmin,rmax);
+                end
             end
-            if (~isempty(drv.radius_dev))
-                fprintf('Radius deviation.......: %.3e\n',drv.radius_dev);
-            end
-            if (~isempty(drv.radius_dev) && drv.radius_dev ~= 0)
-                fprintf('Min|Max radius.........: %.3e|%.3e\n',drv.radius_min,drv.radius_max);
-            end
-            if (~isempty(drv.temp_avg))
-                fprintf('Average temperature....: %.3e\n',drv.temp_avg);
-            end
-            if (~isempty(drv.temp_dev))
-                fprintf('Temperature deviation..: %.3e\n',drv.temp_dev);
-            end
-            if (~isempty(drv.temp_dev) && drv.temp_dev ~= 0)
-                fprintf('Min|Max temperature....: %.3e|%.3e\n',drv.temp_min,drv.temp_max);
+            if (~isempty(drv.particles) &&...
+               (drv.type == drv.type == drv.THERMAL || drv.type == drv.type == drv.THERMO_MECHANICAL))
+                tavg = mean([drv.particles.temperature]);
+                tdev = std([drv.particles.temperature]);
+                tmin = min([drv.particles.temperature]);
+                tmax = max([drv.particles.temperature]);
+                fprintf('Average temperature....: %.3e\n',tavg);
+                fprintf('Temperature deviation..: %.3e\n',tdev);
+                if (tdev ~= 0)
+                    fprintf('Min|Max temperature....: %.3e|%.3e\n',tmin,tmax);
+                end
             end
             if (~isempty(drv.mass_particle))
                 fprintf('Total mass.............: %.3e\n',drv.mass_particle);

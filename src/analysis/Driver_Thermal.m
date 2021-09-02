@@ -130,8 +130,6 @@ classdef Driver_Thermal < Driver
             
             % Set global properties
             this.setTotalParticlesProps();
-            this.setRadiusDistrib();
-            this.setTempDistrib();
             this.voronoiDiagram();
             this.setGlobalVol();
             if (isempty(this.porosity))

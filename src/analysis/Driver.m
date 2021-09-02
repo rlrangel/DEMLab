@@ -60,16 +60,6 @@ classdef Driver < handle
         vol_particle   double = double.empty;   % total volume of all particles
         mass_particle  double = double.empty;   % total mass of all particles
         
-        % Particles properties distribution
-        radius_min double = double.empty;   % minimum radius of all particles
-        radius_max double = double.empty;   % maximum radius of all particles
-        radius_avg double = double.empty;   % average radius of all particles
-        radius_dev double = double.empty;   % radius standard deviation of all particles
-        temp_min   double = double.empty;   % minimum temperature of all particles
-        temp_max   double = double.empty;   % maximum temperature of all particles
-        temp_avg   double = double.empty;   % average temperature of all particles
-        temp_dev   double = double.empty;   % temperature standard deviation of all particles
-        
         % Model limits
         bbox BBox = BBox.empty;   % handle to object of BBox class
         sink Sink = Sink.empty;   % handles to objects of Sink class
@@ -268,22 +258,6 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
-        function setRadiusDistrib(this)
-            this.radius_min = min([this.particles.radius]);
-            this.radius_max = max([this.particles.radius]);
-            this.radius_avg = mean([this.particles.radius]);
-            this.radius_dev = std([this.particles.radius]);
-        end
-        
-        %------------------------------------------------------------------
-        function setTempDistrib(this)
-            this.temp_min = min([this.particles.temperature]);
-            this.temp_max = max([this.particles.temperature]);
-            this.temp_avg = mean([this.particles.temperature]);
-            this.temp_dev = std([this.particles.temperature]);
-        end
-        
-        %------------------------------------------------------------------
         function cleanParticles(this)
             erase = false;
             % Remove particles not respecting bbox and sinks
@@ -351,10 +325,8 @@ classdef Driver < handle
                 mp.n_particles = length(mp.particles);
             end
             
-            % Update global particles properties
+            % Update total particles properties
             this.setTotalParticlesProps();
-            this.setRadiusDistrib();
-            this.setTempDistrib();
         end
         
         %------------------------------------------------------------------

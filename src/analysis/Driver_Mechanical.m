@@ -141,7 +141,6 @@ classdef Driver_Mechanical < Driver
             
             % Set global properties
             this.setTotalParticlesProps();
-            this.setRadiusDistrib();
             this.voronoiDiagram();
             this.setGlobalVol();
             if (isempty(this.porosity))
