@@ -10,81 +10,144 @@
 classdef Result < handle
     %% Constant values
     properties (Constant = true, Access = public)
-        % Types of global parameters
+        %--------------------------------------
+        % Types of global parameters:
         TIME = uint8(1);
         STEP = uint8(2);
         
-        % Types of particle results: properties
+        %--------------------------------------
+        % Types of individual particle results:
+        
+        % Properties
         RADIUS = uint8(3);
         MASS   = uint8(4);
         
-        % Types of particle results: position
+        % Position
         MOTION       = uint8(5);
         COORDINATE_X = uint8(6);
         COORDINATE_Y = uint8(7);
         ORIENTATION  = uint8(8);
         
-        % Types of particle results: forces
+        % Force
         FORCE_VEC = uint8(9);
         FORCE_MOD = uint8(10);
         FORCE_X   = uint8(11);
         FORCE_Y   = uint8(12);
         TORQUE    = uint8(13);
         
-        % Types of particle results: velocity
+        % Velocity
         VELOCITY_VEC = uint8(14);
         VELOCITY_MOD = uint8(15);
         VELOCITY_X   = uint8(16);
         VELOCITY_Y   = uint8(17);
         VELOCITY_ROT = uint8(18);
         
-        % Types of particle results: acceleration
+        % Acceleration
         ACCELERATION_VEC = uint8(19);
         ACCELERATION_MOD = uint8(20);
         ACCELERATION_X   = uint8(21);
         ACCELERATION_Y   = uint8(22);
         ACCELERATION_ROT = uint8(23);
         
-        % Types of particle results: thermal state
+        % Thermal
         HEAT_RATE   = uint8(24);
         TEMPERATURE = uint8(25);
+        
+        %--------------------------------------
+        % Types of average particle results:
+        AVG_VELOCITY_MOD     = uint8(26);
+        AVG_VELOCITY_ROT     = uint8(27);
+        AVG_ACCELERATION_MOD = uint8(28);
+        AVG_ACCELERATION_ROT = uint8(29);
+        AVG_TEMPERATURE      = uint8(30);
+        
+        %--------------------------------------
+        % Types of extreme particle results:
+        MIN_VELOCITY_MOD     = uint8(31);
+        MAX_VELOCITY_MOD     = uint8(32);
+        MIN_VELOCITY_ROT     = uint8(33);
+        MAX_VELOCITY_ROT     = uint8(34);
+        MIN_ACCELERATION_MOD = uint8(35);
+        MAX_ACCELERATION_MOD = uint8(36);
+        MIN_ACCELERATION_ROT = uint8(37);
+        MAX_ACCELERATION_ROT = uint8(38);
+        MIN_TEMPERATURE      = uint8(39);
+        MAX_TEMPERATURE      = uint8(40);
+        
+        %--------------------------------------
+        % Types of total interaction results:
+        TOT_HEAT_RATE_ALL       = uint8(41);
+        TOT_CONDUCTION_DIRECT   = uint8(42);
+        TOT_CONDUCTION_INDIRECT = uint8(43);
     end
     
     %% Public properties: flags for required results
     properties (SetAccess = public, GetAccess = public)
-        % Global parameters
+        %--------------------------------------
+        % Global parameters:
         has_time = logical(false);
         has_step = logical(false);
         
-        % Particle properties
+        %--------------------------------------
+        % Individual particle results:
+        
+        % Properties
         has_radius = logical(false);
         has_mass   = logical(false);
         
-        % Particle position
+        % Position
         has_coord_x     = logical(false);
         has_coord_y     = logical(false);
         has_orientation = logical(false);
         
-        % Particle force
+        % Force
         has_force_x = logical(false);
         has_force_y = logical(false);
         has_torque  = logical(false);
         
-        % Particle velocity
+        % Velocity
         has_velocity_x   = logical(false);
         has_velocity_y   = logical(false);
         has_velocity_rot = logical(false);
         
-        % Particle acceleration
+        % Acceleration
         has_acceleration_x   = logical(false);
         has_acceleration_y   = logical(false);
         has_acceleration_rot = logical(false);
         
-        % Particle thermal state
+        % Thermal
         has_heat_rate   = logical(false);
         has_temperature = logical(false);
         
-        % Wall state
+        %--------------------------------------
+        % Average particle results:
+        has_avg_velocity_mod     = logical(false);
+        has_avg_velocity_rot     = logical(false);
+        has_avg_acceleration_mod = logical(false);
+        has_avg_acceleration_rot = logical(false);
+        has_avg_temperature      = logical(false);
+        
+        %--------------------------------------
+        % Extreme particle results:
+        has_min_velocity_mod     = logical(false);
+        has_max_velocity_mod     = logical(false);
+        has_min_velocity_rot     = logical(false);
+        has_max_velocity_rot     = logical(false);
+        has_min_acceleration_mod = logical(false);
+        has_max_acceleration_mod = logical(false);
+        has_min_acceleration_rot = logical(false);
+        has_max_acceleration_rot = logical(false);
+        has_min_temperature      = logical(false);
+        has_max_temperature      = logical(false);
+        
+        %--------------------------------------
+        % Total interaction results:
+        has_tot_heat_rate_all       = logical(false);
+        has_tot_conduction_direct   = logical(false);
+        has_tot_conduction_indirect = logical(false);
+        
+        %--------------------------------------
+        % Wall results:
         has_wall_position    = logical(false);
         has_wall_temperature = logical(false);
     end
@@ -94,39 +157,71 @@ classdef Result < handle
         % Index for columns (current output step)
         idx uint32 = uint32.empty;
         
-        % Global parameters
+        %--------------------------------------
+        % Global parameters:
         times double = double.empty;
         steps double = double.empty;
         
-        % Particle properties
+        %--------------------------------------
+        % Individual particle results:
+        
+        % Properties
         radius double = double.empty;
         mass   double = double.empty;
         
-        % Particle position
+        % Position
         coord_x     double = double.empty;
         coord_y     double = double.empty;
         orientation double = double.empty;
         
-        % Particle force
+        % Force
         force_x double = double.empty;
         force_y double = double.empty;
         torque  double = double.empty;
         
-        % Particle velocity
+        % Velocity
         velocity_x   double = double.empty;
         velocity_y   double = double.empty;
         velocity_rot double = double.empty;
         
-        % Particle acceleration
+        % Acceleration
         acceleration_x   double = double.empty;
         acceleration_y   double = double.empty;
         acceleration_rot double = double.empty;
         
-        % Particle thermal state
+        % Thermal
         heat_rate   double = double.empty;
         temperature double = double.empty;
         
-        % Wall state
+        %--------------------------------------
+        % Average particle results:
+        avg_velocity_mod     double = double.empty;
+        avg_velocity_rot     double = double.empty;
+        avg_acceleration_mod double = double.empty;
+        avg_acceleration_rot double = double.empty;
+        avg_temperature      double = double.empty;
+        
+        %--------------------------------------
+        % Extreme particle results:
+        min_velocity_mod     double = double.empty;
+        max_velocity_mod     double = double.empty;
+        min_velocity_rot     double = double.empty;
+        max_velocity_rot     double = double.empty;
+        min_acceleration_mod double = double.empty;
+        max_acceleration_mod double = double.empty;
+        min_acceleration_rot double = double.empty;
+        max_acceleration_rot double = double.empty;
+        min_temperature      double = double.empty;
+        max_temperature      double = double.empty;
+        
+        %--------------------------------------
+        % Total interactions results:
+        tot_heat_rate_all       double = double.empty;
+        tot_conduction_direct   double = double.empty;
+        tot_conduction_indirect double = double.empty;
+        
+        %--------------------------------------
+        % Wall results:
         wall_position    double = double.empty;
         wall_temperature double = double.empty;
     end
@@ -145,6 +240,15 @@ classdef Result < handle
             % Index for columns
             this.idx = 1;
             
+            % Number of columns for all results: number of output steps (+initial conditions)
+            c = drv.nout+1; 
+            
+            % Number of rows for individual particle results: total number of particles
+            rp = drv.n_particles;
+            
+            % Number of rows for individual wall results: total number of walls
+            rw = drv.n_walls;
+            
             % Set results that always need to be stored to show model
             this.has_time          = true;
             this.has_coord_x       = true;
@@ -156,10 +260,8 @@ classdef Result < handle
                 this.has_wall_temperature = true;
             end
             
-            % Number of columns: number of output steps (+initial conditions)
-            c = drv.nout+1; 
-            
-            % Global parameters
+            %--------------------------------------
+            % Global parameters:
             if (this.has_time)
                 this.times = nan(1,c);
             end
@@ -167,81 +269,146 @@ classdef Result < handle
                 this.steps = nan(1,c);
             end
             
-            % Number of rows for particles: total number of particles
-            r = drv.n_particles;
+            %--------------------------------------
+            % Individual particle results:
             
-            % Particle properties
+            % Properties
             if (this.has_radius)
-                this.radius = nan(r,c);
+                this.radius = nan(rp,c);
             end
             if (this.has_mass)
-                this.mass = nan(r,c);
+                this.mass = nan(rp,c);
             end
             
-            % Particle force
+            % Force
             if (this.has_force_x)
-                this.force_x = nan(r,c);
+                this.force_x = nan(rp,c);
             end
             if (this.has_force_y)
-                this.force_y = nan(r,c);
+                this.force_y = nan(rp,c);
             end
             if (this.has_torque)
-                this.torque = nan(r,c);
+                this.torque = nan(rp,c);
             end
             
-            % Particle position
+            % Position
             if (this.has_coord_x)
-                this.coord_x = nan(r,c);
+                this.coord_x = nan(rp,c);
             end
             if (this.has_coord_y)
-                this.coord_y = nan(r,c);
+                this.coord_y = nan(rp,c);
             end
             if (this.has_orientation)
-                this.orientation = nan(r,c);
+                this.orientation = nan(rp,c);
             end
             
-            % Particle velocity
+            % Velocity
             if (this.has_velocity_x)
-                this.velocity_x = nan(r,c);
+                this.velocity_x = nan(rp,c);
             end
             if (this.has_velocity_y)
-                this.velocity_y = nan(r,c);
+                this.velocity_y = nan(rp,c);
             end
             if (this.has_velocity_rot)
-                this.velocity_rot = nan(r,c);
+                this.velocity_rot = nan(rp,c);
             end
             
-            % Particle acceleration
+            % Acceleration
             if (this.has_acceleration_x)
-                this.acceleration_x = nan(r,c);
+                this.acceleration_x = nan(rp,c);
             end
             if (this.has_acceleration_y)
-                this.acceleration_y = nan(r,c);
+                this.acceleration_y = nan(rp,c);
             end
             if (this.has_acceleration_rot)
-                this.acceleration_rot = nan(r,c);
+                this.acceleration_rot = nan(rp,c);
             end
             
-            % Particle thermal state
+            % Thermal
             if (this.has_heat_rate)
-                this.heat_rate = nan(r,c);
+                this.heat_rate = nan(rp,c);
             end
             if (this.has_temperature)
-                this.temperature = nan(r,c);
+                this.temperature = nan(rp,c);
             end
             
-            % Number of rows for walls: total number of walls
-            r = drv.n_walls;
+            %--------------------------------------
+            % Average particle results:
+            if (this.has_avg_velocity_mod)
+                this.avg_velocity_mod = nan(1,c);
+            end
+            if (this.has_avg_velocity_rot)
+                this.avg_velocity_rot = nan(1,c);
+            end
+            if (this.has_avg_acceleration_mod)
+                this.avg_acceleration_mod = nan(1,c);
+            end
+            if (this.has_avg_acceleration_rot)
+                this.avg_acceleration_rot = nan(1,c);
+            end
+            if (this.has_avg_temperature)
+                this.avg_temperature = nan(1,c);
+            end
             
-            % Wall state
+            %--------------------------------------
+            % Extreme particle results:
+            if (this.has_min_velocity_mod)
+                this.min_velocity_mod = nan(1,c);
+            end
+            if (this.has_max_velocity_mod)
+                this.max_velocity_mod = nan(1,c);
+            end
+            if (this.has_min_velocity_rot)
+                this.min_velocity_rot = nan(1,c);
+            end
+            if (this.has_max_velocity_rot)
+                this.max_velocity_rot = nan(1,c);
+            end
+            if (this.has_min_acceleration_mod)
+                this.min_acceleration_mod = nan(1,c);
+            end
+            if (this.has_max_acceleration_mod)
+                this.max_acceleration_mod = nan(1,c);
+            end
+            if (this.has_min_acceleration_rot)
+                this.min_acceleration_rot = nan(1,c);
+            end
+            if (this.has_max_acceleration_rot)
+                this.max_acceleration_rot = nan(1,c);
+            end
+            if (this.has_min_temperature)
+                this.min_temperature = nan(1,c);
+            end
+            if (this.has_max_temperature)
+                this.max_temperature = nan(1,c);
+            end
+            
+            %--------------------------------------
+            % Total particle results:
+            if (this.has_tot_heat_rate_all)
+                this.tot_heat_rate_all = nan(1,c);
+            end
+            if (this.has_tot_conduction_direct)
+                this.tot_conduction_direct = nan(1,c);
+            end
+            if (this.has_tot_conduction_indirect)
+                this.tot_conduction_indirect = nan(1,c);
+            end
+            
+            %--------------------------------------
+            % Wall results:
+            
+            % Position
             if (this.has_wall_position)
                 % 4 values for each wall in any column:
                 % * Line wall:   x1,y1,x2,y2
                 % * Circle wall: x,y,R,nan
-                this.wall_position = nan(4*r,c);
+                this.wall_position = nan(4*rw,c);
             end
+            
+            % Thermal
             if (this.has_wall_temperature)
-                this.wall_temperature = nan(r,c);
+                this.wall_temperature = nan(rw,c);
             end
         end
         
@@ -320,7 +487,7 @@ classdef Result < handle
         end
         
         %------------------------------------------------------------------
-        function storeParticleMotion(this,p)
+        function storeParticleVelocity(this,p)
             r = p.id;
             c = this.idx;
             if (this.has_velocity_x)
@@ -332,6 +499,12 @@ classdef Result < handle
             if (this.has_velocity_rot)
                 this.velocity_rot(r,c) = p.veloc_rot;
             end
+        end
+        
+        %------------------------------------------------------------------
+        function storeParticleAcceleration(this,p)
+            r = p.id;
+            c = this.idx;
             if (this.has_acceleration_x)
                 this.acceleration_x(r,c) = p.accel_trl(1);
             end
@@ -358,6 +531,109 @@ classdef Result < handle
             c = this.idx;
             if (this.has_heat_rate)
                 this.heat_rate(r,c) = p.heat_rate;
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function storeAvgVelocity(this,drv)
+            c = this.idx;
+            if (this.has_avg_velocity_mod)
+                this.avg_velocity_mod(c) = mean(vecnorm([drv.particles.veloc_trl]));
+            end
+            if (this.has_avg_velocity_rot)
+                this.avg_velocity_rot(c) = mean(abs([drv.particles.veloc_rot]));
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function storeAvgAcceleration(this,drv)
+            c = this.idx;
+            if (this.has_avg_acceleration_mod)
+                this.avg_acceleration_mod(c) = mean(vecnorm([drv.particles.accel_trl]));
+            end
+            if (this.has_avg_acceleration_rot)
+                this.avg_acceleration_rot(c) = mean(abs([drv.particles.accel_rot]));
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function storeAvgTemperature(this,drv)
+            if (this.has_avg_temperature)
+                this.avg_temperature(c) = mean([drv.particles.temperature]);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function storeExtVelocity(this,drv)
+            c = this.idx;
+            if (this.has_min_velocity_mod || this.has_max_velocity_mod)
+                vt = vecnorm([drv.particles.veloc_trl]);
+                if (this.has_min_velocity_mod)
+                    this.min_velocity_mod(c) = min(vt);
+                end
+                if (this.has_max_velocity_mod)
+                    this.max_velocity_mod(c) = max(vt);
+                end
+            end
+            if (this.has_min_velocity_rot || this.has_max_velocity_rot)
+                vr = [drv.particles.veloc_rot];
+                if (this.has_min_velocity_rot)
+                    this.min_velocity_rot(c) = min(vr);
+                end
+                if (this.has_max_velocity_rot)
+                    this.max_velocity_rot(c) = max(vr);
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function storeExtAcceleration(this,drv)
+            c = this.idx;
+            if (this.has_min_acceleration_mod || this.has_max_acceleration_mod)
+                at = vecnorm([drv.particles.accel_trl]);
+                if (this.has_min_acceleration_mod)
+                    this.min_acceleration_mod(c) = min(at);
+                end
+                if (this.has_max_acceleration_mod)
+                    this.max_acceleration_mod(c) = max(at);
+                end
+            end
+            if (this.has_min_acceleration_rot || this.has_max_acceleration_rot)
+                ar = [drv.particles.accel_rot];
+                if (this.has_min_acceleration_rot)
+                    this.min_acceleration_rot(c) = min(ar);
+                end
+                if (this.has_max_acceleration_rot)
+                    this.max_acceleration_rot(c) = max(ar);
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function storeExtTemperature(this,drv)
+            if (this.has_min_temperature)
+                this.min_temperature(c) = min([drv.particles.temperature]);
+            end
+            if (this.has_max_temperature)
+                this.max_temperature(c) = max([drv.particles.temperature]);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function storeTotalHeatRate(this,drv)
+            c = this.idx;
+            if (this.has_tot_heat_rate_all)
+                cd = [drv.interacts.dconduc];
+                ci = [drv.interacts.iconduc];
+                this.tot_heat_rate_all(c) = sum(abs([cd.total_hrate]+[ci.total_hrate]));
+            end
+            if (this.has_tot_conduction_direct)
+                cd = [drv.interacts.dconduc];
+                this.tot_conduction_direct(c) = sum(abs([cd.total_hrate]));
+            end
+            if (this.has_tot_conduction_indirect)
+                ci = [drv.interacts.iconduc];
+                this.tot_conduction_indirect(c) = sum(abs([ci.total_hrate]));
             end
         end
         

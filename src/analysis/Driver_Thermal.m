@@ -197,10 +197,17 @@ classdef Driver_Thermal < Driver
         %------------------------------------------------------------------
         function process(this)
             while (this.time <= this.max_time)
-                % Store current time and step to result arrays
+                % Check if it is time to store results:
+                % Time & step not stored after 1st step as it was alreadystored in preprocess.
+                % Global results stored after 1st step as some results were not ready before.
                 this.storeResults()
-                if (this.store)
-                    this.result.storeTime(this);
+                if (this.store || step == 1)
+                    if (this.store)
+                        this.result.storeTime(this);
+                    end
+                    this.result.storeAvgTemperature(this);
+                    this.result.storeExtTemperature(this);
+                    this.result.storeTotalHeatRate(this);
                 end
                 
                 % Loop over all interactions, particles and walls

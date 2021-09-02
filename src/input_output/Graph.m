@@ -166,6 +166,42 @@ classdef Graph < handle
                     R = drv.result.temperature(p,:);
                 case drv.result.HEAT_RATE
                     R = drv.result.heat_rate(p,:);
+                case drv.result.AVG_VELOCITY_MOD
+                    R = drv.result.avg_velocity_mod;
+                case drv.result.AVG_VELOCITY_ROT
+                    R = drv.result.avg_velocity_rot;
+                case drv.result.AVG_ACCELERATION_MOD
+                    R = drv.result.avg_acceleration_mod;
+                case drv.result.AVG_ACCELERATION_ROT
+                    R = drv.result.avg_acceleration_rot;
+                case drv.result.AVG_TEMPERATURE
+                    R = drv.result.avg_temperature;
+                case drv.result.MIN_VELOCITY_MOD
+                    R = drv.result.min_velocity_mod;
+                case drv.result.MAX_VELOCITY_MOD
+                    R = drv.result.max_velocity_mod;
+                case drv.result.MIN_VELOCITY_ROT
+                    R = drv.result.min_velocity_rot;
+                case drv.result.MAX_VELOCITY_ROT
+                    R = drv.result.max_velocity_rot;
+                case drv.result.MIN_ACCELERATION_MOD
+                    R = drv.result.min_acceleration_mod;
+                case drv.result.MAX_ACCELERATION_MOD
+                    R = drv.result.max_acceleration_mod;
+                case drv.result.MIN_ACCELERATION_ROT
+                    R = drv.result.min_acceleration_rot;
+                case drv.result.MAX_ACCELERATION_ROT
+                    R = drv.result.max_acceleration_rot;
+                case drv.result.MIN_TEMPERATURE
+                    R = drv.result.min_temperature;
+                case drv.result.MAX_TEMPERATURE
+                    R = drv.result.max_temperature;
+                case drv.result.TOT_HEAT_RATE_ALL
+                    R = drv.result.tot_heat_rate_all;
+                case drv.result.TOT_CONDUCTION_DIRECT
+                    R = drv.result.tot_conduction_direct;
+                case drv.result.TOT_CONDUCTION_INDIRECT
+                    R = drv.result.tot_conduction_indirect;
             end
         end
         

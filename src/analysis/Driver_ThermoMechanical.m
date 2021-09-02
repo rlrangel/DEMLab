@@ -152,7 +152,8 @@ classdef Driver_ThermoMechanical < Driver
                 this.result.storeParticlePosition(p);      % initial
                 this.result.storeParticleTemperature(p);   % initial
                 this.result.storeParticleForce(p);         % zero (reset after 1st step)
-                this.result.storeParticleMotion(p);        % zero (reset after 1st step)
+                this.result.storeParticleVelocity(p);      % zero (reset after 1st step)
+                this.result.storeParticleAcceleration(p);  % zero (reset after 1st step)
                 this.result.storeParticleHeatRate(p);      % zero (reset after 1st step)
                 
                 % Compute critical time step for current particle
@@ -199,10 +200,21 @@ classdef Driver_ThermoMechanical < Driver
         %------------------------------------------------------------------
         function process(this)
             while (this.time <= this.max_time)
-                % Store current time and step to result arrays
+                % Check if it is time to store results:
+                % Time & step not stored after 1st step as it was already stored in preprocess.
+                % Global results stored after 1st step as some results were not ready before.
                 this.storeResults()
-                if (this.store)
-                    this.result.storeTime(this);
+                if (this.store || step == 1)
+                    if (this.store)
+                        this.result.storeTime(this);
+                    end
+                    this.result.storeAvgVelocity(this);
+                    this.result.storeExtVelocity(this);
+                    this.result.storeAvgAcceleration(this);
+                    this.result.storeExtAcceleration(this);
+                    this.result.storeAvgTemperature(this);
+                    this.result.storeExtTemperature(this);
+                    this.result.storeTotalHeatRate(this);
                 end
                 
                 % Interactions search
@@ -388,12 +400,14 @@ classdef Driver_ThermoMechanical < Driver
                 if (this.step == 0)
                     % Work-around to fill null initial values stored in pre-process
                     this.result.storeParticleForce(p);
-                    this.result.storeParticleMotion(p);
+                    this.result.storeParticleVelocity(p);
+                    this.result.storeParticleAcceleration(p);
                     this.result.storeParticleHeatRate(p);
                 elseif (this.store)
                     this.result.storeParticlePosition(p);
                     this.result.storeParticleForce(p);
-                    this.result.storeParticleMotion(p);
+                    this.result.storeParticleVelocity(p);
+                    this.result.storeParticleAcceleration(p);
                     this.result.storeParticleTemperature(p);
                     this.result.storeParticleHeatRate(p);
                 end

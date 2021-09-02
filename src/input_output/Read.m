@@ -2658,8 +2658,13 @@ classdef Read < handle
                 results_general = ["time","step","radius","mass","coord_x","coord_y","orientation","wall_position"];
                 results_mech    = ["force_x","force_y","torque",...
                                    "velocity_x","velocity_y","velocity_rot",...
-                                   "acceleration_x","acceleration_y","acceleration_rot"];
-                results_therm   = ["heat_rate","temperature","wall_temperature"];
+                                   "acceleration_x","acceleration_y","acceleration_rot",...
+                                   "velocity_mod_avg","velocity_rot_avg",...
+                                   "acceleration_mod_avg","acceleration_rot_avg",...
+                                   "velocity_mod_min","velocity_mod_max","velocity_rot_min","velocity_rot_max",...
+                                   "acceleration_mod_min","acceleration_mod_max","acceleration_rot_min","acceleration_rot_max"];
+                results_therm   = ["temperature","temperature_avg","temperature_min","temperature_max","wall_temperature",...
+                                   "heat_rate","heat_rate_total","conduction_direct_total","conduction_indirect_total"];
                 
                 for i = 1:length(OUT.saved_results)
                     % Check data
@@ -2670,17 +2675,17 @@ classdef Read < handle
                     elseif (~ismember(res,results_general) &&...
                             ~ismember(res,results_mech)    &&...
                             ~ismember(res,results_therm))
-                        this.warnMsg('Result %s is not available is this type of analysis.',res);
+                        this.warnMsg('Result %s is not available in this type of analysis.',res);
                         continue;
                     elseif (drv.type == drv.MECHANICAL     &&...
                             ~ismember(res,results_general) &&...
                             ~ismember(res,results_mech))
-                        this.warnMsg('Result %s is not available is this type of analysis.',res);
+                        this.warnMsg('Result %s is not available in this type of analysis.',res);
                         continue;
                     elseif (drv.type == drv.THERMAL        &&...
                             ~ismember(res,results_general) &&...
                             ~ismember(res,results_therm))
-                        this.warnMsg('Result %s is not available is this type of analysis.',res);
+                        this.warnMsg('Result %s is not available in this type of analysis.',res);
                         continue;
                     end
                     
@@ -2719,12 +2724,48 @@ classdef Read < handle
                         drv.result.has_acceleration_y = true;
                     elseif (strcmp(res,'acceleration_rot'))
                         drv.result.has_acceleration_rot = true;
-                    elseif (strcmp(res,'heat_rate'))
-                        drv.result.has_heat_rate = true;
+                    elseif (strcmp(res,'velocity_mod_avg'))
+                        drv.result.has_avg_velocity_mod = true;
+                    elseif (strcmp(res,'velocity_rot_avg'))
+                        drv.result.has_avg_velocity_rot = true;
+                    elseif (strcmp(res,'acceleration_mod_avg'))
+                        drv.result.has_avg_acceleration_mod = true;
+                    elseif (strcmp(res,'acceleration_rot_avg'))
+                        drv.result.has_avg_acceleration_rot = true;
+                    elseif (strcmp(res,'velocity_mod_min'))
+                        drv.result.has_min_velocity_mod = true;
+                    elseif (strcmp(res,'velocity_mod_max'))
+                        drv.result.has_max_velocity_mod = true;
+                    elseif (strcmp(res,'velocity_rot_min'))
+                        drv.result.has_min_velocity_rot = true;
+                    elseif (strcmp(res,'velocity_rot_max'))
+                        drv.result.has_max_velocity_rot = true;
+                    elseif (strcmp(res,'acceleration_mod_min'))
+                        drv.result.has_min_acceleration_mod = true;
+                    elseif (strcmp(res,'acceleration_mod_max'))
+                        drv.result.has_max_acceleration_mod = true;
+                    elseif (strcmp(res,'acceleration_rot_min'))
+                        drv.result.has_min_acceleration_rot = true;
+                    elseif (strcmp(res,'acceleration_rot_max'))
+                        drv.result.has_max_acceleration_rot = true;
                     elseif (strcmp(res,'temperature'))
                         drv.result.has_temperature = true;
+                    elseif (strcmp(res,'temperature_avg'))
+                        drv.result.has_avg_temperature = true;
+                    elseif (strcmp(res,'temperature_min'))
+                        drv.result.has_min_temperature = true;
+                    elseif (strcmp(res,'temperature_max'))
+                        drv.result.has_max_temperature = true;
                     elseif (strcmp(res,'wall_temperature'))
                         drv.result.has_wall_temperature = true;
+                    elseif (strcmp(res,'heat_rate'))
+                        drv.result.has_heat_rate = true;
+                    elseif (strcmp(res,'heat_rate_total'))
+                        drv.result.has_tot_heat_rate_all = true;
+                    elseif (strcmp(res,'conduction_direct_total'))
+                        drv.result.has_tot_conduction_direct = true;
+                    elseif (strcmp(res,'conduction_indirect_total'))
+                        drv.result.has_tot_conduction_indirect = true;
                     end
                 end
             end
@@ -2757,13 +2798,18 @@ classdef Read < handle
                 end
                 
                 % Array of possible results
-                global_results = ["time","step"];
-                results_mech   = ["radius","mass",...
-                                  "coordinate_x","coordinate_y","orientation",...
-                                  "force_vector","force_modulus","force_x","force_y","torque",...
-                                  "velocity_vector","velocity_modulus","velocity_x","velocity_y","velocity_rot",...
-                                  "acceleration_vector","acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
-                results_therm  = ["heat_rate","temperature"];
+                results_general_global   = ["time","step"];
+                results_general_particle = ["radius","mass","coordinate_x","coordinate_y","orientation"];
+                results_mech_global      = ["velocity_mod_avg","velocity_rot_avg",...
+                                            "acceleration_mod_avg","acceleration_rot_avg",...
+                                            "velocity_mod_min","velocity_mod_max","velocity_rot_min","velocity_rot_max",...
+                                            "acceleration_mod_min","acceleration_mod_max","acceleration_rot_min","acceleration_rot_max"];
+                results_mech_particle    = ["force_modulus","force_x","force_y","torque",...
+                                            "velocity_modulus","velocity_x","velocity_y","velocity_rot",...
+                                            "acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
+                results_therm_global     = ["temperature_avg","temperature_min","temperature_max",...
+                                            "heat_rate_total","conduction_direct_total","conduction_indirect_total"];
+                results_therm_particle   = ["temperature","heat_rate"];                        
                 
                 % Check and get axes data
                 if (~isfield(GRA,'axis_x'))
@@ -2775,18 +2821,52 @@ classdef Read < handle
                 end
                 X = string(GRA.axis_x);
                 Y = string(GRA.axis_y);
-                if (~this.isStringArray(X,1)    ||...
-                   (~ismember(X,global_results) &&...
-                    ~ismember(X,results_mech)   &&...
-                    ~ismember(X,results_therm)))
+                if (~this.isStringArray(X,1)              ||...
+                   (~ismember(X,results_general_global)   &&...
+                    ~ismember(X,results_general_particle) &&...
+                    ~ismember(X,results_mech_global)      &&...
+                    ~ismember(X,results_mech_particle)    &&...
+                    ~ismember(X,results_therm_global)     &&...
+                    ~ismember(X,results_therm_particle)))
                     this.invalidParamError('Graph.axis_x','Available result options can be checked in the documentation');
                     status = 0; return;
-                elseif (~this.isStringArray(Y,1)    ||...
-                       (~ismember(Y,global_results) &&...
-                        ~ismember(Y,results_mech)   &&...
-                        ~ismember(Y,results_therm)))
+                elseif (~this.isStringArray(Y,1)              ||...
+                       (~ismember(Y,results_general_global)   &&...
+                        ~ismember(Y,results_general_particle) &&...
+                        ~ismember(Y,results_mech_global)      &&...
+                        ~ismember(Y,results_therm_global)     &&...
+                        ~ismember(Y,results_therm_particle)))
                     this.invalidParamError('Graph.axis_y','Available result options can be checked in the documentation');
                     status = 0; return;
+                end
+                if (drv.type == drv.MECHANICAL)
+                    if (~ismember(X,results_general_global)   &&...
+                        ~ismember(X,results_general_particle) &&...
+                        ~ismember(X,results_mech_global)      &&...
+                        ~ismember(X,results_mech_particle))
+                        this.warnMsg('Result %s is not available in this type of analysis.',X);
+                        continue;
+                    elseif (~ismember(Y,results_general_global)   &&...
+                            ~ismember(Y,results_general_particle) &&...
+                            ~ismember(Y,results_mech_global)      &&...
+                            ~ismember(Y,results_mech_particle))
+                        this.warnMsg('Result %s is not available in this type of analysis.',Y);
+                        continue;
+                    end
+                elseif (drv.type == drv.THERMAL)
+                    if (~ismember(X,results_general_global)   &&...
+                        ~ismember(X,results_general_particle) &&...
+                        ~ismember(X,results_therm_global)     &&...
+                        ~ismember(X,results_therm_particle))
+                        this.warnMsg('Result %s is not available in this type of analysis.',X);
+                        continue;
+                    elseif (~ismember(Y,results_general_global)   &&...
+                            ~ismember(Y,results_general_particle) &&...
+                            ~ismember(Y,results_therm_global)     &&...
+                            ~ismember(Y,results_therm_particle))
+                        this.warnMsg('Result %s is not available in this type of analysis.',Y);
+                        continue;
+                    end
                 end
                 
                 % Set X axis data
@@ -2850,12 +2930,66 @@ classdef Read < handle
                 elseif (strcmp(X,'acceleration_rot'))
                     gra.res_x = drv.result.ACCELERATION_ROT;
                     drv.result.has_acceleration_rot = true;
+                elseif (strcmp(X,'velocity_mod_avg'))
+                    gra.res_x = drv.result.AVG_VELOCITY_MOD;
+                    drv.result.has_avg_velocity_mod = true;
+                elseif (strcmp(X,'velocity_rot_avg'))
+                    gra.res_x = drv.result.AVG_VELOCITY_ROT;
+                    drv.result.has_avg_velocity_rot = true;
+                elseif (strcmp(X,'acceleration_mod_avg'))
+                    gra.res_x = drv.result.AVG_ACCELERATION_MOD;
+                    drv.result.has_avg_acceleration_mod = true;
+                elseif (strcmp(X,'acceleration_rot_avg'))
+                    gra.res_x = drv.result.AVG_ACCELERATION_ROT;
+                    drv.result.has_avg_acceleration_rot = true;
+                elseif (strcmp(X,'velocity_mod_min'))
+                    gra.res_x = drv.result.MIN_VELOCITY_MOD;
+                    drv.result.has_min_velocity_mod = true;
+                elseif (strcmp(X,'velocity_mod_max'))
+                    gra.res_x = drv.result.MAX_VELOCITY_MOD;
+                    drv.result.has_max_velocity_mod = true;
+                elseif (strcmp(X,'velocity_rot_min'))
+                    gra.res_x = drv.result.MIN_VELOCITY_ROT;
+                    drv.result.has_min_velocity_rot = true;
+                elseif (strcmp(X,'velocity_rot_max'))
+                    gra.res_x = drv.result.MAX_VELOCITY_ROT;
+                    drv.result.has_max_velocity_rot = true;
+                elseif (strcmp(X,'acceleration_mod_min'))
+                    gra.res_x = drv.result.MIN_ACCELERATION_MOD;
+                    drv.result.has_min_acceleration_mod = true;
+                elseif (strcmp(X,'acceleration_mod_max'))
+                    gra.res_x = drv.result.MAX_ACCELERATION_MOD;
+                    drv.result.has_max_acceleration_mod = true;
+                elseif (strcmp(X,'acceleration_rot_min'))
+                    gra.res_x = drv.result.MIN_ACCELERATION_ROT;
+                    drv.result.has_min_acceleration_rot = true;
+                elseif (strcmp(X,'acceleration_rot_max'))
+                    gra.res_x = drv.result.MAX_ACCELERATION_ROT;
+                    drv.result.has_max_acceleration_rot = true;
                 elseif (strcmp(X,'temperature'))
                     gra.res_x = drv.result.TEMPERATURE;
                     drv.result.has_temperature = true;
+                elseif (strcmp(X,'temperature_avg'))
+                    gra.res_x = drv.result.AVG_TEMPERATURE;
+                    drv.result.has_avg_temperature = true;
+                elseif (strcmp(X,'temperature_min'))
+                    gra.res_x = drv.result.MIN_TEMPERATURE;
+                    drv.result.has_min_temperature = true;
+                elseif (strcmp(X,'temperature_max'))
+                    gra.res_x = drv.result.MAX_TEMPERATURE;
+                    drv.result.has_max_temperature = true;
                 elseif (strcmp(X,'heat_rate'))
                     gra.res_x = drv.result.HEAT_RATE;
                     drv.result.has_heat_rate = true;
+                elseif (strcmp(X,'heat_rate_total'))
+                    gra.res_x = drv.result.TOT_HEAT_RATE_ALL;
+                    drv.result.has_tot_heat_rate_all = true;
+                elseif (strcmp(X,'conduction_direct_total'))
+                    gra.res_x = drv.result.TOT_CONDUCTION_DIRECT;
+                    drv.result.has_tot_conduction_direct = true;
+                elseif (strcmp(X,'conduction_indirect_total'))
+                    gra.res_x = drv.result.TOT_CONDUCTION_INDIRECT;
+                    drv.result.has_tot_conduction_indirect = true;
                 end
                 
                 % Set Y axis data
@@ -2919,12 +3053,66 @@ classdef Read < handle
                 elseif (strcmp(Y,'acceleration_rot'))
                     gra.res_y = drv.result.ACCELERATION_ROT;
                     drv.result.has_acceleration_rot = true;
+                elseif (strcmp(Y,'velocity_mod_avg'))
+                    gra.res_y = drv.result.AVG_VELOCITY_MOD;
+                    drv.result.has_avg_velocity_mod = true;
+                elseif (strcmp(Y,'velocity_rot_avg'))
+                    gra.res_y = drv.result.AVG_VELOCITY_ROT;
+                    drv.result.has_avg_velocity_rot = true;
+                elseif (strcmp(Y,'acceleration_mod_avg'))
+                    gra.res_y = drv.result.AVG_ACCELERATION_MOD;
+                    drv.result.has_avg_acceleration_mod = true;
+                elseif (strcmp(Y,'acceleration_rot_avg'))
+                    gra.res_y = drv.result.AVG_ACCELERATION_ROT;
+                    drv.result.has_avg_acceleration_rot = true;
+                elseif (strcmp(Y,'velocity_mod_min'))
+                    gra.res_y = drv.result.MIN_VELOCITY_MOD;
+                    drv.result.has_min_velocity_mod = true;
+                elseif (strcmp(Y,'velocity_mod_max'))
+                    gra.res_y = drv.result.MAX_VELOCITY_MOD;
+                    drv.result.has_max_velocity_mod = true;
+                elseif (strcmp(Y,'velocity_rot_min'))
+                    gra.res_y = drv.result.MIN_VELOCITY_ROT;
+                    drv.result.has_min_velocity_rot = true;
+                elseif (strcmp(Y,'velocity_rot_max'))
+                    gra.res_y = drv.result.MAX_VELOCITY_ROT;
+                    drv.result.has_max_velocity_rot = true;
+                elseif (strcmp(Y,'acceleration_mod_min'))
+                    gra.res_y = drv.result.MIN_ACCELERATION_MOD;
+                    drv.result.has_min_acceleration_mod = true;
+                elseif (strcmp(Y,'acceleration_mod_max'))
+                    gra.res_y = drv.result.MAX_ACCELERATION_MOD;
+                    drv.result.has_max_acceleration_mod = true;
+                elseif (strcmp(Y,'acceleration_rot_min'))
+                    gra.res_y = drv.result.MIN_ACCELERATION_ROT;
+                    drv.result.has_min_acceleration_rot = true;
+                elseif (strcmp(Y,'acceleration_rot_max'))
+                    gra.res_y = drv.result.MAX_ACCELERATION_ROT;
+                    drv.result.has_max_acceleration_rot = true;
                 elseif (strcmp(Y,'temperature'))
                     gra.res_y = drv.result.TEMPERATURE;
                     drv.result.has_temperature = true;
+                elseif (strcmp(Y,'temperature_avg'))
+                    gra.res_y = drv.result.AVG_TEMPERATURE;
+                    drv.result.has_avg_temperature = true;
+                elseif (strcmp(Y,'temperature_min'))
+                    gra.res_y = drv.result.MIN_TEMPERATURE;
+                    drv.result.has_min_temperature = true;
+                elseif (strcmp(Y,'temperature_max'))
+                    gra.res_y = drv.result.MAX_TEMPERATURE;
+                    drv.result.has_max_temperature = true;
                 elseif (strcmp(Y,'heat_rate'))
                     gra.res_y = drv.result.HEAT_RATE;
                     drv.result.has_heat_rate = true;
+                elseif (strcmp(Y,'heat_rate_total'))
+                    gra.res_y = drv.result.TOT_HEAT_RATE_ALL;
+                    drv.result.has_tot_heat_rate_all = true;
+                elseif (strcmp(Y,'conduction_direct_total'))
+                    gra.res_y = drv.result.TOT_CONDUCTION_DIRECT;
+                    drv.result.has_tot_conduction_direct = true;
+                elseif (strcmp(Y,'conduction_indirect_total'))
+                    gra.res_y = drv.result.TOT_CONDUCTION_INDIRECT;
+                    drv.result.has_tot_conduction_indirect = true;
                 end
                 
                 % Curves
@@ -2953,7 +3141,7 @@ classdef Read < handle
                         
                         % Particle X
                         if (isfield(CUR,'particle_x'))
-                            if (~ismember(X,global_results))
+                            if (ismember(X,results_general_particle) || ismember(X,results_mech_particle) || ismember(X,results_therm_particle))
                                 particle_x = CUR.particle_x;
                                 if (~this.isIntArray(particle_x,1) || particle_x <= 0 || particle_x > drv.n_particles)
                                     this.invalidParamError('Graph.curve.particle_x','It must be a positive integer corresponding to a valid particle ID');
@@ -2963,14 +3151,14 @@ classdef Read < handle
                             else
                                 this.warnMsg('Graph.curve.particle_x was provided to a curve whose X-axis data is not a particle result. It will be ignored.');
                             end
-                        elseif (~ismember(X,global_results))
+                        elseif (ismember(X,results_general_particle) || ismember(X,results_mech_particle) || ismember(X,results_therm_particle))
                             this.missingDataError('Graph.curve.particle_x');
                             status = 0; return;
                         end
                         
                         % Particle Y
                         if (isfield(CUR,'particle_y'))
-                            if (~ismember(Y,global_results))
+                            if (ismember(Y,results_general_particle) || ismember(X,results_mech_particle) || ismember(X,results_therm_particle))
                                 particle_y = CUR.particle_y;
                                 if (~this.isIntArray(particle_y,1) || particle_y <= 0 || particle_y > drv.n_particles)
                                     this.invalidParamError('Graph.curve.particle_y','It must be a positive integer corresponding to a valid particle ID');
@@ -2980,7 +3168,7 @@ classdef Read < handle
                             else
                                 this.warnMsg('Graph.curve.particle_y was provided to a curve whose Y-axis data is not a particle result. It will be ignored.');
                             end
-                        elseif (~ismember(Y,global_results))
+                        elseif (ismember(Y,results_general_particle) || ismember(X,results_mech_particle) || ismember(X,results_therm_particle))
                             this.missingDataError('Graph.curve.particle_y');
                             status = 0; return;
                         end

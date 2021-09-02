@@ -186,13 +186,21 @@ classdef Driver < handle
             if (this.result.idx < length(this.result.times))
                 this.result.updateIndex();
                 this.result.storeTime(this);
+                this.result.storeAvgVelocity(this);
+                this.result.storeExtVelocity(this);
+                this.result.storeAvgAcceleration(this);
+                this.result.storeExtAcceleration(this);
+                this.result.storeAvgTemperature(this);
+                this.result.storeExtTemperature(this);
+                this.result.storeTotalHeatRate(this);
                 for i = 1:this.n_particles
                     p = this.particles(i);
                     this.result.storeParticleProp(p);
                     this.result.storeParticlePosition(p);
                     this.result.storeParticleTemperature(p);
                     this.result.storeParticleForce(p);
-                    this.result.storeParticleMotion(p);
+                    this.result.storeParticleVelocity(p);
+                    this.result.storeParticleAcceleration(p);
                     this.result.storeParticleHeatRate(p);
                 end
                 for i = 1:this.n_walls
