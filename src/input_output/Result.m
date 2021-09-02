@@ -16,37 +16,38 @@ classdef Result < handle
         
         % Types of particle results: properties
         RADIUS = uint8(3);
+        MASS   = uint8(4);
         
         % Types of particle results: position
-        MOTION       = uint8(4);
-        COORDINATE_X = uint8(5);
-        COORDINATE_Y = uint8(6);
-        ORIENTATION  = uint8(7);
+        MOTION       = uint8(5);
+        COORDINATE_X = uint8(6);
+        COORDINATE_Y = uint8(7);
+        ORIENTATION  = uint8(8);
         
         % Types of particle results: forces
-        FORCE_VEC = uint8(8);
-        FORCE_MOD = uint8(9);
-        FORCE_X   = uint8(10);
-        FORCE_Y   = uint8(11);
-        TORQUE    = uint8(12);
+        FORCE_VEC = uint8(9);
+        FORCE_MOD = uint8(10);
+        FORCE_X   = uint8(11);
+        FORCE_Y   = uint8(12);
+        TORQUE    = uint8(13);
         
         % Types of particle results: velocity
-        VELOCITY_VEC = uint8(13);
-        VELOCITY_MOD = uint8(14);
-        VELOCITY_X   = uint8(15);
-        VELOCITY_Y   = uint8(16);
-        VELOCITY_ROT = uint8(17);
+        VELOCITY_VEC = uint8(14);
+        VELOCITY_MOD = uint8(15);
+        VELOCITY_X   = uint8(16);
+        VELOCITY_Y   = uint8(17);
+        VELOCITY_ROT = uint8(18);
         
         % Types of particle results: acceleration
-        ACCELERATION_VEC = uint8(18);
-        ACCELERATION_MOD = uint8(19);
-        ACCELERATION_X   = uint8(20);
-        ACCELERATION_Y   = uint8(21);
-        ACCELERATION_ROT = uint8(22);
+        ACCELERATION_VEC = uint8(19);
+        ACCELERATION_MOD = uint8(20);
+        ACCELERATION_X   = uint8(21);
+        ACCELERATION_Y   = uint8(22);
+        ACCELERATION_ROT = uint8(23);
         
         % Types of particle results: thermal state
-        HEAT_RATE   = uint8(23);
-        TEMPERATURE = uint8(24);
+        HEAT_RATE   = uint8(24);
+        TEMPERATURE = uint8(25);
     end
     
     %% Public properties: flags for required results
@@ -57,6 +58,7 @@ classdef Result < handle
         
         % Particle properties
         has_radius = logical(false);
+        has_mass   = logical(false);
         
         % Particle position
         has_coord_x     = logical(false);
@@ -98,6 +100,7 @@ classdef Result < handle
         
         % Particle properties
         radius double = double.empty;
+        mass   double = double.empty;
         
         % Particle position
         coord_x     double = double.empty;
@@ -170,6 +173,9 @@ classdef Result < handle
             % Particle properties
             if (this.has_radius)
                 this.radius = nan(r,c);
+            end
+            if (this.has_mass)
+                this.mass = nan(r,c);
             end
             
             % Particle force
@@ -259,9 +265,13 @@ classdef Result < handle
         end
         
         %------------------------------------------------------------------
+        % Fixed properties for all steps
         function storeParticleProp(this,p)
             if (this.has_radius)
                 this.radius(p.id,:) = p.radius;
+            end
+            if (this.has_mass)
+                this.mass(p.id,:) = p.mass;
             end
         end
         

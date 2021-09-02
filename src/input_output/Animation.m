@@ -320,6 +320,10 @@ classdef Animation < handle
                     this.anim_type = this.SCALAR;
                     this.res_part  = drv.result.radius;
                     
+                case drv.result.MASS
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.mass;
+                    
                 case drv.result.COORDINATE_X
                     this.anim_type = this.SCALAR;
                     this.res_part  = drv.result.coord_x;

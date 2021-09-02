@@ -2655,7 +2655,7 @@ classdef Read < handle
             % Reults to store (besides those always saved and needed for graphs/animations)
             if (isfield(OUT,'saved_results'))
                 % Possible results
-                results_general = ["time","step","radius","coord_x","coord_y","orientation","wall_position"];
+                results_general = ["time","step","radius","mass","coord_x","coord_y","orientation","wall_position"];
                 results_mech    = ["force_x","force_y","torque",...
                                    "velocity_x","velocity_y","velocity_rot",...
                                    "acceleration_x","acceleration_y","acceleration_rot"];
@@ -2691,6 +2691,8 @@ classdef Read < handle
                         drv.result.has_step = true;
                     elseif (strcmp(res,'radius'))
                         drv.result.has_radius = true;
+                    elseif (strcmp(res,'mass'))
+                        drv.result.has_mass = true;
                     elseif (strcmp(res,'coord_x'))
                         drv.result.has_coord_x = true;
                     elseif (strcmp(res,'coord_y'))
@@ -2756,7 +2758,7 @@ classdef Read < handle
                 
                 % Array of possible results
                 global_results = ["time","step"];
-                results_mech   = ["radius",...
+                results_mech   = ["radius","mass",...
                                   "coordinate_x","coordinate_y","orientation",...
                                   "force_vector","force_modulus","force_x","force_y","torque",...
                                   "velocity_vector","velocity_modulus","velocity_x","velocity_y","velocity_rot",...
@@ -2797,6 +2799,9 @@ classdef Read < handle
                 elseif (strcmp(X,'radius'))
                     gra.res_x = drv.result.RADIUS;
                     drv.result.has_radius = true;
+                elseif (strcmp(X,'mass'))
+                    gra.res_x = drv.result.MASS;
+                    drv.result.has_mass = true;
                 elseif (strcmp(X,'coordinate_x'))
                     gra.res_x = drv.result.COORDINATE_X;
                     drv.result.has_coord_x = true;
@@ -2863,6 +2868,9 @@ classdef Read < handle
                 elseif (strcmp(Y,'radius'))
                     gra.res_y = drv.result.RADIUS;
                     drv.result.has_radius = true;
+                elseif (strcmp(Y,'mass'))
+                    gra.res_y = drv.result.MASS;
+                    drv.result.has_mass = true;
                 elseif (strcmp(Y,'coordinate_x'))
                     gra.res_y = drv.result.COORDINATE_X;
                     drv.result.has_coord_x = true;
@@ -3061,7 +3069,7 @@ classdef Read < handle
                 end
                 
                 % Array of possible results
-                results_general = ["radius",...
+                results_general = ["radius","mass",...
                                    "motion","coordinate_x","coordinate_y","orientation"];
                 results_mech    = ["force_vector","force_modulus","force_x","force_y","torque",...
                                    "velocity_vector","velocity_modulus","velocity_x","velocity_y","velocity_rot",...
@@ -3087,6 +3095,9 @@ classdef Read < handle
                 elseif (strcmp(result,'radius'))
                     anim.res_type = drv.result.RADIUS;
                     drv.result.has_radius = true;
+                elseif (strcmp(result,'mass'))
+                    anim.res_type = drv.result.MASS;
+                    drv.result.has_mass = true;
                 elseif (strcmp(result,'motion'))
                     anim.res_type = drv.result.MOTION;
                     drv.result.has_orientation = true;

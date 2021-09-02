@@ -124,6 +124,8 @@ classdef Graph < handle
                     R = drv.result.steps;
                 case drv.result.RADIUS
                     R = drv.result.radius(p,:);
+                case drv.result.MASS
+                    R = drv.result.mass(p,:);
                 case drv.result.COORDINATE_X
                     R = drv.result.coord_x(p,:);
                 case drv.result.COORDINATE_Y
