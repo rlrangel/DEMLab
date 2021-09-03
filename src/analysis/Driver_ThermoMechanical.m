@@ -16,17 +16,6 @@
 classdef Driver_ThermoMechanical < Driver
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        % Global properties
-        gravity       double = double.empty;   % vector of gravity components value
-        damp_trl      double = double.empty;   % damping for translational motion
-        damp_rot      double = double.empty;   % damping for rotational motion
-        fluid_conduct double = double.empty;   % thermal conductivity of interstitial fluid
-        
-        % Time integration
-        scheme_trl  Scheme = Scheme.empty;   % handle to object of Scheme class for translation integration
-        scheme_rot  Scheme = Scheme.empty;   % handle to object of Scheme class for rotation integration
-        scheme_temp Scheme = Scheme.empty;   % handle to object of Scheme class for temperature integration
-        
         % Forces / torques evaluation
         eval_freq uint32  = uint32.empty;    % evaluation frequency (in steps)
         eval      logical = logical.empty;   % flag for evaluating forces in current step
@@ -45,30 +34,31 @@ classdef Driver_ThermoMechanical < Driver
         %------------------------------------------------------------------
         function setDefaultProps(this)
             % Scalars
-            this.n_mparts      = 0;
-            this.n_particles   = 0;
-            this.n_walls       = 0;
-            this.n_interacts   = 0;
-            this.n_materials   = 0;
-            this.fluid_conduct = 0;
-            this.alpha         = inf; % convex hull
-            this.por_freq      = NaN; % never compute
-            this.vor_freq      = NaN; % never compute
-            this.eval_freq     = 1;   % always compute
-            this.workers       = parcluster('local').NumWorkers; % max. available
-            this.nprog         = 1;
-            this.nout          = 100;
+            this.n_mparts    = 0;
+            this.n_particles = 0;
+            this.n_walls     = 0;
+            this.n_interacts = 0;
+            this.n_solids    = 0;
+            this.alpha       = inf; % convex hull
+            this.por_freq    = NaN; % never compute
+            this.vor_freq    = NaN; % never compute
+            this.eval_freq   = 1;   % always compute
+            this.workers     = parcluster('local').NumWorkers; % max. available
+            this.nprog       = 1;
+            this.nout        = 100;
+            % Vectors
+            this.fluid_vel   = [0;0];
             % Booleans
-            this.auto_step     = false;
-            this.eval          = true;  % according to eval_freq
-            this.parallel      = false; % according to workers
-            this.save_ws       = true;  % according to nout
+            this.auto_step   = false;
+            this.eval        = true;  % according to eval_freq
+            this.parallel    = false; % according to workers
+            this.save_ws     = true;  % according to nout
             % Objects
-            this.search        = Search_SimpleLoop();
-            this.scheme_trl    = Scheme_EulerForward();
-            this.scheme_rot    = Scheme_EulerForward();
-            this.scheme_temp   = Scheme_EulerForward();
-            this.result        = Result();
+            this.search      = Search_SimpleLoop();
+            this.scheme_trl  = Scheme_EulerForward();
+            this.scheme_rot  = Scheme_EulerForward();
+            this.scheme_temp = Scheme_EulerForward();
+            this.result      = Result();
         end
         
         %------------------------------------------------------------------

@@ -204,7 +204,7 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             Rc = int.kinemat.contact_radius;
             D  = int.kinemat.dist/2;
             ks = int.eff_conduct;
-            kf = drv.fluid_conduct;
+            kf = drv.fluid.conduct;
             c  = this.core;
             
             % Parameters
@@ -227,7 +227,7 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             d  = int.kinemat.dist;
             k1 = int.elem1.conduct;
             k2 = int.elem2.conduct;
-            kf = drv.fluid_conduct;
+            kf = drv.fluid.conduct;
             c  = this.core;
             An = int.kinemat.vedge^2 * pi / 4;
             

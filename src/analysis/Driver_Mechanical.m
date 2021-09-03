@@ -15,15 +15,6 @@
 classdef Driver_Mechanical < Driver
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        % Global properties
-        gravity  double = double.empty;   % vector of gravity components value
-        damp_trl double = double.empty;   % damping for translational motion
-        damp_rot double = double.empty;   % damping for rotational motion
-        
-        % Time integration
-        scheme_trl Scheme = Scheme.empty;   % handle to object of Scheme class for translation integration
-        scheme_rot Scheme = Scheme.empty;   % handle to object of Scheme class for rotation integration
-        
         % Forces / torques evaluation
         eval_freq uint32  = uint32.empty;    % evaluation frequency (in steps)
         eval      logical = logical.empty;   % flag for evaluating forces in current step
@@ -46,7 +37,7 @@ classdef Driver_Mechanical < Driver
             this.n_particles = 0;
             this.n_walls     = 0;
             this.n_interacts = 0;
-            this.n_materials = 0;
+            this.n_solids    = 0;
             this.alpha       = inf; % convex hull
             this.por_freq    = NaN; % never compute
             this.vor_freq    = NaN; % never compute
@@ -54,6 +45,8 @@ classdef Driver_Mechanical < Driver
             this.workers     = parcluster('local').NumWorkers; % max. available
             this.nprog       = 1;
             this.nout        = 100;
+            % Vectors
+            this.fluid_vel   = [0;0];
             % Booleans
             this.auto_step   = false;
             this.eval        = true;  % according to eval_freq

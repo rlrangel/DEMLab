@@ -182,7 +182,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             Rc = int.kinemat.contact_radius;
             D  = int.kinemat.dist/2;
             ks = int.eff_conduct;
-            kf = drv.fluid_conduct;
+            kf = drv.fluid.conduct;
             
             % Parameters
             rij = this.getConductRadius(int,drv,Rp);
@@ -206,7 +206,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             d  = int.kinemat.dist;
             k1 = int.elem1.conduct;
             k2 = int.elem2.conduct;
-            kf = drv.fluid_conduct;
+            kf = drv.fluid.conduct;
             
             % Parameters
             if (int.kinematic.is_contact)

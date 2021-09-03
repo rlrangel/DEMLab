@@ -309,9 +309,9 @@ classdef Read < handle
             if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_trans'))
                 scheme = string(json.Solver.integr_scheme_trans);
                 if (~this.isStringArray(scheme,1)    ||...
-                    ~strcmp(scheme,'forward_euler')  &&...
+                   (~strcmp(scheme,'forward_euler')  &&...
                     ~strcmp(scheme,'modified_euler') &&...
-                    ~strcmp(scheme,'taylor_2'))
+                    ~strcmp(scheme,'taylor_2')))
                     this.invalidOptError('Solver.integr_scheme_trans','forward_euler, modified_euler, taylor_2');
                     status = 0; return;
                 end
@@ -328,9 +328,9 @@ classdef Read < handle
             if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_rotat'))
                 scheme = string(json.Solver.integr_scheme_rotat);
                 if (~this.isStringArray(scheme,1)    ||...
-                    ~strcmp(scheme,'forward_euler')  &&...
+                   (~strcmp(scheme,'forward_euler')  &&...
                     ~strcmp(scheme,'modified_euler') &&...
-                    ~strcmp(scheme,'taylor_2'))
+                    ~strcmp(scheme,'taylor_2')))
                     this.invalidOptError('Solver.integr_scheme_rotat','forward_euler, modified_euler, taylor_2');
                     status = 0; return;
                 end
@@ -771,16 +771,14 @@ classdef Read < handle
                 drv.damp_rot = dr;
             end
             
-            % Interstitial fluid properties
-            if (isfield(GC,'fluid_thermal_conductivity'))
-                fc = GC.fluid_thermal_conductivity;
-                if (~this.isDoubleArray(fc,1))
-                    this.invalidParamError('GlobalCondition.fluid_thermal_conductivity','It must be a numeric value');
+            % Interstitial fluid velocity
+            if (isfield(GC,'fluid_velocity'))
+                fv = GC.fluid_velocity;
+                if (~this.isDoubleArray(fv,2))
+                    this.invalidParamError('GlobalCondition.fluid_velocity','It must be a pair of numeric values with X,Y velocity components');
                     status = 0; return;
-                elseif (fc <= 0)
-                    this.warnMsg('Unphysical value found for interstitial fluid property.');
                 end
-                drv.fluid_conduct = fc;
+                drv.fluid_vel = fv;
             end
         end
         
@@ -821,14 +819,14 @@ classdef Read < handle
                     % Apply initial velocity to selected particles
                     model_parts = string(TV.model_parts);
                     for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
+                        mp_name = model_parts(j);
+                        if (~this.isStringArray(mp_name,1))
                             this.invalidParamError('InitialCondition.translational_velocity.model_parts','It must be a list of strings containing the names of the model parts');
                             status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
+                        elseif (strcmp(mp_name,'PARTICLES'))
                             [drv.particles.veloc_trl] = deal(val);
                         else
-                            mp = findobj(drv.mparts,'name',name);
+                            mp = findobj(drv.mparts,'name',mp_name);
                             if (isempty(mp))
                                 this.warnMsg('Nonexistent model part used in InitialCondition.translational_velocity.');
                                 continue;
@@ -858,14 +856,14 @@ classdef Read < handle
                     % Apply initial velocity to selected particles
                     model_parts = string(RV.model_parts);
                     for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
+                        mp_name = model_parts(j);
+                        if (~this.isStringArray(mp_name,1))
                             this.invalidParamError('InitialCondition.rotational_velocity.model_parts','It must be a list of strings containing the names of the model parts');
                             status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
+                        elseif (strcmp(mp_name,'PARTICLES'))
                             [drv.particles.veloc_rot] = deal(val);
                         else
-                            mp = findobj(drv.mparts,'name',name);
+                            mp = findobj(drv.mparts,'name',mp_name);
                             if (isempty(mp))
                                 this.warnMsg('Nonexistent model part used in InitialCondition.rotational_velocity.');
                                 continue;
@@ -895,16 +893,16 @@ classdef Read < handle
                     % Apply initial temperature to selected elements
                     model_parts = string(T.model_parts);
                     for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
+                        mp_name = model_parts(j);
+                        if (~this.isStringArray(mp_name,1))
                             this.invalidParamError('InitialCondition.temperature.model_parts','It must be a list of strings containing the names of the model parts');
                             status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
+                        elseif (strcmp(mp_name,'PARTICLES'))
                             [drv.particles.temperature] = deal(val);
-                        elseif (strcmp(name,'WALLS'))
+                        elseif (strcmp(mp_name,'WALLS'))
                             [drv.walls.temperature] = deal(val);
                         else
-                            mp = findobj(drv.mparts,'name',name);
+                            mp = findobj(drv.mparts,'name',mp_name);
                             if (isempty(mp))
                                 this.warnMsg('Nonexistent model part used in InitialCondition.temperature.');
                                 continue;
@@ -1127,14 +1125,14 @@ classdef Read < handle
                     % Add handle to prescribed condition to selected particles
                     model_parts = string(F.model_parts);
                     for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
+                        mp_name = model_parts(j);
+                        if (~this.isStringArray(mp_name,1))
                             this.invalidParamError('PrescribedCondition.force.model_parts','It must be a list of strings containing the names of the model parts');
                             status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
+                        elseif (strcmp(mp_name,'PARTICLES'))
                             [drv.particles.pc_force] = deal(pc);
                         else
-                            mp = findobj(drv.mparts,'name',name);
+                            mp = findobj(drv.mparts,'name',mp_name);
                             if (isempty(mp))
                                 this.warnMsg('Nonexistent model part used in PrescribedCondition.force.');
                                 continue;
@@ -1334,14 +1332,14 @@ classdef Read < handle
                     % Add handle to prescribed condition to selected particles
                     model_parts = string(T.model_parts);
                     for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
+                        mp_name = model_parts(j);
+                        if (~this.isStringArray(mp_name,1))
                             this.invalidParamError('PrescribedCondition.torque.model_parts','It must be a list of strings containing the names of the model parts');
                             status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
+                        elseif (strcmp(mp_name,'PARTICLES'))
                             [drv.particles.pc_torque] = deal(pc);
                         else
-                            mp = findobj(drv.mparts,'name',name);
+                            mp = findobj(drv.mparts,'name',mp_name);
                             if (isempty(mp))
                                 this.warnMsg('Nonexistent model part used in PrescribedCondition.torque.');
                                 continue;
@@ -1541,14 +1539,14 @@ classdef Read < handle
                     % Add handle to prescribed condition to selected particles
                     model_parts = string(HF.model_parts);
                     for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
+                        mp_name = model_parts(j);
+                        if (~this.isStringArray(mp_name,1))
                             this.invalidParamError('PrescribedCondition.heat_flux.model_parts','It must be a list of strings containing the names of the model parts');
                             status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
+                        elseif (strcmp(mp_name,'PARTICLES'))
                             [drv.particles.pc_heatflux] = deal(pc);
                         else
-                            mp = findobj(drv.mparts,'name',name);
+                            mp = findobj(drv.mparts,'name',mp_name);
                             if (isempty(mp))
                                 this.warnMsg('Nonexistent model part used in PrescribedCondition.heat_flux.');
                                 continue;
@@ -1748,14 +1746,14 @@ classdef Read < handle
                     % Add handle to prescribed condition to selected particles
                     model_parts = string(HF.model_parts);
                     for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
+                        mp_name = model_parts(j);
+                        if (~this.isStringArray(mp_name,1))
                             this.invalidParamError('PrescribedCondition.heat_rate.model_parts','It must be a list of strings containing the names of the model parts');
                             status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
+                        elseif (strcmp(mp_name,'PARTICLES'))
                             [drv.particles.pc_heatrate] = deal(pc);
                         else
-                            mp = findobj(drv.mparts,'name',name);
+                            mp = findobj(drv.mparts,'name',mp_name);
                             if (isempty(mp))
                                 this.warnMsg('Nonexistent model part used in PrescribedCondition.heat_rate.');
                                 continue;
@@ -1974,16 +1972,16 @@ classdef Read < handle
                     % Add handle to fixed condition to selected elements
                     model_parts = string(V.model_parts);
                     for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
+                        mp_name = model_parts(j);
+                        if (~this.isStringArray(mp_name,1))
                             this.invalidParamError('FixedCondition.velocity_translation.model_parts','It must be a list of strings containing the names of the model parts');
                             status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
+                        elseif (strcmp(mp_name,'PARTICLES'))
                             [drv.particles.fc_translation] = deal(cond);
-                        elseif (strcmp(name,'WALLS'))
+                        elseif (strcmp(mp_name,'WALLS'))
                             [drv.walls.fc_translation] = deal(cond);
                         else
-                            mp = findobj(drv.mparts,'name',name);
+                            mp = findobj(drv.mparts,'name',mp_name);
                             if (isempty(mp))
                                 this.warnMsg('Nonexistent model part used in FixedCondition.velocity_translation.');
                                 continue;
@@ -2184,16 +2182,16 @@ classdef Read < handle
                     % Add handle to fixed condition to selected elements
                     model_parts = string(V.model_parts);
                     for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
+                        mp_name = model_parts(j);
+                        if (~this.isStringArray(mp_name,1))
                             this.invalidParamError('FixedCondition.velocity_rotation.model_parts','It must be a list of strings containing the names of the model parts');
                             status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
+                        elseif (strcmp(mp_name,'PARTICLES'))
                             [drv.particles.fc_rotation] = deal(cond);
-                        elseif (strcmp(name,'WALLS'))
+                        elseif (strcmp(mp_name,'WALLS'))
                             [drv.walls.fc_rotation] = deal(cond);
                         else
-                            mp = findobj(drv.mparts,'name',name);
+                            mp = findobj(drv.mparts,'name',mp_name);
                             if (isempty(mp))
                                 this.warnMsg('Nonexistent model part used in FixedCondition.velocity_rotation.');
                                 continue;
@@ -2394,16 +2392,16 @@ classdef Read < handle
                     % Add handle to fixed condition to selected elements
                     model_parts = string(T.model_parts);
                     for j = 1:length(model_parts)
-                        name = model_parts(j);
-                        if (~this.isStringArray(name,1))
+                        mp_name = model_parts(j);
+                        if (~this.isStringArray(mp_name,1))
                             this.invalidParamError('FixedCondition.temperature.model_parts','It must be a list of strings containing the names of the model parts');
                             status = 0; return;
-                        elseif (strcmp(name,'PARTICLES'))
+                        elseif (strcmp(mp_name,'PARTICLES'))
                             [drv.particles.fc_temperature] = deal(cond);
-                        elseif (strcmp(name,'WALLS'))
+                        elseif (strcmp(mp_name,'WALLS'))
                             [drv.walls.fc_temperature] = deal(cond);
                         else
-                            mp = findobj(drv.mparts,'name',name);
+                            mp = findobj(drv.mparts,'name',mp_name);
                             if (isempty(mp))
                                 this.warnMsg('Nonexistent model part used in FixedCondition.temperature.');
                                 continue;
@@ -2426,122 +2424,182 @@ classdef Read < handle
             
             for i = 1:length(json.Material)
                 M = json.Material(i);
-                if (~isfield(M,'name') || ~isfield(M,'model_parts') || ~isfield(M,'properties'))
-                    this.missingDataError('Material.name and/or Material.model_parts and/or Material.properties');
+                
+                % Check material type
+                if (~isfield(M,'type'))
+                    this.missingDataError('Material.type');
+                    status = 0; return;
+                end
+                type = string(M.type);
+                if (~this.isStringArray(type,1) ||...
+                   (~strcmp(type,'solid') &&...
+                    ~strcmp(type,'fluid')))
+                    this.invalidOptError('Material.type','solid, fluid');
                     status = 0; return;
                 end
                 
-                % Create material object
-                mat = Material();
-                drv.n_materials = drv.n_materials + 1;
-                drv.materials(drv.n_materials) = mat;
-                
-                % Name
-                name = string(M.name);
-                if (~this.isStringArray(name,1))
-                    this.invalidParamError('Material.name','It must be a string with the name representing the material');
-                    status = 0; return;
-                end
-                mat.name = name;
-                
-                % Properties
-                prop = M.properties;
-                msg = 0; % controler for type of message
-                
-                if (isfield(prop,'density'))
-                    if (~this.isDoubleArray(prop.density,1))
-                        msg = -100;
-                    elseif (prop.density <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.density = prop.density;
-                end
-                if (isfield(prop,'young_modulus'))
-                    if (~this.isDoubleArray(prop.young_modulus,1))
-                        msg = -100;
-                    elseif (prop.young_modulus <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.young = prop.young_modulus;
-                end
-                if (isfield(prop,'young_modulus_real'))
-                    if (~this.isDoubleArray(prop.young_modulus_real,1))
-                        msg = -100;
-                    elseif (prop.young_modulus_real <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.young0 = prop.young_modulus_real;
-                end
-                if (isfield(prop,'shear_modulus'))
-                    if (~this.isDoubleArray(prop.shear_modulus,1))
-                        msg = -100;
-                    elseif (prop.shear_modulus <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.shear = prop.shear_modulus;
-                end
-                if (isfield(prop,'poisson_ratio'))
-                    if (~this.isDoubleArray(prop.poisson_ratio,1))
-                        msg = -100;
-                    elseif (prop.poisson_ratio < 0 || prop.poisson_ratio > 0.5)
-                        msg = msg + 1;
-                    end
-                    mat.poisson = prop.poisson_ratio;
-                end
-                if (isfield(prop,'thermal_conductivity'))
-                    if (~this.isDoubleArray(prop.thermal_conductivity,1))
-                        msg = -100;
-                    elseif (prop.thermal_conductivity <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.conduct = prop.thermal_conductivity;
-                end
-                if (isfield(prop,'heat_capacity'))
-                    if (~this.isDoubleArray(prop.heat_capacity,1))
-                        msg = -100;
-                    elseif (prop.heat_capacity <= 0)
-                        msg = msg + 1;
-                    end
-                    mat.hcapacity = prop.heat_capacity;
-                end
-                
-                if (msg < 0)
-                    this.invalidParamError('Material.properties','Properties must be numerical values');
-                    status = 0; return;
-                elseif(msg > 0)
-                    this.warnMsg('Unphysical value found for material property.');
-                end
-                
-                % Apply material to selected elements
-                model_parts = string(M.model_parts);
-                for j = 1:length(model_parts)
-                    mp_name = model_parts(j);
-                    if (~this.isStringArray(mp_name,1))
-                        this.invalidParamError('Material.model_parts','It must be a list of strings containing the names of the model parts');
-                        status = 0; return;
-                    elseif (strcmp(mp_name,'PARTICLES'))
-                        [drv.particles.material] = deal(mat);
-                    elseif (strcmp(mp_name,'WALLS'))
-                        [drv.walls.material] = deal(mat);
-                    else
-                        mp = findobj(drv.mparts,'name',name);
-                        if (isempty(mp))
-                            this.warnMsg('Nonexistent model part used in Material.');
-                            continue;
+                % SOLID MATERIAL
+                if (strcmp(type,'solid'))
+                    
+                    % Create material object
+                    mat = Material_Solid();
+                    drv.n_solids = drv.n_solids + 1;
+                    drv.solids(drv.n_solids) = mat;
+                    
+                    % Name
+                    if (isfield(M,'name'))
+                        name = string(M.name);
+                        if (~this.isStringArray(name,1))
+                            this.invalidParamError('Material.name','It must be a string with the name representing the material');
+                            status = 0; return;
                         end
-                        [mp.particles.material] = deal(mat);
-                        [mp.walls.material]     = deal(mat);
+                        mat.name = name;
+                    else
+                        mat.name = sprintf('Solid_%d',drv.n_solids);
                     end
+                    
+                    % Solid properties
+                    if (isfield(M,'young_modulus'))
+                        if (~this.isDoubleArray(M.young_modulus,1))
+                            this.invalidParamError('Material.young_modulus','Material properties must be numerical values');
+                            status = 0; return;
+                        elseif (M.young_modulus <= 0)
+                            this.warnMsg('Unphysical value found for Material.young_modulus.');
+                        end
+                        mat.young = M.young_modulus;
+                    end
+                    if (isfield(M,'young_modulus_real'))
+                        if (~this.isDoubleArray(M.young_modulus_real,1))
+                            this.invalidParamError('Material.young_modulus_real','Material properties must be numerical values');
+                            status = 0; return;
+                        elseif (M.young_modulus_real <= 0)
+                            this.warnMsg('Unphysical value found for Material.young_modulus_real.');
+                        end
+                        mat.young0 = M.young_modulus_real;
+                    end
+                    if (isfield(M,'shear_modulus'))
+                        if (~this.isDoubleArray(M.shear_modulus,1))
+                            this.invalidParamError('Material.shear_modulus','Material properties must be numerical values');
+                            status = 0; return;
+                        elseif (M.shear_modulus <= 0)
+                            this.warnMsg('Unphysical value found for Material.shear_modulus.');
+                        end
+                        mat.shear = M.shear_modulus;
+                    end
+                    if (isfield(M,'poisson_ratio'))
+                        if (~this.isDoubleArray(M.poisson_ratio,1))
+                            this.invalidParamError('Material.poisson_ratio','Material properties must be numerical values');
+                            status = 0; return;
+                        elseif (M.poisson_ratio < 0 || M.poisson_ratio > 0.5)
+                            this.warnMsg('Unphysical value found for Material.poisson_ratio.');
+                        end
+                        mat.poisson = M.poisson_ratio;
+                    end
+                    
+                % FLUID MATERIAL (only 1 per model)
+                elseif (strcmp(type,'fluid'))
+                    
+                    % Check if fluid has already been created
+                    if (~isempty(drv.fluid))
+                        this.warnMsg('Only one fluid material is permitted, so only the first one will be considered.');
+                        continue;
+                    end
+                    
+                    % Create material object
+                    mat = Material_Fluid();
+                    drv.fluid = mat;
+                    
+                    % Name
+                    if (isfield(M,'name'))
+                        name = string(M.name);
+                        if (~this.isStringArray(name,1))
+                            this.invalidParamError('Material.name','It must be a string with the name representing the material');
+                            status = 0; return;
+                        end
+                        mat.name = name;
+                    else
+                        mat.name = sprintf('Fluid');
+                    end
+                    
+                    % Fluid properties
+                    if (isfield(M,'viscosity'))
+                        if (~this.isDoubleArray(M.viscosity,1))
+                            this.invalidParamError('Material.viscosity','Material properties must be numerical values');
+                            status = 0; return;
+                        elseif (M.viscosity <= 0)
+                            this.warnMsg('Unphysical value found for Material.viscosity.');
+                        end
+                        mat.viscosity = M.viscosity;
+                    end
+                end
+                
+                % Generic properties
+                if (isfield(M,'density'))
+                    if (~this.isDoubleArray(M.density,1))
+                        this.invalidParamError('Material.density','Material properties must be numerical values');
+                            status = 0; return;
+                    elseif (M.density <= 0)
+                        this.warnMsg('Unphysical value found for Material.density.');
+                    end
+                    mat.density = M.density;
+                end
+                if (isfield(M,'thermal_conductivity'))
+                    if (~this.isDoubleArray(M.thermal_conductivity,1))
+                        this.invalidParamError('Material.thermal_conductivity','Material properties must be numerical values');
+                            status = 0; return;
+                    elseif (M.thermal_conductivity <= 0)
+                        this.warnMsg('Unphysical value found for Material.thermal_conductivity.');
+                    end
+                    mat.conduct = M.thermal_conductivity;
+                end
+                if (isfield(M,'heat_capacity'))
+                    if (~this.isDoubleArray(M.heat_capacity,1))
+                        this.invalidParamError('Material.heat_capacity','Material properties must be numerical values');
+                            status = 0; return;
+                    elseif (M.heat_capacity <= 0)
+                        this.warnMsg('Unphysical value found for Material.heat_capacity.');
+                    end
+                    mat.hcapacity = M.heat_capacity;
+                end
+                
+                % Set additional material properties
+                if (strcmp(type,'solid'))
+                    % Apply solid material to selected model parts
+                    if (isfield(M,'model_parts'))
+                        model_parts = string(M.model_parts);
+                        for j = 1:length(model_parts)
+                            mp_name = model_parts(j);
+                            if (~this.isStringArray(mp_name,1))
+                                this.invalidParamError('Material.model_parts','It must be a list of strings containing the names of the model parts');
+                                status = 0; return;
+                            elseif (strcmp(mp_name,'PARTICLES'))
+                                [drv.particles.material] = deal(mat);
+                            elseif (strcmp(mp_name,'WALLS'))
+                                [drv.walls.material] = deal(mat);
+                            else
+                                mp = findobj(drv.mparts,'name',mp_name);
+                                if (isempty(mp))
+                                    this.warnMsg('Nonexistent model part used in Material.');
+                                    continue;
+                                end
+                                [mp.particles.material] = deal(mat);
+                                [mp.walls.material]     = deal(mat);
+                            end
+                        end
+                    end
+                elseif (strcmp(type,'fluid'))
+                    mat.setPrandtl();
                 end
             end
             
             % Checks
-            if (drv.n_materials == 0)
-                this.invalidParamError('No valid material was found.',[]);
+            if (drv.n_solids == 0)
+                this.invalidParamError('No valid solid material was found.',[]);
                 status = 0; return;
             else
-                for i = 1:drv.n_materials
-                    if (length(findobj(drv.materials,'name',drv.materials(i).name)) > 1)
+                for i = 1:drv.n_solids
+                    if (length(findobj(drv.solids,'name',drv.solids(i).name)) > 1 ||...
+                        strcmp(drv.solids(i).name,drv.fluid.name))
                         this.invalidParamError('Repeated material name.','Material names must be unique');
                         status = 0; return;
                     end
@@ -4956,8 +5014,10 @@ classdef Read < handle
         %------------------------------------------------------------------
         function status = checkMaterials(this,drv)
             status = 1;
-            for i = 1:drv.n_materials
-                m = drv.materials(i);
+            
+            % Check solid materials
+            for i = 1:drv.n_solids
+                m = drv.solids(i);
                 
                 % Check material properties needed for analysis types
                 if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) &&...
@@ -4979,7 +5039,7 @@ classdef Read < handle
                     m.young = m.young0;
                 end
                 if (~isempty(m.young) && ~isempty(m.poisson))
-                    shear_from_poisson = m.young / (2 + 2*m.poisson);
+                    shear_from_poisson = m.getShear();
                     if (isempty(m.shear))
                         m.shear = shear_from_poisson;
                     elseif (m.shear ~= shear_from_poisson)
@@ -5038,7 +5098,7 @@ classdef Read < handle
                 if (drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.VISCOELASTIC_LINEAR    ||...
                     drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.VISCOELASTIC_NONLINEAR ||...
                     drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.ELASTOPLASTIC_LINEAR)
-                    if (length(findobj(drv.materials,'young',[])) > 1)
+                    if (length(findobj(drv.solids,'young',[])) > 1)
                         fprintf(2,'The selected normal contact force model requires the Young modulus of materials.');
                         status = 0; return;
                     end
@@ -5049,13 +5109,13 @@ classdef Read < handle
             if (~isempty(drv.search.b_interact.cforcet))
                 if (drv.search.b_interact.cforcet.type == drv.search.b_interact.cforcet.SPRING ||...
                     drv.search.b_interact.cforcet.type == drv.search.b_interact.cforcet.SPRING_SLIDER)
-                    if (length(findobj(drv.materials,'poisson',[])) > 1)
+                    if (length(findobj(drv.solids,'poisson',[])) > 1)
                         fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.');
                         status = 0; return;
                     end
                     
                 elseif (drv.search.b_interact.cforcet.type == drv.search.b_interact.cforcet.SDS_LINEAR)
-                    if (length(findobj(drv.materials,'poisson',[])) > 1)
+                    if (length(findobj(drv.solids,'poisson',[])) > 1)
                         fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.');
                         status = 0; return;
                     end
@@ -5066,30 +5126,30 @@ classdef Read < handle
                     
                 elseif (drv.search.b_interact.cforcet.type == drv.search.b_interact.cforcet.SDS_NONLINEAR)
                     if (drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.DD)
-                        if (length(findobj(drv.materials,'shear',[])) > 1)
+                        if (length(findobj(drv.solids,'shear',[])) > 1)
                             fprintf(2,'The selected tangent contact force model requires the Shear modulus of materials.');
                             status = 0; return;
                         end
                     elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.LTH)
-                        if (length(findobj(drv.materials,'poisson',[])) > 1)
+                        if (length(findobj(drv.solids,'poisson',[])) > 1)
                             fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.');
                             status = 0; return;
                         end
                     elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.ZZY)
-                        if (length(findobj(drv.materials,'shear',[])) > 1)
+                        if (length(findobj(drv.solids,'shear',[])) > 1)
                             fprintf(2,'The selected tangent contact force model requires the Shear modulus of materials.');
                             status = 0; return;
                         end
-                        if (length(findobj(drv.materials,'poisson',[])) > 1)
+                        if (length(findobj(drv.solids,'poisson',[])) > 1)
                             fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.');
                             status = 0; return;
                         end
                     elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.TTI)
-                        if (length(findobj(drv.materials,'young',[])) > 1)
+                        if (length(findobj(drv.solids,'young',[])) > 1)
                             fprintf(2,'The selected normal contact force model requires the Young modulus of materials.');
                             status = 0; return;
                         end
-                        if (length(findobj(drv.materials,'poisson',[])) > 1)
+                        if (length(findobj(drv.solids,'poisson',[])) > 1)
                             fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.');
                             status = 0; return;
                         end
@@ -5104,7 +5164,7 @@ classdef Read < handle
             
             % Area correction
             if (~isempty(drv.search.b_interact.corarea))
-                if (length(findobj(drv.materials,'young0',[])) > 1)
+                if (length(findobj(drv.solids,'young0',[])) > 1)
                     fprintf(2,'Area correction models require the real value of the Young modulus to be provided.');
                     status = 0; return;
                 end
@@ -5120,8 +5180,10 @@ classdef Read < handle
                 if (drv.type == drv.MECHANICAL)
                     drv.search.cutoff = 0;
                 end
-                if (isempty(drv.fluid_conduct))
-                    this.warnMsg('Thermal conductivity of interstitial fluid was not specified, it will be assumed as zero.');
+                if (isempty(drv.fluid))
+                    this.warnMsg('The material for the interstitial fluid was not provided. A conductivity of zero will be assumed.');
+                    drv.fluid = Material_Fluid();
+                    drv.fluid.conduct = 0;
                 end
                 if (drv.search.b_interact.iconduc.type == drv.search.b_interact.iconduc.VORONOI_A)
                     if (drv.search.b_interact.iconduc.method == drv.search.b_interact.iconduc.VORONOI_DIAGRAM &&...
@@ -5145,6 +5207,9 @@ classdef Read < handle
                     end
                 end
             end
+            
+            % Convection
+            
         end
     end
     

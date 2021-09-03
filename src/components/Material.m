@@ -2,32 +2,46 @@
 %
 %% Description
 %
-% This is a handle class for the definition of materials.
+% This is a handle super-class for the definition of materials.
 %
-% It stores mechanical and / or thermal properties related to solids.
+% This super-class defines generic properties for all material types,
+% while specific properties are defined in the derived *sub-classes*:
+%
+% * <material_solid.html Material_Solid>
+% * <material_fluid.html Material_Fluid>
 %
 classdef Material < handle
+    %% Constant values
+    properties (Constant = true, Access = public)
+        % Types of material
+        SOLID = uint8(1);
+        FLUID = uint8(2);
+    end
+    
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Indentification
-        name string = string.empty;
+        type uint8  = uint8.empty;    % flag for type of material
+        name string = string.empty;   % identification name of material
         
-        % Mechanical properties
-        density    double = double.empty;
-        young      double = double.empty;
-        young0     double = double.empty;
-        shear      double = double.empty;
-        poisson    double = double.empty;
-        
-        % Thermal properties
-        conduct   double = double.empty;
-        hcapacity double = double.empty;
+        % Generic properties
+        density   double = double.empty;   % density
+        conduct   double = double.empty;   % thermal conductivity
+        hcapacity double = double.empty;   % heat capacity
     end
     
     %% Constructor method
     methods
-        function this = Material()
-            
+        function this = Material(type)
+            if (nargin > 0)
+                this.type = type;
+            end
         end
+    end
+    
+    %% Abstract methods: implemented in derived sub-classes
+    methods (Abstract)
+        %------------------------------------------------------------------
+        setDefaultProps(this);
     end
 end

@@ -36,7 +36,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         minertia double = double.empty;   % moment of inertia
         
         % Physical properties
-        material Material = Material.empty;   % handle to object of Material class
+        material Material = Material.empty;   % handle to object of Material_Solid subclass
         mass     double   = double.empty;     % mass (density * volume)
         weight   double   = double.empty;     % weight vector (mass * gravity)
         tinertia double   = double.empty;     % thermal inertia (mass * heat_capacity)

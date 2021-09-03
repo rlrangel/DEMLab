@@ -36,14 +36,21 @@ classdef Driver < handle
         particles Particle  = Particle.empty;    % handles to objects of Particle class
         walls     Wall      = Wall.empty;        % handles to objects of Wall class
         interacts Interact  = Interact.empty;    % handles to objects of Interact class
-        materials Material  = Material.empty;    % handles to objects of Material class
+        solids    Material  = Material.empty;    % handles to objects of Material_Solid subclass
+        fluid     Material  = Material.empty;    % handles to object of Material_Fluid subclass
         
         % Model components: total numbers
         n_mparts    uint32 = uint32.empty;   % number of model parts
         n_particles uint32 = uint32.empty;   % number of particles
         n_walls     uint32 = uint32.empty;   % number of walls
         n_interacts uint32 = uint32.empty;   % number of binary interactions
-        n_materials uint32 = uint32.empty;   % number of materials
+        n_solids    uint32 = uint32.empty;   % number of solid materials
+        
+        % Global properties
+        gravity   double = double.empty;   % vector of gravity components value
+        damp_trl  double = double.empty;   % damping for translational motion
+        damp_rot  double = double.empty;   % damping for rotational motion
+        fluid_vel double = double.empty;   % interstitial fluid velocity vector
         
         % Model domain properties
         alpha      double = double.empty;   % alpha radius
@@ -70,6 +77,11 @@ classdef Driver < handle
         
         % Neighbours search
         search Search = Search.empty;   % handle to object of Search class
+        
+        % Time integration
+        scheme_trl  Scheme = Scheme.empty;   % handle to object of Scheme class for translation integration
+        scheme_rot  Scheme = Scheme.empty;   % handle to object of Scheme class for rotation integration
+        scheme_temp Scheme = Scheme.empty;   % handle to object of Scheme class for temperature integration
         
         % Time advancing
         auto_step logical = logical.empty;   % flag for computing time step automatically

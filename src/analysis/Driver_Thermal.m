@@ -13,15 +13,6 @@
 % in order to compute the changes of temperature.
 %
 classdef Driver_Thermal < Driver
-    %% Public properties
-    properties (SetAccess = public, GetAccess = public)
-        % Global properties
-        fluid_conduct double = double.empty;   % thermal conductivity of interstitial fluid
-        
-        % Time integration
-        scheme_temp Scheme = Scheme.empty;   % handle to object of Scheme class for temperature integration
-    end
-    
     %% Constructor method
     methods
         function this = Driver_Thermal()
@@ -35,24 +26,25 @@ classdef Driver_Thermal < Driver
         %------------------------------------------------------------------
         function setDefaultProps(this)
             % Scalars
-            this.n_mparts      = 0;
-            this.n_particles   = 0;
-            this.n_walls       = 0;
-            this.n_interacts   = 0;
-            this.n_materials   = 0;
-            this.fluid_conduct = 0;
-            this.alpha         = inf; % convex hull
-            this.workers       = parcluster('local').NumWorkers; % max. available
-            this.nprog         = 1;
-            this.nout          = 100;
+            this.n_mparts    = 0;
+            this.n_particles = 0;
+            this.n_walls     = 0;
+            this.n_interacts = 0;
+            this.n_solids    = 0;
+            this.alpha       = inf; % convex hull
+            this.workers     = parcluster('local').NumWorkers; % max. available
+            this.nprog       = 1;
+            this.nout        = 100;
+            % Vectors
+            this.fluid_vel   = [0;0];
             % Booleans
-            this.auto_step     = false;
-            this.parallel      = false; % according to workers
-            this.save_ws       = true;  % according to nout
+            this.auto_step   = false;
+            this.parallel    = false; % according to workers
+            this.save_ws     = true;  % according to nout
             % Objects
-            this.search        = Search_SimpleLoop();
-            this.scheme_temp   = Scheme_EulerForward();
-            this.result        = Result();
+            this.search      = Search_SimpleLoop();
+            this.scheme_temp = Scheme_EulerForward();
+            this.result      = Result();
         end
         
         %------------------------------------------------------------------

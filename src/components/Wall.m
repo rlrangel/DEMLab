@@ -10,7 +10,7 @@
 % Their motion and / or temperature are not influenced by their
 % interactions with other elements.
 %
-% A wall may or may not have an assigned material.
+% A wall may or may not have an assigned solid material.
 % If it does, the effective interaction properties take into account the
 % material properties from both the wall and the particle.
 % Otherwise, the effective interaction properties for the mechanical
@@ -38,7 +38,7 @@ classdef Wall < handle & matlab.mixin.Heterogeneous
         id   uint32 = uint32.empty;   % identification number
         
         % Physical properties
-        material Material = Material.empty;   % handle to object of Material class
+        material Material = Material.empty;   % handle to object of Material_Solid subclass
         
         % Behavior flags
         fixed_motion logical = logical.empty;   % flag for fixed motion wall
