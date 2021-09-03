@@ -61,6 +61,7 @@ classdef Driver_Mechanical < Driver
         
         %------------------------------------------------------------------
         function setParticleProps(this,p)
+            p.setCharLen();
             p.setSurface();
             p.setCrossSec();
             p.setVolume();

@@ -2,15 +2,16 @@
 %
 %% Description
 %
-% This is a handle super-class for the definition of materials.
+% This is a handle heterogeneous super-class for the definition of
+% materials.
 %
 % This super-class defines generic properties for all material types,
 % while specific properties are defined in the derived *sub-classes*:
 %
-% * <material_solid.html Material_Solid>
+% * <material_solid.html Material_Solid> (default)
 % * <material_fluid.html Material_Fluid>
 %
-classdef Material < handle
+classdef Material < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of material
@@ -36,6 +37,13 @@ classdef Material < handle
             if (nargin > 0)
                 this.type = type;
             end
+        end
+    end
+    
+    %% Default sub-class definition
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = Material_Solid;
         end
     end
     

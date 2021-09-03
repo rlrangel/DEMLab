@@ -64,6 +64,7 @@ classdef Driver_ThermoMechanical < Driver
         
         %------------------------------------------------------------------
         function setParticleProps(this,p)
+            p.setCharLen();
             p.setSurface();
             p.setCrossSec();
             p.setVolume();
@@ -369,6 +370,10 @@ classdef Driver_ThermoMechanical < Driver
                     % Add prescribed conditions
                     p.addPCHeatFlux(this.time);
                     p.addPCHeatRate(this.time);
+                    
+                    % Add convection heat transfer from surrounding fluid
+                    p.setConvCoeff(this);
+                    p.addConvection(this);
                     
                     % Evaluate equation of energy balance (update temp. rate of change)
                     p.setTempChange();

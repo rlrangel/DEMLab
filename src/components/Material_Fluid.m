@@ -26,9 +26,8 @@ classdef Material_Fluid < Material
     %% Public methods: implementation of super-class declarations
     methods
         %------------------------------------------------------------------
-        function setDefaultProps(this)
-            this.conduct   = 0;
-            this.viscosity = 0;
+        function setDefaultProps(~)
+            
         end
     end
     

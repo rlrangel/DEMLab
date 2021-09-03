@@ -52,6 +52,11 @@ classdef Particle_Sphere < Particle
         end
         
         %------------------------------------------------------------------
+        function setCharLen(this)
+            this.char_len = 2 * this.radius;
+        end
+        
+        %------------------------------------------------------------------
         function setSurface(this)
             this.surface = 4 * pi * this.radius^2;
         end

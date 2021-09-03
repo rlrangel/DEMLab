@@ -30,16 +30,21 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         id   uint32 = uint32.empty;   % identification number
         
         % Geometric properties
+        char_len double = double.empty;   % characteristic length
         surface  double = double.empty;   % surface area
         cross    double = double.empty;   % in-plane cross-sectional area
         volume   double = double.empty;   % volume
         minertia double = double.empty;   % moment of inertia
         
         % Physical properties
-        material Material = Material.empty;   % handle to object of Material_Solid subclass
-        mass     double   = double.empty;     % mass (density * volume)
-        weight   double   = double.empty;     % weight vector (mass * gravity)
-        tinertia double   = double.empty;     % thermal inertia (mass * heat_capacity)
+        material   Material = Material.empty;   % handle to object of Material_Solid subclass
+        mass       double   = double.empty;     % mass (density * volume)
+        weight     double   = double.empty;     % weight vector (mass * gravity)
+        tinertia   double   = double.empty;     % thermal inertia (mass * heat_capacity)
+        conv_coeff double   = double.empty;     % convection coefficient
+        
+        % Particle-fluid interaction
+        nusselt   % handle to object of Nusselt class
         
         % Neighbours Interactions
         interacts Interact = Interact.empty;   % handles to objects of Interact class
@@ -106,6 +111,9 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         setDefaultProps(this);
         
         %------------------------------------------------------------------
+        setCharLen(this);
+        
+        %------------------------------------------------------------------
         setSurface(this);
         
         %------------------------------------------------------------------
@@ -136,6 +144,14 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         %------------------------------------------------------------------
         function setTInertia(this)
             this.tinertia = this.mass * this.material.hcapacity;
+        end
+        
+        %------------------------------------------------------------------
+        function setConvCoeff(this,drv)
+            if (~isempty(this.nusselt))
+                Nu = this.nusselt.getValue(this,drv);
+                this.conv_coeff = Nu * drv.fluid.conduct / this.char_len;
+            end
         end
         
         %------------------------------------------------------------------
@@ -196,6 +212,13 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
                 if (this.pc_heatrate(i).isActive(time))
                     this.heat_rate = this.heat_rate + this.pc_heatrate(i).getValue(time);
                 end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function addConvection(this,drv)
+            if (~isempty(this.conv_coeff))
+                this.heat_rate = this.heat_rate + this.conv_coeff * this.surface * (drv.fluid_temp-this.temperature);
             end
         end
         

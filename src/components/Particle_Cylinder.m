@@ -53,6 +53,11 @@ classdef Particle_Cylinder < Particle
         end
         
         %------------------------------------------------------------------
+        function setCharLen(this)
+            this.char_len = 2 * this.radius;
+        end
+        
+        %------------------------------------------------------------------
         function setSurface(this)
             % Assumption: lateral area only
             this.surface = 2 * pi * this.radius * this.len;

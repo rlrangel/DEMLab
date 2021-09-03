@@ -50,6 +50,7 @@ classdef Driver_Thermal < Driver
         
         %------------------------------------------------------------------
         function setParticleProps(~,p)
+            p.setCharLen();
             p.setSurface();
             p.setCrossSec();
             p.setVolume();
@@ -127,6 +128,11 @@ classdef Driver_Thermal < Driver
             this.setGlobalVol();
             if (isempty(this.porosity))
                 this.setGlobalPorosity();
+            end
+            
+            % Set particles convection coefficient (may need porosity ready)
+            for i = 1:this.n_particles
+                p.setConvCoeff(this);
             end
             
             % Loop over all walls
@@ -237,6 +243,9 @@ classdef Driver_Thermal < Driver
                     % Add prescribed conditions
                     p.addPCHeatFlux(this.time);
                     p.addPCHeatRate(this.time);
+                    
+                    % Add convection heat transfer from surrounding fluid
+                    p.addConvection(this);
                     
                     % Evaluate equation of energy balance (update temp. rate of change)
                     p.setTempChange();

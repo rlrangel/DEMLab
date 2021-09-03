@@ -99,6 +99,9 @@ classdef Read < handle
                 status = this.getInteractionAssignment(json,drv);
             end
             if (status)
+                status = this.getConvection(json,drv);
+            end
+            if (status)
                 status = this.getOutput(json,drv);
             end
             if (status)
@@ -2680,6 +2683,60 @@ classdef Read < handle
             end
         end
         
+        
+        %------------------------------------------------------------------
+        function status = getConvection(this,json,drv)
+            status = 1;
+            if (~isfield(json,'ConvectionModel'))
+                return;
+            end
+            CONV = json.ConvectionModel;
+            
+            % Check if fluid material has been defined
+            if (isempty(drv.fluid))
+                this.missingDataError('Definition of fluid material for convection model');
+                status = 0; return;
+            end
+            
+            % Nusselt correlation
+            if (~isfield(CONV,'nusselt_correlation'))
+                this.missingDataError('ConvectionModel.nusselt_correlation');
+                status = 0; return;
+            end
+            cor = string(CONV.nusselt_correlation);
+            if (~this.isStringArray(cor,1) ||...
+               (~strcmp(cor,'sphere_hanz_marshall')))
+                this.invalidOptError('ConvectionModel.nusselt_correlation','sphere_hanz_marshall');
+                status = 0; return;
+            end
+            if (strcmp(cor,'sphere_hanz_marshall'))
+                nu = Nusselt_Sphere_RanzMarshall();
+            end
+            
+            % Apply nusselt correlation to selected particles
+            if (isfield(CONV,'model_parts'))
+                model_parts = string(CONV.model_parts);
+                for j = 1:length(model_parts)
+                    mp_name = model_parts(j);
+                    if (~this.isStringArray(mp_name,1))
+                        this.invalidParamError('ConvectionModel.model_parts','It must be a list of strings containing the names of the model parts');
+                        status = 0; return;
+                    elseif (strcmp(mp_name,'PARTICLES'))
+                        [drv.particles.nusselt] = deal(nu);
+                    else
+                        mp = findobj(drv.mparts,'name',mp_name);
+                        if (isempty(mp))
+                            this.warnMsg('Nonexistent model part used in ConvectionModel.model_parts.');
+                            continue;
+                        end
+                        [mp.particles.nusselt] = deal(nu);
+                    end
+                end
+            else
+                [drv.particles.nusselt] = deal(nu);
+            end
+        end
+        
         %------------------------------------------------------------------
         function status = getOutput(this,json,drv)
             status = 1;
@@ -5217,7 +5274,30 @@ classdef Read < handle
             end
             
             % Convection
-            
+            if (any(~isempty([drv.particles.nusselt])))
+                if (isempty(drv.fluid))
+                    this.missingDataError('Definition of fluid material for convection model');
+                    status = 0; return;
+                elseif (isempty(drv.fluid_vel))
+                    fprintf(2,'The selected convection model requires the fluid velocity.');
+                    status = 0; return;
+                elseif (isempty(drv.fluid_temp))
+                    fprintf(2,'The selected convection model requires the fluid temperature.');
+                    status = 0; return;
+                elseif (isempty(drv.fluid.density))
+                    fprintf(2,'The selected convection model requires the fluid density.');
+                    status = 0; return;
+                elseif (isempty(drv.fluid.conduct))
+                    fprintf(2,'The selected convection model requires the fluid thermal conductivity.');
+                    status = 0; return;
+                elseif (isempty(drv.fluid.hcapacity))
+                    fprintf(2,'The selected convection model requires the fluid heat capacity.');
+                    status = 0; return;
+                elseif (isempty(drv.fluid.viscosity))
+                    fprintf(2,'The selected convection model requires the fluid viscosity.');
+                    status = 0; return;
+                end
+            end
         end
     end
     
