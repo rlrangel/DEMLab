@@ -31,6 +31,7 @@ classdef Driver_Thermal < Driver
             this.n_walls     = 0;
             this.n_interacts = 0;
             this.n_solids    = 0;
+            this.fluid_temp  = 0;
             this.alpha       = inf; % convex hull
             this.workers     = parcluster('local').NumWorkers; % max. available
             this.nprog       = 1;

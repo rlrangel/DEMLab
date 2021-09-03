@@ -47,10 +47,11 @@ classdef Driver < handle
         n_solids    uint32 = uint32.empty;   % number of solid materials
         
         % Global properties
-        gravity   double = double.empty;   % vector of gravity components value
-        damp_trl  double = double.empty;   % damping for translational motion
-        damp_rot  double = double.empty;   % damping for rotational motion
-        fluid_vel double = double.empty;   % interstitial fluid velocity vector
+        gravity    double = double.empty;   % vector of gravity components value
+        damp_trl   double = double.empty;   % damping for translational motion
+        damp_rot   double = double.empty;   % damping for rotational motion
+        fluid_vel  double = double.empty;   % interstitial fluid velocity vector
+        fluid_temp double = double.empty;   % interstitial fluid temperature
         
         % Model domain properties
         alpha      double = double.empty;   % alpha radius

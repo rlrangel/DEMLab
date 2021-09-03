@@ -39,6 +39,7 @@ classdef Driver_ThermoMechanical < Driver
             this.n_walls     = 0;
             this.n_interacts = 0;
             this.n_solids    = 0;
+            this.fluid_temp  = 0;
             this.alpha       = inf; % convex hull
             this.por_freq    = NaN; % never compute
             this.vor_freq    = NaN; % never compute

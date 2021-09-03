@@ -771,7 +771,7 @@ classdef Read < handle
                 drv.damp_rot = dr;
             end
             
-            % Interstitial fluid velocity
+            % Interstitial fluid velocity and temperature
             if (isfield(GC,'fluid_velocity'))
                 fv = GC.fluid_velocity;
                 if (~this.isDoubleArray(fv,2))
@@ -779,6 +779,14 @@ classdef Read < handle
                     status = 0; return;
                 end
                 drv.fluid_vel = fv;
+            end
+            if (isfield(GC,'fluid_temperature'))
+                ft = GC.fluid_temperature;
+                if (~this.isDoubleArray(ft,1))
+                    this.invalidParamError('GlobalCondition.fluid_temperature','It must be a numeric value');
+                    status = 0; return;
+                end
+                drv.fluid_temp = ft;
             end
         end
         
