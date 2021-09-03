@@ -6,7 +6,7 @@
 % class for the implementation of the *Whitaker* correlation for computing
 % the Nusselt number for a flow past a sphere.
 %
-% $$Nu = 2 + \left(0.4Re^{1/2}+0.06Re^{2/3}\right)Re^{2/5}\left(\frac{\mu_{f}}{\mu_{fs}}\right)^{1/4}$$
+% $$Nu = 2 + \left(0.4Re^{1/2}+0.06Re^{2/3}\right)Pr^{2/5}\left(\frac{\mu_{f}}{\mu_{fs}}\right)^{1/4}$$
 %
 % *Notation*:
 %
