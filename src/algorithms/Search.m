@@ -12,7 +12,7 @@
 % assumed for defining a neighbour (contact neighbours have a cutoff
 % distance of zero).
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <search_simpleloop.html Search_SimpleLoop> (default)

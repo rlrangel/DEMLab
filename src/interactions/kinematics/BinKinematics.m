@@ -8,7 +8,7 @@
 % It deals with the calculation of distances, relative positions and
 % velocities, and contact geometry.
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <binkinematics_spheresphere.html BinKinematics_SphereSphere> (default)

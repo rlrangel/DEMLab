@@ -8,7 +8,7 @@
 % perform the time steps of the different types of analysis,
 % and also the pre and pos processing tasks.
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <driver_mechanical.html Driver_Mechanical>

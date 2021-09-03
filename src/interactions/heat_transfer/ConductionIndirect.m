@@ -14,7 +14,7 @@
 % particle-particle). The total heat conduction between elements is the sum
 % of both contributions.
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <conductionindirect_voronoia.html ConductionIndirect_VoronoiA> (default)

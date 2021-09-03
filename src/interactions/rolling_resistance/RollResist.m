@@ -5,7 +5,7 @@
 % This is a value heterogeneous super-class for the definition of models
 % for the rolling resistance torque between elements.
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <rollresist_constant.html RollResist_Constant> (default)

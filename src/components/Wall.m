@@ -17,7 +17,7 @@
 % behavior are set as the particle material, and the wall is considered
 % insulated (no heat exchange with particles).
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <wall_line.html Wall_Line> (default)

@@ -9,7 +9,7 @@
 % Particles that are outside the bounding box limits are removed from the
 % simulation.
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <bbox_rectangle.html BBox_Rectangle> (default)

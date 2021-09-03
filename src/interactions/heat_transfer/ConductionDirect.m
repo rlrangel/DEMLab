@@ -8,7 +8,7 @@
 % Direct heat conduction happens through the contact area of two touching
 % bodies.
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <conductiondirect_bob.html ConductionDirect_BOB> (default)

@@ -5,7 +5,7 @@
 % This is a handle heterogeneous super-class for the definition of time
 % integration schemes.
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <scheme_eulerforward.html Scheme_EulerForward> (default)

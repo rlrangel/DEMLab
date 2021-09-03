@@ -9,7 +9,7 @@
 % exchange are originated by overlaps.
 % Furthermore, their shapes are assumed to be preserved after collisions.
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <particle_sphere.html Particle_Sphere> (default)

@@ -10,7 +10,7 @@
 % The modified Young modulus leads to a larger contact area, which have
 % some side effects, such as the increase of direct heat conduction.
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <areacorrect_zyz.html AreaCorrect_ZYZ> (default)

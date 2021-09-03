@@ -8,7 +8,7 @@
 % A condition is a time function that returns a value for each provided
 % time value.
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <condition_constant.html Condition_Constant> (default)

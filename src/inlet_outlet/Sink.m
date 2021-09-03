@@ -8,7 +8,7 @@
 % Particles that are inside the sink limits are removed from the
 % simulation.
 %
-% This super-class defines abstracts methods that must be implemented in
+% This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
 % * <sink_rectangle.html Sink_Rectangle> (default)
