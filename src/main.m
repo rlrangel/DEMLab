@@ -57,6 +57,7 @@
 % * <areacorrect.html AreaCorrect>
 % * <conductiondirect.html ConductionDirect>
 % * <conductionindirect.html ConductionIndirect>
+% * <nusselt.html Nusselt>
 % * <read.html Read>
 % * <result.html Result>
 % * <animation.html Animation>
