@@ -2683,7 +2683,6 @@ classdef Read < handle
             end
         end
         
-        
         %------------------------------------------------------------------
         function status = getConvection(this,json,drv)
             status = 1;
@@ -2704,13 +2703,16 @@ classdef Read < handle
                 status = 0; return;
             end
             cor = string(CONV.nusselt_correlation);
-            if (~this.isStringArray(cor,1) ||...
-               (~strcmp(cor,'sphere_hanz_marshall')))
-                this.invalidOptError('ConvectionModel.nusselt_correlation','sphere_hanz_marshall');
+            if (~this.isStringArray(cor,1)          ||...
+               (~strcmp(cor,'sphere_hanz_marshall') &&...
+                ~strcmp(cor,'sphere_whitaker')))
+                this.invalidOptError('ConvectionModel.nusselt_correlation','sphere_hanz_marshall, sphere_whitaker');
                 status = 0; return;
             end
             if (strcmp(cor,'sphere_hanz_marshall'))
                 nu = Nusselt_Sphere_RanzMarshall();
+            elseif (strcmp(cor,'sphere_whitaker'))
+                nu = Nusselt_Sphere_Whitaker();
             end
             
             % Apply nusselt correlation to selected particles

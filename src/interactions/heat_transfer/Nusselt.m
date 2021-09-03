@@ -19,6 +19,7 @@ classdef Nusselt < handle
     properties (Constant = true, Access = public)
         % Types of model
         SPHERE_RANZ_MARSHALL = uint8(1);
+        SPHERE_WHITAKER      = uint8(2);
     end
     
     %% Public properties
