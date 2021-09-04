@@ -135,10 +135,12 @@ classdef Driver_Mechanical < Driver
             
             % Set global properties
             this.setTotalParticlesProps();
-            this.voronoiDiagram();
             this.setGlobalVol();
             if (isempty(this.porosity))
                 this.setGlobalPorosity();
+            end
+            if (~isnan(this.vor_freq))
+                this.setVoronoiDiagram();
             end
             
             % Loop over all walls
@@ -162,7 +164,7 @@ classdef Driver_Mechanical < Driver
                 % Time & step not stored after 1st step as it was already stored in preprocess.
                 % Global results stored after 1st step as some results were not ready before.
                 this.storeResults()
-                if (this.store || step == 1)
+                if (this.store || this.step == 1)
                     if (this.store)
                         this.result.storeTime(this);
                     end
@@ -185,7 +187,7 @@ classdef Driver_Mechanical < Driver
                 
                 % Update voronoi diagram
                 if (mod(this.step,this.vor_freq) == 0)
-                    this.voronoiDiagram();
+                    this.setVoronoiDiagram();
                 end
                 
                 % Loop over all interactions

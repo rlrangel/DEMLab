@@ -33,6 +33,8 @@ classdef Driver_Thermal < Driver
             this.n_solids    = 0;
             this.fluid_temp  = 0;
             this.alpha       = inf; % convex hull
+            this.por_freq    = NaN; % never compute
+            this.vor_freq    = NaN; % never compute
             this.workers     = parcluster('local').NumWorkers; % max. available
             this.nprog       = 1;
             this.nout        = 100;
@@ -124,10 +126,12 @@ classdef Driver_Thermal < Driver
             
             % Set global properties
             this.setTotalParticlesProps();
-            this.voronoiDiagram();
             this.setGlobalVol();
             if (isempty(this.porosity))
                 this.setGlobalPorosity();
+            end
+            if (~isnan(this.vor_freq))
+                this.setVoronoiDiagram();
             end
             
             % Set particles convection coefficient (may need porosity ready)
@@ -198,7 +202,7 @@ classdef Driver_Thermal < Driver
                 % Time & step not stored after 1st step as it was alreadystored in preprocess.
                 % Global results stored after 1st step as some results were not ready before.
                 this.storeResults()
-                if (this.store || step == 1)
+                if (this.store || this.step == 1)
                     if (this.store)
                         this.result.storeTime(this);
                     end

@@ -192,7 +192,7 @@ classdef Master
                 end
             end
             if (~isempty(drv.particles) &&...
-               (drv.type == drv.type == drv.THERMAL || drv.type == drv.type == drv.THERMO_MECHANICAL))
+               (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL))
                 tavg = mean([drv.particles.temperature]);
                 tdev = std([drv.particles.temperature]);
                 tmin = min([drv.particles.temperature]);

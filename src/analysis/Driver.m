@@ -215,7 +215,7 @@ classdef Driver < handle
         end
         
         %------------------------------------------------------------------
-        function voronoiDiagram(this)
+        function setVoronoiDiagram(this)
             % Assumption: walls are ignored
             try
                 [this.vor_vtx,this.vor_idx] = voronoiDiagram(delaunayTriangulation([this.particles.coord]'));

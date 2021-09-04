@@ -2610,7 +2610,7 @@ classdef Read < handle
             else
                 for i = 1:drv.n_solids
                     if (length(findobj(drv.solids,'name',drv.solids(i).name)) > 1 ||...
-                        strcmp(drv.solids(i).name,drv.fluid.name))
+                        (~isempty(drv.fluid) && strcmp(drv.solids(i).name,drv.fluid.name)))
                         this.invalidParamError('Repeated material name.','Material names must be unique');
                         status = 0; return;
                     end
@@ -3283,7 +3283,7 @@ classdef Read < handle
                         
                         % Particle Y
                         if (isfield(CUR,'particle_y'))
-                            if (ismember(Y,results_general_particle) || ismember(X,results_mech_particle) || ismember(X,results_therm_particle))
+                            if (ismember(Y,results_general_particle) || ismember(Y,results_mech_particle) || ismember(Y,results_therm_particle))
                                 particle_y = CUR.particle_y;
                                 if (~this.isIntArray(particle_y,1) || particle_y <= 0 || particle_y > drv.n_particles)
                                     this.invalidParamError('Graph.curve.particle_y','It must be a positive integer corresponding to a valid particle ID');
@@ -3293,7 +3293,7 @@ classdef Read < handle
                             else
                                 this.warnMsg('Graph.curve.particle_y was provided to a curve whose Y-axis data is not a particle result. It will be ignored.');
                             end
-                        elseif (ismember(Y,results_general_particle) || ismember(X,results_mech_particle) || ismember(X,results_therm_particle))
+                        elseif (ismember(Y,results_general_particle) || ismember(Y,results_mech_particle) || ismember(Y,results_therm_particle))
                             this.missingDataError('Graph.curve.particle_y');
                             status = 0; return;
                         end
