@@ -1,36 +1,34 @@
 {
 	"ProblemData": {
-		"name"             : "resting_ball",
+		"name"             : "resting_sphere_1",
 		"analysis_type"    : "thermal",
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
 		"integr_scheme_therm" : "forward_euler",
 		"time_step"           : 10e-4,
-		"final_time"          : 20
+		"final_time"          : 10.0
 	},
 	"InitialCondition": {
 		"temperature": {
 			"model_parts" : ["PARTICLES"],
-			"value"       : 300
+			"value"       : 300.0
 		}
 	},
 	"FixedCondition": {
 		"temperature": {
 			"type"        : "constant",
 			"model_parts" : ["WALLS"],
-			"value"       : 400
+			"value"       : 400.0
 		}
 	},
 	"Material": {
 		"name"                 : "material_1",
 		"type"                 : "solid",
 		"model_parts"          : ["PARTICLES","WALLS"],
-		"density"              : 100.0,
-		"young_modulus"        : 10000000,
-		"poisson_ratio"        : 0.3,
-		"thermal_conductivity" : 1000,
-		"heat_capacity"        : 10
+		"density"              : 30.0,
+		"thermal_conductivity" : 2000.0,
+		"heat_capacity"        : 10.0
 	},
 	"InteractionModel": {
 		"direct_conduction": {
@@ -38,16 +36,18 @@
 		}
 	},
 	"Output": {
-		"number_output" : 100
+		"progress_print" : 1.0,
+		"number_output"  : 100,
+		"save_workspace" : true
 	},
 	"Animation": {
-		"title"        : "Particle Temperature",
+		"title"        : "Temperature",
 		"result"       : "temperature",
 		"auto_play"    : true,
 		"bounding_box" : [-2.0,2.0,-1.0,3.0]
 	},
 	"Graph": {
-		"title"  : "Particle Temperature",
+		"title"  : "Temperature",
 		"axis_x" : "time",
 		"axis_y" : "temperature",
 		"curve"  : {
