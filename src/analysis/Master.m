@@ -6,7 +6,7 @@
 %
 % The _execute_ method is responsible for managing the high-level tasks
 % and call the appropriate methods to perform each stage of the simulation,
-% from the reading of the input files to the showing of the results.
+% from the reading of input files to the showing of results.
 %
 classdef Master
     %% Constructor method
@@ -50,17 +50,17 @@ classdef Master
                     fprintf('\nExiting program...\n');
                     return;
                 end
-
+                
                 % Read parameters file
                 fprintf('\nReading parameters file...\n');
                 read = Read();
                 [status,drv,storage] = read.execute(file_path,fid);
-
+                
                 % Pre analysis tasks
                 if (status == 0)
                     fprintf('\nExiting program...\n');
                     return;
-
+                    
                 elseif (status == 1) % start analysis from the beggining
                     % Check input data
                     fprintf('\nChecking consistency of input data...\n');
@@ -69,19 +69,19 @@ classdef Master
                         fprintf('\nExiting program...\n');
                         return;
                     end
-
+                    
                     % Pre-process
                     fprintf('\nPre-processing...\n');
                     if (~drv.preProcess())
                         fprintf('\nExiting program...\n');
                         return;
                     end
-
+                    
                     % Print simulation information
                     this.printSimulationInfo(drv);
                     fprintf('\nStarting analysis:\n');
                     fprintf('%s\n',datestr(now));
-
+                    
                 elseif (status == 2) % continue analysis from previous state
                     f = dir(storage);
                     fprintf('\nStorage file found (%.3f Mb):\n%s\n',f.bytes/10e5,storage)
@@ -101,20 +101,20 @@ classdef Master
                     
                     % Update starting elapsed time
                     drv.start_time = drv.total_time;
-
+                    
                     % Print simulation information
                     this.printSimulationInfo(drv);
                     fprintf('\nStarting analysis from previous results:\n');
                     fprintf('%s\n',datestr(now));
                 end
-
+                
                 % Show starting configuration
                 Animation().curConfig(drv,'Starting');
                 
                 % Execute analysis
                 tic;
                 drv.process();
-
+                
                 % Print finished status
                 this.printFinishedStatus(drv,status);
                 
@@ -155,7 +155,7 @@ classdef Master
         function printHeader(~)
             fprintf('==================================================================\n');
             fprintf('           DEMLab - Discrete Element Method Laboratory            \n');
-            fprintf('                    Version 1.0 - August 2021                     \n');
+            fprintf('                  Version 1.0 - September 2021                    \n');
             fprintf(' International Center for Numerical Methods in Engineering (CIMNE)\n');
             fprintf('==================================================================\n\n');
         end

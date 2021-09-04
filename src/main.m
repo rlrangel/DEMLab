@@ -74,7 +74,7 @@
 %
 %% History
 %
-% * Version 1.0 - August, 2021
+% * Version 1.0 - September, 2021
 %
 % Developed under the context of the
 % <https://www.surrey.ac.uk/mathegram MATHEGRAM project>.
