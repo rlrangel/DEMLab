@@ -5,15 +5,14 @@
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
-		"time_step"           : 10e-4,
-		"final_time"          : 20,
 		"integr_scheme_therm" : "forward_euler",
-		"parallelization"     : false
+		"time_step"           : 10e-4,
+		"final_time"          : 20
 	},
 	"InitialCondition": {
 		"temperature": {
-			"value"       : 300,
-			"model_parts" : ["PARTICLES"]
+			"model_parts" : ["PARTICLES"],
+			"value"       : 300
 		}
 	},
 	"FixedCondition": {
@@ -24,15 +23,14 @@
 		}
 	},
 	"Material": {
-		"name"        : "material_1",
-		"model_parts" : ["PARTICLES","WALLS"],
-		"properties"  : {
-			"density"              : 100.0,
-			"young_modulus"        : 10000000,
-			"poisson_ratio"        : 0.3,
-			"thermal_conductivity" : 1000,
-			"heat_capacity"        : 10
-		}
+		"name"                 : "material_1",
+		"type"                 : "solid",
+		"model_parts"          : ["PARTICLES","WALLS"],
+		"density"              : 100.0,
+		"young_modulus"        : 10000000,
+		"poisson_ratio"        : 0.3,
+		"thermal_conductivity" : 1000,
+		"heat_capacity"        : 10
 	},
 	"InteractionModel": {
 		"direct_conduction": {
