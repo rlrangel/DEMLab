@@ -262,7 +262,7 @@ classdef Search_VerletList < Search
             %     For other shapes, the base kinematic object will be used.
             dir   = p2.coord - p1.coord;
             dist  = norm(dir);
-            separ = dist - p1.radius + p2.radius;
+            separ = dist - p1.radius - p2.radius;
             
             % Check if particle is within verlet distance
             if (addVL && dist < this.verlet_dist)
