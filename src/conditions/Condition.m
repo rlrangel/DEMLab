@@ -28,9 +28,8 @@ classdef Condition < handle & matlab.mixin.Heterogeneous
         % Types of table data interpolation methods
         INTERP_LINEAR = uint8(1);
         INTERP_MAKIMA = uint8(2);
-        INTERP_CUBIC  = uint8(3);
-        INTERP_PCHIP  = uint8(4);
-        INTERP_SPLINE = uint8(5);
+        INTERP_PCHIP  = uint8(3);
+        INTERP_SPLINE = uint8(4);
     end
     
     %% Public properties

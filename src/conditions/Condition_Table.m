@@ -9,7 +9,6 @@
 %
 % * Linear
 % * Makima
-% * Cubic
 % * Pchip
 % * Spline
 %
@@ -46,8 +45,6 @@ classdef Condition_Table < Condition
                     val = interp1(this.val_x,this.val_y,time,'linear');
                 case this.INTERP_MAKIMA
                     val = interp1(this.val_x,this.val_y,time,'makima');
-                case this.INTERP_CUBIC
-                    val = interp1(this.val_x,this.val_y,time,'cubic');
                 case this.INTERP_PCHIP
                     val = interp1(this.val_x,this.val_y,time,'pchip');
                 case this.INTERP_SPLINE

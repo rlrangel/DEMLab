@@ -820,34 +820,50 @@ classdef Read < handle
                     elseif (iscell(IC.translational_velocity))
                         TV = IC.translational_velocity{i};
                     end
-                    if (~isfield(TV,'value') || ~isfield(TV,'model_parts'))
-                        this.missingDataError('InitialCondition.translational_velocity.value and/or InitialCondition.translational_velocity.model_parts');
-                        status = 0; return;
-                    end
                     
                     % Velocity value
+                    if (~isfield(TV,'value'))
+                        this.missingDataError('InitialCondition.translational_velocity.value');
+                        status = 0; return;
+                    end
                     val = TV.value;
                     if (~this.isDoubleArray(val,2))
                         this.invalidParamError('InitialCondition.translational_velocity.value','It must be a pair of numeric values with X,Y velocity components');
                         status = 0; return;
                     end
                     
-                    % Apply initial velocity to selected particles
-                    model_parts = string(TV.model_parts);
-                    for j = 1:length(model_parts)
-                        mp_name = model_parts(j);
-                        if (~this.isStringArray(mp_name,1))
-                            this.invalidParamError('InitialCondition.translational_velocity.model_parts','It must be a list of strings containing the names of the model parts');
-                            status = 0; return;
-                        elseif (strcmp(mp_name,'PARTICLES'))
-                            [drv.particles.veloc_trl] = deal(val);
-                        else
-                            mp = findobj(drv.mparts,'name',mp_name);
-                            if (isempty(mp))
-                                this.warnMsg('Nonexistent model part used in InitialCondition.translational_velocity.');
-                                continue;
+                    % Apply initial condition to selected particles
+                    if (isfield(TV,'particles'))
+                        particles = TV.particles;
+                        for j = 1:length(particles)
+                            p = particles(j);
+                            if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                                this.invalidParamError('InitialCondition.translational_velocity.particles','It must be a list of existing particles IDs');
+                                status = 0; return;
                             end
-                            [mp.particles.veloc_trl] = deal(val);
+                            pobj = drv.particles([drv.particles.id]==p);
+                            pobj.veloc_trl = val;
+                        end
+                    end
+                    
+                    % Apply initial condition to selected model parts
+                    if (isfield(TV,'model_parts'))
+                        model_parts = string(TV.model_parts);
+                        for j = 1:length(model_parts)
+                            mp_name = model_parts(j);
+                            if (~this.isStringArray(mp_name,1))
+                                this.invalidParamError('InitialCondition.translational_velocity.model_parts','It must be a list of strings containing the names of the model parts');
+                                status = 0; return;
+                            elseif (strcmp(mp_name,'PARTICLES'))
+                                [drv.particles.veloc_trl] = deal(val);
+                            else
+                                mp = findobj(drv.mparts,'name',mp_name);
+                                if (isempty(mp))
+                                    this.warnMsg('Nonexistent model part used in InitialCondition.translational_velocity.');
+                                    continue;
+                                end
+                                [mp.particles.veloc_trl] = deal(val);
+                            end
                         end
                     end
                 end
@@ -861,19 +877,33 @@ classdef Read < handle
                     elseif (iscell(IC.rotational_velocity))
                         RV = IC.rotational_velocity{i};
                     end
-                    if (~isfield(RV,'value') || ~isfield(RV,'model_parts'))
-                        this.missingDataError('InitialCondition.rotational_velocity.value and/or InitialCondition.rotational_velocity.model_parts');
-                        status = 0; return;
-                    end
                     
                     % Velocity value
+                    if (~isfield(RV,'value'))
+                        this.missingDataError('InitialCondition.rotational_velocity.value');
+                        status = 0; return;
+                    end
                     val = RV.value;
                     if (~this.isDoubleArray(val,1))
                         this.invalidParamError('InitialCondition.rotational_velocity.value','It must be a numeric value');
                         status = 0; return;
                     end
                     
-                    % Apply initial velocity to selected particles
+                    % Apply initial condition to selected particles
+                    if (isfield(RV,'particles'))
+                        particles = RV.particles;
+                        for j = 1:length(particles)
+                            p = particles(j);
+                            if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                                this.invalidParamError('InitialCondition.rotational_velocity.particles','It must be a list of existing particles IDs');
+                                status = 0; return;
+                            end
+                            pobj = drv.particles([drv.particles.id]==p);
+                            pobj.veloc_rot = val;
+                        end
+                    end
+                    
+                    % Apply initial condition to selected particles
                     model_parts = string(RV.model_parts);
                     for j = 1:length(model_parts)
                         mp_name = model_parts(j);
@@ -902,37 +932,67 @@ classdef Read < handle
                     elseif (iscell(IC.temperature))
                         T = IC.temperature{i};
                     end
-                    if (~isfield(T,'value') || ~isfield(T,'model_parts'))
-                        this.missingDataError('InitialCondition.temperature.value and/or InitialCondition.temperature.model_parts');
-                        status = 0; return;
-                    end
                     
                     % Temperature value
+                    if (~isfield(T,'value'))
+                        this.missingDataError('InitialCondition.temperature.value');
+                        status = 0; return;
+                    end
                     val = T.value;
                     if (~this.isDoubleArray(val,1))
                         this.invalidParamError('InitialCondition.temperature.value','It must be a numeric value');
                         status = 0; return;
                     end
                     
-                    % Apply initial temperature to selected elements
-                    model_parts = string(T.model_parts);
-                    for j = 1:length(model_parts)
-                        mp_name = model_parts(j);
-                        if (~this.isStringArray(mp_name,1))
-                            this.invalidParamError('InitialCondition.temperature.model_parts','It must be a list of strings containing the names of the model parts');
-                            status = 0; return;
-                        elseif (strcmp(mp_name,'PARTICLES'))
-                            [drv.particles.temperature] = deal(val);
-                        elseif (strcmp(mp_name,'WALLS'))
-                            [drv.walls.temperature] = deal(val);
-                        else
-                            mp = findobj(drv.mparts,'name',mp_name);
-                            if (isempty(mp))
-                                this.warnMsg('Nonexistent model part used in InitialCondition.temperature.');
-                                continue;
+                    % Apply initial temperature to selected particles
+                    if (isfield(T,'particles'))
+                        particles = T.particles;
+                        for j = 1:length(particles)
+                            p = particles(j);
+                            if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                                this.invalidParamError('InitialCondition.temperature.particles','It must be a list of existing particles IDs');
+                                status = 0; return;
                             end
-                            [mp.particles.temperature] = deal(val);
-                            [mp.walls.temperature]     = deal(val);
+                            pobj = drv.particles([drv.particles.id]==p);
+                            pobj.temperature = val;
+                        end
+                    end
+                    
+                    % Apply initial condition to selected walls
+                    if (isfield(T,'walls'))
+                        walls = T.walls;
+                        for j = 1:length(walls)
+                            w = walls(j);
+                            if (~this.isIntArray(w,1) || ~ismember(w,[drv.walls.id]))
+                                this.invalidParamError('InitialCondition.temperature.walls','It must be a list of existing walls IDs');
+                                status = 0; return;
+                            end
+                            wobj = drv.walls([drv.walls.id]==w);
+                            wobj.temperature = val;
+                        end
+                    end
+                    
+                    % Apply initial condition to selected model parts
+                    if (isfield(T,'model_parts'))
+                        model_parts = string(T.model_parts);
+                        for j = 1:length(model_parts)
+                            mp_name = model_parts(j);
+                            if (~this.isStringArray(mp_name,1))
+                                this.invalidParamError('InitialCondition.temperature.model_parts','It must be a list of strings containing the names of the model parts');
+                                status = 0; return;
+                            elseif (strcmp(mp_name,'PARTICLES'))
+                                [drv.particles.temperature] = deal(val);
+                            elseif (strcmp(mp_name,'WALLS'))
+                                [drv.walls.temperature] = deal(val);
+                            else
+                                mp = findobj(drv.mparts,'name',mp_name);
+                                if (isempty(mp))
+                                    this.warnMsg('Nonexistent model part used in InitialCondition.temperature.');
+                                    continue;
+                                end
+                                [mp.particles.temperature] = deal(val);
+                                [mp.walls.temperature]     = deal(val);
+                            end
                         end
                     end
                 end
@@ -968,12 +1028,12 @@ classdef Read < handle
                     elseif (iscell(PC.force))
                         F = PC.force{i};
                     end
-                    if (~isfield(F,'type') || ~isfield(F,'model_parts'))
-                        this.missingDataError('PrescribedCondition.force.type and/or PrescribedCondition.force.model_parts');
-                        status = 0; return;
-                    end
                     
                     % Type
+                    if (~isfield(F,'type'))
+                        this.missingDataError('PrescribedCondition.force.type');
+                        status = 0; return;
+                    end
                     type = string(F.type);
                     if (~this.isStringArray(type,1))
                         this.invalidParamError('PrescribedCondition.force.type','It must be a pre-defined string of the condition type');
@@ -1095,10 +1155,9 @@ classdef Read < handle
                             if (~this.isStringArray(interp,1) ||...
                                (~strcmp(interp,'linear') &&...
                                 ~strcmp(interp,'makima') &&...
-                                ~strcmp(interp,'cubic')  &&...
                                 ~strcmp(interp,'pchip')  &&...
                                 ~strcmp(interp,'spline')))
-                                this.invalidOptError('PrescribedCondition.force.interpolation','linear, makima, cubic, pchip or spline');
+                                this.invalidOptError('PrescribedCondition.force.interpolation','linear, makima, pchip or spline');
                                 status = 0; return;
                             elseif (strcmp(interp,'linear'))
                                 if (size(pc.val_x,1) < 2)
@@ -1112,12 +1171,6 @@ classdef Read < handle
                                     status = 0; return;
                                 end
                                 pc.interp = pc.INTERP_MAKIMA;
-                            elseif (strcmp(interp,'cubic'))
-                                if (size(pc.val_x,1) < 3)
-                                    this.invalidParamError('PrescribedCondition.force.values','It must contain at least 3 points for cubic interpolation');
-                                    status = 0; return;
-                                end
-                                pc.interp = pc.INTERP_CUBIC;
                             elseif (strcmp(interp,'pchip'))
                                 if (size(pc.val_x,1) < 4)
                                     this.invalidParamError('PrescribedCondition.force.values','It must contain at least 4 points for pchip interpolation');
@@ -1151,21 +1204,37 @@ classdef Read < handle
                     end
                     
                     % Add handle to prescribed condition to selected particles
-                    model_parts = string(F.model_parts);
-                    for j = 1:length(model_parts)
-                        mp_name = model_parts(j);
-                        if (~this.isStringArray(mp_name,1))
-                            this.invalidParamError('PrescribedCondition.force.model_parts','It must be a list of strings containing the names of the model parts');
-                            status = 0; return;
-                        elseif (strcmp(mp_name,'PARTICLES'))
-                            [drv.particles.pc_force] = deal(pc);
-                        else
-                            mp = findobj(drv.mparts,'name',mp_name);
-                            if (isempty(mp))
-                                this.warnMsg('Nonexistent model part used in PrescribedCondition.force.');
-                                continue;
+                    if (isfield(F,'particles'))
+                        particles = F.particles;
+                        for j = 1:length(particles)
+                            p = particles(j);
+                            if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                                this.invalidParamError('PrescribedCondition.force.particles','It must be a list of existing particles IDs');
+                                status = 0; return;
                             end
-                            [mp.particles.pc_force] = deal(pc);
+                            pobj = drv.particles([drv.particles.id]==p);
+                            pobj.pc_force = pc;
+                        end
+                    end
+                    
+                    % Add handle to prescribed condition to selected model parts
+                    if (isfield(F,'model_parts'))
+                        model_parts = string(F.model_parts);
+                        for j = 1:length(model_parts)
+                            mp_name = model_parts(j);
+                            if (~this.isStringArray(mp_name,1))
+                                this.invalidParamError('PrescribedCondition.force.model_parts','It must be a list of strings containing the names of the model parts');
+                                status = 0; return;
+                            elseif (strcmp(mp_name,'PARTICLES'))
+                                [drv.particles.pc_force] = deal(pc);
+                            else
+                                mp = findobj(drv.mparts,'name',mp_name);
+                                if (isempty(mp))
+                                    this.warnMsg('Nonexistent model part used in PrescribedCondition.force.');
+                                    continue;
+                                end
+                                [mp.particles.pc_force] = deal(pc);
+                            end
                         end
                     end
                 end
@@ -1179,12 +1248,12 @@ classdef Read < handle
                     elseif (iscell(PC.torque))
                         T = PC.torque{i};
                     end
-                    if (~isfield(T,'type') || ~isfield(T,'model_parts'))
-                        this.missingDataError('PrescribedCondition.torque.type and/or PrescribedCondition.torque.model_parts');
-                        status = 0; return;
-                    end
                     
                     % Type
+                    if (~isfield(T,'type'))
+                        this.missingDataError('PrescribedCondition.torque.type');
+                        status = 0; return;
+                    end
                     type = string(T.type);
                     if (~this.isStringArray(type,1))
                         this.invalidParamError('PrescribedCondition.torque.type','It must be a pre-defined string of the condition type');
@@ -1306,10 +1375,9 @@ classdef Read < handle
                             if (~this.isStringArray(interp,1) ||...
                                (~strcmp(interp,'linear') &&...
                                 ~strcmp(interp,'makima') &&...
-                                ~strcmp(interp,'cubic')  &&...
                                 ~strcmp(interp,'pchip')  &&...
                                 ~strcmp(interp,'spline')))
-                                this.invalidOptError('PrescribedCondition.torque.interpolation','linear, makima, cubic, pchip or spline');
+                                this.invalidOptError('PrescribedCondition.torque.interpolation','linear, makima, pchip or spline');
                                 status = 0; return;
                             elseif (strcmp(interp,'linear'))
                                 if (size(pc.val_x,1) < 2)
@@ -1323,12 +1391,6 @@ classdef Read < handle
                                     status = 0; return;
                                 end
                                 pc.interp = pc.INTERP_MAKIMA;
-                            elseif (strcmp(interp,'cubic'))
-                                if (size(pc.val_x,1) < 3)
-                                    this.invalidParamError('PrescribedCondition.torque.values','It must contain at least 3 points for cubic interpolation');
-                                    status = 0; return;
-                                end
-                                pc.interp = pc.INTERP_CUBIC;
                             elseif (strcmp(interp,'pchip'))
                                 if (size(pc.val_x,1) < 4)
                                     this.invalidParamError('PrescribedCondition.torque.values','It must contain at least 4 points for pchip interpolation');
@@ -1362,21 +1424,37 @@ classdef Read < handle
                     end
                     
                     % Add handle to prescribed condition to selected particles
-                    model_parts = string(T.model_parts);
-                    for j = 1:length(model_parts)
-                        mp_name = model_parts(j);
-                        if (~this.isStringArray(mp_name,1))
-                            this.invalidParamError('PrescribedCondition.torque.model_parts','It must be a list of strings containing the names of the model parts');
-                            status = 0; return;
-                        elseif (strcmp(mp_name,'PARTICLES'))
-                            [drv.particles.pc_torque] = deal(pc);
-                        else
-                            mp = findobj(drv.mparts,'name',mp_name);
-                            if (isempty(mp))
-                                this.warnMsg('Nonexistent model part used in PrescribedCondition.torque.');
-                                continue;
+                    if (isfield(T,'particles'))
+                        particles = T.particles;
+                        for j = 1:length(particles)
+                            p = particles(j);
+                            if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                                this.invalidParamError('PrescribedCondition.torque.particles','It must be a list of existing particles IDs');
+                                status = 0; return;
                             end
-                            [mp.particles.pc_torque] = deal(pc);
+                            pobj = drv.particles([drv.particles.id]==p);
+                            pobj.pc_torque = pc;
+                        end
+                    end
+                    
+                    % Add handle to prescribed condition to selected model parts
+                    if (isfield(T,'model_parts'))
+                        model_parts = string(T.model_parts);
+                        for j = 1:length(model_parts)
+                            mp_name = model_parts(j);
+                            if (~this.isStringArray(mp_name,1))
+                                this.invalidParamError('PrescribedCondition.torque.model_parts','It must be a list of strings containing the names of the model parts');
+                                status = 0; return;
+                            elseif (strcmp(mp_name,'PARTICLES'))
+                                [drv.particles.pc_torque] = deal(pc);
+                            else
+                                mp = findobj(drv.mparts,'name',mp_name);
+                                if (isempty(mp))
+                                    this.warnMsg('Nonexistent model part used in PrescribedCondition.torque.');
+                                    continue;
+                                end
+                                [mp.particles.pc_torque] = deal(pc);
+                            end
                         end
                     end
                 end
@@ -1390,12 +1468,12 @@ classdef Read < handle
                     elseif (iscell(PC.heat_flux))
                         HF = PC.heat_flux{i};
                     end
-                    if (~isfield(HF,'type') || ~isfield(HF,'model_parts'))
-                        this.missingDataError('PrescribedCondition.heat_flux.type and/or PrescribedCondition.heat_flux.model_parts');
-                        status = 0; return;
-                    end
                     
                     % Type
+                    if (~isfield(HF,'type'))
+                        this.missingDataError('PrescribedCondition.heat_flux.type');
+                        status = 0; return;
+                    end
                     type = string(HF.type);
                     if (~this.isStringArray(type,1))
                         this.invalidParamError('PrescribedCondition.heat_flux.type','It must be a pre-defined string of the condition type');
@@ -1517,10 +1595,9 @@ classdef Read < handle
                             if (~this.isStringArray(interp,1) ||...
                                (~strcmp(interp,'linear') &&...
                                 ~strcmp(interp,'makima') &&...
-                                ~strcmp(interp,'cubic')  &&...
                                 ~strcmp(interp,'pchip')  &&...
                                 ~strcmp(interp,'spline')))
-                                this.invalidOptError('PrescribedCondition.heat_flux.interpolation','linear, makima, cubic, pchip or spline');
+                                this.invalidOptError('PrescribedCondition.heat_flux.interpolation','linear, makima, pchip or spline');
                                 status = 0; return;
                             elseif (strcmp(interp,'linear'))
                                 if (size(pc.val_x,1) < 2)
@@ -1534,12 +1611,6 @@ classdef Read < handle
                                     status = 0; return;
                                 end
                                 pc.interp = pc.INTERP_MAKIMA;
-                            elseif (strcmp(interp,'cubic'))
-                                if (size(pc.val_x,1) < 3)
-                                    this.invalidParamError('PrescribedCondition.heat_flux.values','It must contain at least 3 points for cubic interpolation');
-                                    status = 0; return;
-                                end
-                                pc.interp = pc.INTERP_CUBIC;
                             elseif (strcmp(interp,'pchip'))
                                 if (size(pc.val_x,1) < 4)
                                     this.invalidParamError('PrescribedCondition.heat_flux.values','It must contain at least 4 points for pchip interpolation');
@@ -1573,21 +1644,37 @@ classdef Read < handle
                     end
                     
                     % Add handle to prescribed condition to selected particles
-                    model_parts = string(HF.model_parts);
-                    for j = 1:length(model_parts)
-                        mp_name = model_parts(j);
-                        if (~this.isStringArray(mp_name,1))
-                            this.invalidParamError('PrescribedCondition.heat_flux.model_parts','It must be a list of strings containing the names of the model parts');
-                            status = 0; return;
-                        elseif (strcmp(mp_name,'PARTICLES'))
-                            [drv.particles.pc_heatflux] = deal(pc);
-                        else
-                            mp = findobj(drv.mparts,'name',mp_name);
-                            if (isempty(mp))
-                                this.warnMsg('Nonexistent model part used in PrescribedCondition.heat_flux.');
-                                continue;
+                    if (isfield(HF,'particles'))
+                        particles = HF.particles;
+                        for j = 1:length(particles)
+                            p = particles(j);
+                            if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                                this.invalidParamError('PrescribedCondition.heat_flux.particles','It must be a list of existing particles IDs');
+                                status = 0; return;
                             end
-                            [mp.particles.pc_heatflux] = deal(pc);
+                            pobj = drv.particles([drv.particles.id]==p);
+                            pobj.pc_heatflux = pc;
+                        end
+                    end
+                    
+                    % Add handle to prescribed condition to selected model parts
+                    if (isfield(HF,'model_parts'))
+                        model_parts = string(HF.model_parts);
+                        for j = 1:length(model_parts)
+                            mp_name = model_parts(j);
+                            if (~this.isStringArray(mp_name,1))
+                                this.invalidParamError('PrescribedCondition.heat_flux.model_parts','It must be a list of strings containing the names of the model parts');
+                                status = 0; return;
+                            elseif (strcmp(mp_name,'PARTICLES'))
+                                [drv.particles.pc_heatflux] = deal(pc);
+                            else
+                                mp = findobj(drv.mparts,'name',mp_name);
+                                if (isempty(mp))
+                                    this.warnMsg('Nonexistent model part used in PrescribedCondition.heat_flux.');
+                                    continue;
+                                end
+                                [mp.particles.pc_heatflux] = deal(pc);
+                            end
                         end
                     end
                 end
@@ -1601,12 +1688,12 @@ classdef Read < handle
                     elseif (iscell(PC.heat_rate))
                         HF = PC.heat_rate{i};
                     end
-                    if (~isfield(HF,'type') || ~isfield(HF,'model_parts'))
-                        this.missingDataError('PrescribedCondition.heat_rate.type or PrescribedCondition.heat_rate.model_parts');
-                        status = 0; return;
-                    end
                     
                     % Type
+                    if (~isfield(HF,'type'))
+                        this.missingDataError('PrescribedCondition.heat_rate.type');
+                        status = 0; return;
+                    end
                     type = string(HF.type);
                     if (~this.isStringArray(type,1))
                         this.invalidParamError('PrescribedCondition.heat_rate.type','It must be a pre-defined string of the condition type');
@@ -1728,10 +1815,9 @@ classdef Read < handle
                             if (~this.isStringArray(interp,1) ||...
                                (~strcmp(interp,'linear') &&...
                                 ~strcmp(interp,'makima') &&...
-                                ~strcmp(interp,'cubic')  &&...
                                 ~strcmp(interp,'pchip')  &&...
                                 ~strcmp(interp,'spline')))
-                                this.invalidOptError('PrescribedCondition.heat_rate.interpolation','linear, makima, cubic, pchip or spline');
+                                this.invalidOptError('PrescribedCondition.heat_rate.interpolation','linear, makima, pchip or spline');
                                 status = 0; return;
                             elseif (strcmp(interp,'linear'))
                                 if (size(pc.val_x,1) < 2)
@@ -1745,12 +1831,6 @@ classdef Read < handle
                                     status = 0; return;
                                 end
                                 pc.interp = pc.INTERP_MAKIMA;
-                            elseif (strcmp(interp,'cubic'))
-                                if (size(pc.val_x,1) < 3)
-                                    this.invalidParamError('PrescribedCondition.heat_rate.values','It must contain at least 3 points for cubic interpolation');
-                                    status = 0; return;
-                                end
-                                pc.interp = pc.INTERP_CUBIC;
                             elseif (strcmp(interp,'pchip'))
                                 if (size(pc.val_x,1) < 4)
                                     this.invalidParamError('PrescribedCondition.heat_rate.values','It must contain at least 4 points for pchip interpolation');
@@ -1784,21 +1864,37 @@ classdef Read < handle
                     end
                     
                     % Add handle to prescribed condition to selected particles
-                    model_parts = string(HF.model_parts);
-                    for j = 1:length(model_parts)
-                        mp_name = model_parts(j);
-                        if (~this.isStringArray(mp_name,1))
-                            this.invalidParamError('PrescribedCondition.heat_rate.model_parts','It must be a list of strings containing the names of the model parts');
-                            status = 0; return;
-                        elseif (strcmp(mp_name,'PARTICLES'))
-                            [drv.particles.pc_heatrate] = deal(pc);
-                        else
-                            mp = findobj(drv.mparts,'name',mp_name);
-                            if (isempty(mp))
-                                this.warnMsg('Nonexistent model part used in PrescribedCondition.heat_rate.');
-                                continue;
+                    if (isfield(HF,'particles'))
+                        particles = HF.particles;
+                        for j = 1:length(particles)
+                            p = particles(j);
+                            if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                                this.invalidParamError('PrescribedCondition.heat_rate.particles','It must be a list of existing particles IDs');
+                                status = 0; return;
                             end
-                            [mp.particles.pc_heatrate] = deal(pc);
+                            pobj = drv.particles([drv.particles.id]==p);
+                            pobj.pc_heatrate = pc;
+                        end
+                    end
+                    
+                    % Add handle to prescribed condition to selected model parts
+                    if (isfield(HF,'model_parts'))
+                        model_parts = string(HF.model_parts);
+                        for j = 1:length(model_parts)
+                            mp_name = model_parts(j);
+                            if (~this.isStringArray(mp_name,1))
+                                this.invalidParamError('PrescribedCondition.heat_rate.model_parts','It must be a list of strings containing the names of the model parts');
+                                status = 0; return;
+                            elseif (strcmp(mp_name,'PARTICLES'))
+                                [drv.particles.pc_heatrate] = deal(pc);
+                            else
+                                mp = findobj(drv.mparts,'name',mp_name);
+                                if (isempty(mp))
+                                    this.warnMsg('Nonexistent model part used in PrescribedCondition.heat_rate.');
+                                    continue;
+                                end
+                                [mp.particles.pc_heatrate] = deal(pc);
+                            end
                         end
                     end
                 end
@@ -1831,12 +1927,12 @@ classdef Read < handle
                     elseif (iscell(FC.velocity_translation))
                         V = FC.velocity_translation{i};
                     end
-                    if (~isfield(V,'type') || ~isfield(V,'model_parts'))
-                        this.missingDataError('FixedCondition.velocity_translation.type and/or FixedCondition.velocity_translation.model_parts');
-                        status = 0; return;
-                    end
                     
                     % Type
+                    if (~isfield(V,'type'))
+                        this.missingDataError('FixedCondition.velocity_translation.type');
+                        status = 0; return;
+                    end
                     type = string(V.type);
                     if (~this.isStringArray(type,1))
                         this.invalidParamError('FixedCondition.velocity_translation.type','It must be a pre-defined string of the condition type');
@@ -1958,10 +2054,9 @@ classdef Read < handle
                             if (~this.isStringArray(interp,1) ||...
                                (~strcmp(interp,'linear') &&...
                                 ~strcmp(interp,'makima') &&...
-                                ~strcmp(interp,'cubic')  &&...
                                 ~strcmp(interp,'pchip')  &&...
                                 ~strcmp(interp,'spline')))
-                                this.invalidOptError('FixedCondition.velocity_translation.interpolation','linear, makima, cubic, pchip or spline');
+                                this.invalidOptError('FixedCondition.velocity_translation.interpolation','linear, makima, pchip or spline');
                                 status = 0; return;
                             elseif (strcmp(interp,'linear'))
                                 if (size(cond.val_x,1) < 2)
@@ -1975,12 +2070,6 @@ classdef Read < handle
                                     status = 0; return;
                                 end
                                 cond.interp = cond.INTERP_MAKIMA;
-                            elseif (strcmp(interp,'cubic'))
-                                if (size(cond.val_x,1) < 3)
-                                    this.invalidParamError('FixedCondition.velocity_translation.values','It must contain at least 3 points for cubic interpolation');
-                                    status = 0; return;
-                                end
-                                cond.interp = cond.INTERP_CUBIC;
                             elseif (strcmp(interp,'pchip'))
                                 if (size(cond.val_x,1) < 4)
                                     this.invalidParamError('FixedCondition.velocity_translation.values','It must contain at least 4 points for pchip interpolation');
@@ -2013,25 +2102,55 @@ classdef Read < handle
                         cond.init_time = 0;
                     end
                     
-                    % Add handle to fixed condition to selected elements
-                    model_parts = string(V.model_parts);
-                    for j = 1:length(model_parts)
-                        mp_name = model_parts(j);
-                        if (~this.isStringArray(mp_name,1))
-                            this.invalidParamError('FixedCondition.velocity_translation.model_parts','It must be a list of strings containing the names of the model parts');
-                            status = 0; return;
-                        elseif (strcmp(mp_name,'PARTICLES'))
-                            [drv.particles.fc_translation] = deal(cond);
-                        elseif (strcmp(mp_name,'WALLS'))
-                            [drv.walls.fc_translation] = deal(cond);
-                        else
-                            mp = findobj(drv.mparts,'name',mp_name);
-                            if (isempty(mp))
-                                this.warnMsg('Nonexistent model part used in FixedCondition.velocity_translation.');
-                                continue;
+                    % Add handle to fixed condition to selected particles
+                    if (isfield(V,'particles'))
+                        particles = V.particles;
+                        for j = 1:length(particles)
+                            p = particles(j);
+                            if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                                this.invalidParamError('FixedCondition.velocity_translation.particles','It must be a list of existing particles IDs');
+                                status = 0; return;
                             end
-                            [mp.particles.fc_translation] = deal(cond);
-                            [mp.walls.fc_translation]     = deal(cond);
+                            pobj = drv.particles([drv.particles.id]==p);
+                            pobj.fc_translation = cond;
+                        end
+                    end
+                    
+                    % Add handle to fixed condition to selected walls
+                    if (isfield(V,'walls'))
+                        walls = V.walls;
+                        for j = 1:length(walls)
+                            w = walls(j);
+                            if (~this.isIntArray(w,1) || ~ismember(w,[drv.walls.id]))
+                                this.invalidParamError('FixedCondition.velocity_translation.walls','It must be a list of existing walls IDs');
+                                status = 0; return;
+                            end
+                            wobj = drv.walls([drv.walls.id]==w);
+                            wobj.fc_translation = cond;
+                        end
+                    end
+                    
+                    % Add handle to fixed condition to selected model parts
+                    if (isfield(V,'model_parts'))
+                        model_parts = string(V.model_parts);
+                        for j = 1:length(model_parts)
+                            mp_name = model_parts(j);
+                            if (~this.isStringArray(mp_name,1))
+                                this.invalidParamError('FixedCondition.velocity_translation.model_parts','It must be a list of strings containing the names of the model parts');
+                                status = 0; return;
+                            elseif (strcmp(mp_name,'PARTICLES'))
+                                [drv.particles.fc_translation] = deal(cond);
+                            elseif (strcmp(mp_name,'WALLS'))
+                                [drv.walls.fc_translation] = deal(cond);
+                            else
+                                mp = findobj(drv.mparts,'name',mp_name);
+                                if (isempty(mp))
+                                    this.warnMsg('Nonexistent model part used in FixedCondition.velocity_translation.');
+                                    continue;
+                                end
+                                [mp.particles.fc_translation] = deal(cond);
+                                [mp.walls.fc_translation]     = deal(cond);
+                            end
                         end
                     end
                 end
@@ -2045,12 +2164,12 @@ classdef Read < handle
                     elseif (iscell(FC.velocity_rotation))
                         V = FC.velocity_rotation{i};
                     end
-                    if (~isfield(V,'type') || ~isfield(V,'model_parts'))
-                        this.missingDataError('FixedCondition.velocity_rotation.type and/or FixedCondition.velocity_rotation.model_parts');
-                        status = 0; return;
-                    end
                     
                     % Type
+                    if (~isfield(V,'type'))
+                        this.missingDataError('FixedCondition.velocity_rotation.type');
+                        status = 0; return;
+                    end
                     type = string(V.type);
                     if (~this.isStringArray(type,1))
                         this.invalidParamError('FixedCondition.velocity_rotation.type','It must be a pre-defined string of the condition type');
@@ -2172,10 +2291,9 @@ classdef Read < handle
                             if (~this.isStringArray(interp,1) ||...
                                (~strcmp(interp,'linear') &&...
                                 ~strcmp(interp,'makima') &&...
-                                ~strcmp(interp,'cubic')  &&...
                                 ~strcmp(interp,'pchip')  &&...
                                 ~strcmp(interp,'spline')))
-                                this.invalidOptError('FixedCondition.velocity_rotation.interpolation','linear, makima, cubic, pchip or spline');
+                                this.invalidOptError('FixedCondition.velocity_rotation.interpolation','linear, makima, pchip or spline');
                                 status = 0; return;
                             elseif (strcmp(interp,'linear'))
                                 if (size(cond.val_x,1) < 2)
@@ -2189,12 +2307,6 @@ classdef Read < handle
                                     status = 0; return;
                                 end
                                 cond.interp = cond.INTERP_MAKIMA;
-                            elseif (strcmp(interp,'cubic'))
-                                if (size(cond.val_x,1) < 3)
-                                    this.invalidParamError('FixedCondition.velocity_rotation.values','It must contain at least 3 points for cubic interpolation');
-                                    status = 0; return;
-                                end
-                                cond.interp = cond.INTERP_CUBIC;
                             elseif (strcmp(interp,'pchip'))
                                 if (size(cond.val_x,1) < 4)
                                     this.invalidParamError('FixedCondition.velocity_rotation.values','It must contain at least 4 points for pchip interpolation');
@@ -2227,25 +2339,55 @@ classdef Read < handle
                         cond.init_time = 0;
                     end
                     
-                    % Add handle to fixed condition to selected elements
-                    model_parts = string(V.model_parts);
-                    for j = 1:length(model_parts)
-                        mp_name = model_parts(j);
-                        if (~this.isStringArray(mp_name,1))
-                            this.invalidParamError('FixedCondition.velocity_rotation.model_parts','It must be a list of strings containing the names of the model parts');
-                            status = 0; return;
-                        elseif (strcmp(mp_name,'PARTICLES'))
-                            [drv.particles.fc_rotation] = deal(cond);
-                        elseif (strcmp(mp_name,'WALLS'))
-                            [drv.walls.fc_rotation] = deal(cond);
-                        else
-                            mp = findobj(drv.mparts,'name',mp_name);
-                            if (isempty(mp))
-                                this.warnMsg('Nonexistent model part used in FixedCondition.velocity_rotation.');
-                                continue;
+                    % Add handle to fixed condition to selected particles
+                    if (isfield(V,'particles'))
+                        particles = V.particles;
+                        for j = 1:length(particles)
+                            p = particles(j);
+                            if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                                this.invalidParamError('FixedCondition.velocity_rotation.particles','It must be a list of existing particles IDs');
+                                status = 0; return;
                             end
-                            [mp.particles.fc_rotation] = deal(cond);
-                            [mp.walls.fc_rotation]     = deal(cond);
+                            pobj = drv.particles([drv.particles.id]==p);
+                            pobj.fc_rotation = cond;
+                        end
+                    end
+                    
+                    % Add handle to fixed condition to selected walls
+                    if (isfield(V,'walls'))
+                        walls = V.walls;
+                        for j = 1:length(walls)
+                            w = walls(j);
+                            if (~this.isIntArray(w,1) || ~ismember(w,[drv.walls.id]))
+                                this.invalidParamError('FixedCondition.velocity_rotation.walls','It must be a list of existing walls IDs');
+                                status = 0; return;
+                            end
+                            wobj = drv.walls([drv.walls.id]==w);
+                            wobj.fc_rotation = cond;
+                        end
+                    end
+                    
+                    % Add handle to fixed condition to selected model parts
+                    if (isfield(V,'model_parts'))
+                        model_parts = string(V.model_parts);
+                        for j = 1:length(model_parts)
+                            mp_name = model_parts(j);
+                            if (~this.isStringArray(mp_name,1))
+                                this.invalidParamError('FixedCondition.velocity_rotation.model_parts','It must be a list of strings containing the names of the model parts');
+                                status = 0; return;
+                            elseif (strcmp(mp_name,'PARTICLES'))
+                                [drv.particles.fc_rotation] = deal(cond);
+                            elseif (strcmp(mp_name,'WALLS'))
+                                [drv.walls.fc_rotation] = deal(cond);
+                            else
+                                mp = findobj(drv.mparts,'name',mp_name);
+                                if (isempty(mp))
+                                    this.warnMsg('Nonexistent model part used in FixedCondition.velocity_rotation.');
+                                    continue;
+                                end
+                                [mp.particles.fc_rotation] = deal(cond);
+                                [mp.walls.fc_rotation]     = deal(cond);
+                            end
                         end
                     end
                 end
@@ -2259,12 +2401,12 @@ classdef Read < handle
                     elseif (iscell(FC.temperature))
                         T = FC.temperature{i};
                     end
-                    if (~isfield(T,'type') || ~isfield(T,'model_parts'))
-                        this.missingDataError('FixedCondition.temperature.type and/or FixedCondition.temperature.model_parts');
-                        status = 0; return;
-                    end
                     
                     % Type
+                    if (~isfield(T,'type'))
+                        this.missingDataError('FixedCondition.temperature.type');
+                        status = 0; return;
+                    end
                     type = string(T.type);
                     if (~this.isStringArray(type,1))
                         this.invalidParamError('FixedCondition.temperature.type','It must be a pre-defined string of the condition type');
@@ -2386,10 +2528,9 @@ classdef Read < handle
                             if (~this.isStringArray(interp,1) ||...
                                (~strcmp(interp,'linear') &&...
                                 ~strcmp(interp,'makima') &&...
-                                ~strcmp(interp,'cubic')  &&...
                                 ~strcmp(interp,'pchip')  &&...
                                 ~strcmp(interp,'spline')))
-                                this.invalidOptError('FixedCondition.temperature.interpolation','linear, makima, cubic, pchip or spline');
+                                this.invalidOptError('FixedCondition.temperature.interpolation','linear, makima, pchip or spline');
                                 status = 0; return;
                             elseif (strcmp(interp,'linear'))
                                 if (size(cond.val_x,1) < 2)
@@ -2403,12 +2544,6 @@ classdef Read < handle
                                     status = 0; return;
                                 end
                                 cond.interp = cond.INTERP_MAKIMA;
-                            elseif (strcmp(interp,'cubic'))
-                                if (size(cond.val_x,1) < 3)
-                                    this.invalidParamError('FixedCondition.temperature.values','It must contain at least 3 points for cubic interpolation');
-                                    status = 0; return;
-                                end
-                                cond.interp = cond.INTERP_CUBIC;
                             elseif (strcmp(interp,'pchip'))
                                 if (size(cond.val_x,1) < 4)
                                     this.invalidParamError('FixedCondition.temperature.values','It must contain at least 4 points for pchip interpolation');
@@ -2441,25 +2576,55 @@ classdef Read < handle
                         cond.init_time = 0;
                     end
                     
-                    % Add handle to fixed condition to selected elements
-                    model_parts = string(T.model_parts);
-                    for j = 1:length(model_parts)
-                        mp_name = model_parts(j);
-                        if (~this.isStringArray(mp_name,1))
-                            this.invalidParamError('FixedCondition.temperature.model_parts','It must be a list of strings containing the names of the model parts');
-                            status = 0; return;
-                        elseif (strcmp(mp_name,'PARTICLES'))
-                            [drv.particles.fc_temperature] = deal(cond);
-                        elseif (strcmp(mp_name,'WALLS'))
-                            [drv.walls.fc_temperature] = deal(cond);
-                        else
-                            mp = findobj(drv.mparts,'name',mp_name);
-                            if (isempty(mp))
-                                this.warnMsg('Nonexistent model part used in FixedCondition.temperature.');
-                                continue;
+                    % Add handle to fixed condition to selected particles
+                    if (isfield(T,'particles'))
+                        particles = T.particles;
+                        for j = 1:length(particles)
+                            p = particles(j);
+                            if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                                this.invalidParamError('FixedCondition.temperature.particles','It must be a list of existing particles IDs');
+                                status = 0; return;
                             end
-                            [mp.particles.fc_temperature] = deal(cond);
-                            [mp.walls.fc_temperature]     = deal(cond);
+                            pobj = drv.particles([drv.particles.id]==p);
+                            pobj.fc_temperature = cond;
+                        end
+                    end
+                    
+                    % Add handle to fixed condition to selected walls
+                    if (isfield(T,'walls'))
+                        walls = T.walls;
+                        for j = 1:length(walls)
+                            w = walls(j);
+                            if (~this.isIntArray(w,1) || ~ismember(w,[drv.walls.id]))
+                                this.invalidParamError('FixedCondition.temperature.walls','It must be a list of existing walls IDs');
+                                status = 0; return;
+                            end
+                            wobj = drv.walls([drv.walls.id]==w);
+                            wobj.fc_temperature = cond;
+                        end
+                    end
+                    
+                    % Add handle to fixed condition to selected model parts
+                    if (isfield(T,'model_parts'))
+                        model_parts = string(T.model_parts);
+                        for j = 1:length(model_parts)
+                            mp_name = model_parts(j);
+                            if (~this.isStringArray(mp_name,1))
+                                this.invalidParamError('FixedCondition.temperature.model_parts','It must be a list of strings containing the names of the model parts');
+                                status = 0; return;
+                            elseif (strcmp(mp_name,'PARTICLES'))
+                                [drv.particles.fc_temperature] = deal(cond);
+                            elseif (strcmp(mp_name,'WALLS'))
+                                [drv.walls.fc_temperature] = deal(cond);
+                            else
+                                mp = findobj(drv.mparts,'name',mp_name);
+                                if (isempty(mp))
+                                    this.warnMsg('Nonexistent model part used in FixedCondition.temperature.');
+                                    continue;
+                                end
+                                [mp.particles.fc_temperature] = deal(cond);
+                                [mp.walls.fc_temperature]     = deal(cond);
+                            end
                         end
                     end
                 end
@@ -2620,6 +2785,35 @@ classdef Read < handle
                 
                 % Set additional material properties
                 if (strcmp(type,'solid'))
+                    
+                    % Apply solid material to selected particles
+                    if (isfield(M,'particles'))
+                        particles = M.particles;
+                        for j = 1:length(particles)
+                            p = particles(j);
+                            if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                                this.invalidParamError('Material.particles','It must be a list of existing particles IDs');
+                                status = 0; return;
+                            end
+                            pobj = drv.particles([drv.particles.id]==p);
+                            pobj.material = mat;
+                        end
+                    end
+                    
+                    % Apply solid material to selected walls
+                    if (isfield(M,'walls'))
+                        walls = M.walls;
+                        for j = 1:length(walls)
+                            w = walls(j);
+                            if (~this.isIntArray(w,1) || ~ismember(w,[drv.walls.id]))
+                                this.invalidParamError('Material.walls','It must be a list of existing walls IDs');
+                                status = 0; return;
+                            end
+                            wobj = drv.walls([drv.walls.id]==w);
+                            wobj.material = mat;
+                        end
+                    end
+                    
                     % Apply solid material to selected model parts
                     if (isfield(M,'model_parts'))
                         model_parts = string(M.model_parts);
@@ -2734,7 +2928,6 @@ classdef Read < handle
             if (~isfield(json,'ConvectionModel'))
                 return;
             end
-            CONV = json.ConvectionModel;
             
             % Check if fluid material has been defined
             if (isempty(drv.fluid))
@@ -2742,45 +2935,65 @@ classdef Read < handle
                 status = 0; return;
             end
             
-            % Nusselt correlation
-            if (~isfield(CONV,'nusselt_correlation'))
-                this.missingDataError('ConvectionModel.nusselt_correlation');
-                status = 0; return;
-            end
-            cor = string(CONV.nusselt_correlation);
-            if (~this.isStringArray(cor,1)          ||...
-               (~strcmp(cor,'sphere_hanz_marshall') &&...
-                ~strcmp(cor,'sphere_whitaker')))
-                this.invalidOptError('ConvectionModel.nusselt_correlation','sphere_hanz_marshall, sphere_whitaker');
-                status = 0; return;
-            end
-            if (strcmp(cor,'sphere_hanz_marshall'))
-                nu = Nusselt_Sphere_RanzMarshall();
-            elseif (strcmp(cor,'sphere_whitaker'))
-                nu = Nusselt_Sphere_Whitaker();
-            end
-            
-            % Apply nusselt correlation to selected particles
-            if (isfield(CONV,'model_parts'))
-                model_parts = string(CONV.model_parts);
-                for j = 1:length(model_parts)
-                    mp_name = model_parts(j);
-                    if (~this.isStringArray(mp_name,1))
-                        this.invalidParamError('ConvectionModel.model_parts','It must be a list of strings containing the names of the model parts');
-                        status = 0; return;
-                    elseif (strcmp(mp_name,'PARTICLES'))
-                        [drv.particles.nusselt] = deal(nu);
-                    else
-                        mp = findobj(drv.mparts,'name',mp_name);
-                        if (isempty(mp))
-                            this.warnMsg('Nonexistent model part used in ConvectionModel.model_parts.');
-                            continue;
+            for i = 1:length(json.ConvectionModel)
+                if (isstruct(json.ConvectionModel))
+                    CONV = json.ConvectionModel(i);
+                elseif (iscell(json.ConvectionModel))
+                    CONV = json.ConvectionModel{i};
+                end
+                
+                % Nusselt correlation
+                if (~isfield(CONV,'nusselt_correlation'))
+                    this.missingDataError('ConvectionModel.nusselt_correlation');
+                    status = 0; return;
+                end
+                cor = string(CONV.nusselt_correlation);
+                if (~this.isStringArray(cor,1)          ||...
+                   (~strcmp(cor,'sphere_hanz_marshall') &&...
+                    ~strcmp(cor,'sphere_whitaker')))
+                    this.invalidOptError('ConvectionModel.nusselt_correlation','sphere_hanz_marshall, sphere_whitaker');
+                    status = 0; return;
+                end
+                if (strcmp(cor,'sphere_hanz_marshall'))
+                    nu = Nusselt_Sphere_RanzMarshall();
+                elseif (strcmp(cor,'sphere_whitaker'))
+                    nu = Nusselt_Sphere_Whitaker();
+                end
+                
+                % Apply nusselt correlation to selected particles
+                if (isfield(CONV,'particles'))
+                    particles = CONV.particles;
+                    for j = 1:length(particles)
+                        p = particles(j);
+                        if (~this.isIntArray(p,1) || ~ismember(p,[drv.particles.id]))
+                            this.invalidParamError('ConvectionModel.particles','It must be a list of existing particles IDs');
+                            status = 0; return;
                         end
-                        [mp.particles.nusselt] = deal(nu);
+                        pobj = drv.particles([drv.particles.id]==p);
+                        pobj.nusselt = nu;
                     end
                 end
-            else
-                [drv.particles.nusselt] = deal(nu);
+                
+                % Apply nusselt correlation to selected model parts
+                if (isfield(CONV,'model_parts'))
+                    model_parts = string(CONV.model_parts);
+                    for j = 1:length(model_parts)
+                        mp_name = model_parts(j);
+                        if (~this.isStringArray(mp_name,1))
+                            this.invalidParamError('ConvectionModel.model_parts','It must be a list of strings containing the names of the model parts');
+                            status = 0; return;
+                        elseif (strcmp(mp_name,'PARTICLES'))
+                            [drv.particles.nusselt] = deal(nu);
+                        else
+                            mp = findobj(drv.mparts,'name',mp_name);
+                            if (isempty(mp))
+                                this.warnMsg('Nonexistent model part used in ConvectionModel.model_parts.');
+                                continue;
+                            end
+                            [mp.particles.nusselt] = deal(nu);
+                        end
+                    end
+                end
             end
         end
         
@@ -5152,14 +5365,14 @@ classdef Read < handle
                     (isempty(m.density) ||...
                      isempty(m.young)   ||...
                      isempty(m.poisson)))
-                    fprintf(2,'Missing mechanical properties of material %s.',m.name);
+                    fprintf(2,'Missing mechanical properties of material %s.\n',m.name);
                     status = 0; return;
                 end
                 if ((drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL) &&...
                         (isempty(m.density)  ||...
                          isempty(m.conduct)  ||...
                          isempty(m.hcapacity)))
-                    fprintf(2,'Missing thermal properties of material %s.',m.name);
+                    fprintf(2,'Missing thermal properties of material %s.\n',m.name);
                     status = 0; return;
                 end
                 if (~isempty(m.young0) && isempty(m.young))
@@ -5183,10 +5396,10 @@ classdef Read < handle
             for i = 1:drv.n_particles
                 p = drv.particles(i);
                 if (isempty(p.material))
-                    fprintf(2,'No material was provided to particle %d.',p.id);
+                    fprintf(2,'No material was provided to particle %d.\n',p.id);
                     status = 0; return;
                 elseif (length(p.material) > 1)
-                    fprintf(2,'More than one material was provided to particle %d.',p.id);
+                    fprintf(2,'More than one material was provided to particle %d.\n',p.id);
                     status = 0; return;
                 end
             end
@@ -5194,7 +5407,7 @@ classdef Read < handle
             % Check compatibility between different types of particles
             if (length(findobj(drv.particles,'type',drv.particles(1).SPHERE))   > 1 &&...
                 length(findobj(drv.particles,'type',drv.particles(1).CYLINDER)) > 1)
-                fprintf(2,'Interaction between SPEHERE and CYLINDER particles is not defined.');
+                fprintf(2,'Interaction between SPEHERE and CYLINDER particles is not defined.\n');
                 status = 0; return;
             end
         end
@@ -5205,7 +5418,7 @@ classdef Read < handle
             for i = 1:drv.n_walls
                 w = drv.walls(i);
                 if (w.type == w.LINE && isequal(w.coord_ini,w.coord_end))
-                    fprintf(2,'Wall %d has no length.',w.id);
+                    fprintf(2,'Wall %d has no length.\n',w.id);
                     status = 0; return;
                 end
                 
@@ -5227,7 +5440,7 @@ classdef Read < handle
                     drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.VISCOELASTIC_NONLINEAR ||...
                     drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.ELASTOPLASTIC_LINEAR)
                     if (length(findobj(drv.solids,'young',[])) > 1)
-                        fprintf(2,'The selected normal contact force model requires the Young modulus of materials.');
+                        fprintf(2,'The selected normal contact force model requires the Young modulus of materials.\n');
                         status = 0; return;
                     end
                 end
@@ -5238,7 +5451,7 @@ classdef Read < handle
                 if (drv.search.b_interact.cforcet.type == drv.search.b_interact.cforcet.SPRING ||...
                     drv.search.b_interact.cforcet.type == drv.search.b_interact.cforcet.SPRING_SLIDER)
                     if (length(findobj(drv.solids,'poisson',[])) > 1)
-                        fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.');
+                        fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.\n');
                         status = 0; return;
                     end
                     
@@ -5248,37 +5461,37 @@ classdef Read < handle
                         status = 0; return;
                     end
                     if (drv.search.b_interact.cforcet.auto_damp && isempty(drv.search.b_interact.cforcet.restitution))
-                        fprintf(2,'The selected tangent contact force model requires the tangent restitution coefficient.');
+                        fprintf(2,'The selected tangent contact force model requires the tangent restitution coefficient.\n');
                         status = 0; return;
                     end
                     
                 elseif (drv.search.b_interact.cforcet.type == drv.search.b_interact.cforcet.SDS_NONLINEAR)
                     if (drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.DD)
                         if (length(findobj(drv.solids,'shear',[])) > 1)
-                            fprintf(2,'The selected tangent contact force model requires the Shear modulus of materials.');
+                            fprintf(2,'The selected tangent contact force model requires the Shear modulus of materials.\n');
                             status = 0; return;
                         end
                     elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.LTH)
                         if (length(findobj(drv.solids,'poisson',[])) > 1)
-                            fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.');
+                            fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.\n');
                             status = 0; return;
                         end
                     elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.ZZY)
                         if (length(findobj(drv.solids,'shear',[])) > 1)
-                            fprintf(2,'The selected tangent contact force model requires the Shear modulus of materials.');
+                            fprintf(2,'The selected tangent contact force model requires the Shear modulus of materials.\n');
                             status = 0; return;
                         end
                         if (length(findobj(drv.solids,'poisson',[])) > 1)
-                            fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.');
+                            fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.\n');
                             status = 0; return;
                         end
                     elseif(drv.search.b_interact.cforcet.formula == drv.search.b_interact.cforcet.TTI)
                         if (length(findobj(drv.solids,'young',[])) > 1)
-                            fprintf(2,'The selected normal contact force model requires the Young modulus of materials.');
+                            fprintf(2,'The selected normal contact force model requires the Young modulus of materials.\n');
                             status = 0; return;
                         end
                         if (length(findobj(drv.solids,'poisson',[])) > 1)
-                            fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.');
+                            fprintf(2,'The selected tangent contact force model requires the Poisson ratio of materials.\n');
                             status = 0; return;
                         end
                     end
@@ -5293,7 +5506,7 @@ classdef Read < handle
             % Area correction
             if (~isempty(drv.search.b_interact.corarea))
                 if (length(findobj(drv.solids,'young0',[])) > 1)
-                    fprintf(2,'Area correction models require the real value of the Young modulus to be provided.');
+                    fprintf(2,'Area correction models require the real value of the Young modulus to be provided.\n');
                     status = 0; return;
                 end
             end         
@@ -5316,48 +5529,48 @@ classdef Read < handle
                 if (drv.search.b_interact.iconduc.type == drv.search.b_interact.iconduc.VORONOI_A)
                     if (drv.search.b_interact.iconduc.method == drv.search.b_interact.iconduc.VORONOI_DIAGRAM &&...
                         drv.n_particles < 3)
-                        fprintf(2,'The selected indirect conduction model requires at least 3 particles to build the Voronoi diagram.');
+                        fprintf(2,'The selected indirect conduction model requires at least 3 particles to build the Voronoi diagram.\n');
                         status = 0; return;
                     end
                 end
                 if (drv.search.b_interact.iconduc.type == drv.search.b_interact.iconduc.VORONOI_B)
                     if (drv.search.b_interact.iconduc.method == drv.search.b_interact.iconduc.VORONOI_DIAGRAM &&...
                         drv.n_particles < 3)
-                        fprintf(2,'The selected indirect conduction model requires at least 3 particles to build the Voronoi diagram.');
+                        fprintf(2,'The selected indirect conduction model requires at least 3 particles to build the Voronoi diagram.\n');
                         status = 0; return;
                     end
                 end
                 if (drv.search.b_interact.iconduc.type == drv.search.b_interact.iconduc.SURROUNDING_LAYER)
                     rmin = min([drv.particles.radius]);
                     if (drv.search.b_interact.iconduc.dist_min >= rmin)
-                        fprintf(2,'The value of InteractionModel.indirect_conduction.min_distance is too high.');
+                        fprintf(2,'The value of InteractionModel.indirect_conduction.min_distance is too high.\n');
                         status = 0; return;
                     end
                 end
             end
             
             % Convection
-            if (any(~isempty([drv.particles.nusselt])))
+            if (length(findobj(drv.particles,'nusselt',[])) < drv.n_particles)
                 if (isempty(drv.fluid))
                     this.missingDataError('Definition of fluid material for convection model');
                     status = 0; return;
                 elseif (isempty(drv.fluid_vel))
-                    fprintf(2,'The selected convection model requires the fluid velocity.');
+                    fprintf(2,'The selected convection model requires the fluid velocity.\n');
                     status = 0; return;
                 elseif (isempty(drv.fluid_temp))
-                    fprintf(2,'The selected convection model requires the fluid temperature.');
+                    fprintf(2,'The selected convection model requires the fluid temperature.\n');
                     status = 0; return;
                 elseif (isempty(drv.fluid.density))
-                    fprintf(2,'The selected convection model requires the fluid density.');
+                    fprintf(2,'The selected convection model requires the fluid density.\n');
                     status = 0; return;
                 elseif (isempty(drv.fluid.conduct))
-                    fprintf(2,'The selected convection model requires the fluid thermal conductivity.');
+                    fprintf(2,'The selected convection model requires the fluid thermal conductivity.\n');
                     status = 0; return;
                 elseif (isempty(drv.fluid.hcapacity))
-                    fprintf(2,'The selected convection model requires the fluid heat capacity.');
+                    fprintf(2,'The selected convection model requires the fluid heat capacity.\n');
                     status = 0; return;
                 elseif (isempty(drv.fluid.viscosity))
-                    fprintf(2,'The selected convection model requires the fluid viscosity.');
+                    fprintf(2,'The selected convection model requires the fluid viscosity.\n');
                     status = 0; return;
                 end
             end
