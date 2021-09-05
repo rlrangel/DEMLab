@@ -212,9 +212,6 @@ classdef Master
             if (~isempty(drv.max_time))
                 fprintf('Final time.............: %f\n',drv.max_time);
             end
-            if (~isempty(drv.max_step))
-                fprintf('Maximum steps..........: %d\n',drv.max_step);
-            end
         end
         
         %------------------------------------------------------------------

@@ -80,26 +80,24 @@ classdef Driver_Thermal < Driver
             status = 1;
             this.initTime();
             
-            % Remove particles not respecting bbox and sinks
-            % (total number of particles needed for preallocating results)
-            this.cleanParticles();
-            if (this.n_particles == 0)
-                fprintf(2,'The model has no particle inside the domain to initialize the analysis.\n');
-                status = 0;
-                return;
-            end
-            
             % Initialize result arrays and add initial time and step values
+            % (initialze arrays with NaN for all initial particles)
             this.result.initialize(this);
             this.result.storeTime(this);
             
-            % loop over all particles
+            % 1st loop over all particles
+            erase = false;
             for i = 1:this.n_particles
                 p = this.particles(i);
                 
+                % Remove particles not respecting bbox and sinks
+                if (this.removeParticle(p))
+                    erase = true;
+                    continue;
+                end
+                
                 % Initialize properties and forcing terms
                 this.setParticleProps(p);
-                this.setLocalPorosity(p);
                 p.resetForcingTerms();
                 
                 % Set fixed temperature (overlap initial condition)
@@ -124,6 +122,16 @@ classdef Driver_Thermal < Driver
                 end
             end
             
+            % Update global properties depending on total number of particles 
+            if (erase)
+                this.erasePropsOfRemovedParticle();
+            end
+            if (this.n_particles == 0)
+                fprintf(2,'The model has no particle inside the domain to initialize the analysis.\n');
+                status = 0;
+                return;
+            end
+            
             % Set global properties
             this.setTotalParticlesProps();
             this.setGlobalVol();
@@ -132,11 +140,6 @@ classdef Driver_Thermal < Driver
             end
             if (~isnan(this.vor_freq))
                 this.setVoronoiDiagram();
-            end
-            
-            % Set particles convection coefficient (may need porosity ready)
-            for i = 1:this.n_particles
-                p.setConvCoeff(this);
             end
             
             % Loop over all walls
@@ -152,9 +155,6 @@ classdef Driver_Thermal < Driver
                 this.result.storeWallTemperature(w);   % initial
             end
             
-            % Compute ending time
-            this.finalTime();
-            
             % Initialize output control variables
             this.initOutputVars();
             
@@ -162,15 +162,27 @@ classdef Driver_Thermal < Driver
             fprintf('\nCreating particle interactions...\n');
             this.search.execute(this);
             
+            % 2nd loop over all particles (interaction-dependent properties)
+            for i = 1:this.n_particles
+                p = this.particles(i);
+                
+                % Set particles local porosity (needs particles interactions ready)
+                p.setLocalPorosity([]);
+                
+                % Set particles convection coefficient (may need porosity ready)
+                p.setConvCoeff(this);
+            end
+            
             % Prepare interactions for analysis
             for i = 1:this.n_interacts
                 int = this.interacts(i);
                 
-                % Remove insulated interactions
+                % Remove insulated interactions with walls
                 if (int.insulated)
                     p = int.elem1; w = int.elem2;
-                    p.interacts(p.interacts==int) = [];
-                    p.neigh_w(p.neigh_w==w.id)    = [];
+                    p.interacts(p.interacts==int)  = [];
+                    p.neigh_w(p.neigh_w==w)        = [];
+                    p.neigh_wid(p.neigh_wid==w.id) = [];
                     delete(int);
                     continue;
                 end
@@ -238,6 +250,10 @@ classdef Driver_Thermal < Driver
     methods
         %------------------------------------------------------------------
         function particleLoop(this)
+            % Initialize flags
+            rmv = false;
+            
+            % Loop over all particles
             for i = 1:this.n_particles
                 p = this.particles(i);
                 
@@ -263,6 +279,12 @@ classdef Driver_Thermal < Driver
                     p.setFCTemperature(this.time);
                 end
                 
+                % Remove particles not respecting bbox and sinks
+                if (this.removeParticle(p))
+                    rmv = true;
+                    continue;
+                end
+                
                 % Store results
                 if (this.step == 0)
                     % Work-around to fill null initial values stored in pre-process
@@ -274,6 +296,11 @@ classdef Driver_Thermal < Driver
                 
                 % Reset forcing terms for next step
                 p.resetForcingTerms();
+            end
+            
+            % Erase handles to removed particles from global list and model parts
+            if (rmv)
+                this.erasePropsOfRemovedParticle;
             end
         end
         

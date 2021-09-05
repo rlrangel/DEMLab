@@ -33,7 +33,7 @@ classdef Sink_Rectangle < Sink
                 do = false;
                 return;
             end
-            do = (any(p.coord > this.limit_min) && any(p.coord < this.limit_max));
+            do = (~any(p.coord > this.limit_min == 0) && ~any(p.coord < this.limit_max == 0));
         end
     end
 end

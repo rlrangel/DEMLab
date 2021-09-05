@@ -48,12 +48,16 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         
         % Neighbours Interactions
         interacts Interact = Interact.empty;   % handles to objects of Interact class
+        neigh_p   Particle = Particle.empty;   % handles to objects of Particle class of neighbour particles
+        neigh_w   Wall     = Wall.empty;       % handles to objects of Wall class of neighbour walls
+        neigh_pid uint32   = uint32.empty;     % vector of neighbour particles IDs (int is faster to search than obj)
+        neigh_wid uint32   = uint32.empty;     % vector of neighbour walls IDs (int is faster to search than obj)
         verlet_p  Particle = Particle.empty;   % handles to objects of Particle class in the verlet list
         verlet_w  Wall     = Wall.empty;       % handles to objects of Wall class in the verlet list
-        neigh_p   uint32   = uint32.empty;     % vector of neighbours particles IDs
-        neigh_w   uint32   = uint32.empty;     % vector of neighbours walls IDs
-        porosity  double   = double.empty;     % average porosity (void ratio) around particle
-        por_freq  double   = double.empty;     % average porosity update frequency (in steps) (double to accept NaN)
+        
+        % Porosity data
+        porosity double = double.empty;   % average porosity (void ratio) around particle
+        por_freq double = double.empty;   % average porosity update frequency (in steps) (double to accept NaN)
         
         % Behavior flags
         free_trl   logical = logical.empty;   % flag for translational free particle
@@ -125,6 +129,9 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         %------------------------------------------------------------------
         setMInertia(this);
         
+        %------------------------------------------------------------------
+        setLocalPorosity(this,por);
+            
         %------------------------------------------------------------------
         [x1,y1,x2,y2] = getBBoxLimits(this);
     end

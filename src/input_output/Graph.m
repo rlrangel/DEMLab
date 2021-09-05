@@ -73,6 +73,7 @@ classdef Graph < handle
             end
             
             % Set legend
+            warning off MATLAB:legend:IgnoringExtraEntries
             legend(leg);
             
             % Save picture

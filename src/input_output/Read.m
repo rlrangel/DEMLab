@@ -138,6 +138,7 @@ classdef Read < handle
         %------------------------------------------------------------------
         function [status,name] = getName(this,json)
             status = 1;
+            name   = [];
             
             % Check if name exists
             if (~isfield(json,'ProblemData'))
@@ -208,6 +209,9 @@ classdef Read < handle
                 status = 0; return;
             end
             
+            % Turn off potential warnings when reading file
+            warning off MATLAB:deblank:NonStringInput
+            
             % Look for tags
             while (status == 1 && ~feof(fid))
                 line = deblank(fgetl(fid));
@@ -228,6 +232,9 @@ classdef Read < handle
             if (status == 0)
                 return;
             end
+            
+            % Turn on warnings again
+            warning on MATLAB:deblank:NonStringInput
             
             % Checks
             if (drv.n_particles == 0)
@@ -263,7 +270,7 @@ classdef Read < handle
                     this.invalidParamError('Solver.auto_time_step','It must be a boolean: true or false');
                     status = 0; return;
                 end
-                drv.auto_step = true;
+                drv.auto_step = json.Solver.auto_time_step;
             end
             
             % Time step
@@ -291,20 +298,8 @@ classdef Read < handle
                     status = 0; return;
                 end
                 drv.max_time = json.Solver.final_time;
-            elseif (~isfield(json.Solver,'max_steps'))
-                this.missingDataError('Solver.final_time or Solver.max_steps');
-                status = 0; return;
-            end
-            
-            % Maximum steps
-            if (isfield(json.Solver,'max_steps'))
-                if (~this.isIntArray(json.Solver.max_steps,1) || json.Solver.max_steps <= 0)
-                    this.invalidParamError('Solver.max_steps','It must be a positive integer');
-                    status = 0; return;
-                end
-                drv.max_step = json.Solver.max_steps;
-            elseif (~isfield(json.Solver,'final_time'))
-                this.missingDataError('Solver.final_time or Solver.max_steps');
+            else
+                this.missingDataError('Solver.final_time');
                 status = 0; return;
             end
             
@@ -403,7 +398,7 @@ classdef Read < handle
                 this.missingDataError('Search.scheme');
                 status = 0; return;
             end
-            scheme = string(Search.scheme);
+            scheme = string(json.Search.scheme);
             if (~this.isStringArray(scheme,1) ||...
                (~strcmp(scheme,'simple_loop') &&...
                 ~strcmp(scheme,'verlet_list')))
@@ -570,8 +565,9 @@ classdef Read < handle
                 end
                 
                 % Check for valid polygon
-                warning off MATLAB:polyshape:repairedBySimplify;
+                warning off MATLAB:polyshape:repairedBySimplify
                 warning off MATLAB:polyshape:boolOperationFailed
+                warning off MATLAB:polyshape:boundary3Points
                 try
                     p = polyshape(x,y);
                 catch
@@ -612,7 +608,11 @@ classdef Read < handle
             end
             
             for i = 1:length(json.Sink)
-                S = json.Sink(i);
+                if (isstruct(json.Sink))
+                    S = json.Sink(i);
+                elseif (iscell(json.Sink))
+                    S = json.Sink{i};
+                end
                 
                 % Shape
                 if (~isfield(S,'shape'))
@@ -702,8 +702,9 @@ classdef Read < handle
                     end
                     
                     % Check for valid polygon
-                    warning off MATLAB:polyshape:repairedBySimplify;
+                    warning off MATLAB:polyshape:repairedBySimplify
                     warning off MATLAB:polyshape:boolOperationFailed
+                    warning off MATLAB:polyshape:MATLAB:polyshape:boundary3Points
                     try
                         p = polyshape(x,y);
                     catch
@@ -719,7 +720,7 @@ classdef Read < handle
                     sink = Sink_Polygon();
                     sink.coord_x = x;
                     sink.coord_y = y;
-                    drv.sink = sink;
+                    drv.sink(i)  = sink;
                     
                 else
                     this.invalidOptError('Sink.shape','rectangle, circle, polygon');
@@ -814,7 +815,11 @@ classdef Read < handle
             % TRANSLATIONAL VELOCITY
             if (isfield(IC,'translational_velocity'))
                 for i = 1:length(IC.translational_velocity)
-                    TV = IC.translational_velocity(i);
+                    if (isstruct(IC.translational_velocity))
+                        TV = IC.translational_velocity(i);
+                    elseif (iscell(IC.translational_velocity))
+                        TV = IC.translational_velocity{i};
+                    end
                     if (~isfield(TV,'value') || ~isfield(TV,'model_parts'))
                         this.missingDataError('InitialCondition.translational_velocity.value and/or InitialCondition.translational_velocity.model_parts');
                         status = 0; return;
@@ -851,7 +856,11 @@ classdef Read < handle
             % ROTATIONAL VELOCITY
             if (isfield(IC,'rotational_velocity'))                
                 for i = 1:length(IC.rotational_velocity)
-                    RV = IC.rotational_velocity(i);
+                    if (isstruct(IC.rotational_velocity))
+                        RV = IC.rotational_velocity(i);
+                    elseif (iscell(IC.rotational_velocity))
+                        RV = IC.rotational_velocity{i};
+                    end
                     if (~isfield(RV,'value') || ~isfield(RV,'model_parts'))
                         this.missingDataError('InitialCondition.rotational_velocity.value and/or InitialCondition.rotational_velocity.model_parts');
                         status = 0; return;
@@ -888,7 +897,11 @@ classdef Read < handle
             % TEMPERATURE
             if (isfield(IC,'temperature'))
                 for i = 1:length(IC.temperature)
-                    T = IC.temperature(i);
+                    if (isstruct(IC.temperature))
+                        T = IC.temperature(i);
+                    elseif (iscell(IC.temperature))
+                        T = IC.temperature{i};
+                    end
                     if (~isfield(T,'value') || ~isfield(T,'model_parts'))
                         this.missingDataError('InitialCondition.temperature.value and/or InitialCondition.temperature.model_parts');
                         status = 0; return;
@@ -950,7 +963,11 @@ classdef Read < handle
             % FORCE
             if (isfield(PC,'force'))
                 for i = 1:length(PC.force)
-                    F = PC.force(i);
+                    if (isstruct(PC.force))
+                        F = PC.force(i);
+                    elseif (iscell(PC.force))
+                        F = PC.force{i};
+                    end
                     if (~isfield(F,'type') || ~isfield(F,'model_parts'))
                         this.missingDataError('PrescribedCondition.force.type and/or PrescribedCondition.force.model_parts');
                         status = 0; return;
@@ -1157,7 +1174,11 @@ classdef Read < handle
             % TORQUE
             if (isfield(PC,'torque'))
                 for i = 1:length(PC.torque)
-                    T = PC.torque(i);
+                    if (isstruct(PC.torque))
+                        T = PC.torque(i);
+                    elseif (iscell(PC.torque))
+                        T = PC.torque{i};
+                    end
                     if (~isfield(T,'type') || ~isfield(T,'model_parts'))
                         this.missingDataError('PrescribedCondition.torque.type and/or PrescribedCondition.torque.model_parts');
                         status = 0; return;
@@ -1364,7 +1385,11 @@ classdef Read < handle
             % HEAT FLUX
             if (isfield(PC,'heat_flux'))
                 for i = 1:length(PC.heat_flux)
-                    HF = PC.heat_flux(i);
+                    if (isstruct(PC.heat_flux))
+                        HF = PC.heat_flux(i);
+                    elseif (iscell(PC.heat_flux))
+                        HF = PC.heat_flux{i};
+                    end
                     if (~isfield(HF,'type') || ~isfield(HF,'model_parts'))
                         this.missingDataError('PrescribedCondition.heat_flux.type and/or PrescribedCondition.heat_flux.model_parts');
                         status = 0; return;
@@ -1571,7 +1596,11 @@ classdef Read < handle
             % HEAT RATE
             if (isfield(PC,'heat_rate'))
                 for i = 1:length(PC.heat_rate)
-                    HF = PC.heat_rate(i);
+                    if (isstruct(PC.heat_rate))
+                        HF = PC.heat_rate(i);
+                    elseif (iscell(PC.heat_rate))
+                        HF = PC.heat_rate{i};
+                    end
                     if (~isfield(HF,'type') || ~isfield(HF,'model_parts'))
                         this.missingDataError('PrescribedCondition.heat_rate.type or PrescribedCondition.heat_rate.model_parts');
                         status = 0; return;
@@ -1797,7 +1826,11 @@ classdef Read < handle
             % VELOCITY TRANSLATION
             if (isfield(FC,'velocity_translation'))
                 for i = 1:length(FC.velocity_translation)
-                    V = FC.velocity_translation(i);
+                    if (isstruct(FC.velocity_translation))
+                        V = FC.velocity_translation(i);
+                    elseif (iscell(FC.velocity_translation))
+                        V = FC.velocity_translation{i};
+                    end
                     if (~isfield(V,'type') || ~isfield(V,'model_parts'))
                         this.missingDataError('FixedCondition.velocity_translation.type and/or FixedCondition.velocity_translation.model_parts');
                         status = 0; return;
@@ -2007,7 +2040,11 @@ classdef Read < handle
             % VELOCITY ROTATION
             if (isfield(FC,'velocity_rotation'))
                 for i = 1:length(FC.velocity_rotation)
-                    V = FC.velocity_rotation(i);
+                    if (isstruct(FC.velocity_rotation))
+                        V = FC.velocity_rotation(i);
+                    elseif (iscell(FC.velocity_rotation))
+                        V = FC.velocity_rotation{i};
+                    end
                     if (~isfield(V,'type') || ~isfield(V,'model_parts'))
                         this.missingDataError('FixedCondition.velocity_rotation.type and/or FixedCondition.velocity_rotation.model_parts');
                         status = 0; return;
@@ -2217,7 +2254,11 @@ classdef Read < handle
             % TEMPERATURE
             if (isfield(FC,'temperature'))
                 for i = 1:length(FC.temperature)
-                    T = FC.temperature(i);
+                    if (isstruct(FC.temperature))
+                        T = FC.temperature(i);
+                    elseif (iscell(FC.temperature))
+                        T = FC.temperature{i};
+                    end
                     if (~isfield(T,'type') || ~isfield(T,'model_parts'))
                         this.missingDataError('FixedCondition.temperature.type and/or FixedCondition.temperature.model_parts');
                         status = 0; return;
@@ -2434,7 +2475,11 @@ classdef Read < handle
             end
             
             for i = 1:length(json.Material)
-                M = json.Material(i);
+                if (isstruct(json.Material))
+                    M = json.Material(i);
+                elseif (iscell(json.Material))
+                    M = json.Material{i};
+                end
                 
                 % Check material type
                 if (~isfield(M,'type'))
@@ -2904,7 +2949,11 @@ classdef Read < handle
             end
             
             for i = 1:length(json.Graph)
-                GRA = json.Graph(i);
+                if (isstruct(json.Graph))
+                    GRA = json.Graph(i);
+                elseif (iscell(json.Graph))
+                    GRA = json.Graph{i};
+                end
                 
                 % Create graph object
                 gra = Graph();
@@ -3321,7 +3370,11 @@ classdef Read < handle
             end
             
             for i = 1:length(json.Animation)
-                ANM = json.Animation(i);
+                if (isstruct(json.Animation))
+                    ANM = json.Animation(i);
+                elseif (iscell(json.Animation))
+                    ANM = json.Animation{i};
+                end
                 
                 % Create animation object
                 anim = Animation();
@@ -3563,11 +3616,13 @@ classdef Read < handle
                 particle.orient = orient;
                 particle.radius = radius;
                 
-                % Store handle to particle object
+                % Check repeated index
                 if (id <= length(drv.particles) && ~isempty(drv.particles(id).id))
                     this.invalidModelError('PARTICLES.SPHERE','Particles IDs cannot be repeated');
                     status = 0; return;
                 end
+                
+                % Store handle to particle object
                 drv.particles(id) = particle;
             end
             
@@ -3652,11 +3707,13 @@ classdef Read < handle
                 particle.len    = length;
                 particle.radius = radius;
                 
-                % Store handle to particle object
+                % Check repeated index
                 if (id <= length(drv.particles) && ~isempty(drv.particles(id).id))
                     this.invalidModelError('PARTICLES.CYLINDER','Particles IDs cannot be repeated');
                     status = 0; return;
                 end
+                
+                % Store handle to particle object
                 drv.particles(id) = particle;
             end
             
@@ -3719,11 +3776,13 @@ classdef Read < handle
                 wall.coord_end = coord(3:4);
                 wall.len       = norm(wall.coord_end-wall.coord_ini);
                 
-                % Store handle to wall object
+                % Check repeated index
                 if (id <= length(drv.walls) && ~isempty(drv.walls(id).id))
                     this.invalidModelError('WALLS.LINE','Walls IDs cannot be repeated');
                     status = 0; return;
                 end
+                
+                % Store handle to wall object
                 drv.walls(id) = wall;
             end
             
@@ -3792,11 +3851,13 @@ classdef Read < handle
                 wall.center = coord;
                 wall.radius = radius;
                 
-                % Store handle to wall object
+                % Check repeated index
                 if (id <= length(drv.walls) && ~isempty(drv.walls(id).id))
                     this.invalidModelError('WALLS.CIRCLE','Walls IDs cannot be repeated');
                     status = 0; return;
                 end
+                
+                % Store handle to wall object
                 drv.walls(id) = wall;
             end
             
@@ -5072,8 +5133,8 @@ classdef Read < handle
                 this.missingDataError('No time step was provided.');
                 status = 0; return;
             end
-            if (isempty(drv.max_time) && isempty(drv.max_step))
-                this.missingDataError('No maximum time and steps were provided.');
+            if (isempty(drv.max_time))
+                this.missingDataError('No maximum time was provided.');
                 status = 0; return;
             end
         end
@@ -5332,7 +5393,7 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function invalidModelError(msg)
+        function invalidModelError(str,msg)
             fprintf(2,'Invalid data in model parts file: %s\n',str);
             if (~isempty(msg))
                 fprintf(2,'%s.\n',msg);

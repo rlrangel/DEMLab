@@ -92,26 +92,24 @@ classdef Driver_Mechanical < Driver
             status = 1;
             this.initTime();
             
-            % Remove particles not respecting bbox and sinks
-            % (total number of particles needed for preallocating results)
-            this.cleanParticles();
-            if (this.n_particles == 0)
-                fprintf(2,'The model has no particle inside the domain to initialize the analysis.\n');
-                status = 0;
-                return;
-            end
-            
             % Initialize result arrays and add initial time and step values
+            % (initialze arrays with NaN for all initial particles)
             this.result.initialize(this);
             this.result.storeTime(this);
             
             % loop over all particles
+            erase = false;
             for i = 1:this.n_particles
                 p = this.particles(i);
                 
+                % Remove particles not respecting bbox and sinks
+                if (this.removeParticle(p))
+                    erase = true;
+                    continue;
+                end
+                
                 % Initialize properties and forcing terms
                 this.setParticleProps(p);
-                this.setLocalPorosity(p);
                 p.resetForcingTerms();
                 
                 % Add initial particle values to result arrays:
@@ -133,11 +131,26 @@ classdef Driver_Mechanical < Driver
                 end
             end
             
+            % Update global properties depending on total number of particles 
+            if (erase)
+                this.erasePropsOfRemovedParticle();
+            end
+            if (this.n_particles == 0)
+                fprintf(2,'The model has no particle inside the domain to initialize the analysis.\n');
+                status = 0;
+                return;
+            end
+            
             % Set global properties
+            % Assumption: particles porosity depends on interaction search,
+            % so it is initially set as the global porosity.
             this.setTotalParticlesProps();
             this.setGlobalVol();
             if (isempty(this.porosity))
                 this.setGlobalPorosity();
+            end
+            for i = 1:this.n_particles
+                this.particles(i).setLocalPorosity(this.porosity);
             end
             if (~isnan(this.vor_freq))
                 this.setVoronoiDiagram();
@@ -149,9 +162,6 @@ classdef Driver_Mechanical < Driver
                 w = this.walls(i);
                 this.result.storeWallPosition(w);
             end
-            
-            % Compute ending time
-            this.finalTime();
             
             % Initialize output control variables
             this.initOutputVars();
@@ -315,7 +325,7 @@ classdef Driver_Mechanical < Driver
                 
                 % Update local porosity
                 if (mod(this.step,p.por_freq) == 0)
-                    this.setLocalPorosity(p);
+                    p.setLocalPorosity([]);
                 end
                 
                 % Store results

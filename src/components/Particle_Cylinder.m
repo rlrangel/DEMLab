@@ -79,6 +79,39 @@ classdef Particle_Cylinder < Particle
         end
         
         %------------------------------------------------------------------
+        function setLocalPorosity(this,por)
+            % Set prescribed value
+            if (~isempty(por))
+                this.porosity = por;
+                return;
+            end
+            
+            % Vector of interacting particles
+            % Assumption: porosity computed only with interacting neighbours
+            P = [this,this.neigh_p];
+            
+            % Total volume of alpha-shape polygon with interacting particles centroids
+            % Assumption: in-plane projection area (unity depth)
+            vt = area(alphaShape([P.coord]',inf));
+            
+            % Avoid null volume (single particle or aligned particles)
+            if (vt ~= 0)
+                % Total volume of particles
+                % Assumption:
+                % 1. In-plane cross-sectional area (unity depth).
+                % 2. Average particles radius and polygon interior angle.
+                ravg = mean([P.radius]);
+                vp   = (length(P)-2) * pi^2 * ravg^2;
+                
+                % Local porosity
+                this.porosity = 1 - vp/vt;
+            else
+                % Assumption: negleting particles volume
+                this.porosity = 1;
+            end
+        end
+        
+        %------------------------------------------------------------------
         function [x1,y1,x2,y2] = getBBoxLimits(this)
             x1 = this.coord(1) - this.radius;
             y1 = this.coord(2) - this.radius;

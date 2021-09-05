@@ -108,16 +108,8 @@ classdef Animation < handle
             f.Visible  = 'off';
             f.Units    = 'normalized';
             f.Position = [0.1 0.1 0.8 0.8];
-            
-            % Set axes properties
             axis(gca,'equal');
             hold on;
-            if (~isempty(this.bbox))
-                xlim(this.bbox(1:2))
-                ylim(this.bbox(3:4))
-            else
-                this.setBBox(drv);
-            end
             
             % Get last stored results
             col = drv.result.idx;
@@ -133,9 +125,17 @@ classdef Animation < handle
                 return;
             end
             
+            % Set axes limits
+            if (~isempty(this.bbox))
+                xlim(this.bbox(1:2))
+                ylim(this.bbox(3:4))
+            else
+                this.setBBoxCur(drv);
+            end
+            
             % Get default result to show for each type of analysis
             if (drv.type == drv.MECHANICAL)
-                title(gca,[prefix,' ',sprintf('Velocities - Time: %.3f',drv.time)]);
+                title(gca,[prefix,' ',sprintf('Configuration - Time: %.3f',drv.time)]);
                 this.anim_type = this.MOTION;
                 this.drawFrame(drv,1);
                 
@@ -172,16 +172,8 @@ classdef Animation < handle
             this.fig.Visible  = 'off';
             this.fig.Units    = 'normalized';
             this.fig.Position = [0.1 0.1 0.8 0.8];
-            
-            % Set axes properties
             axis(gca,'equal');
             hold on;
-            if (~isempty(this.bbox))
-                xlim(this.bbox(1:2))
-                ylim(this.bbox(3:4))
-            else
-                this.setBBox(drv);
-            end
             
             % Set motion results (always needed to show model animation)
             this.times    = drv.result.times;
@@ -189,6 +181,14 @@ classdef Animation < handle
             this.coord_y  = drv.result.coord_y;
             this.radius   = drv.result.radius;
             this.wall_pos = drv.result.wall_position;
+            
+            % Set axes limits
+            if (~isempty(this.bbox))
+                xlim(this.bbox(1:2))
+                ylim(this.bbox(3:4))
+            else
+                this.setBBoxAll(drv);
+            end
             
             % Set type and create animation
             this.setType(drv)
@@ -253,7 +253,7 @@ classdef Animation < handle
         %------------------------------------------------------------------
         function drawFrame(this,drv,f)
             % Draw particles
-            this.drawParticles(drv,f);
+            this.drawParticles(f);
             
             % Draw walls
             for i = 1:drv.n_walls
@@ -276,21 +276,33 @@ classdef Animation < handle
         end
         
         %------------------------------------------------------------------
-        function drawParticles(this,drv,f)
-            for i = 1:drv.n_particles
+        function drawParticles(this,f)
+            % Loop over particles through the length of radius results
+            % (not drv.n_particles because it is the current number of particles)
+            for i = 1:size(this.radius,1)
                 % Check if particle exists at this frame time
-                % (radius should be always available for existing particles)
-                if (isnan(this.radius(i,f)))
-                    continue
+                % (radius and coords should always be available for existing particles)
+                if (isnan(this.radius(i,f)) || isnan(this.coord_x(i,f)) || isnan(this.coord_y(i,f)))
+                    continue;
                 end
                 
                 % Draw particle with selected result
+                % (check if particle exists by looking at the required result)
                 switch this.anim_type
                     case this.MOTION
+                        if (isnan(this.res_part(i,f)))
+                            continue;
+                        end
                         this.drawParticleMotion(i,f);
                     case this.SCALAR
+                        if (isnan(this.res_part(i,f)))
+                            continue;
+                        end
                         this.drawParticleScalar(i,f);
                     case this.VECTOR
+                        if (isnan(this.res_vecx(i,f)) || isnan(this.res_vecy(i,f)))
+                            continue;
+                        end
                         this.drawParticleVector(i,f);
                 end
                 
@@ -418,7 +430,8 @@ classdef Animation < handle
         end
         
         %------------------------------------------------------------------
-        function setBBox(~,drv)
+        % Set the Animation BBox according to current existing particles.
+        function setBBoxCur(~,drv)
             % Initialize axes limits
             if (drv.n_particles ~= 0 || drv.n_walls ~= 0)
                 xmin =  inf;
@@ -449,11 +462,105 @@ classdef Animation < handle
             end
             
             % Create margin
-            dx   = xmax-xmin;
-            dy   = ymax-ymin;
+            dx = xmax-xmin;
+            dy = ymax-ymin;
+            if (dx == 0 && dy == 0)
+                xmin = -1;
+                ymin = -1;
+                xmax =  1;
+                ymax =  1;
+            else
+                if (dx == 0)
+                    dx = dy;
+                end
+                if (dy == 0)
+                    dy = dx;
+                end
+            end
             xmin = xmin - dx/10;
-            ymin = ymin - dx/10;
-            xmax = xmax + dy/10;
+            ymin = ymin - dy/10;
+            xmax = xmax + dx/10;
+            ymax = ymax + dy/10;
+            
+            % Set axes limits
+            xlim([xmin,xmax])
+            ylim([ymin,ymax])
+        end
+        
+        %------------------------------------------------------------------
+        % Set the Animation BBox according to coordinates history.
+        function setBBoxAll(~,drv)
+            % Extreme particle centroid coordinates
+            xmin_p = min(min(drv.result.coord_x));
+            xmax_p = max(max(drv.result.coord_x));
+            ymin_p = min(min(drv.result.coord_y));
+            ymax_p = max(max(drv.result.coord_y));
+            
+            % Consider radius size
+            rmax   = max(max(drv.result.radius));
+            xmin_p = xmin_p - rmax;
+            xmax_p = xmax_p + rmax;
+            ymin_p = ymin_p - rmax;
+            ymax_p = ymax_p + rmax;
+            
+            % Compute extreme wall coordinates
+            xmin_w =  inf;
+            xmax_w = -inf;
+            ymin_w =  inf;
+            ymax_w = -inf;
+            
+            for i = 1:drv.n_walls
+                row = 4 * (drv.walls(i).id-1) + 1;
+                if (drv.walls(i).type == drv.walls(i).LINE)
+                    xmin_ww = min(min(drv.result.wall_position([row+0,row+2],:)));
+                    xmax_ww = max(max(drv.result.wall_position([row+0,row+2],:)));
+                    ymin_ww = min(min(drv.result.wall_position([row+1,row+3],:)));
+                    ymax_ww = max(max(drv.result.wall_position([row+1,row+3],:)));
+                elseif (drv.walls(i).type == drv.walls(i).CIRCLE)
+                    xmin_ww = min(drv.result.wall_position(row+0,:)-drv.result.wall_position(row+2,:));
+                    xmax_ww = max(drv.result.wall_position(row+0,:)+drv.result.wall_position(row+2,:));
+                    ymin_ww = min(drv.result.wall_position(row+1,:)-drv.result.wall_position(row+2,:));
+                    ymax_ww = max(drv.result.wall_position(row+1,:)+drv.result.wall_position(row+2,:));
+                end
+                if (xmin_ww < xmin_w)
+                    xmin_w = xmin_ww;
+                end
+                if (xmax_ww > xmax_w)
+                    xmax_w = xmax_ww;
+                end
+                if (ymin_ww < ymin_w)
+                    ymin_w = ymin_ww;
+                end
+                if (ymax_ww > ymax_w)
+                    ymax_w = ymax_ww;
+                end
+            end
+            
+            % Get total min/max coordinates
+            xmin = min(xmin_p,xmin_w);
+            xmax = max(xmax_p,xmax_w);
+            ymin = min(ymin_p,ymin_w);
+            ymax = max(ymax_p,ymax_w);
+            
+            % Create margin
+            dx = xmax-xmin;
+            dy = ymax-ymin;
+            if (dx == 0 && dy == 0)
+                xmin = -1;
+                ymin = -1;
+                xmax =  1;
+                ymax =  1;
+            else
+                if (dx == 0)
+                    dx = dy;
+                end
+                if (dy == 0)
+                    dy = dx;
+                end
+            end
+            xmin = xmin - dx/10;
+            ymin = ymin - dy/10;
+            xmax = xmax + dx/10;
             ymax = ymax + dy/10;
             
             % Set axes limits
@@ -547,7 +654,7 @@ classdef Animation < handle
         %------------------------------------------------------------------
         function drawParticleMotion(this,i,j)
             % Always check valid data for safety
-            if (isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+            if (isnan(this.radius(i,j)) || isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
                 return;
             end
             
@@ -574,7 +681,7 @@ classdef Animation < handle
         %------------------------------------------------------------------
         function drawParticleScalar(this,i,j)
             % Always check valid data for safety
-            if (isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+            if (isnan(this.radius(i,j)) || isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
                 return;
             end
             
@@ -604,7 +711,7 @@ classdef Animation < handle
         %------------------------------------------------------------------
         function drawParticleVector(this,i,j)
             % Always check valid data for safety
-            if (isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+            if (isnan(this.radius(i,j)) || isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
                 return;
             end
             
@@ -672,15 +779,36 @@ classdef Animation < handle
             
             switch bbox.type
                 case bbox.RECTANGLE
-                    x1  = bbox.limit_min(1);
-                    y1  = bbox.limit_min(2);
-                    x2  = bbox.limit_max(1);
-                    y2  = bbox.limit_max(2);
+                    x1 = bbox.limit_min(1);
+                    y1 = bbox.limit_min(2);
+                    x2 = bbox.limit_max(1);
+                    y2 = bbox.limit_max(2);
+                    if (isinf(x1))
+                        ax = gca;
+                        x1 = ax.XLim(1);
+                    end
+                    if (isinf(y1))
+                        ax = gca;
+                        y1 = ax.YLim(1);
+                    end
+                    if (isinf(x2))
+                        ax = gca;
+                        x2 = ax.XLim(2);
+                    end
+                    if (isinf(y2))
+                        ax = gca;
+                        y2 = ax.YLim(2);
+                    end
                     pos = [x1,y1,x2-x1,y2-y1];
-                    rectangle(pos,'EdgeColor',c,'LineWidth',w,'LineStyle',s);
+                    rectangle('Position',pos,'EdgeColor',c,'LineWidth',w,'LineStyle',s);
                     
                 case bbox.CIRCLE
-                    this.drawCircle(bbox.center(1),bbox.center(2),bbox.radius,c,w,s);
+                    if (~isinf(bbox.radius))
+                        r = bbox.radius;
+                    else
+                        r = 0;
+                    end
+                    this.drawCircle(bbox.center(1),bbox.center(2),r,c,w,s);
                     
                 case bbox.POLYGON
                     pol = polyshape(bbox.coord_x,bbox.coord_y);
@@ -696,15 +824,36 @@ classdef Animation < handle
             
             switch sink.type
                 case sink.RECTANGLE
-                    x1  = sink.limit_min(1);
-                    y1  = sink.limit_min(2);
-                    x2  = sink.limit_max(1);
-                    y2  = sink.limit_max(2);
+                    x1 = sink.limit_min(1);
+                    y1 = sink.limit_min(2);
+                    x2 = sink.limit_max(1);
+                    y2 = sink.limit_max(2);
+                    if (isinf(x1))
+                        ax = gca;
+                        x1 = ax.XLim(1);
+                    end
+                    if (isinf(y1))
+                        ax = gca;
+                        y1 = ax.YLim(1);
+                    end
+                    if (isinf(x2))
+                        ax = gca;
+                        x2 = ax.XLim(2);
+                    end
+                    if (isinf(y2))
+                        ax = gca;
+                        y2 = ax.YLim(2);
+                    end
                     pos = [x1,y1,x2-x1,y2-y1];
-                    rectangle(pos,'EdgeColor',c,'LineWidth',w,'LineStyle',s);
+                    rectangle('Position',pos,'EdgeColor',c,'LineWidth',w,'LineStyle',s);
                     
                 case sink.CIRCLE
-                    this.drawCircle(sink.center(1),sink.center(2),sink.radius,c,w,s);
+                    if (~isinf(sink.radius))
+                        r = sink.radius;
+                    else
+                        r = 0;
+                    end
+                    this.drawCircle(sink.center(1),sink.center(2),r,c,w,s);
                     
                 case sink.POLYGON
                     pol = polyshape(sink.coord_x,sink.coord_y);

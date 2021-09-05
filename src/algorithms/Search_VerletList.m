@@ -100,7 +100,7 @@ classdef Search_VerletList < Search
                     end
                     
                     % Check for existing interaction
-                    if (any(p1.neigh_p == p2.id))
+                    if (any(p1.neigh_pid == p2.id))
                         % Get interaction object
                         int = findobj(p1.interacts,'elem2',p2);
                         
@@ -116,10 +116,12 @@ classdef Search_VerletList < Search
                         % Assumption: cutoff ratio applies to maximum radius
                         if (int.kinemat.separ >= this.cutoff * max(p1.radius,p2.radius))
                             % Remove interaction references from elements
-                            p1.interacts(p1.interacts==int) = [];
-                            p1.neigh_p(p1.neigh_p==p2.id)   = [];
-                            p2.interacts(p2.interacts==int) = [];
-                            p2.neigh_p(p2.neigh_p==p1.id)   = [];
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_p(p1.neigh_p==p2)        = [];
+                            p1.neigh_pid(p1.neigh_pid==p2.id) = [];
+                            p2.interacts(p2.interacts==int)   = [];
+                            p2.neigh_p(p2.neigh_p==p1)        = [];
+                            p2.neigh_pid(p2.neigh_pid==p1.id) = [];
                             
                             % Delete interaction object
                             delete(int);
@@ -136,7 +138,7 @@ classdef Search_VerletList < Search
                     w = drv.walls(j);
                     
                     % Check for existing interaction
-                    if (any(p1.neigh_w == w.id))
+                    if (any(p1.neigh_wid == w.id))
                         % Get interaction object
                         int = findobj(p1.interacts,'elem2',w);
                         
@@ -152,8 +154,9 @@ classdef Search_VerletList < Search
                         % Assumption: cutoff ratio applies to particle radius
                         if (int.kinemat.separ >= this.cutoff * p1.radius)
                             % Remove interaction references from particle
-                            p1.interacts(p1.interacts==int) = [];
-                            p1.neigh_w(p1.neigh_w==w.id)    = [];
+                            p1.interacts(p1.interacts==int)  = [];
+                            p1.neigh_w(p1.neigh_w==w)        = [];
+                            p1.neigh_wid(p1.neigh_wid==w.id) = [];
                             
                             % Delete interaction object
                             delete(int);
@@ -189,7 +192,7 @@ classdef Search_VerletList < Search
                     p2 = p1.verlet_p(j);
                     
                     % Check for existing interaction
-                    if (any(p1.neigh_p == p2.id))
+                    if (any(p1.neigh_pid == p2.id))
                         % Get interaction object
                         int = findobj(p1.interacts,'elem2',p2);
                         
@@ -200,10 +203,12 @@ classdef Search_VerletList < Search
                         % Assumption: cutoff ratio applies to maximum radius
                         if (int.kinemat.separ >= this.cutoff * max(p1.radius,p2.radius))
                             % Remove interaction references from elements
-                            p1.interacts(p1.interacts==int) = [];
-                            p1.neigh_p(p1.neigh_p==p2.id)   = [];
-                            p2.interacts(p2.interacts==int) = [];
-                            p2.neigh_p(p2.neigh_p==p1.id)   = [];
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_p(p1.neigh_p==p2)        = [];
+                            p1.neigh_pid(p1.neigh_pid==p2.id) = [];
+                            p2.interacts(p2.interacts==int)   = [];
+                            p2.neigh_p(p2.neigh_p==p1)        = [];
+                            p2.neigh_pid(p2.neigh_pid==p1.id) = [];
                             
                             % Delete interaction object
                             delete(int);
@@ -220,7 +225,7 @@ classdef Search_VerletList < Search
                     w = p1.verlet_w(j);
                     
                     % Check for existing interaction
-                    if (any(p1.neigh_w == w.id))
+                    if (any(p1.neigh_wid == w.id))
                         % Get interaction object
                         int = findobj(p1.interacts,'elem2',w);
                         
@@ -231,8 +236,9 @@ classdef Search_VerletList < Search
                         % Assumption: cutoff ratio applies to particle radius
                         if (int.kinemat.separ >= this.cutoff * p1.radius)
                             % Remove interaction references from particle
-                            p1.interacts(p1.interacts==int) = [];
-                            p1.neigh_w(p1.neigh_w==w.id)    = [];
+                            p1.interacts(p1.interacts==int)  = [];
+                            p1.neigh_w(p1.neigh_w==w)        = [];
+                            p1.neigh_wid(p1.neigh_wid==w.id) = [];
                             
                             % Delete interaction object
                             delete(int);
@@ -289,9 +295,11 @@ classdef Search_VerletList < Search
             
             % Add references of new interaction to both elements and global list
             p1.interacts(end+1)  = int;
-            p1.neigh_p(end+1)    = p2.id;
+            p1.neigh_p(end+1)    = p2;
+            p1.neigh_pid(end+1)  = p2.id;
             p2.interacts(end+1)  = int;
-            p2.neigh_p(end+1)    = p1.id;
+            p2.neigh_p(end+1)    = p1;
+            p2.neigh_pid(end+1)  = p1.id;
             drv.interacts(end+1) = int;
         end
         
@@ -355,7 +363,8 @@ classdef Search_VerletList < Search
             
             % Add references of new interaction to particle and global list
             p.interacts(end+1)   = int;
-            p.neigh_w(end+1)     = w.id;
+            p.neigh_w(end+1)     = w;
+            p.neigh_wid(end+1)   = w.id;
             drv.interacts(end+1) = int;
         end
     end

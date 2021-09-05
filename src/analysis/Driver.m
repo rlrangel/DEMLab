@@ -88,7 +88,6 @@ classdef Driver < handle
         auto_step logical = logical.empty;   % flag for computing time step automatically
         time_step double  = double.empty;    % time step value
         max_time  double  = double.empty;    % maximum simulation time
-        max_step  uint32  = uint32.empty;    % maximum step value allowed
         time      double  = double.empty;    % current simulation time
         step      uint32  = uint32.empty;    % current simulation step
         
@@ -141,15 +140,6 @@ classdef Driver < handle
             this.start_time = 0;
             this.time       = 0;
             this.step       = 0;
-        end
-        
-        %------------------------------------------------------------------
-        function finalTime(this)
-            if (isempty(this.max_time))
-                this.max_time = this.max_step * this.time_step;
-            elseif (~isempty(this.max_step))
-                this.max_time = min(this.max_time,this.max_step*this.time_step);
-            end
         end
         
         %------------------------------------------------------------------
@@ -227,7 +217,18 @@ classdef Driver < handle
         %------------------------------------------------------------------
         function setGlobalVol(this)
             % Assumption: in-plane projection area (unity depth)
-            this.vol_domain = area(alphaShape([this.particles.coord]',this.alpha));
+            vol = area(alphaShape([this.particles.coord]',this.alpha));
+            
+            % Avoid null volume (aligned particles)
+            % Assumption: set total particle volume (area) when volume is null
+            if (vol ~= 0)
+                this.vol_domain = vol;
+            else
+                if (isempty(this.cross_particle))
+                    this.cross_particle = sum([this.particles.cross]);
+                end
+                this.vol_domain = this.cross_particle;
+            end
         end
         
         %------------------------------------------------------------------
@@ -237,29 +238,8 @@ classdef Driver < handle
             else
                 % Assumption: total volume of particles computed as the
                 % in-plane cross-sectional area (unity depth)
-                this.porosity = this.vol_domain/this.cross_particle - 1;
+                this.porosity = 1 - this.cross_particle/this.vol_domain;
             end
-        end
-        
-        %------------------------------------------------------------------
-        function setLocalPorosity(this,p)
-            % Vector of interacting particles
-            % Assumption: porosity computed only with interacting neighbours
-            P = this.particles([p.id,p.neigh_p]);
-            
-            % Total volume of alpha-shape polygon of interacting particles
-            % Assumption: in-plane projection area (unity depth)
-            vt = area(alphaShape([P.coord]',inf));
-            
-            % Total volume of particles
-            % Assumption:
-            % 1. In-plane cross-sectional area (unity depth).
-            % 2. Average particles radius and polygon interior angle.
-            ravg = mean([P.radius]);
-            vp   = (length(P)-2) * pi^2 * ravg^2;
-            
-            % Local porosity
-            p.porosity = vt/vp - 1;
         end
         
         %------------------------------------------------------------------
@@ -268,22 +248,6 @@ classdef Driver < handle
             this.cross_particle = sum([this.particles.cross]);
             this.vol_particle   = sum([this.particles.volume]);
             this.mass_particle  = sum([this.particles.mass]);
-        end
-        
-        %------------------------------------------------------------------
-        function cleanParticles(this)
-            erase = false;
-            % Remove particles not respecting bbox and sinks
-            for i = 1:this.n_particles
-                if (this.removeParticle(this.particles(i)))
-                    erase = true;
-                end
-            end
-            
-            % Update global properties depending on total number of particles 
-            if (erase)
-                this.erasePropsOfRemovedParticle();
-            end
         end
         
         %------------------------------------------------------------------
