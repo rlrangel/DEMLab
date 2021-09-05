@@ -5123,7 +5123,6 @@ classdef Read < handle
                 if (~isnan(drv.por_freq))
                     this.warnMsg('A constant global porosity has been provided, so other parameters will be ignored.');
                 end
-                
                 por = IC.porosity;
                 if (~this.isDoubleArray(por,1) || por < 0 || por > 1)
                     this.invalidParamError('InteractionModel.indirect_conduction.porosity','It must be a value between 0 and 1');

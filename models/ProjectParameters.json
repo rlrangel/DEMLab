@@ -1,0 +1,74 @@
+{
+	"ProblemData": {
+		"name"             : "packed_box_regular_400",
+		"analysis_type"    : "thermal",
+		"model_parts_file" : "ModelParts.txt"
+	},
+	"Solver": {
+		"integr_scheme_therm" : "forward_euler",
+		"time_step"           : 10e-3,
+		"final_time"          : 10.0
+	},
+	"GlobalCondition": {
+		"fluid_velocity"    : [0.0,0.0],
+		"fluid_temperature" : 250
+	},
+	"InitialCondition": {
+		"temperature": {
+			"model_parts" : ["PARTICLES"],
+			"value"       : 300.0
+		}
+	},
+	"FixedCondition": {
+		"temperature": {
+			"type"        : "constant",
+			"model_parts" : ["WALLS"],
+			"value"       : 400.0
+		}
+	},
+	"Material": [
+	{
+		"name"                 : "solid",
+		"type"                 : "solid",
+		"model_parts"          : ["PARTICLES","WALLS"],
+		"density"              : 1000.0,
+		"thermal_conductivity" : 2000.0,
+		"heat_capacity"        : 50.0
+	},{
+		"name"                 : "fluid",
+		"type"                 : "fluid",
+		"density"              : 1000.0,
+		"thermal_conductivity" : 1.0,
+		"heat_capacity"        : 100.0,
+		"viscosity"            : 1.0
+	}
+	],
+	"ConvectionModel": {
+		"nusselt_correlation" : "sphere_hanz_marshall",
+		"model_parts"         : ["PARTICLES"]
+	},
+	"InteractionModel": {
+		"direct_conduction": {
+			"model" : "bob"
+		},
+		"indirect_conduction": {
+			"model"              : "vononoi_a",
+			"cell_size_method"   : "voronoi_diagram",
+			"update_frequency"   : 10,
+			"cutoff_distance"    : 1,
+			"tolerance_absolute" : 1e-10,
+			"tolerance_relative" : 1e-6
+		}
+	},
+	"Output": {
+		"progress_print" : 1.0,
+		"number_output"  : 50,
+		"save_workspace" : false
+	},
+	"Animation": {
+		"title"          : "Animation",
+		"auto_play"      : true,
+		"bounding_box"   : [-0.1,1.1,-0.1,1.1],
+		"result"         : "temperature"
+	}
+}
