@@ -39,6 +39,10 @@ classdef Graph < handle
         
         %------------------------------------------------------------------
         function plotData(this,drv)
+            if (isempty(this.n_curves))
+                return;
+            end
+            
             % Create new figure
             fig = figure;
             
@@ -83,6 +87,10 @@ classdef Graph < handle
         
         %------------------------------------------------------------------
         function writeData(this,drv)
+            if (isempty(this.n_curves))
+                return;
+            end
+            
             % Create new file
             file_name = strcat(drv.path,'\',this.gtitle,'.txt');
             fid = fopen(file_name,'w');

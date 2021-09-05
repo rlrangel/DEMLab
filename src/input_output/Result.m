@@ -558,6 +558,7 @@ classdef Result < handle
         
         %------------------------------------------------------------------
         function storeAvgTemperature(this,drv)
+            c = this.idx;
             if (this.has_avg_temperature)
                 this.avg_temperature(c) = mean([drv.particles.temperature]);
             end
@@ -611,6 +612,7 @@ classdef Result < handle
         
         %------------------------------------------------------------------
         function storeExtTemperature(this,drv)
+            c = this.idx;
             if (this.has_min_temperature)
                 this.min_temperature(c) = min([drv.particles.temperature]);
             end
@@ -622,18 +624,33 @@ classdef Result < handle
         %------------------------------------------------------------------
         function storeTotalHeatRate(this,drv)
             c = this.idx;
-            if (this.has_tot_heat_rate_all)
+            if (this.has_tot_heat_rate_all || this.has_tot_conduction_direct || this.has_tot_conduction_indirect)
                 cd = [drv.interacts.dconduc];
                 ci = [drv.interacts.iconduc];
-                this.tot_heat_rate_all(c) = sum(abs([cd.total_hrate]+[ci.total_hrate]));
-            end
-            if (this.has_tot_conduction_direct)
-                cd = [drv.interacts.dconduc];
-                this.tot_conduction_direct(c) = sum(abs([cd.total_hrate]));
-            end
-            if (this.has_tot_conduction_indirect)
-                ci = [drv.interacts.iconduc];
-                this.tot_conduction_indirect(c) = sum(abs([ci.total_hrate]));
+                if (isempty(cd) && isempty(ci))
+                    heat_cd = 0;
+                    heat_ci = 0;
+                else
+                    if (isempty(cd))
+                        heat_cd = zeros(size([ci.total_hrate]));
+                    else
+                        heat_cd = [cd.total_hrate];
+                    end
+                    if (isempty(ci))
+                        heat_ci = zeros(size([cd.total_hrate]));
+                    else
+                        heat_ci = [ci.total_hrate];
+                    end
+                end
+                if (this.has_tot_heat_rate_all)
+                    this.tot_heat_rate_all(c) = sum(abs(heat_cd+heat_ci));
+                end
+                if (this.has_tot_conduction_direct)
+                    this.tot_conduction_direct(c) = sum(abs(heat_cd));
+                end
+                if (this.has_tot_conduction_indirect)
+                    this.tot_conduction_indirect(c) = sum(abs(heat_ci));
+                end
             end
         end
         

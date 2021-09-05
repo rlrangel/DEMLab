@@ -3231,13 +3231,15 @@ classdef Read < handle
                         ~ismember(X,results_general_particle) &&...
                         ~ismember(X,results_mech_global)      &&...
                         ~ismember(X,results_mech_particle))
-                        this.warnMsg('Result %s is not available in this type of analysis.',X);
+                        msg = sprintf('Result %s is not available in this type of analysis.',X);
+                        this.warnMsg(msg);
                         continue;
                     elseif (~ismember(Y,results_general_global)   &&...
                             ~ismember(Y,results_general_particle) &&...
                             ~ismember(Y,results_mech_global)      &&...
                             ~ismember(Y,results_mech_particle))
-                        this.warnMsg('Result %s is not available in this type of analysis.',Y);
+                        msg = sprintf('Result %s is not available in this type of analysis.',Y);
+                        this.warnMsg(msg);
                         continue;
                     end
                 elseif (drv.type == drv.THERMAL)
@@ -3245,13 +3247,15 @@ classdef Read < handle
                         ~ismember(X,results_general_particle) &&...
                         ~ismember(X,results_therm_global)     &&...
                         ~ismember(X,results_therm_particle))
-                        this.warnMsg('Result %s is not available in this type of analysis.',X);
+                        msg = sprintf('Result %s is not available in this type of analysis.',X);
+                        this.warnMsg(msg);
                         continue;
                     elseif (~ismember(Y,results_general_global)   &&...
                             ~ismember(Y,results_general_particle) &&...
                             ~ismember(Y,results_therm_global)     &&...
                             ~ismember(Y,results_therm_particle))
-                        this.warnMsg('Result %s is not available in this type of analysis.',Y);
+                        msg = sprintf('Result %s is not available in this type of analysis.',Y);
+                        this.warnMsg(msg);
                         continue;
                     end
                 end
