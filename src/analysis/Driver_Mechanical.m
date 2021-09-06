@@ -152,9 +152,6 @@ classdef Driver_Mechanical < Driver
             for i = 1:this.n_particles
                 this.particles(i).setLocalPorosity(this.porosity);
             end
-            if (~isnan(this.vor_freq))
-                this.setVoronoiDiagram();
-            end
             
             % Loop over all walls
             for i = 1:this.n_walls

@@ -775,6 +775,16 @@ classdef Read < handle
                 drv.damp_rot = dr;
             end
             
+            % Porosity (void ratio)
+            if (isfield(GC,'porosity'))
+                por = GC.porosity;
+                if (~this.isDoubleArray(por,1) || por < 0 || por > 1)
+                    this.invalidParamError('GlobalCondition.porosity','It must be a value between 0 and 1');
+                    status = 0; return;
+                end
+                drv.porosity = por;
+            end
+            
             % Interstitial fluid velocity and temperature
             if (isfield(GC,'fluid_velocity'))
                 fv = GC.fluid_velocity;
@@ -5049,48 +5059,54 @@ classdef Read < handle
             drv.search.b_interact.iconduc = ConductionIndirect_VoronoiA();
             
             % Method to compute cells size
-            if (isfield(IC,'cell_size_method'))
-                method = string(IC.cell_size_method);
-                if (~this.isStringArray(method,1)    ||...
-                   (~strcmp(model,'voronoi_diagram') &&...
-                    ~strcmp(model,'porosity_local')  &&...
-                    ~strcmp(model,'porosity_global')))
-                    this.invalidOptError('InteractionModel.indirect_conduction.cell_size_method','voronoi_diagram, porosity_local, porosity_global');
-                    status = 0; return;
+            if (~isfield(IC,'cell_size_method'))
+                this.missingDataError('InteractionModel.indirect_conduction.cell_size_method');
+                status = 0; return;
+            end
+            method = string(IC.cell_size_method);
+            if (~this.isStringArray(method,1)    ||...
+               (~strcmp(model,'voronoi_diagram') &&...
+                ~strcmp(model,'porosity_local')  &&...
+                ~strcmp(model,'porosity_global')))
+                this.invalidOptError('InteractionModel.indirect_conduction.cell_size_method','voronoi_diagram, porosity_local, porosity_global');
+                status = 0; return;
+            elseif (strcmp(method,'voronoi_diagram'))
+                drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.VORONOI_DIAGRAM;
+                
+                % Voronoi diagram update frequency
+                if (isfield(IC,'update_frequency'))
+                    freq = IC.update_frequency;
+                    if (~this.isIntArray(freq,1) || freq < 0)
+                        this.invalidParamError('InteractionModel.indirect_conduction.update_frequency','It must be a positive integer');
+                        status = 0; return;
+                    end
+                    drv.vor_freq = freq;
+                else
+                    drv.vor_freq = drv.search.freq;
                 end
-                if (strcmp(method,'voronoi_diagram'))
-                    drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.VORONOI_DIAGRAM;
-                    
-                    % Voronoi diagram update frequency
-                    if (isfield(IC,'update_frequency'))
-                        freq = IC.update_frequency;
-                        if (~this.isIntArray(freq,1) || freq < 0)
-                            this.invalidParamError('InteractionModel.indirect_conduction.update_frequency','It must be a positive integer');
-                            status = 0; return;
-                        end
-                        drv.vor_freq = freq;
-                    else
-                        drv.vor_freq = drv.search.freq;
+                
+            elseif (strcmp(method,'porosity_local'))
+                drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.POROSITY_LOCAL;
+                
+                % Local porosity update frequency
+                if (isfield(IC,'update_frequency'))
+                    freq = IC.update_frequency;
+                    if (~this.isIntArray(freq,1) || freq < 0)
+                        this.invalidParamError('InteractionModel.indirect_conduction.update_frequency','It must be a positive integer');
+                        status = 0; return;
                     end
-                    
-                elseif (strcmp(method,'porosity_local'))
-                    drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.POROSITY_LOCAL;
-                    
-                    % Local porosity update frequency
-                    if (isfield(IC,'update_frequency'))
-                        freq = IC.update_frequency;
-                        if (~this.isIntArray(freq,1) || freq < 0)
-                            this.invalidParamError('InteractionModel.indirect_conduction.update_frequency','It must be a positive integer');
-                            status = 0; return;
-                        end
-                        [drv.particles.por_freq] = deal(freq);
-                    else
-                        [drv.particles.por_freq] = deal(drv.search.freq);
-                    end
-                    
-                elseif (strcmp(method,'porosity_global'))
-                    drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.POROSITY_GLOBAL;
-                    
+                    [drv.particles.por_freq] = deal(freq);
+                else
+                    [drv.particles.por_freq] = deal(drv.search.freq);
+                end
+                
+            elseif (strcmp(method,'porosity_global'))
+                drv.search.b_interact.iconduc.method = drv.search.b_interact.iconduc.POROSITY_GLOBAL;
+                
+                if (~isempty(drv.porosity))
+                    drv.por_freq = NaN;
+                    this.warnMsg('A constant global porosity has been provided, so its updating parameters in InteractionModel.indirect_conduction will be ignored.');
+                else
                     % Global porosity update frequency
                     if (isfield(IC,'update_frequency'))
                         freq = IC.update_frequency;
@@ -5115,21 +5131,6 @@ classdef Read < handle
                         drv.alpha = inf; % convex hull
                     end
                 end
-            end            
-            
-            % Prescribed global porosity
-            if (isfield(IC,'porosity'))
-                % Check inconsistency of provided data
-                if (~isnan(drv.por_freq))
-                    this.warnMsg('A constant global porosity has been provided, so other parameters will be ignored.');
-                end
-                por = IC.porosity;
-                if (~this.isDoubleArray(por,1) || por < 0 || por > 1)
-                    this.invalidParamError('InteractionModel.indirect_conduction.porosity','It must be a value between 0 and 1');
-                    status = 0; return;
-                end
-                drv.porosity = por;
-                drv.por_freq = NaN; % never updates global porosity (keep global value)
             end
             
             % Tollerances for numerical integration
