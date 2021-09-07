@@ -215,7 +215,12 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             c1  = D / sqrt(Rc^2  + D^2);
             
             % Heat transfer coeff
-            q = pi * log((a-b*c0)/(a-b*c1)) / b;
+            ln = log((a-b*c0)/(a-b*c1));
+            if isreal(ln)
+                q = pi * ln / b;
+            else
+                q = pi * real(ln) / b;
+            end
         end
         
         %------------------------------------------------------------------
