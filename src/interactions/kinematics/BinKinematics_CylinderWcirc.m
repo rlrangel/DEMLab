@@ -70,25 +70,22 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
         
         %------------------------------------------------------------------
         function this = setRelPos(this,p,w)
-            direction = p.coord - w.center;
-            this.dist = norm(direction);
-            
             % Set distance and surface separation
-            d = this.dist;
-            R = w.radius;
-            r = p.radius;
-            
-            % Particle inside circle
-            if (d <= R)
+            % Assumption: distance between particle and wall assumed as the
+            % distance between two mono-size particles.
+            direction = p.coord - w.center;
+            d = norm(direction);
+            if (d <= w.radius) % Particle inside circle
                 this.inside = true;
                 this.dir    = direction;
-                this.separ  = R - d - r;
+                this.separ  = w.radius - d - p.radius;
+                this.dist   = 2 * (p.radius+this.separ/2);
                 
-            % Particle outside circle
-            else
+            else % Particle outside circle
                 this.inside = false;
                 this.dir    = -direction;
-                this.separ  = d - R - r;
+                this.separ  = d - w.radius - p.radius;
+                this.dist   = 2 * (p.radius+this.separ/2);
             end
         end
         
@@ -98,7 +95,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             
             % Normal overlap and unit vector
             this.ovlp_n = -this.separ;
-            this.dir_n  =  this.dir / this.dist;
+            this.dir_n  =  this.dir / norm(this.dir);
             
             % Positions of contact point
             % Assumption: discount the full overlap from particle
@@ -150,7 +147,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
         %------------------------------------------------------------------
         function this = setContactArea(this,int)
             % Needed properties
-            d    = this.dist;
+            d    = norm(this.dir);
             l    = int.elem1.len;
             r1   = int.elem1.radius;
             r2   = int.elem2.radius;

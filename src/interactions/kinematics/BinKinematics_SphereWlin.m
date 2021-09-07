@@ -87,10 +87,13 @@ classdef BinKinematics_SphereWlin < BinKinematics
             else
                 this.dir = (A + t * M) - P;
             end
-            
+
             % Distance between particle surface and line segment
-            this.dist  = norm(this.dir);
-            this.separ = this.dist - p.radius;
+            % Assumption: distance between particle and wall assumed as the
+            % distance between two mono-size particles.
+            d = norm(this.dir);
+            this.separ = d - p.radius;
+            this.dist = 2 * (p.radius+this.separ/2);
         end
         
         %------------------------------------------------------------------
@@ -100,7 +103,7 @@ classdef BinKinematics_SphereWlin < BinKinematics
             % Normal overlap and unit vector
             % Assumption: the ends of the wall are treated as a flat surface
             this.ovlp_n = -this.separ;
-            this.dir_n  =  this.dir / this.dist;
+            this.dir_n  =  this.dir / norm(this.dir);
             
             % Positions of contact point
             % Assumption: discount the full overlap from particle
