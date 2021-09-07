@@ -99,7 +99,7 @@ classdef Particle_Sphere < Particle
                 % 1. In-plane cross-sectional area (unity depth).
                 % 2. Average particles radius and polygon interior angle.
                 ravg = mean([P.radius]);
-                vp   = (length(P)-2) * pi^2 * ravg^2;
+                vp   = (length(P)-2) * pi * ravg^2 / 2;
                 
                 % Local porosity
                 this.porosity = 1 - vp/vt;

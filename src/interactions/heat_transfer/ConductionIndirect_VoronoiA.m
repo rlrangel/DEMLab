@@ -186,7 +186,11 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             
             % Parameters
             rij = this.getConductRadius(int,drv,Rp);
-            rsf = Rp * rij / sqrt(rij^2 + D^2);            
+            if (rij <= 0 || isinf(rij))
+                q = 0;
+                return;
+            end
+            rsf = Rp * rij / sqrt(rij^2 + D^2);
             
             % Evaluate integral numerically
             fun = @(r) 2*pi*r / ((sqrt(Rp^2-r.^2)-r*D/rij)/ks + 2*(D-sqrt(Rp^2-r.^2))/kf);
@@ -217,7 +221,10 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             D2 = d - D1;
             
             ri = this.getConductRadius(int,drv,(R1+R2)/2); % Assumption: average radius
-            if (R1 <= R2)
+            if (rij <= 0 || isinf(rij))
+                q = 0;
+                return;
+            elseif (R1 <= R2)
                 rsf = R1*ri / sqrt(ri^2 + D1^2);
             else
                 rsf = R2*ri / sqrt(ri^2 + D2^2);
