@@ -52,7 +52,7 @@ classdef AreaCorrect_MPMH < AreaCorrect
                 % Assumption: computed with Hertz model
                 fn = 4 * sqrt(int.eff_radius) * int.eff_young * int.kinemat.ovlp_n^(3/2) / 3;
             end
-            int.kinemat.contact_radius = (fn*int.eff_radius/int.eff_young0)^(1/3) * c_time;
+            int.kinemat.contact_radius = (fn*int.eff_radius/int.eff_young0)^(1/3);
         end
     end
 end

@@ -5495,8 +5495,8 @@ classdef Read < handle
             
             % Area correction
             if (~isempty(drv.search.b_interact.corarea))
-                if (length(findobj(drv.solids,'young0',[])) > 1)
-                    fprintf(2,'Area correction models require the real value of the Young modulus to be provided.\n');
+                if (~isempty(findobj(drv.solids,'young',[])) || ~isempty(findobj(drv.solids,'young0',[])) || ~isempty(findobj(drv.solids,'poisson',[])))
+                    fprintf(2,'Area correction models require the simulation and real values of the Young modulus and the Poisson ratio.\n');
                     status = 0; return;
                 end
             end         
