@@ -3913,8 +3913,8 @@ classdef Read < handle
                 end
                 
                 % Length
-                length = values(5);
-                if (~this.isDoubleArray(length,1) || length <= 0)
+                len = values(5);
+                if (~this.isDoubleArray(len,1) || len <= 0)
                     this.invalidModelError('PARTICLES.CYLINDER','Length of cylinder particles must be a positive value');
                     status = 0; return;
                 end
@@ -3931,7 +3931,7 @@ classdef Read < handle
                 particle.id     = id;
                 particle.coord  = coord;
                 particle.orient = orient;
-                particle.len    = length;
+                particle.len    = len;
                 particle.radius = radius;
                 
                 % Check repeated index

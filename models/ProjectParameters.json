@@ -52,12 +52,11 @@
 			"model" : "bob"
 		},
 		"indirect_conduction": {
-			"model"              : "vononoi_a",
-			"cell_size_method"   : "voronoi_diagram",
-			"update_frequency"   : 10,
-			"cutoff_distance"    : 1,
-			"tolerance_absolute" : 1e-10,
-			"tolerance_relative" : 1e-6
+			"model"                 : "surrounding_layer",
+			"layer_thick"           : 0.4,
+			"min_distance"          : 0.0000000275,
+			"tolerance_absolute"    : 10e-10,
+			"tolerance_relative"    : 10e-6
 		}
 	},
 	"Output": {
