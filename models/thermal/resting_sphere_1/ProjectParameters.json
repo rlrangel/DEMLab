@@ -9,6 +9,10 @@
 		"time_step"           : 10e-4,
 		"final_time"          : 10.0
 	},
+	"GlobalCondition": {
+		"fluid_velocity"    : [0.0,0.0],
+		"fluid_temperature" : 250
+	},
 	"InitialCondition": {
 		"temperature": {
 			"model_parts" : ["PARTICLES"],
@@ -22,17 +26,35 @@
 			"value"       : 400.0
 		}
 	},
-	"Material": {
-		"name"                 : "material_1",
+	"Material": [
+	{
+		"name"                 : "solid_material",
 		"type"                 : "solid",
 		"model_parts"          : ["PARTICLES","WALLS"],
 		"density"              : 30.0,
-		"thermal_conductivity" : 2000.0,
-		"heat_capacity"        : 10.0
+		"thermal_conductivity" : 1000.0,
+		"heat_capacity"        : 20.0
+	},{
+		"name"                 : "fluid_material",
+		"type"                 : "fluid",
+		"density"              : 1000.0,
+		"thermal_conductivity" : 10.0,
+		"heat_capacity"        : 100.0,
+		"viscosity"            : 0.0001
+	}
+	],
+	"ConvectionModel": {
+		"nusselt_correlation" : "sphere_hanz_marshall",
+		"model_parts"         : ["PARTICLES"]
 	},
 	"InteractionModel": {
 		"direct_conduction": {
 			"model" : "bob"
+		},
+		"indirect_conduction": {
+			"model"        : "surrounding_layer",
+			"layer_thick"  : 0.4,
+			"min_distance" : 0.0000000275
 		}
 	},
 	"Output": {
@@ -46,7 +68,8 @@
 		"auto_play"    : true,
 		"bounding_box" : [-2.0,2.0,-1.0,3.0]
 	},
-	"Graph": {
+	"Graph": [
+	{
 		"title"  : "Temperature",
 		"axis_x" : "time",
 		"axis_y" : "temperature",
@@ -54,5 +77,14 @@
 			"name"       : "p1",
 			"particle_y" : 1
 		}
+	},{
+		"title"  : "Rate of Heat Transfer",
+		"axis_x" : "time",
+		"axis_y" : "heat_rate",
+		"curve"  : {
+			"name"       : "p1",
+			"particle_y" : 1
+		}
 	}
+	]
 }

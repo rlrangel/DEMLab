@@ -9,17 +9,21 @@
 		"time_step"           : 10e-4,
 		"final_time"          : 10.0		
 	},
+	"GlobalCondition": {
+		"fluid_velocity"    : [0.0,0.0],
+		"fluid_temperature" : 250
+	},
 	"InitialCondition": {
 		"temperature": [
 			{
-			"model_parts" : ["Middle"],
-			"value"       : 250.0
+			"particles" : [3],
+			"value"     : 250.0
 			},{
-			"model_parts" : ["Left"],
-			"value"       : 300.0
+			"particles" : [1,2],
+			"value"     : 300.0
 			},{
-			"model_parts" : ["Right"],
-			"value"       : 350.0
+			"particles" : [4,5],
+			"value"     : 350.0
 			}
 		]
 	},
@@ -30,22 +34,41 @@
 			"value"       : 400.0
 		}
 	},
-	"Material": {
-		"name"                 : "material_1",
+	"Material": [
+	{
+		"name"                 : "solid_material",
 		"type"                 : "solid",
 		"model_parts"          : ["PARTICLES","WALLS"],
 		"density"              : 100.0,
 		"thermal_conductivity" : 2000.0,
 		"heat_capacity"        : 300.0
+	},{
+		"name"                 : "fluid_material",
+		"type"                 : "fluid",
+		"model_parts"          : ["PARTICLES","WALLS"],
+		"density"              : 1000.0,
+		"thermal_conductivity" : 10.0,
+		"heat_capacity"        : 100.0,
+		"viscosity"            : 0.0001
+	}
+	],
+	"ConvectionModel": {
+		"nusselt_correlation" : "sphere_hanz_marshall",
+		"model_parts"         : ["PARTICLES"]
 	},
 	"InteractionModel": {
 		"direct_conduction": {
 			"model" : "bob"
+		},
+		"indirect_conduction": {
+			"model"        : "surrounding_layer",
+			"layer_thick"  : 0.4,
+			"min_distance" : 0.0000000275
 		}
 	},
 	"Output": {
 		"progress_print" : 1.0,
-		"number_output"  : 100
+		"number_output"  : 100,
 		"save_workspace" : true
 	},
 	"Animation": {
@@ -54,7 +77,8 @@
 		"auto_play"    : true,
 		"bounding_box" : [-1.5,1.5,-0.1,0.5]
 	},
-	"Graph": {
+	"Graph": [
+	{
 		"title"  : "Temperature",
 		"axis_x" : "time",
 		"axis_y" : "temperature",
@@ -76,5 +100,28 @@
 			"particle_y" : 5
 			}
 		]
+	},{
+		"title"  : "Rate of Heat Transfer",
+		"axis_x" : "time",
+		"axis_y" : "heat_rate",
+		"curve"  : [
+			{
+			"name"       : "p1",
+			"particle_y" : 1
+			},{
+			"name"       : "p2",
+			"particle_y" : 2
+			},{
+			"name"       : "p3",
+			"particle_y" : 3
+			},{
+			"name"       : "p4",
+			"particle_y" : 4
+			},{
+			"name"       : "p5",
+			"particle_y" : 5
+			}
+		]
 	}
+	]
 }
