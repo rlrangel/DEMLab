@@ -81,7 +81,7 @@ classdef Graph < handle
             legend(leg);
             
             % Save picture
-            file_name = strcat(drv.path,'\',this.gtitle,'.png');
+            file_name = strcat(drv.path,this.gtitle,'.png');
             saveas(gcf,file_name);
         end
         
@@ -92,7 +92,7 @@ classdef Graph < handle
             end
             
             % Create new file
-            file_name = strcat(drv.path,'\',this.gtitle,'.txt');
+            file_name = strcat(drv.path,this.gtitle,'.txt');
             fid = fopen(file_name,'w');
             
             % Write curves

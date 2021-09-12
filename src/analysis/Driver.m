@@ -163,7 +163,7 @@ classdef Driver < handle
         function storeResults(drv)
             if (drv.time >= drv.tout)
                 if (drv.save_ws)
-                    save(strcat(drv.path,'\',drv.name));
+                    save(strcat(drv.path,drv.name));
                     drv.total_time = drv.start_time + toc;
                 end
                 drv.tout = drv.tout + drv.nout - 10e-10; % tollerance to deal with precision issues

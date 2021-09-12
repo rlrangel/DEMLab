@@ -195,7 +195,7 @@ classdef Animation < handle
             this.createAnimation(drv);
             
             % Save movie file
-            file_name = strcat(drv.path,'\',this.anim_title);
+            file_name = strcat(drv.path,this.anim_title);
             writer = VideoWriter(file_name,'MPEG-4');
             writer.FrameRate = this.fps;
             open(writer);
@@ -220,17 +220,35 @@ classdef Animation < handle
             % Preallocate movie frames array
             frams(nf) = struct('cdata',[],'colormap',[]);
             
+            % Create waitbar
+            wb = waitbar(0.0,{sprintf('Creating animation "%s"',this.anim_title),'0.0%'},...
+                         'Name','Animation Creation',...
+                         'CreateCancelBtn','setappdata(gcbf,''canceling'',1)');
+            setappdata(wb,'canceling',0);
+            
             % Generate movie frames (one for each results storage time)
             tim = this.times(1:nf);
             tit = this.anim_title;
-            for i = 1:nf                
+            for i = 1:nf
+                % Draw frame
                 set(0,'CurrentFigure',this.fig)
                 cla;
                 title(gca,strcat(tit,sprintf(' - Time: %.3f',tim(i))));
                 this.drawFrame(drv,i);
                 frams(i) = getframe(this.fig);
+                
+                % Update waitbar
+                prog = double(i)/double(nf);
+                waitbar(prog,wb,{sprintf('Creating animation "%s"',this.anim_title),...
+                                 sprintf('%.1f%%',100*prog)});
+                if getappdata(wb,'canceling')
+                    break
+                end
             end
-            this.frames = frams;
+            delete(wb);
+            
+            % Get generated frames
+            this.frames = frams(1:i);
             
             % Compute frame rate (frames / second)
             this.fps = ceil(nf/drv.time);
