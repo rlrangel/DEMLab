@@ -195,7 +195,7 @@ classdef Animation < handle
             this.createAnimation(drv);
             
             % Save movie file
-            file_name = strcat(drv.path,this.anim_title);
+            file_name = strcat(drv.path_out,this.anim_title);
             writer = VideoWriter(file_name,'MPEG-4');
             writer.FrameRate = this.fps;
             open(writer);

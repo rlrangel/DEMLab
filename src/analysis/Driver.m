@@ -27,9 +27,9 @@ classdef Driver < handle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Problem data
-        name string = string.empty;   % problem name
-        type uint8  = uint8.empty;    % flag for type of analysis
-        path string = string.empty;   % path to model folder
+        name    string = string.empty;   % problem name
+        type    uint8  = uint8.empty;    % flag for type of analysis
+        path_in string = string.empty;   % path to input files folder
         
         % Model components: handle to objects
         mparts    ModelPart = ModelPart.empty;   % handles to objects of ModelPart class
@@ -96,6 +96,7 @@ classdef Driver < handle
         total_time double  = double.empty;   % total elapsed time for all analysis runs
         
         % Output generation
+        path_out   string    = string.empty;      % path to output folder
         result     Result    = Result.empty;      % handle to object of Result class
         graphs     Graph     = Graph.empty;       % handles to objects of Graph class
         animations Animation = Animation.empty;   % handles to objects of Animation class
@@ -163,7 +164,7 @@ classdef Driver < handle
         function storeResults(drv)
             if (drv.time >= drv.tout)
                 if (drv.save_ws)
-                    save(strcat(drv.path,drv.name));
+                    save(strcat(drv.path_out,drv.name));
                     drv.total_time = drv.start_time + toc;
                 end
                 drv.tout = drv.tout + drv.nout - 10e-10; % tollerance to deal with precision issues

@@ -184,9 +184,18 @@ classdef Read < handle
                 drv = Driver_ThermoMechanical();
             end
             
-            % Set path to model folder and name
-            drv.path = path;
-            drv.name = name;
+            % Set problem name and paths
+            drv.name     = name;
+            drv.path_in  = path;
+            drv.path_out = strcat(path,name,'_out\');
+            
+            % Create output folder
+            warning off MATLAB:MKDIR:DirectoryExists
+            if (~mkdir(drv.path_out))
+                fprintf(2,'Output folder could not be created.\n');
+                status = 0; return;
+            end
+            warning on MATLAB:MKDIR:DirectoryExists
             
             % Model parts file name
             model_parts_file = string(PD.model_parts_file);
@@ -201,7 +210,7 @@ classdef Read < handle
             status = 1;
             
             % Open model parts file
-            fullname = fullfile(drv.path,file);
+            fullname = fullfile(drv.path_in,file);
             fid = fopen(fullname,'rt');
             if (fid < 0)
                 fprintf(2,'Error opening model parts file: %s\n', file);
@@ -1144,7 +1153,7 @@ classdef Read < handle
                                 this.invalidParamError('PrescribedCondition.force.file','It must be a string with the file name');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(drv.path,file),3);
+                            [status,vals] = this.readTable(fullfile(drv.path_in,file),3);
                             if (status == 0)
                                 return;
                             end
@@ -1364,7 +1373,7 @@ classdef Read < handle
                                 this.invalidParamError('PrescribedCondition.torque.file','It must be a string with the file name');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(drv.path,file),2);
+                            [status,vals] = this.readTable(fullfile(drv.path_in,file),2);
                             if (status == 0)
                                 return;
                             end
@@ -1584,7 +1593,7 @@ classdef Read < handle
                                 this.invalidParamError('PrescribedCondition.heat_flux.file','It must be a string with the file name');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(drv.path,file),2);
+                            [status,vals] = this.readTable(fullfile(drv.path_in,file),2);
                             if (status == 0)
                                 return;
                             end
@@ -1804,7 +1813,7 @@ classdef Read < handle
                                 this.invalidParamError('PrescribedCondition.heat_rate.file','It must be a string with the file name');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(drv.path,file),2);
+                            [status,vals] = this.readTable(fullfile(drv.path_in,file),2);
                             if (status == 0)
                                 return;
                             end
@@ -2043,7 +2052,7 @@ classdef Read < handle
                                 this.invalidParamError('FixedCondition.velocity_translation.file','It must be a string with the file name');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(drv.path,file),3);
+                            [status,vals] = this.readTable(fullfile(drv.path_in,file),3);
                             if (status == 0)
                                 return;
                             end
@@ -2280,7 +2289,7 @@ classdef Read < handle
                                 this.invalidParamError('FixedCondition.velocity_rotation.file','It must be a string with the file name');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(drv.path,file),2);
+                            [status,vals] = this.readTable(fullfile(drv.path_in,file),2);
                             if (status == 0)
                                 return;
                             end
@@ -2517,7 +2526,7 @@ classdef Read < handle
                                 this.invalidParamError('FixedCondition.temperature.file','It must be a string with the file name');
                                 status = 0; return;
                             end
-                            [status,vals] = this.readTable(fullfile(drv.path,file),2);
+                            [status,vals] = this.readTable(fullfile(drv.path_in,file),2);
                             if (status == 0)
                                 return;
                             end
