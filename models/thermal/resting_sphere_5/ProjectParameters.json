@@ -6,12 +6,12 @@
 	},
 	"Solver": {
 		"integr_scheme_therm" : "forward_euler",
-		"time_step"           : 10e-4,
+		"time_step"           : 1.0e-3,
 		"final_time"          : 10.0		
 	},
 	"GlobalCondition": {
 		"fluid_velocity"    : [0.0,0.0],
-		"fluid_temperature" : 250
+		"fluid_temperature" : 250.0
 	},
 	"InitialCondition": {
 		"temperature": [
@@ -45,7 +45,6 @@
 	},{
 		"name"                 : "fluid_material",
 		"type"                 : "fluid",
-		"model_parts"          : ["PARTICLES","WALLS"],
 		"density"              : 1000.0,
 		"thermal_conductivity" : 10.0,
 		"heat_capacity"        : 100.0,
