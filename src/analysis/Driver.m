@@ -164,6 +164,7 @@ classdef Driver < handle
         function storeResults(drv)
             if (drv.time >= drv.tout)
                 if (drv.save_ws)
+                    drv.createOutFolder();
                     save(strcat(drv.path_out,drv.name));
                     drv.total_time = drv.start_time + toc;
                 end
@@ -305,6 +306,15 @@ classdef Driver < handle
             
             % Update total particles properties
             this.setTotalParticlesProps();
+        end
+        
+        %------------------------------------------------------------------
+        function createOutFolder(this)
+            if (~exist(this.path_out,'dir') ~= 7) % 7 = ID for folders
+                warning off MATLAB:MKDIR:DirectoryExists
+                mkdir(this.path_out)
+                warning on MATLAB:MKDIR:DirectoryExists
+            end
         end
         
         %------------------------------------------------------------------

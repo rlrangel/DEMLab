@@ -81,6 +81,7 @@ classdef Graph < handle
             legend(leg);
             
             % Save picture
+            drv.createOutFolder();
             file_name = strcat(drv.path_out,this.gtitle,'.png');
             saveas(gcf,file_name);
         end
@@ -92,6 +93,7 @@ classdef Graph < handle
             end
             
             % Create new file
+            drv.createOutFolder();
             file_name = strcat(drv.path_out,this.gtitle,'.txt');
             fid = fopen(file_name,'w');
             

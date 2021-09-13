@@ -190,12 +190,7 @@ classdef Read < handle
             drv.path_out = strcat(path,name,'_out\');
             
             % Create output folder
-            warning off MATLAB:MKDIR:DirectoryExists
-            if (~mkdir(drv.path_out))
-                fprintf(2,'Output folder could not be created.\n');
-                status = 0; return;
-            end
-            warning on MATLAB:MKDIR:DirectoryExists
+            drv.createOutFolder();
             
             % Model parts file name
             model_parts_file = string(PD.model_parts_file);
