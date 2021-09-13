@@ -264,7 +264,7 @@ classdef Animation < handle
             if(this.play)
                 fprintf('\nShowing animation "%s"...\n',this.anim_title);
                 this.fig.Visible = 'on';
-                movie(this.fig,this.frames,999,this.fps);
+                movie(this.fig,this.frames,10,this.fps);
             end
         end
         

@@ -31,7 +31,8 @@
 % * Provide its complete path thorugh the string variable _file_ in the end
 %   of this script (e.g. file = 'C:\...\ProjectParameters.json').
 % * Leave the string variable _file_ blank (file = '') and use the
-%   selection dialog box that will appear when running this script.
+%   selection dialog that appears when running this script (multiple files
+%   can be selected).
 %
 %% OOP classes
 %

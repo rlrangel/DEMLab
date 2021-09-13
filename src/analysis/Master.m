@@ -2,11 +2,11 @@
 %
 %% Description
 %
-% This is the main class for running a DEMLab simulation.
+% This is the main class for running simulations in DEMLab.
 %
-% The _execute_ method is responsible for managing the high-level tasks
-% and call the appropriate methods to perform each stage of the simulation,
-% from the reading of input files to the showing of results.
+% It is responsible for managing the high-level tasks and call the
+% appropriate methods to perform each stage of a simulation, from the
+% reading of input files to the showing of results.
 %
 classdef Master
     %% Constructor method
@@ -23,129 +23,164 @@ classdef Master
             % Print header
             this.printHeader();
             
-            % Get input file name, path and extension
+            % Get input file name and path
             if (isempty(file_fullname))
                 filter  = {'*.json','Parameters File (*.json)';'*.mat','Storage File (*.mat)'};
                 title   = 'DEMLab - Input file';
                 default = 'ProjectParameters.json';
-                [file_name,file_path] = uigetfile(filter,title,default);
+                [file_name,path_in] = uigetfile(filter,title,default,'MultiSelect','on');
                 if (isequal(file_name,0))
                     fprintf('No file selected.\n');
                     fprintf('\nExiting program...\n');
                     return;
                 end
-                file_fullname = fullfile(file_path,file_name);
-                [~,~,ext] = fileparts(file_fullname);
+                file_fullname = fullfile(path_in,file_name);
             else
-                [file_path,~,ext] = fileparts(file_fullname);
+                path_in = strcat(fileparts(file_fullname),'\');
             end
             
-            % Run according to input file type
-            if (strcmp(ext,'.json'))
-                % Open parameters file
-                fprintf('Parameters file selected:\n%s\n',file_fullname)
-                fid = fopen(file_fullname,'rt');
-                if (fid < 0)
-                    fprintf(2,'\nError opening parameters file.\n');
-                    fprintf('\nExiting program...\n');
-                    return;
+            % Convert to cell to allow multiple files
+            if (~iscell(file_fullname))
+                file_fullname = {file_fullname};
+            end
+            
+            % Display input files
+            n_files = length(file_fullname);
+            if (n_files > 1)
+                fprintf('%d input files selected:\n',n_files);
+                for i = 1:n_files
+                    fprintf('%s\n',string(file_fullname(i)));
                 end
+                fprintf('\n------------------------------------------------------------------\n\n');
+            end
+            
+            % Run each input file
+            for i = 1:n_files
+                is_last = (i == n_files);
                 
-                % Read parameters file
-                fprintf('\nReading parameters file...\n');
-                read = Read();
-                [status,drv,storage] = read.execute(file_path,fid);
+                % Check extension
+                cur_file = string(file_fullname(i));
+                [~,~,ext] = fileparts(cur_file);
                 
-                % Pre analysis tasks
-                if (status == 0)
-                    fprintf('\nExiting program...\n');
-                    return;
-                    
-                elseif (status == 1) % start analysis from the beggining
-                    % Check input data
-                    fprintf('\nChecking consistency of input data...\n');
-                    status = read.check(drv);
-                    if (~status)
-                        fprintf('\nExiting program...\n');
-                        return;
+                % Clear driver
+                clearvars drv;
+                
+                % Run according to input file type
+                if (strcmp(ext,'.json'))
+                    % Open parameters file
+                    fprintf('Parameters file:\n%s\n',cur_file);
+                    fid = fopen(cur_file,'rt');
+                    if (fid < 0)
+                        fprintf(2,'\nError opening parameters file.\n');
+                        this.printExit(is_last);
+                        continue;
                     end
                     
-                    % Pre-process
-                    fprintf('\nPre-processing...\n');
-                    if (~drv.preProcess())
-                        fprintf('\nExiting program...\n');
-                        return;
+                    % Read parameters file
+                    fprintf('\nReading parameters file...\n');
+                    read = Read();
+                    [status,drv,storage] = read.execute(path_in,fid);
+                    
+                    % Pre analysis tasks
+                    if (status == 0)
+                        this.printExit(is_last);
+                        continue;
+                        
+                    elseif (status == 1) % start analysis from the beggining
+                        % Check input data
+                        fprintf('\nChecking consistency of input data...\n');
+                        status = read.check(drv);
+                        if (~status)
+                            this.printExit(is_last);
+                            continue;
+                        end
+                        
+                        % Pre-process
+                        fprintf('\nPre-processing...\n');
+                        if (~drv.preProcess())
+                            this.printExit(is_last);
+                            continue;
+                        end
+                        
+                        % Print simulation information
+                        this.printSimulationInfo(drv);
+                        fprintf('\nStarting analysis:\n');
+                        fprintf('%s\n',datestr(now));
+                        
+                    elseif (status == 2) % continue analysis from previous state
+                        f = dir(storage);
+                        fprintf('\nStorage file found (%.3f Mb):\n%s\n',f.bytes/10e5,storage);
+                        
+                        % Load storage file
+                        try
+                            warning off MATLAB:load:variableNotFound
+                            load(storage,'drv');
+                            warning on MATLAB:load:variableNotFound
+                        catch
+                            fprintf(2,'\nError loading storage file.\n');
+                            this.printExit(is_last);
+                            continue;
+                        end
+                        if (~exist('drv','var') || isempty(drv))
+                            fprintf(2,'\nInvalid stored data.\n');
+                            this.printExit(is_last);
+                            continue;
+                        end
+                        
+                        % Update starting elapsed time
+                        drv.start_time = drv.total_time;
+
+                        % Print simulation information
+                        this.printSimulationInfo(drv);
+                        fprintf('\nStarting analysis from previous results:\n');
+                        fprintf('%s\n',datestr(now));
                     end
                     
-                    % Print simulation information
-                    this.printSimulationInfo(drv);
-                    fprintf('\nStarting analysis:\n');
-                    fprintf('%s\n',datestr(now));
+                    % Show starting configuration
+                    Animation().curConfig(drv,'Starting');
                     
-                elseif (status == 2) % continue analysis from previous state
-                    f = dir(storage);
-                    fprintf('\nStorage file found (%.3f Mb):\n%s\n',f.bytes/10e5,storage)
+                    % Execute analysis
+                    tic;
+                    drv.process();
+                    
+                    % Print finished status
+                    this.printFinishedStatus(drv,status);
+                    
+                elseif (strcmp(ext,'.mat'))
+                    f = dir(cur_file);
+                    fprintf('Storage file (%.3f Mb):\n%s\n',f.bytes/10e5,cur_file);
                     
                     % Load storage file
                     try
-                        load(storage,'drv');
+                        warning off MATLAB:load:variableNotFound
+                        load(cur_file,'drv');
+                        warning on MATLAB:load:variableNotFound
                     catch
                         fprintf(2,'\nError loading storage file.\n');
-                        fprintf('\nExiting program...\n');
-                        return;
+                        this.printExit(is_last);
+                        continue;
                     end
-                    if (~exist('drv','var'))
-                        fprintf(2,'n\Invalid stored data.\n');
-                        fprintf('\nExiting program...\n');
+                    if (~exist('drv','var') || isempty(drv))
+                        fprintf(2,'\nInvalid stored data.\n');
+                        this.printExit(is_last);
+                        continue;
                     end
                     
-                    % Update starting elapsed time
-                    drv.start_time = drv.total_time;
-                    
-                    % Print simulation information
-                    this.printSimulationInfo(drv);
-                    fprintf('\nStarting analysis from previous results:\n');
-                    fprintf('%s\n',datestr(now));
+                    % Show current configuration
+                    Animation().curConfig(drv,'');
+                else
+                    fprintf(2,'\nInvalid input file extension.\n');
+                    this.printExit(is_last);
+                    continue;
                 end
                 
-                % Show starting configuration
-                Animation().curConfig(drv,'Starting');
-                
-                % Execute analysis
-                tic;
-                drv.process();
-                
-                % Print finished status
-                this.printFinishedStatus(drv,status);
-                
-            elseif (strcmp(ext,'.mat'))
-                f = dir(file_fullname);
-                fprintf('\nStorage file selected (%.3f Mb):\n%s\n',f.bytes/10e5,file_fullname)
-                
-                % Load storage file
-                try
-                    load(file_fullname,'drv');
-                catch
-                    fprintf(2,'\nError loading storage file.\n');
-                    fprintf('\nExiting program...\n');
-                    return;
+                % Pos-process
+                drv.posProcess();
+                fprintf('\nFinished!\n');
+                if (~is_last)
+                    fprintf('\n------------------------------------------------------------------\n\n');
                 end
-                if (~exist('drv','var'))
-                    fprintf(2,'n\Invalid stored data.\n');
-                    fprintf('\nExiting program...\n');
-                end
-                
-                % Show current configuration
-                Animation().curConfig(drv,'');
-            else
-                fprintf(2,'\nInvalid input file extension.\n');
-                fprintf('\nExiting program...\n');
-                return;
             end
-            
-            % Pos-process
-            drv.posProcess()
-            fprintf('\nFinished!\n\n');
         end
     end
     
@@ -229,6 +264,16 @@ classdef Master
                 total_time.Format = 'hh:mm:ss.SS';
                 fprintf('Current analysis time: %s\n',string(curr_time));
                 fprintf('Total simulation time: %s\n',string(total_time));
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function printExit(~,is_last)
+            if (is_last)
+                fprintf('\nExiting program...\n');
+            else
+                fprintf('\nAborted!\n');
+                fprintf('\n------------------------------------------------------------------\n\n');
             end
         end
         
