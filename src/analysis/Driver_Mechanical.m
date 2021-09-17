@@ -48,6 +48,8 @@ classdef Driver_Mechanical < Driver
             % Vectors
             this.fluid_vel   = [0;0];
             % Booleans
+            this.has_bbox    = false;
+            this.has_sink    = false;
             this.auto_step   = false;
             this.eval        = true;  % according to eval_freq
             this.parallel    = false; % according to workers

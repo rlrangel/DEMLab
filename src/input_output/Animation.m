@@ -280,7 +280,7 @@ classdef Animation < handle
             end
             
             % Draw bounding box
-            if (~isempty(drv.bbox))
+            if (drv.has_bbox)
                 if (drv.bbox.isActive(this.times(f)))
                     this.drawBBox(drv.bbox);
                 end
@@ -309,7 +309,10 @@ classdef Animation < handle
                 % (check if particle exists by looking at the required result)
                 switch this.anim_type
                     case this.MOTION
-                        if (isnan(this.res_part(i,f)))
+                        % Allow to pass when result is empty since this is
+                        % the case when drawing initial configuration
+                        % (orientation result is checked inside)
+                        if (~isempty(this.res_part) && isnan(this.res_part(i,f)))
                             continue;
                         end
                         this.drawParticleMotion(i,f);

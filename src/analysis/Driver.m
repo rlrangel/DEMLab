@@ -69,8 +69,10 @@ classdef Driver < handle
         mass_particle  double = double.empty;   % total mass of all particles
         
         % Model limits
-        bbox BBox = BBox.empty;   % handle to object of BBox class
-        sink Sink = Sink.empty;   % handles to objects of Sink class
+        has_bbox logical = logical.empty;   % flag for existing bbox
+        has_sink logical = logical.empty;   % flag for existing sinks
+        bbox     BBox    = BBox.empty;      % handle to object of BBox class
+        sink     Sink    = Sink.empty;      % handles to objects of Sink class
         
         % Paralelization
         parallel logical = logical.empty;   % flag for parallelization of simulation
@@ -89,7 +91,7 @@ classdef Driver < handle
         time_step double  = double.empty;    % time step value
         max_time  double  = double.empty;    % maximum simulation time
         time      double  = double.empty;    % current simulation time
-        step      uint32  = uint32.empty;    % current simulation step
+        step      double  = double.empty;    % current simulation step (double to perform NaN operations in frequency checks)
         
         % Elapsed time control (real analysis time)
         start_time double  = double.empty;   % starting elapsed time for current analysis run
@@ -257,7 +259,7 @@ classdef Driver < handle
             do = false;
             
             % Remove particles not respecting bbox
-            if (~isempty(this.bbox))
+            if (this.has_bbox)
                 if (this.bbox.removeParticle(p,this.time))
                     do = true;
                     
@@ -273,7 +275,7 @@ classdef Driver < handle
             end
             
             % Remove particles not respecting sinks
-            if (~isempty(this.sink))
+            if (this.has_sink)
                 for i = 1:length(this.sink)
                     if (this.sink(i).removeParticle(p,this.time))
                         do = true;

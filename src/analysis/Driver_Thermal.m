@@ -41,6 +41,8 @@ classdef Driver_Thermal < Driver
             % Vectors
             this.fluid_vel   = [0;0];
             % Booleans
+            this.has_bbox    = false;
+            this.has_sink    = false;
             this.auto_step   = false;
             this.parallel    = false; % according to workers
             this.save_ws     = true;  % according to nout

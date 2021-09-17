@@ -516,8 +516,7 @@ classdef Read < handle
                 end
                 if (limit_min(1) >= limit_max(1) || limit_min(2) >= limit_max(2))
                     this.invalidParamError('BoundingBox.limit_min or BoundingBox.limit_max','The minimum coordinates must be smaller than the maximum ones');
-                    status = 0;
-                    return;
+                    status = 0; return;
                 end
                 
                 % Create object and set properties
@@ -602,6 +601,9 @@ classdef Read < handle
                 end
                 drv.bbox.interval = interval;
             end
+            
+            % Set flag for existing bbox
+            drv.has_bbox = ~isempty(drv.bbox);
         end
         
         %------------------------------------------------------------------
@@ -653,8 +655,7 @@ classdef Read < handle
                     % Check consistency
                     if (limit_min(1) >= limit_max(1) || limit_min(2) >= limit_max(2))
                         this.invalidParamError('Sink.limit_min or Sink.limit_max','The minimum coordinates must be smaller than the maximum ones');
-                        status = 0;
-                        return;
+                        status = 0; return;
                     end
                     
                     % Create object and set properties
@@ -741,6 +742,9 @@ classdef Read < handle
                     drv.sink(i).interval = interval;
                 end
             end
+            
+            % Set flag for existing sink
+            drv.has_sink = ~isempty(drv.sink);
         end
         
         %------------------------------------------------------------------
@@ -3235,6 +3239,7 @@ classdef Read < handle
                        (~ismember(Y,results_general_global)   &&...
                         ~ismember(Y,results_general_particle) &&...
                         ~ismember(Y,results_mech_global)      &&...
+                        ~ismember(Y,results_mech_particle)    &&...
                         ~ismember(Y,results_therm_global)     &&...
                         ~ismember(Y,results_therm_particle)))
                     this.invalidParamError('Graph.axis_y','Available result options can be checked in the documentation');
