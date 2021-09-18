@@ -2765,7 +2765,10 @@ classdef Read < handle
                         if (~this.isDoubleArray(M.viscosity,1))
                             this.invalidParamError('Material.viscosity','Material properties must be numerical values');
                             status = 0; return;
-                        elseif (M.viscosity <= 0)
+                        elseif (M.viscosity == 0)
+                            this.invalidParamError('Material.viscosity','It cannot be zero');
+                            status = 0; return;
+                        elseif (M.viscosity < 0)
                             this.warnMsg('Unphysical value found for Material.viscosity.');
                         end
                         mat.viscosity = M.viscosity;

@@ -43,7 +43,7 @@ classdef BinKinematics_SphereWlin < BinKinematics
                     int.avg_poisson = mp.poisson;
                 end
                 if (~isempty(mp.conduct))
-                    int.eff_conduct = mp.conduct;
+                    int.eff_conduct = mp.conduct/2;
                     int.avg_conduct = mp.conduct;
                 end
                 
