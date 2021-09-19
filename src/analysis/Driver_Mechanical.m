@@ -228,7 +228,6 @@ classdef Driver_Mechanical < Driver
         %------------------------------------------------------------------
         function interactionLoop(this)
             % Evaluate interactions:
-            % Only contact interactions available in mechanical analysis
             for i = 1:this.n_interacts
                 int = this.interacts(i);
                 
@@ -240,6 +239,12 @@ classdef Driver_Mechanical < Driver
                 % Update voronoi edges
                 if (mod(this.step,this.vor_freq) == 0)
                     int.kinemat = int.kinemat.setVoronoiEdge(this,int);
+                end
+                
+                % Check if elements are in contact
+                % (only contact interactions available in mechanical analysis)
+                if (int.kinemat.separ >= 0)
+                    continue;
                 end
                 
                 % Update overlap parameters and contact area
