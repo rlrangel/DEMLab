@@ -1,0 +1,75 @@
+{
+	"ProblemData": {
+		"name"             : "box1_regular_400",
+		"analysis_type"    : "thermal",
+		"model_parts_file" : "ModelParts.txt"
+	},
+	"Solver": {
+		"integr_scheme_therm" : "forward_euler",
+		"time_step"           : 1.0e-2,
+		"final_time"          : 10.0
+	},
+	"InitialCondition": {
+		"temperature": {
+			"model_parts" : ["PARTICLES"],
+			"value"       : 300.0
+		}
+	},
+	"FixedCondition": {
+		"temperature": {
+			"type"        : "constant",
+			"model_parts" : ["WALLS"],
+			"value"       : 400.0
+		}
+	},
+	"Material": {
+		"name"                 : "solid_material",
+		"type"                 : "solid",
+		"model_parts"          : ["PARTICLES","WALLS"],
+		"density"              : 1000.0,
+		"thermal_conductivity" : 2000.0,
+		"heat_capacity"        : 50.0
+	},
+	"InteractionModel": {
+		"direct_conduction": {
+			"model" : "bob"
+		}
+	},
+	"Output": {
+		"progress_print" : 1.0,
+		"number_output"  : 100,
+		"save_workspace" : true
+	},
+	"Animation": {
+		"title"        : "Temperature",
+		"result"       : "temperature",
+		"auto_play"    : true,
+		"bounding_box" : [-0.1,1.1,-0.1,1.1]
+	},
+	"Graph": [
+	{
+		"title"  : "Particle Temperature",
+		"axis_x" : "time",
+		"axis_y" : "temperature",
+		"curve"  : {
+			"name"       : "mid-top particle",
+			"particle_y" : 390
+		}
+	},{
+		"title"  : "Particle Rate of Heat Transfer",
+		"axis_x" : "time",
+		"axis_y" : "heat_rate",
+		"curve"  : {
+			"name"       : "mid-top particle",
+			"particle_y" : 390
+		}
+	},{
+		"title"  : "Average Temperature",
+		"axis_x" : "time",
+		"axis_y" : "temperature_avg",
+		"curve"  : {
+			"name" : "avg. temp."
+		}
+	}
+	]
+}
