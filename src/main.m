@@ -34,6 +34,9 @@
 %   selection dialog that appears when running this script (multiple files
 %   can be selected).
 %
+% A folder with the problem name plus the suffix "_out" is created to
+% receive the output files.
+%
 %% OOP classes
 %
 % This program adopts an Object Oriented Programming (OOP) paradigm.

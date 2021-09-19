@@ -311,7 +311,7 @@ classdef Search_VerletList < Search
             switch (this.pwInteractionType(p,w))
                 case 1
                     this.kinpw_sph_line.setRelPos(p,w);
-                    if (addVL && dist < this.verlet_dist)
+                    if (addVL && this.kinpw_sph_line.dist < this.verlet_dist)
                         p.verlet_w(end+1) = w;
                     end
                     if (this.kinpw_sph_line.separ >= this.cutoff * p.radius)
@@ -320,7 +320,7 @@ classdef Search_VerletList < Search
                     kin = copy(this.kinpw_sph_line);
                 case 2
                     this.kinpw_sph_circ.setRelPos(p,w);
-                    if (addVL && dist < this.verlet_dist)
+                    if (addVL && this.kinpw_sph_circ.dist < this.verlet_dist)
                         p.verlet_w(end+1) = w;
                     end
                     if (this.kinpw_sph_circ.separ >= this.cutoff * p.radius)
@@ -329,7 +329,7 @@ classdef Search_VerletList < Search
                     kin = copy(this.kinpw_sph_circ);
                 case 3
                     this.kinpw_cyl_line.setRelPos(p,w);
-                    if (addVL && dist < this.verlet_dist)
+                    if (addVL && this.kinpw_cyl_line.dist < this.verlet_dist)
                         p.verlet_w(end+1) = w;
                     end
                     if (this.kinpw_cyl_line.separ >= this.cutoff * p.radius)
@@ -338,7 +338,7 @@ classdef Search_VerletList < Search
                     kin = copy(this.kinpw_cyl_line);
                 case 4
                     this.kinpw_cyl_circ.setRelPos(p,w);
-                    if (addVL && dist < this.verlet_dist)
+                    if (addVL && this.kinpw_cyl_circ.dist < this.verlet_dist)
                         p.verlet_w(end+1) = w;
                     end
                     if (this.kinpw_cyl_circ.separ >= this.cutoff * p.radius)

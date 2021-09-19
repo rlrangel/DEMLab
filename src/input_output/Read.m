@@ -5319,7 +5319,7 @@ classdef Read < handle
     %% Public methods: checks
     methods
         %------------------------------------------------------------------
-        function status = checkDriver(~,drv)
+        function status = checkDriver(this,drv)
             status = 1;
             if (isempty(drv.name))
                 this.missingDataError('No problem name was provided.');
@@ -5433,7 +5433,7 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = checkModels(~,drv)
+        function status = checkModels(this,drv)
             status = 1;
             
             % Contact force normal
