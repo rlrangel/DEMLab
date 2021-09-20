@@ -922,21 +922,23 @@ classdef Read < handle
                     end
                     
                     % Apply initial condition to selected particles
-                    model_parts = string(RV.model_parts);
-                    for j = 1:length(model_parts)
-                        mp_name = model_parts(j);
-                        if (~this.isStringArray(mp_name,1))
-                            this.invalidParamError('InitialCondition.rotational_velocity.model_parts','It must be a list of strings containing the names of the model parts');
-                            status = 0; return;
-                        elseif (strcmp(mp_name,'PARTICLES'))
-                            [drv.particles.veloc_rot] = deal(val);
-                        else
-                            mp = findobj(drv.mparts,'name',mp_name);
-                            if (isempty(mp))
-                                this.warnMsg('Nonexistent model part used in InitialCondition.rotational_velocity.');
-                                continue;
+                    if (isfield(RV,'model_parts'))
+                        model_parts = string(RV.model_parts);
+                        for j = 1:length(model_parts)
+                            mp_name = model_parts(j);
+                            if (~this.isStringArray(mp_name,1))
+                                this.invalidParamError('InitialCondition.rotational_velocity.model_parts','It must be a list of strings containing the names of the model parts');
+                                status = 0; return;
+                            elseif (strcmp(mp_name,'PARTICLES'))
+                                [drv.particles.veloc_rot] = deal(val);
+                            else
+                                mp = findobj(drv.mparts,'name',mp_name);
+                                if (isempty(mp))
+                                    this.warnMsg('Nonexistent model part used in InitialCondition.rotational_velocity.');
+                                    continue;
+                                end
+                                [mp.particles.veloc_rot] = deal(val);
                             end
-                            [mp.particles.veloc_rot] = deal(val);
                         end
                     end
                 end
