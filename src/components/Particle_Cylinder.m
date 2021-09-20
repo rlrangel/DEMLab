@@ -88,7 +88,7 @@ classdef Particle_Cylinder < Particle
             
             % Vector of interacting particles
             % Assumption: porosity computed only with interacting neighbours
-            P = [this,this.neigh_p];
+            P = [this,this.neigh_p(isvalid(this.neigh_p))];
             
             % Total volume of alpha-shape polygon with interacting particles centroids
             % Assumption: in-plane projection area (unity depth)

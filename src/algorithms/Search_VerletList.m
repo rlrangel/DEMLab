@@ -191,6 +191,12 @@ classdef Search_VerletList < Search
                 for j = 1:length(p1.verlet_p)
                     p2 = p1.verlet_p(j);
                     
+                    % Check if particle has been deleted
+                    if (~isvalid(p2))
+                        p1.neigh_p(~isvalid(p1.neigh_p)) = [];
+                        continue;
+                    end
+                    
                     % Check for existing interaction
                     if (any(p1.neigh_pid == p2.id))
                         % Get interaction object

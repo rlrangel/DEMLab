@@ -308,6 +308,11 @@ classdef Driver < handle
             
             % Update total particles properties
             this.setTotalParticlesProps();
+            
+            % Attention:
+            % To avoid additional computational costs, references to the
+            % deleted particle from other particles (e.g. neighbohring
+            % lists) are not removed.
         end
         
         %------------------------------------------------------------------

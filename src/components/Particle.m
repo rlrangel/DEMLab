@@ -47,6 +47,7 @@ classdef Particle < handle & matlab.mixin.Heterogeneous
         nusselt   % handle to object of Nusselt class
         
         % Neighbours Interactions
+        % Attention: These properties may contain references to deleted particles
         interacts Interact = Interact.empty;   % handles to objects of Interact class
         neigh_p   Particle = Particle.empty;   % handles to objects of Particle class of neighbour particles
         neigh_w   Wall     = Wall.empty;       % handles to objects of Wall class of neighbour walls
