@@ -132,7 +132,7 @@ classdef ConductionDirect_Collisional < ConductionDirect
             
             % Maximum contact radius and total collision time
             Rc = (15 * m * r * v0^2 / (16 * y))^(1/5);
-            tc = (m^2 / (r * e^2 * v0))^(1/5);
+            tc = 2.87 * (m^2 / (r * e^2 * v0))^(1/5);
             
             % Fourier number
             % Assumption: average for particles
