@@ -182,9 +182,9 @@ classdef Driver_Thermal < Driver
                 % Remove insulated interactions with walls
                 if (int.insulated)
                     p = int.elem1; w = int.elem2;
-                    p.interacts(p.interacts==int)  = [];
-                    p.neigh_w(p.neigh_w==w)        = [];
-                    p.neigh_wid(p.neigh_wid==w.id) = [];
+                    p.interacts(p.interacts==int)   = [];                    
+                    p.neigh_w([p.neigh_w.id]==w.id) = [];
+                    p.neigh_wid(p.neigh_wid==w.id)  = [];
                     delete(int);
                     continue;
                 end

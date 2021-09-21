@@ -1166,6 +1166,10 @@ classdef Read < handle
                             this.invalidParamError('PrescribedCondition.force.values','It must contain 3 columns (one for the independent variable values and two for the X,Y force components), and at least 2 points');
                             status = 0; return;
                         end
+                        if (length(unique(vals(:,1))) ~= length(vals(:,1)))
+                            this.invalidParamError('PrescribedCondition.force.values','Each independent variable value must be unique');
+                            status = 0; return;
+                        end
                         pc.val_x = vals(:,1);
                         pc.val_y = vals(:,2:3);
                         
@@ -1218,7 +1222,7 @@ classdef Read < handle
                             status = 0; return;
                         end
                         pc.interval  = interval;
-                        pc.init_time = min(0,min(interval));
+                        pc.init_time = max(0,min(interval));
                     else
                         pc.init_time = 0;
                     end
@@ -1386,6 +1390,10 @@ classdef Read < handle
                             this.invalidParamError('PrescribedCondition.torque.values','It must contain 2 columns (one for the independent variable values and another for the torque values), and at least 2 points');
                             status = 0; return;
                         end
+                        if (length(unique(vals(:,1))) ~= length(vals(:,1)))
+                            this.invalidParamError('PrescribedCondition.torque.values','Each independent variable value must be unique');
+                            status = 0; return;
+                        end
                         pc.val_x = vals(:,1);
                         pc.val_y = vals(:,2);
                         
@@ -1438,7 +1446,7 @@ classdef Read < handle
                             status = 0; return;
                         end
                         pc.interval  = interval;
-                        pc.init_time = min(0,min(interval));
+                        pc.init_time = max(0,min(interval));
                     else
                         pc.init_time = 0;
                     end
@@ -1606,6 +1614,10 @@ classdef Read < handle
                             this.invalidParamError('PrescribedCondition.heat_flux.values','It must contain 2 columns (one for the independent variable values and another for the heat flux values), and at least 2 points');
                             status = 0; return;
                         end
+                        if (length(unique(vals(:,1))) ~= length(vals(:,1)))
+                            this.invalidParamError('PrescribedCondition.heat_flux.values','Each independent variable value must be unique');
+                            status = 0; return;
+                        end
                         pc.val_x = vals(:,1);
                         pc.val_y = vals(:,2);
                         
@@ -1658,7 +1670,7 @@ classdef Read < handle
                             status = 0; return;
                         end
                         pc.interval  = interval;
-                        pc.init_time = min(0,min(interval));
+                        pc.init_time = max(0,min(interval));
                     else
                         pc.init_time = 0;
                     end
@@ -1826,6 +1838,10 @@ classdef Read < handle
                             this.invalidParamError('PrescribedCondition.heat_rate.values','It must contain 2 columns (one for the independent variable values and another for the heat rate values), and at least 2 points');
                             status = 0; return;
                         end
+                        if (length(unique(vals(:,1))) ~= length(vals(:,1)))
+                            this.invalidParamError('PrescribedCondition.heat_rate.values','Each independent variable value must be unique');
+                            status = 0; return;
+                        end
                         pc.val_x = vals(:,1);
                         pc.val_y = vals(:,2);
                         
@@ -1878,7 +1894,7 @@ classdef Read < handle
                             status = 0; return;
                         end
                         pc.interval  = interval;
-                        pc.init_time = min(0,min(interval));
+                        pc.init_time = max(0,min(interval));
                     else
                         pc.init_time = 0;
                     end
@@ -2065,6 +2081,10 @@ classdef Read < handle
                             this.invalidParamError('FixedCondition.velocity_translation.values','It must contain 3 columns (one for the independent variable values and 2 for the velocity X,Y component values), and at least 2 points');
                             status = 0; return;
                         end
+                        if (length(unique(vals(:,1))) ~= length(vals(:,1)))
+                            this.invalidParamError('FixedCondition.velocity_translation.values','Each independent variable value must be unique');
+                            status = 0; return;
+                        end
                         cond.val_x = vals(:,1);
                         cond.val_y = vals(:,2:3);
                         
@@ -2117,7 +2137,7 @@ classdef Read < handle
                             status = 0; return;
                         end
                         cond.interval  = interval;
-                        cond.init_time = min(0,min(interval));
+                        cond.init_time = max(0,min(interval));
                     else
                         cond.init_time = 0;
                     end
@@ -2302,6 +2322,10 @@ classdef Read < handle
                             this.invalidParamError('FixedCondition.velocity_rotation.values','It must contain 2 columns (one for the independent variable values and another for the velocity values), and at least 2 points');
                             status = 0; return;
                         end
+                        if (length(unique(vals(:,1))) ~= length(vals(:,1)))
+                            this.invalidParamError('FixedCondition.velocity_rotation.values','Each independent variable value must be unique');
+                            status = 0; return;
+                        end
                         cond.val_x = vals(:,1);
                         cond.val_y = vals(:,2);
                         
@@ -2354,7 +2378,7 @@ classdef Read < handle
                             status = 0; return;
                         end
                         cond.interval  = interval;
-                        cond.init_time = min(0,min(interval));
+                        cond.init_time = max(0,min(interval));
                     else
                         cond.init_time = 0;
                     end
@@ -2539,6 +2563,10 @@ classdef Read < handle
                             this.invalidParamError('FixedCondition.temperature.values','It must contain 2 columns (one for the independent variable values and another for the temperature values), and at least 2 points');
                             status = 0; return;
                         end
+                        if (length(unique(vals(:,1))) ~= length(vals(:,1)))
+                            this.invalidParamError('FixedCondition.temperature.values','Each independent variable value must be unique');
+                            status = 0; return;
+                        end
                         cond.val_x = vals(:,1);
                         cond.val_y = vals(:,2);
                         
@@ -2591,7 +2619,7 @@ classdef Read < handle
                             status = 0; return;
                         end
                         cond.interval  = interval;
-                        cond.init_time = min(0,min(interval));
+                        cond.init_time = max(0,min(interval));
                     else
                         cond.init_time = 0;
                     end
@@ -3041,8 +3069,8 @@ classdef Read < handle
             % Number of outputs
             if (isfield(OUT,'number_output'))
                 nout = OUT.number_output;
-                if (~this.isIntArray(nout,1) || nout <= 0)
-                    this.invalidParamError('Output.number_output','It must be a positive integer');
+                if (~this.isIntArray(nout,1) || nout <= 0 || nout >= drv.max_time/drv.time_step)
+                    this.invalidParamError('Output.number_output','It must be a positive integer not larger than the maximum number of steps');
                     status = 0; return;
                 end
                 drv.nout = nout;

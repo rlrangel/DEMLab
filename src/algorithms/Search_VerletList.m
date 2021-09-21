@@ -154,9 +154,12 @@ classdef Search_VerletList < Search
                         % Assumption: cutoff ratio applies to particle radius
                         if (int.kinemat.separ >= this.cutoff * p1.radius)
                             % Remove interaction references from particle
-                            p1.interacts(p1.interacts==int)  = [];
-                            p1.neigh_w(p1.neigh_w==w)        = [];
-                            p1.neigh_wid(p1.neigh_wid==w.id) = [];
+                            % (neigh_w is cleaned by searching the id
+                            %  to avoid error when it is heterogeneous:
+                            %  i.e. different wall types)
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_w([p1.neigh_w.id]==w.id) = [];
+                            p1.neigh_wid(p1.neigh_wid==w.id)  = [];
                             
                             % Delete interaction object
                             delete(int);
@@ -242,9 +245,12 @@ classdef Search_VerletList < Search
                         % Assumption: cutoff ratio applies to particle radius
                         if (int.kinemat.separ >= this.cutoff * p1.radius)
                             % Remove interaction references from particle
-                            p1.interacts(p1.interacts==int)  = [];
-                            p1.neigh_w(p1.neigh_w==w)        = [];
-                            p1.neigh_wid(p1.neigh_wid==w.id) = [];
+                            % (neigh_w is cleaned by searching the id
+                            %  to avoid error when it is heterogeneous:
+                            %  i.e. different wall types)
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_w([p1.neigh_w.id]==w.id) = [];
+                            p1.neigh_wid(p1.neigh_wid==w.id)  = [];
                             
                             % Delete interaction object
                             delete(int);

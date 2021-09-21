@@ -50,6 +50,7 @@ classdef Condition_Table < Condition
                 case this.INTERP_SPLINE
                     val = interp1(this.val_x,this.val_y,time,'spline');
             end
+            val = val';
         end
     end
 end
