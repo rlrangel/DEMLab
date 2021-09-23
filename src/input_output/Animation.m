@@ -263,7 +263,7 @@ classdef Animation < handle
         %------------------------------------------------------------------
         function showAnimation(this)
             if(this.play)
-                fprintf('\nShowing animation "%s"...\n',this.anim_title);
+                fprintf('\nShowing animation "%s"...',this.anim_title);
                 this.fig.Visible = 'on';
                 movie(this.fig,this.frames,10,this.fps);
             end
@@ -409,7 +409,7 @@ classdef Animation < handle
                 case drv.result.ACCELERATION_MOD
                     this.anim_type = this.SCALAR;
                     x = drv.result.acceleration_x;
-                    y = drv.result.acceleration_Y;
+                    y = drv.result.acceleration_y;
                     this.res_part = sqrt(x.^2+y.^2);
                     
                 case drv.result.ACCELERATION_X
@@ -653,7 +653,7 @@ classdef Animation < handle
             % Maximum vector norm value
             x = this.res_vecx;
             y = this.res_vecy;
-            max_vec = max(sqrt(x.^2+y.^2));
+            max_vec = max(max(sqrt(x.^2+y.^2)));
             
             % Figure size
             limitx = xlim;

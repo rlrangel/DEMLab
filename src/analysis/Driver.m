@@ -349,6 +349,7 @@ classdef Driver < handle
                 for i = 1:length(this.animations)
                     this.animations(i).showAnimation();
                 end
+                fprintf('\n');
             end
         end
     end
