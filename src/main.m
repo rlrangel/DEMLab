@@ -32,7 +32,7 @@
 %   of this script (e.g. file = 'C:\...\ProjectParameters.json').
 % * Leave the string variable _file_ blank (file = '') and use the
 %   selection dialog that appears when running this script (multiple files
-%   can be selected).
+%   can be selected to run simulations sequentially).
 %
 % A folder with the problem name plus the suffix "_out" is created to
 % receive the output files.
