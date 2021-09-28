@@ -223,7 +223,8 @@ classdef Master
                 fprintf('Average radius.........: %.3e\n',ravg);
                 fprintf('Radius deviation.......: %.3e\n',rdev);
                 if (rdev ~= 0)
-                    fprintf('Min|Max radius.........: %.3e|%.3e\n',rmin,rmax);
+                    fprintf('Min radius.............: %.3e\n',rmin);
+                    fprintf('Max radius.............: %.3e\n',rmax);
                 end
             end
             if (~isempty(drv.particles) &&...
@@ -235,7 +236,8 @@ classdef Master
                 fprintf('Average temperature....: %.3e\n',tavg);
                 fprintf('Temperature deviation..: %.3e\n',tdev);
                 if (tdev ~= 0)
-                    fprintf('Min|Max temperature....: %.3e|%.3e\n',tmin,tmax);
+                    fprintf('Min temperature........: %.3e\n',tmin);
+                    fprintf('Max temperature........: %.3e\n',tmax);
                 end
             end
             if (~isempty(drv.mass_particle))
