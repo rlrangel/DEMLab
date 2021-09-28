@@ -137,29 +137,29 @@ classdef ConductionIndirect_SurrLayer < ConductionIndirect
         %------------------------------------------------------------------
         function this = evalHeatRate(this,int,drv)
             if (isempty(this.coeff))
-                q = this.heatTransCoeff(int,drv);
+                h = this.heatTransCoeff(int,drv);
             else
-                q = this.coeff;
+                h = this.coeff;
             end
-            this.total_hrate = q * (int.elem2.temperature-int.elem1.temperature);
+            this.total_hrate = h * (int.elem2.temperature-int.elem1.temperature);
         end
     end
     
     %% Public methods: sub-class specifics
     methods
         %------------------------------------------------------------------
-        function q = heatTransCoeff(this,int,drv)
+        function h = heatTransCoeff(this,int,drv)
             if (int.kinemat.gen_type == int.kinemat.PARTICLE_WALL ||...
                 int.elem1.radius == int.elem2.radius)
                 % Assumption: Particle-Wall is treated as 2 equal size particles
-                q = this.evalIntegralMonosize(int,drv);
+                h = this.evalIntegralMonosize(int,drv);
             else
-                q = this.evalIntegralMultisize(int,drv);
+                h = this.evalIntegralMultisize(int,drv);
             end
         end
         
         %------------------------------------------------------------------
-        function q = evalIntegralMonosize(this,int,drv)
+        function h = evalIntegralMonosize(this,int,drv)
             % Needed properties
             Rp = int.elem1.radius;
             L  = this.layer*Rp;
@@ -186,11 +186,11 @@ classdef ConductionIndirect_SurrLayer < ConductionIndirect
             c = sqrt(1-rin^2);
             
             % Analytic solution of integral
-            q = 2*pi*kf*Rp*((a+1)*log(abs((b-a-1)/(a-c+1)))+b-c);
+            h = 2*pi*kf*Rp*((a+1)*log(abs((b-a-1)/(a-c+1)))+b-c);
         end
         
         %------------------------------------------------------------------
-        function q = evalIntegralMultisize(this,int,drv)
+        function h = evalIntegralMultisize(this,int,drv)
             % Needed properties
             Rc = int.kinemat.contact_radius;
             R1 = int.elem1.radius;
@@ -213,9 +213,9 @@ classdef ConductionIndirect_SurrLayer < ConductionIndirect
             % Evaluate integral numerically
             fun = @(r) 2*pi*r/max(S,d-sqrt(R1^2-r^2)-sqrt(R2^2-r^2));
             try
-                q = kf * integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
+                h = kf * integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
             catch
-                q = 0;
+                h = 0;
             end
         end
     end

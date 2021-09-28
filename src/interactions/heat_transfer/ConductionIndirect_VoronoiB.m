@@ -176,29 +176,29 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
         %------------------------------------------------------------------
         function this = evalHeatRate(this,int,drv)
             if (isempty(this.coeff))
-                q = this.heatTransCoeff(int,drv);
+                h = this.heatTransCoeff(int,drv);
             else
-                q = this.coeff;
+                h = this.coeff;
             end
-            this.total_hrate = q * (int.elem2.temperature-int.elem1.temperature);
+            this.total_hrate = h * (int.elem2.temperature-int.elem1.temperature);
         end
     end
     
     %% Public methods: sub-class specifics
     methods
         %------------------------------------------------------------------
-        function q = heatTransCoeff(this,int,drv)
+        function h = heatTransCoeff(this,int,drv)
             if (int.kinemat.gen_type == int.kinemat.PARTICLE_WALL ||...
                 int.elem1.radius == int.elem2.radius)
                 % Assumption: Particle-Wall is treated as 2 equal size particles
-                q = this.evalExpressionMonosize(int,drv);
+                h = this.evalExpressionMonosize(int,drv);
             else
-                q = this.evalExpressionMultisize(int,drv);
+                h = this.evalExpressionMultisize(int,drv);
             end
         end
         
         %------------------------------------------------------------------
-        function q = evalExpressionMonosize(this,int,drv)
+        function h = evalExpressionMonosize(this,int,drv)
             % Needed properties
             Rp = int.elem1.radius;
             Rc = int.kinemat.contact_radius;
@@ -217,14 +217,14 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             % Heat transfer coeff
             ln = log((a-b*c0)/(a-b*c1));
             if isreal(ln)
-                q = pi * ln / b;
+                h = pi * ln / b;
             else
-                q = pi * real(ln) / b;
+                h = pi * real(ln) / b;
             end
         end
         
         %------------------------------------------------------------------
-        function q = evalExpressionMultisize(this,int,drv)
+        function h = evalExpressionMultisize(this,int,drv)
             % Needed properties
             R1 = int.elem1.radius;
             R2 = int.elem2.radius;
@@ -257,11 +257,11 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             
             % Heat transfer coeff
             if (lambda > 0)
-                q = pi * kf * d * (1-dgamma^2) * log(abs((1-Y1)/(1+Y1))) / (2*sqrt(abs(lambda)));
+                h = pi * kf * d * (1-dgamma^2) * log(abs((1-Y1)/(1+Y1))) / (2*sqrt(abs(lambda)));
             elseif (lambda < 0)
-                q = pi * kf * d * (1-dgamma^2) * atan(Y2) / (2*sqrt(abs(lambda)));
+                h = pi * kf * d * (1-dgamma^2) * atan(Y2) / (2*sqrt(abs(lambda)));
             else
-                q = pi * kf * d * (1-dgamma^2) * (1/delmin-1/delmax) / (A+B);
+                h = pi * kf * d * (1-dgamma^2) * (1/delmin-1/delmax) / (A+B);
             end
         end
         
