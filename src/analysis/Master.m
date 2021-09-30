@@ -220,6 +220,9 @@ classdef Master
                 rdev = std([drv.particles.radius]);
                 rmin = min([drv.particles.radius]);
                 rmax = max([drv.particles.radius]);
+                if (rdev/rmin < 1e-8)
+                    rdev = 0;
+                end
                 fprintf('Average radius.........: %.3e\n',ravg);
                 fprintf('Radius deviation.......: %.3e\n',rdev);
                 if (rdev ~= 0)

@@ -1237,7 +1237,7 @@ classdef Read < handle
                                 status = 0; return;
                             end
                             pobj = drv.particles([drv.particles.id]==p);
-                            pobj.pc_force = pc;
+                            pobj.pc_force(end+1) = pc;
                         end
                     end
                     
@@ -1250,14 +1250,18 @@ classdef Read < handle
                                 this.invalidParamError('PrescribedCondition.force.model_parts','It must be a list of strings containing the names of the model parts');
                                 status = 0; return;
                             elseif (strcmp(mp_name,'PARTICLES'))
-                                [drv.particles.pc_force] = deal(pc);
+                                for k = 1:drv.n_particles
+                                    drv.particles(k).pc_force(end+1) = pc;
+                                end
                             else
                                 mp = findobj(drv.mparts,'name',mp_name);
                                 if (isempty(mp))
                                     this.warnMsg('Nonexistent model part used in PrescribedCondition.force.');
                                     continue;
                                 end
-                                [mp.particles.pc_force] = deal(pc);
+                                for k = 1:mp.n_particles
+                                    mp.particles(k).pc_force(end+1) = pc;
+                                end
                             end
                         end
                     end
@@ -1461,7 +1465,7 @@ classdef Read < handle
                                 status = 0; return;
                             end
                             pobj = drv.particles([drv.particles.id]==p);
-                            pobj.pc_torque = pc;
+                            pobj.pc_torque(end+1) = pc;
                         end
                     end
                     
@@ -1474,14 +1478,18 @@ classdef Read < handle
                                 this.invalidParamError('PrescribedCondition.torque.model_parts','It must be a list of strings containing the names of the model parts');
                                 status = 0; return;
                             elseif (strcmp(mp_name,'PARTICLES'))
-                                [drv.particles.pc_torque] = deal(pc);
+                                for k = 1:drv.n_particles
+                                    drv.particles(k).pc_torque(end+1) = pc;
+                                end
                             else
                                 mp = findobj(drv.mparts,'name',mp_name);
                                 if (isempty(mp))
                                     this.warnMsg('Nonexistent model part used in PrescribedCondition.torque.');
                                     continue;
                                 end
-                                [mp.particles.pc_torque] = deal(pc);
+                                for k = 1:mp.n_particles
+                                    mp.particles(k).pc_torque(end+1) = pc;
+                                end
                             end
                         end
                     end
@@ -1685,7 +1693,7 @@ classdef Read < handle
                                 status = 0; return;
                             end
                             pobj = drv.particles([drv.particles.id]==p);
-                            pobj.pc_heatflux = pc;
+                            pobj.pc_heatflux(end+1) = pc;
                         end
                     end
                     
@@ -1698,14 +1706,18 @@ classdef Read < handle
                                 this.invalidParamError('PrescribedCondition.heat_flux.model_parts','It must be a list of strings containing the names of the model parts');
                                 status = 0; return;
                             elseif (strcmp(mp_name,'PARTICLES'))
-                                [drv.particles.pc_heatflux] = deal(pc);
+                                for k = 1:drv.n_particles
+                                    drv.particles(k).pc_heatflux(end+1) = pc;
+                                end
                             else
                                 mp = findobj(drv.mparts,'name',mp_name);
                                 if (isempty(mp))
                                     this.warnMsg('Nonexistent model part used in PrescribedCondition.heat_flux.');
                                     continue;
                                 end
-                                [mp.particles.pc_heatflux] = deal(pc);
+                                for k = 1:mp.n_particles
+                                    mp.particles(k).pc_heatflux(end+1) = pc;
+                                end
                             end
                         end
                     end
@@ -1909,7 +1921,7 @@ classdef Read < handle
                                 status = 0; return;
                             end
                             pobj = drv.particles([drv.particles.id]==p);
-                            pobj.pc_heatrate = pc;
+                            pobj.pc_heatrate(end+1) = pc;
                         end
                     end
                     
@@ -1922,14 +1934,18 @@ classdef Read < handle
                                 this.invalidParamError('PrescribedCondition.heat_rate.model_parts','It must be a list of strings containing the names of the model parts');
                                 status = 0; return;
                             elseif (strcmp(mp_name,'PARTICLES'))
-                                [drv.particles.pc_heatrate] = deal(pc);
+                                for k = 1:drv.n_particles
+                                    drv.particles(k).pc_heatrate(end+1) = pc;
+                                end
                             else
                                 mp = findobj(drv.mparts,'name',mp_name);
                                 if (isempty(mp))
                                     this.warnMsg('Nonexistent model part used in PrescribedCondition.heat_rate.');
                                     continue;
                                 end
-                                [mp.particles.pc_heatrate] = deal(pc);
+                                for k = 1:mp.n_particles
+                                    mp.particles(k).pc_heatrate(end+1) = pc;
+                                end
                             end
                         end
                     end
@@ -2152,7 +2168,7 @@ classdef Read < handle
                                 status = 0; return;
                             end
                             pobj = drv.particles([drv.particles.id]==p);
-                            pobj.fc_translation = cond;
+                            pobj.fc_translation(end+1) = cond;
                         end
                     end
                     
@@ -2166,7 +2182,7 @@ classdef Read < handle
                                 status = 0; return;
                             end
                             wobj = drv.walls([drv.walls.id]==w);
-                            wobj.fc_translation = cond;
+                            wobj.fc_translation(end+1) = cond;
                         end
                     end
                     
@@ -2179,17 +2195,25 @@ classdef Read < handle
                                 this.invalidParamError('FixedCondition.velocity_translation.model_parts','It must be a list of strings containing the names of the model parts');
                                 status = 0; return;
                             elseif (strcmp(mp_name,'PARTICLES'))
-                                [drv.particles.fc_translation] = deal(cond);
+                                for k = 1:drv.n_particles
+                                    drv.particles(k).fc_translation(end+1) = cond;
+                                end
                             elseif (strcmp(mp_name,'WALLS'))
-                                [drv.walls.fc_translation] = deal(cond);
+                                for k = 1:drv.n_walls
+                                    drv.walls(k).fc_translation(end+1) = cond;
+                                end
                             else
                                 mp = findobj(drv.mparts,'name',mp_name);
                                 if (isempty(mp))
                                     this.warnMsg('Nonexistent model part used in FixedCondition.velocity_translation.');
                                     continue;
                                 end
-                                [mp.particles.fc_translation] = deal(cond);
-                                [mp.walls.fc_translation]     = deal(cond);
+                                for k = 1:mp.n_particles
+                                    mp.particles(k).fc_translation(end+1) = cond;
+                                end
+                                for k = 1:mp.n_walls
+                                    mp.walls(k).fc_translation(end+1) = cond;
+                                end
                             end
                         end
                     end
@@ -2393,7 +2417,7 @@ classdef Read < handle
                                 status = 0; return;
                             end
                             pobj = drv.particles([drv.particles.id]==p);
-                            pobj.fc_rotation = cond;
+                            pobj.fc_rotation(end+1) = cond;
                         end
                     end
                     
@@ -2407,7 +2431,7 @@ classdef Read < handle
                                 status = 0; return;
                             end
                             wobj = drv.walls([drv.walls.id]==w);
-                            wobj.fc_rotation = cond;
+                            wobj.fc_rotation(end+1) = cond;
                         end
                     end
                     
@@ -2420,17 +2444,25 @@ classdef Read < handle
                                 this.invalidParamError('FixedCondition.velocity_rotation.model_parts','It must be a list of strings containing the names of the model parts');
                                 status = 0; return;
                             elseif (strcmp(mp_name,'PARTICLES'))
-                                [drv.particles.fc_rotation] = deal(cond);
+                                for k = 1:drv.n_particles
+                                    drv.particles(k).fc_rotation(end+1) = cond;
+                                end
                             elseif (strcmp(mp_name,'WALLS'))
-                                [drv.walls.fc_rotation] = deal(cond);
+                                for k = 1:drv.n_walls
+                                    drv.walls(k).fc_rotation(end+1) = cond;
+                                end
                             else
                                 mp = findobj(drv.mparts,'name',mp_name);
                                 if (isempty(mp))
                                     this.warnMsg('Nonexistent model part used in FixedCondition.velocity_rotation.');
                                     continue;
                                 end
-                                [mp.particles.fc_rotation] = deal(cond);
-                                [mp.walls.fc_rotation]     = deal(cond);
+                                for k = 1:mp.n_particles
+                                    mp.particles(k).fc_rotation(end+1) = cond;
+                                end
+                                for k = 1:mp.n_walls
+                                    mp.walls(k).fc_rotation(end+1) = cond;
+                                end
                             end
                         end
                     end
@@ -2634,7 +2666,7 @@ classdef Read < handle
                                 status = 0; return;
                             end
                             pobj = drv.particles([drv.particles.id]==p);
-                            pobj.fc_temperature = cond;
+                            pobj.fc_temperature(end+1) = cond;
                         end
                     end
                     
@@ -2648,7 +2680,7 @@ classdef Read < handle
                                 status = 0; return;
                             end
                             wobj = drv.walls([drv.walls.id]==w);
-                            wobj.fc_temperature = cond;
+                            wobj.fc_temperature(end+1) = cond;
                         end
                     end
                     
@@ -2661,17 +2693,25 @@ classdef Read < handle
                                 this.invalidParamError('FixedCondition.temperature.model_parts','It must be a list of strings containing the names of the model parts');
                                 status = 0; return;
                             elseif (strcmp(mp_name,'PARTICLES'))
-                                [drv.particles.fc_temperature] = deal(cond);
+                                for k = 1:drv.n_particles
+                                    drv.particles(k).fc_temperature(end+1) = cond;
+                                end
                             elseif (strcmp(mp_name,'WALLS'))
-                                [drv.walls.fc_temperature] = deal(cond);
+                                for k = 1:drv.n_walls
+                                    drv.walls(k).fc_temperature(end+1) = cond;
+                                end
                             else
                                 mp = findobj(drv.mparts,'name',mp_name);
                                 if (isempty(mp))
                                     this.warnMsg('Nonexistent model part used in FixedCondition.temperature.');
                                     continue;
                                 end
-                                [mp.particles.fc_temperature] = deal(cond);
-                                [mp.walls.fc_temperature]     = deal(cond);
+                                for k = 1:mp.n_particles
+                                    mp.particles(k).fc_temperature(end+1) = cond;
+                                end
+                                for k = 1:mp.n_walls
+                                    mp.walls(k).fc_temperature(end+1) = cond;
+                                end
                             end
                         end
                     end
