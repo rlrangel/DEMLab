@@ -1,0 +1,71 @@
+{
+	"ProblemData": {
+		"name"             : "billiard",
+		"analysis_type"    : "mechanical",
+		"model_parts_file" : "ModelParts.txt"
+	},
+	"Solver": {
+		"integr_scheme_trans" : "forward_euler",
+		"integr_scheme_rotat" : "forward_euler",
+		"time_step"           : 1.0e-5,
+		"final_time"          : 12.0
+	},
+	"Search": {
+		"scheme"           : "verlet_list",
+		"search_frequency" : 20,
+		"verlet_frequency" : 2000,
+		"verlet_distance"  : 0.1
+	},
+	"BoundingBox": {
+		"shape"     : "rectangle",
+		"limit_min" : [-0.0510,-0.0510],
+		"limit_max" : [2.2910,1.1710]
+	},
+	"FixedCondition": {
+		"velocity_translation": [
+		{
+			"type"        : "constant",
+			"model_parts" : ["stick"],
+			"value"       : [3.00,0.00],
+			"interval"    : [1.00,1.07]
+		},{
+			"type"        : "constant",
+			"model_parts" : ["stick"],
+			"value"       : [-0.50,0.00],
+			"interval"    : [2.50,4.10]
+		}
+		]
+	},
+	"Material": {
+		"name"          : "solid_material",
+		"type"          : "solid",
+		"model_parts"   : ["PARTICLES","WALLS"],
+		"density"       : 2e3,
+		"young_modulus" : 3e6,
+		"poisson_ratio" : 0.3
+	},
+	"InteractionModel": {
+		"contact_force_normal": {
+			"model"                      : "viscoelastic_nonlinear",
+			"restitution_coeff"          : 0.3,
+			"damping_formula"            : "critical_ratio",
+			"ratio"                      : 0.5,
+			"remove_artificial_cohesion" : true
+		},
+		"contact_force_tangent": {
+			"model"          : "spring_slider",
+			"friction_coeff" : 0.2
+		}
+	},
+	"Output": {
+		"progress_print" : 1.0,
+		"number_output"  : 500,
+		"save_workspace" : true
+	},
+	"Animation": {
+		"title"        : "Motion",
+		"result"       : "motion",
+		"auto_play"    : true,
+		"bounding_box" : [-0.1510,2.3910,-0.1510,1.2710]
+	}
+}
