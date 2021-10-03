@@ -4325,17 +4325,15 @@ classdef Read < handle
             end
             
             % Coefficient of restitution
-            if (~isfield(IM.contact_force_normal,'restitution_coeff'))
-                this.missingDataError('InteractionModel.contact_force_normal.restitution_coeff');
-                status = 0; return;
+            if (isfield(IM.contact_force_normal,'restitution_coeff'))
+                rest = IM.contact_force_normal.restitution_coeff;
+                if (~this.isDoubleArray(rest,1))
+                    this.invalidParamError('InteractionModel.contact_force_normal.restitution_coeff','It must be a numeric value');
+                elseif (rest < 0 || rest > 1)
+                    this.warnMsg('Unphysical value found for InteractionModel.contact_force_normal.restitution_coeff.');
+                end
+                drv.search.b_interact.cforcen.restitution = rest;
             end
-            rest = IM.contact_force_normal.restitution_coeff;
-            if (~this.isDoubleArray(rest,1))
-                this.invalidParamError('InteractionModel.contact_force_normal.restitution_coeff','It must be a numeric value');
-            elseif (rest < 0 || rest > 1)
-                this.warnMsg('Unphysical value found for InteractionModel.contact_force_normal.restitution_coeff.');
-            end
-            drv.search.b_interact.cforcen.restitution = rest;
         end
         
         %------------------------------------------------------------------
@@ -5508,13 +5506,31 @@ classdef Read < handle
             
             % Contact force normal
             if (~isempty(drv.search.b_interact.cforcen))
-                if (drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.VISCOELASTIC_LINEAR    ||...
-                    drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.VISCOELASTIC_NONLINEAR ||...
-                    drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.ELASTOPLASTIC_LINEAR)
-                    if (length(findobj(drv.solids,'young',[])) > 1)
-                        fprintf(2,'The selected normal contact force model requires the Young modulus of materials.\n');
-                        status = 0; return;
+                if (drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.VISCOELASTIC_LINEAR)
+                    if (drv.search.b_interact.cforcen.stiff_formula == drv.search.b_interact.cforcen.OVERLAP ||...
+                        drv.search.b_interact.cforcen.stiff_formula == drv.search.b_interact.cforcen.TIME    ||...
+                        isempty(drv.search.b_interact.cforcen.damp))
+                        if (isempty(drv.search.b_interact.cforcen.restitution))
+                            fprintf(2,'The selected normal contact force model requires the coefficient of restitution.\n');
+                            status = 0; return;
+                        end
                     end
+                end
+                if (drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.VISCOELASTIC_NONLINEAR)
+                    if (drv.search.b_interact.cforcen.damp_formula == drv.search.b_interact.cforcen.TTI)
+                        if (isempty(drv.search.b_interact.cforcen.damp))
+                            fprintf(2,'The selected normal contact force model requires the coefficient of restitution.\n');
+                            status = 0; return;
+                        end
+                    end
+                end
+                if (drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.ELASTOPLASTIC_LINEAR)
+                    fprintf(2,'The selected normal contact force model requires the coefficient of restitution.\n');
+                    status = 0; return;
+                end
+                if (length(findobj(drv.solids,'young',[])) > 1)
+                    fprintf(2,'The selected normal contact force model requires the Young modulus of materials.\n');
+                    status = 0; return;
                 end
             end
             

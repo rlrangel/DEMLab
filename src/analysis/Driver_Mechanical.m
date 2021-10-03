@@ -171,7 +171,7 @@ classdef Driver_Mechanical < Driver
             while (this.time <= this.max_time)
                 % Check if it is time to store results:
                 % Time & step not stored after 1st step as it was already stored in preprocess.
-                % Global results stored after 1st step as some results were not ready before.
+                % Global model results stored after 1st step as some results were not ready before.
                 this.storeResults()
                 if (this.store || this.step == 1)
                     if (this.store)
