@@ -1,6 +1,6 @@
 {
 	"ProblemData": {
-		"name"             : "bounce_straight",
+		"name"             : "colliding_balls",
 		"analysis_type"    : "mechanical",
 		"model_parts_file" : "ModelParts.txt"
 	},
@@ -8,29 +8,37 @@
 		"integr_scheme_trans" : "forward_euler",
 		"integr_scheme_rotat" : "forward_euler",
 		"time_step"           : 1.0e-5,
-		"final_time"          : 10.0
+		"final_time"          : 2.0
 	},
 	"Search": {
 		"scheme"           : "simple_loop",
-		"search_frequency" : 50
-	},
-	"GlobalCondition": {
-		"gravity" : [0.00,-9.81]
+		"search_frequency" : 10
 	},
 	"Material": {
 		"name"          : "solid_material",
 		"type"          : "solid",
-		"model_parts"   : ["PARTICLES","WALLS"],
+		"model_parts"   : ["PARTICLES"],
 		"density"       : 1e3,
-		"young_modulus" : 1e6,
+		"young_modulus" : 1e7,
 		"poisson_ratio" : 0.3
+	},
+	"InitialCondition": {
+		"translational_velocity": [
+			{
+			"value"       : [2.0,0.0],
+			"model_parts" : "Left"
+			},
+			{
+			"value"       : [-2.0,0.0],
+			"model_parts" : "Right"
+			}
+		]
 	},
 	"InteractionModel": {
 		"contact_force_normal": {
-			"model"                      : "viscoelastic_nonlinear",
-			"restitution_coeff"          : 0.8,
-			"damping_formula"            : "critical_ratio",
-			"ratio"                      : 0.2,
+			"model"                      : "viscoelastic_linear",
+			"stiff_formula"              : "energy",
+			"restitution_coeff"          : 0.7,
 			"remove_artificial_cohesion" : true
 		},
 		"contact_force_tangent": {
@@ -40,43 +48,36 @@
 	},
 	"Output": {
 		"progress_print" : 1.0,
-		"number_output"  : 500,
+		"number_output"  : 200,
 		"save_workspace" : false
 	},
-	"Animation": [
-	{
+	"Animation": {
 		"title"        : "Motion",
 		"result"       : "motion",
 		"auto_play"    : true,
-		"bounding_box" : [-2.0,2.0,-1.0,3.0]
-	},{
-		"title"        : "Velocity Vector",
-		"result"       : "velocity_vector",
-		"auto_play"    : true,
-		"bounding_box" : [-2.0,2.0,-1.0,3.0]
-	}
-	],
+		"bounding_box" : [-2.0,2.0,-2.0,2.0]
+	},
 	"Graph": [
 	{
-		"title"  : "Vertical Position",
+		"title"  : "Horizontal Position",
 		"axis_x" : "time",
-		"axis_y" : "coordinate_y",
+		"axis_y" : "coordinate_x",
 		"curve"  : {
 			"name"       : "particle 1",
 			"particle_y" : 1
 		}
 	},{
-		"title"  : "Velocity Modulus",
+		"title"  : "Horizontal Velocity",
 		"axis_x" : "time",
-		"axis_y" : "velocity_modulus",
+		"axis_y" : "velocity_x",
 		"curve"  : {
 			"name"       : "particle 1",
 			"particle_y" : 1
 		}
 	},{
-		"title"  : "Acceleration Modulus",
+		"title"  : "Horizontal Acceleration",
 		"axis_x" : "time",
-		"axis_y" : "acceleration_modulus",
+		"axis_y" : "acceleration_x",
 		"curve"  : {
 			"name"       : "particle 1",
 			"particle_y" : 1

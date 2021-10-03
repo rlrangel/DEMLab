@@ -259,16 +259,22 @@ classdef Master
             fprintf('\n\nAnalysis finished:\n');
             fprintf('%s\n',datestr(now));
             if (status == 1)
-                time = seconds(toc);
-                time.Format = 'hh:mm:ss.SS';
-                fprintf('Total time: %s\n',string(time));
+                time            = seconds(toc);
+                avg_time        = time/drv.step;
+                time.Format     = 'hh:mm:ss.SS';
+                avg_time.Format = 's';
+                fprintf('Total time:.....: %s\n',string(time));
+                fprintf('Avg step time:..: %s\n',string(avg_time));
             elseif (status == 2)
-                curr_time  = seconds(toc);
-                total_time = seconds(drv.total_time);
+                curr_time         = seconds(toc);
+                total_time        = seconds(drv.total_time);
+                avg_time          = total_time/drv.step;
                 curr_time.Format  = 'hh:mm:ss.SS';
                 total_time.Format = 'hh:mm:ss.SS';
-                fprintf('Current analysis time: %s\n',string(curr_time));
-                fprintf('Total simulation time: %s\n',string(total_time));
+                avg_time.Format   = 's';
+                fprintf('Current analysis time:..: %s\n',string(curr_time));
+                fprintf('Total simulation time:..: %s\n',string(total_time));
+                fprintf('Avg step time:..........: %s\n',string(avg_time));
             end
         end
         

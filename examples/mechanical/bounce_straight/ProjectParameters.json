@@ -1,18 +1,18 @@
 {
 	"ProblemData": {
-		"name"             : "bounce_oblique",
+		"name"             : "bounce_straight",
 		"analysis_type"    : "mechanical",
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
 		"integr_scheme_trans" : "forward_euler",
 		"integr_scheme_rotat" : "forward_euler",
-		"time_step"           : 1.0e-5,
+		"time_step"           : 1.0e-4,
 		"final_time"          : 10.0
 	},
 	"Search": {
 		"scheme"           : "simple_loop",
-		"search_frequency" : 50
+		"search_frequency" : 10
 	},
 	"GlobalCondition": {
 		"gravity" : [0.00,-9.81]
@@ -22,15 +22,14 @@
 		"type"          : "solid",
 		"model_parts"   : ["PARTICLES","WALLS"],
 		"density"       : 1e3,
-		"young_modulus" : 1e6,
+		"young_modulus" : 5e6,
 		"poisson_ratio" : 0.3
 	},
 	"InteractionModel": {
 		"contact_force_normal": {
-			"model"                      : "viscoelastic_nonlinear",
-			"restitution_coeff"          : 0.8,
-			"damping_formula"            : "critical_ratio",
-			"ratio"                      : 0.2,
+			"model"                      : "viscoelastic_linear",
+			"stiff_formula"              : "energy",
+			"restitution_coeff"          : 0.9,
 			"remove_artificial_cohesion" : true
 		},
 		"contact_force_tangent": {
@@ -40,7 +39,7 @@
 	},
 	"Output": {
 		"progress_print" : 1.0,
-		"number_output"  : 500,
+		"number_output"  : 200,
 		"save_workspace" : false
 	},
 	"Animation": [
@@ -48,27 +47,35 @@
 		"title"        : "Motion",
 		"result"       : "motion",
 		"auto_play"    : true,
-		"bounding_box" : [-11.0,11.0,-3.0,5.0]
+		"bounding_box" : [-2.0,2.0,-1.0,3.0]
 	},{
 		"title"        : "Velocity Vector",
 		"result"       : "velocity_vector",
 		"auto_play"    : true,
-		"bounding_box" : [-11.0,11.0,-3.0,5.0]
+		"bounding_box" : [-2.0,2.0,-1.0,3.0]
 	}
 	],
 	"Graph": [
 	{
-		"title"  : "Velocity Modulus",
+		"title"  : "Vertical Position",
 		"axis_x" : "time",
-		"axis_y" : "velocity_modulus",
+		"axis_y" : "coordinate_y",
 		"curve"  : {
 			"name"       : "particle 1",
 			"particle_y" : 1
 		}
 	},{
-		"title"  : "Acceleration Modulus",
+		"title"  : "Vertical Velocity",
 		"axis_x" : "time",
-		"axis_y" : "acceleration_modulus",
+		"axis_y" : "velocity_y",
+		"curve"  : {
+			"name"       : "particle 1",
+			"particle_y" : 1
+		}
+	},{
+		"title"  : "Vertical Acceleration",
+		"axis_x" : "time",
+		"axis_y" : "acceleration_y",
 		"curve"  : {
 			"name"       : "particle 1",
 			"particle_y" : 1
