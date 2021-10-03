@@ -5746,6 +5746,7 @@ classdef Read < handle
             if (fid < 0)
                 fprintf(2,'Error opening file of table values.\n');
                 fprintf(2,'It must have the same path of the project parameters file.\n');
+                vals = [];
                 status = 0; return;
             end
             vals = fscanf(fid,'%f',[col Inf])';

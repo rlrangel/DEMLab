@@ -1,0 +1,63 @@
+{
+	"ProblemData": {
+		"name"             : "pack_fall",
+		"analysis_type"    : "mechanical",
+		"model_parts_file" : "ModelParts_pack.txt"
+	},
+	"Solver": {
+		"integr_scheme_trans" : "forward_euler",
+		"integr_scheme_rotat" : "forward_euler",
+		"time_step"           : 5.0e-5,
+		"final_time"          : 3.0
+	},
+	"Search": {
+		"scheme"           : "verlet_list",
+		"search_frequency" : 20,
+		"verlet_frequency" : 2000,
+		"verlet_distance"  : 0.3
+	},
+	"BoundingBox": {
+		"shape"     : "rectangle",
+		"interval"  : [0.000,0.001],
+		"limit_min" : [0.000,0.500],
+		"limit_max" : [1.000,1.000]
+	},
+	"GlobalCondition": {
+		"gravity" : [0.00,-9.81]
+	},
+	"Material": {
+		"name"          : "solid_material",
+		"type"          : "solid",
+		"model_parts"   : ["PARTICLES","WALLS"],
+		"density"       : 1e3,
+		"young_modulus" : 1e6,
+		"poisson_ratio" : 0.3
+	},
+	"InteractionModel": {
+		"contact_force_normal": {
+			"model"                      : "viscoelastic_nonlinear",
+			"damping_formula"            : "critical_ratio",
+			"ratio"                      : 0.5,
+			"remove_artificial_cohesion" : true
+		},
+		"contact_force_tangent": {
+			"model"             : "sds_nonlinear",
+			"formula"           : "TTI",
+			"friction_coeff"    : 0.7,
+			"damping_coeff"     : 100
+		}
+	},
+	"Output": {
+		"progress_print" : 1.0,
+		"number_output"  : 100,
+		"save_workspace" : false
+	},
+	"Animation": [
+	{
+		"title"        : "motion",
+		"result"       : "motion",
+		"auto_play"    : true,
+		"bounding_box" : [-0.1,1.1,-0.1,1.1]
+	}
+	]
+}

@@ -1,0 +1,60 @@
+{
+	"ProblemData": {
+		"name"             : "rotating_drum_70",
+		"analysis_type"    : "mechanical",
+		"model_parts_file" : "ModelParts.txt"
+	},
+	"Solver": {
+		"integr_scheme_trans" : "forward_euler",
+		"integr_scheme_rotat" : "forward_euler",
+		"time_step"           : 5.0e-5,
+		"final_time"          : 10.0
+	},
+	"Search": {
+		"scheme"           : "verlet_list",
+		"search_frequency" : 20,
+		"verlet_frequency" : 1000,
+		"verlet_distance"  : 0.8
+	},
+	"GlobalCondition": {
+		"gravity" : [0.00,-9.81]
+	},
+	"FixedCondition": {
+		"velocity_rotation": {
+			"type"  : "constant",
+			"walls" : [1],
+			"value" : 1.0
+		}
+	},
+	"Material": {
+		"name"          : "solid_material",
+		"type"          : "solid",
+		"model_parts"   : ["PARTICLES","WALLS"],
+		"density"       : 1e3,
+		"young_modulus" : 1e6,
+		"poisson_ratio" : 0.3
+	},
+	"InteractionModel": {
+		"contact_force_normal": {
+			"model"                      : "viscoelastic_nonlinear",
+			"damping_formula"            : "critical_ratio",
+			"ratio"                      : 0.1,
+			"remove_artificial_cohesion" : true
+		},
+		"contact_force_tangent": {
+			"model"          : "spring_slider",
+			"friction_coeff" : 0.5
+		}
+	},
+	"Output": {
+		"progress_print" : 1.0,
+		"number_output"  : 100,
+		"save_workspace" : true
+	},
+	"Animation": {
+		"title"        : "Motion",
+		"result"       : "motion",
+		"auto_play"    : true,
+		"bounding_box" : [-11.0,11.0,-11.0,11.0]
+	}
+}
