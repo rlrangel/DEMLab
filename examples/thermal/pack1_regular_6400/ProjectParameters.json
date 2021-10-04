@@ -1,17 +1,13 @@
 {
 	"ProblemData": {
-		"name"             : "box2_regular_6400",
+		"name"             : "pack1_regular_6400",
 		"analysis_type"    : "thermal",
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
 		"integr_scheme_therm" : "forward_euler",
-		"time_step"           : 1.0e-3,
+		"time_step"           : 2.0e-3,
 		"final_time"          : 10.0
-	},
-	"GlobalCondition": {
-		"fluid_velocity"    : [0.0,0.0],
-		"fluid_temperature" : 300.0
 	},
 	"InitialCondition": {
 		"temperature": {
@@ -21,39 +17,18 @@
 	},
 	"FixedCondition": {
 		"temperature": {
-			"type"  : "constant",
-			"walls" : [2],
-			"value" : 300.0
-		}
-	},
-	"PrescribedCondition": {
-		"heat_rate": {
 			"type"        : "constant",
-			"model_parts" : ["TOP"],
-			"value"       : 100.0
+			"model_parts" : ["WALLS"],
+			"value"       : 400.0
 		}
 	},
-	"Material": [
-	{
+	"Material": {
 		"name"                 : "solid_material",
 		"type"                 : "solid",
-		"model_parts"          : ["PARTICLES"],
-		"walls"                : [2],
+		"model_parts"          : ["PARTICLES","WALLS"],
 		"density"              : 1000.0,
 		"thermal_conductivity" : 2000.0,
-		"heat_capacity"        : 10.0
-	},{
-		"name"                 : "fluid_material",
-		"type"                 : "fluid",
-		"density"              : 1000.0,
-		"thermal_conductivity" : 1.0,
-		"heat_capacity"        : 10.0,
-		"viscosity"            : 0.0001
-	}
-	],
-	"ConvectionModel": {
-		"nusselt_correlation" : "sphere_hanz_marshall",
-		"model_parts"         : ["PARTICLES"]
+		"heat_capacity"        : 50.0
 	},
 	"InteractionModel": {
 		"direct_conduction": {
@@ -77,16 +52,16 @@
 		"axis_x" : "time",
 		"axis_y" : "temperature",
 		"curve"  : {
-			"name"       : "mid particle",
-			"particle_y" : 3240
+			"name"       : "mid-top particle",
+			"particle_y" : particle 390
 		}
 	},{
 		"title"  : "Particle Rate of Heat Transfer",
 		"axis_x" : "time",
 		"axis_y" : "heat_rate",
 		"curve"  : {
-			"name"       : "mid particle",
-			"particle_y" : 3240
+			"name"       : "mid-top particle",
+			"particle_y" : particle 390
 		}
 	},{
 		"title"  : "Average Temperature",
@@ -94,6 +69,20 @@
 		"axis_y" : "temperature_avg",
 		"curve"  : {
 			"name" : "avg. temp."
+		}
+	},{
+		"title"  : "Minimum Temperature",
+		"axis_x" : "time",
+		"axis_y" : "temperature_min",
+		"curve"  : {
+			"name" : "min. temp."
+		}
+	},{
+		"title"  : "Maximum Temperature",
+		"axis_x" : "time",
+		"axis_y" : "temperature_max",
+		"curve"  : {
+			"name" : "max. temp."
 		}
 	}
 	]

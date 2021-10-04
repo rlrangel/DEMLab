@@ -1,12 +1,13 @@
 {
 	"ProblemData": {
-		"name"             : "colliding_balls",
-		"analysis_type"    : "mechanical",
+		"name"             : "collision_binary",
+		"analysis_type"    : "thermo_mechanical",
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
 		"integr_scheme_trans" : "forward_euler",
 		"integr_scheme_rotat" : "forward_euler",
+		"integr_scheme_therm" : "forward_euler",
 		"time_step"           : 1.0e-5,
 		"final_time"          : 2.0
 	},
@@ -15,13 +16,22 @@
 		"search_frequency" : 10
 	},
 	"InitialCondition": {
+		"temperature": [
+		{
+			"value"     : 300.0,
+			"particles" : [1]
+		},{
+			"value"     : 400.0,
+			"particles" : [2]
+		}
+		],
 		"translational_velocity": [
 		{
-			"value"       : [2.0,0.0],
-			"model_parts" : "Left"
+			"value"     : [2.0,0.0],
+			"particles" : [1]
 		},{
-			"value"       : [-2.0,0.0],
-			"model_parts" : "Right"
+			"value"     : [-2.0,0.0],
+			"particles" : [2]
 		}
 		]
 	},
@@ -29,9 +39,11 @@
 		"name"          : "solid_material",
 		"type"          : "solid",
 		"model_parts"   : ["PARTICLES"],
-		"density"       : 1e3,
-		"young_modulus" : 1e7,
-		"poisson_ratio" : 0.3
+		"density"              : 10,
+		"young_modulus"        : 1000000,
+		"poisson_ratio"        : 0.3,
+		"thermal_conductivity" : 1000,
+		"heat_capacity"        : 5
 	},
 	"InteractionModel": {
 		"contact_force_normal": {
@@ -43,6 +55,9 @@
 		"contact_force_tangent": {
 			"model"          : "spring_slider",
 			"friction_coeff" : 0.3
+		},
+		"direct_conduction": {
+			"model" : "bob"
 		}
 	},
 	"Output": {
@@ -50,12 +65,19 @@
 		"number_output"  : 200,
 		"save_workspace" : false
 	},
-	"Animation": {
+	"Animation": [
+	{
 		"title"        : "Motion",
 		"result"       : "motion",
 		"auto_play"    : true,
 		"bounding_box" : [-2.0,2.0,-2.0,2.0]
-	},
+	},{
+		"title"        : "Temperature",
+		"result"       : "temperature",
+		"auto_play"    : true,
+		"bounding_box" : [-2.0,2.0,-2.0,2.0]
+	}
+	],
 	"Graph": [
 	{
 		"title"  : "Horizontal Position",
@@ -66,21 +88,26 @@
 			"particle_y" : 1
 		}
 	},{
-		"title"  : "Horizontal Velocity",
+		"title"  : "Force Modulus",
 		"axis_x" : "time",
-		"axis_y" : "velocity_x",
+		"axis_y" : "force_modulus",
 		"curve"  : {
 			"name"       : "particle 1",
 			"particle_y" : 1
 		}
 	},{
-		"title"  : "Horizontal Acceleration",
+		"title"  : "Temperature",
 		"axis_x" : "time",
-		"axis_y" : "acceleration_x",
-		"curve"  : {
+		"axis_y" : "temperature",
+		"curve"  : [
+		{
 			"name"       : "particle 1",
 			"particle_y" : 1
+		},{
+			"name"       : "particle 2",
+			"particle_y" : 2
 		}
+		]
 	}
 	]
 }

@@ -1,6 +1,6 @@
 {
 	"ProblemData": {
-		"name"             : "pipe_2292",
+		"name"             : "heap",
 		"analysis_type"    : "thermal",
 		"model_parts_file" : "ModelParts.txt"
 	},
@@ -44,7 +44,7 @@
 		"title"        : "Temperature",
 		"result"       : "temperature",
 		"auto_play"    : true,
-		"bounding_box" : [-1.1,1.1,-1.1,1.1]
+		"bounding_box" : [-1.4,1.4,-0.1,1.0]
 	},
 	"Graph": [
 	{
@@ -52,16 +52,16 @@
 		"axis_x" : "time",
 		"axis_y" : "temperature",
 		"curve"  : {
-			"name"       : "mid-top particle",
-			"particle_y" : 169
+			"name"       : "top particle",
+			"particle_y" : particle 1361
 		}
 	},{
 		"title"  : "Particle Rate of Heat Transfer",
 		"axis_x" : "time",
 		"axis_y" : "heat_rate",
 		"curve"  : {
-			"name"       : "mid-top particle",
-			"particle_y" : 169
+			"name"       : "top particle",
+			"particle_y" : particle 1361
 		}
 	},{
 		"title"  : "Average Temperature",
@@ -69,6 +69,20 @@
 		"axis_y" : "temperature_avg",
 		"curve"  : {
 			"name" : "avg. temp."
+		}
+	},{
+		"title"  : "Minimum Temperature",
+		"axis_x" : "time",
+		"axis_y" : "temperature_min",
+		"curve"  : {
+			"name" : "min. temp."
+		}
+	},{
+		"title"  : "Maximum Temperature",
+		"axis_x" : "time",
+		"axis_y" : "temperature_max",
+		"curve"  : {
+			"name" : "max. temp."
 		}
 	}
 	]

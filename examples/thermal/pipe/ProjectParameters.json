@@ -1,12 +1,12 @@
 {
 	"ProblemData": {
-		"name"             : "box1_regular_400",
+		"name"             : "pipe",
 		"analysis_type"    : "thermal",
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
 		"integr_scheme_therm" : "forward_euler",
-		"time_step"           : 1.0e-2,
+		"time_step"           : 1.0e-3,
 		"final_time"          : 10.0
 	},
 	"InitialCondition": {
@@ -36,7 +36,7 @@
 		}
 	},
 	"Output": {
-		"progress_print" : 1.0,
+		"progress_print" : 0.1,
 		"number_output"  : 100,
 		"save_workspace" : true
 	},
@@ -44,7 +44,7 @@
 		"title"        : "Temperature",
 		"result"       : "temperature",
 		"auto_play"    : true,
-		"bounding_box" : [-0.1,1.1,-0.1,1.1]
+		"bounding_box" : [-1.1,1.1,-1.1,1.1]
 	},
 	"Graph": [
 	{
@@ -53,7 +53,7 @@
 		"axis_y" : "temperature",
 		"curve"  : {
 			"name"       : "mid-top particle",
-			"particle_y" : 390
+			"particle_y" : particle 169
 		}
 	},{
 		"title"  : "Particle Rate of Heat Transfer",
@@ -61,7 +61,7 @@
 		"axis_y" : "heat_rate",
 		"curve"  : {
 			"name"       : "mid-top particle",
-			"particle_y" : 390
+			"particle_y" : particle 169
 		}
 	},{
 		"title"  : "Average Temperature",
@@ -69,6 +69,20 @@
 		"axis_y" : "temperature_avg",
 		"curve"  : {
 			"name" : "avg. temp."
+		}
+	},{
+		"title"  : "Minimum Temperature",
+		"axis_x" : "time",
+		"axis_y" : "temperature_min",
+		"curve"  : {
+			"name" : "min. temp."
+		}
+	},{
+		"title"  : "Maximum Temperature",
+		"axis_x" : "time",
+		"axis_y" : "temperature_max",
+		"curve"  : {
+			"name" : "max. temp."
 		}
 	}
 	]

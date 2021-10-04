@@ -1,6 +1,6 @@
 {
 	"ProblemData": {
-		"name"             : "resting_sphere_5",
+		"name"             : "resting_multiple",
 		"analysis_type"    : "thermal",
 		"model_parts_file" : "ModelParts.txt"
 	},
@@ -15,16 +15,16 @@
 	},
 	"InitialCondition": {
 		"temperature": [
-			{
+		{
 			"particles" : [3],
 			"value"     : 250.0
-			},{
+		},{
 			"particles" : [1,2],
 			"value"     : 300.0
-			},{
+		},{
 			"particles" : [4,5],
 			"value"     : 350.0
-			}
+		}
 		]
 	},
 	"FixedCondition": {
@@ -68,7 +68,7 @@
 	"Output": {
 		"progress_print" : 1.0,
 		"number_output"  : 100,
-		"save_workspace" : true
+		"save_workspace" : false
 	},
 	"Animation": {
 		"title"        : "Temperature",
@@ -82,44 +82,44 @@
 		"axis_x" : "time",
 		"axis_y" : "temperature",
 		"curve"  : [
-			{
-			"name"       : "p1",
+		{
+			"name"       : "particle 1",
 			"particle_y" : 1
-			},{
-			"name"       : "p2",
+		},{
+			"name"       : "particle 2",
 			"particle_y" : 2
-			},{
-			"name"       : "p3",
+		},{
+			"name"       : "particle 3",
 			"particle_y" : 3
-			},{
-			"name"       : "p4",
+		},{
+			"name"       : "particle 4",
 			"particle_y" : 4
-			},{
-			"name"       : "p5",
+		},{
+			"name"       : "particle 5",
 			"particle_y" : 5
-			}
+		}
 		]
 	},{
 		"title"  : "Rate of Heat Transfer",
 		"axis_x" : "time",
 		"axis_y" : "heat_rate",
 		"curve"  : [
-			{
-			"name"       : "p1",
+		{
+			"name"       : "particle 1",
 			"particle_y" : 1
-			},{
-			"name"       : "p2",
+		},{
+			"name"       : "particle 2",
 			"particle_y" : 2
-			},{
-			"name"       : "p3",
+		},{
+			"name"       : "particle 3",
 			"particle_y" : 3
-			},{
-			"name"       : "p4",
+		},{
+			"name"       : "particle 4",
 			"particle_y" : 4
-			},{
-			"name"       : "p5",
+		},{
+			"name"       : "particle 5",
 			"particle_y" : 5
-			}
+		}
 		]
 	}
 	]
