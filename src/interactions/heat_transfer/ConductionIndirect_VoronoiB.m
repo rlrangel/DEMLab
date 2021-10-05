@@ -205,11 +205,11 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             D  = int.kinemat.dist/2;
             ks = int.eff_conduct;
             kf = drv.fluid.conduct;
-            c  = this.core;
+            rc = this.core * Rp;
             
             % Parameters
             rij = this.getConductRadius(int,drv,Rp);
-            a   = (1/c - 1/Rp)/(2*ks) + 1/(kf*Rp);
+            a   = (1/rc - 1/Rp)/(2*ks) + 1/(kf*Rp);
             b   = 1/(kf*D);
             c0  = D / sqrt(rij^2 + D^2);
             c1  = D / sqrt(Rc^2  + D^2);
