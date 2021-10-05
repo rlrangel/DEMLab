@@ -149,48 +149,15 @@ classdef ConductionIndirect_SurrLayer < ConductionIndirect
     methods
         %------------------------------------------------------------------
         function h = heatTransCoeff(this,int,drv)
-            if (int.kinemat.gen_type == int.kinemat.PARTICLE_WALL ||...
-                int.elem1.radius == int.elem2.radius)
-                % Assumption: Particle-Wall is treated as 2 equal size particles
-                h = this.evalIntegralMonosize(int,drv);
+            if (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                h = this.evalIntegralParticleParticle(int,drv);
             else
-                h = this.evalIntegralMultisize(int,drv);
+                h = this.analyticSolutionParticleWall(int,drv);
             end
         end
         
         %------------------------------------------------------------------
-        function h = evalIntegralMonosize(this,int,drv)
-            % Needed properties
-            Rp = int.elem1.radius;
-            L  = this.layer*Rp;
-            kf = drv.fluid.conduct;
-            d  = int.kinemat.dist;
-            S  = this.dist_min;
-            
-            % Parameters
-            a = (d-2*Rp)/Rp;
-            
-            if (d > 2*Rp+S)
-                rin = 0;
-            else
-                rin = sqrt(1-(S/Rp-a-1)^2);
-            end
-            
-            if (a > sqrt(((Rp+L)/Rp)^2-1)-1)
-                rout = sqrt(((Rp+L)/Rp)^2-(a+1)^2);
-            else
-                rout = 1;
-            end
-            
-            b = sqrt(1-rout^2);
-            c = sqrt(1-rin^2);
-            
-            % Analytic solution of integral
-            h = 2*pi*kf*Rp*((a+1)*log(abs((b-a-1)/(a-c+1)))+b-c);
-        end
-        
-        %------------------------------------------------------------------
-        function h = evalIntegralMultisize(this,int,drv)
+        function h = evalIntegralParticleParticle(this,int,drv)
             % Needed properties
             Rc = int.kinemat.contact_radius;
             R1 = int.elem1.radius;
@@ -217,6 +184,37 @@ classdef ConductionIndirect_SurrLayer < ConductionIndirect
             catch
                 h = 0;
             end
+        end
+        
+        %------------------------------------------------------------------
+        function h = analyticSolutionParticleWall(this,int,drv)
+            % Needed properties
+            Rp = int.elem1.radius;
+            L  = this.layer*Rp;
+            kf = drv.fluid.conduct;
+            d  = int.kinemat.dist;
+            S  = this.dist_min;
+            
+            % Parameters
+            a = (d-Rp)/Rp;
+            
+            if (d > Rp+S)
+                rin = 0;
+            else
+                rin = sqrt(1-(S/Rp-a-1)^2);
+            end
+            
+            if (a > sqrt(((Rp+L)/Rp)^2-1)-1)
+                rout = sqrt(((Rp+L)/Rp)^2-(a+1)^2);
+            else
+                rout = 1;
+            end
+            
+            b = sqrt(1-rout^2);
+            c = sqrt(1-rin^2);
+            
+            % Analytic solution of integral
+            h = 2*pi*kf*Rp*((a+1)*log(abs(b-a-1)/abs(a-c+1))+b-c);
         end
     end
 end
