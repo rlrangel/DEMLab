@@ -2,7 +2,7 @@
 	"ProblemData": {
 		"name"             : "pack_fall",
 		"analysis_type"    : "mechanical",
-		"model_parts_file" : "ModelParts_pack.txt"
+		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
 		"integr_scheme_trans" : "forward_euler",
