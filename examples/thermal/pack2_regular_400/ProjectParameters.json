@@ -78,7 +78,7 @@
 		"axis_y" : "temperature",
 		"curve"  : {
 			"name"       : "mid particle",
-			"particle_y" : particle 210
+			"particle_y" : 210
 		}
 	},{
 		"title"  : "Particle Rate of Heat Transfer",
@@ -86,7 +86,7 @@
 		"axis_y" : "heat_rate",
 		"curve"  : {
 			"name"       : "mid particle",
-			"particle_y" : particle 210
+			"particle_y" : 210
 		}
 	},{
 		"title"  : "Average Temperature",

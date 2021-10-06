@@ -52,8 +52,8 @@
 		"axis_x" : "time",
 		"axis_y" : "temperature",
 		"curve"  : {
-			"name"       : "p3260",
-			"particle_y" : particle 3260
+			"name"       : "particle 3260",
+			"particle_y" : 3260
 		}
 	}
 }
