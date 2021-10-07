@@ -234,7 +234,7 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             k2 = int.elem2.conduct;
             kf = drv.fluid.conduct;
             c  = this.core;
-            An = int.kinemat.vedge^2 * pi / 4;
+            An = this.getConductArea(int,drv,(R1+R2)/2); % Assumption: average radius
             
             % Parameters
             gamma1 = R1/d;
@@ -277,7 +277,23 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
                 else
                     por = int.elem1.porosity; % Assumption: particle porosity only
                 end
-                r = 0.56 * Rp / (1-por)^(1/3);
+                r = 0.56 * Rp * (1-por)^(-1/3);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function An = getConductArea(this,int,drv,Rp)
+            if (this.method == this.VORONOI_DIAGRAM)
+                An = int.kinemat.vedge^2 * pi / 4;
+            else
+                if (this.method == this.POROSITY_GLOBAL)
+                    por = drv.porosity;
+                elseif (this.method == this.POROSITY_LOCAL && int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                    por = (int.elem1.porosity+int.elem2.porosity)/2; % Assumption: average porosity
+                else
+                    por = int.elem1.porosity; % Assumption: particle porosity only
+                end
+                An = 0.985 * Rp^2 * (1-por)^(-2/3);
             end
         end
     end
