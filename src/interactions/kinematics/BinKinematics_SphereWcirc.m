@@ -76,21 +76,19 @@ classdef BinKinematics_SphereWcirc < BinKinematics
         %------------------------------------------------------------------
         function this = setRelPos(this,p,w)
             % Set distance and surface separation
-            % Assumption: distance between particle and wall assumed as the
-            % distance between two mono-size particles.
             direction = p.coord - w.center;
             d = norm(direction);
             if (d <= w.radius) % Particle inside circle
                 this.inside = true;
                 this.dir    = direction;
                 this.separ  = w.radius - d - p.radius;
-                this.dist   = 2 * (p.radius+this.separ/2);
+                this.dist   = p.radius + this.separ;
                 
             else % Particle outside circle
                 this.inside = false;
                 this.dir    = -direction;
                 this.separ  = d - w.radius - p.radius;
-                this.dist   = 2 * (p.radius+this.separ/2);
+                this.dist   = p.radius + this.separ;
             end
         end
         

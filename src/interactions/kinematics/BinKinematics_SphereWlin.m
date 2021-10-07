@@ -89,11 +89,8 @@ classdef BinKinematics_SphereWlin < BinKinematics
             end
 
             % Distance between particle surface and line segment
-            % Assumption: distance between particle and wall assumed as the
-            % distance between two mono-size particles.
-            d = norm(this.dir);
-            this.separ = d - p.radius;
-            this.dist = 2 * (p.radius+this.separ/2);
+            this.dist  = norm(this.dir);
+            this.separ = this.dist - p.radius;
         end
         
         %------------------------------------------------------------------
