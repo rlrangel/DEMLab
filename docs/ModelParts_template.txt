@@ -1,0 +1,22 @@
+%PARTICLES.SPHERE
+0
+0   0.0  0.0   0.0   0.0
+
+%PARTICLES.CYLINDER
+0
+0   0.0  0.0   0.0   0.0   0.0
+
+%WALLS.LINE
+0
+0   0.0  0.0  0.0  0.0
+
+%WALLS.CIRCLE
+0
+0   0.0  0.0   0.0
+
+%MODELPART
+NAME mp_name
+PARTICLES 0
+0 0 0
+WALLS 0
+0 0 0

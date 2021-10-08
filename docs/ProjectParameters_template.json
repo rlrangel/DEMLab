@@ -1,0 +1,387 @@
+{
+	"ProblemData": {
+		"name"             : "name",
+		"analysis_type"    : "mechanical"/"thermal"/"thermo_mechanical",
+		"model_parts_file" : "ModelParts.txt"
+	},
+	"Solver": {
+		"integr_scheme_trans" : "forward_euler"/"modified_euler"/"taylor_2",
+		"integr_scheme_rotat" : "forward_euler"/"modified_euler"/"taylor_2",
+		"integr_scheme_therm" : "forward_euler",
+		"auto_time_step"      : true/false,
+		"time_step"           : 0.0,
+		"final_time"          : 0.0,
+		"eval_frequency"      : 0
+	},
+	"Search": {
+		"scheme"           : "simple_loop"/"verlet_list",
+		"search_frequency" : 0,
+		"verlet_frequency" : 0,
+		"verlet_distance"  : 0.0
+	},
+	"BoundingBox": {
+		"shape"     : "rectangle"/"circle"/"polygon",
+		"interval"  : [0.0,0.0],
+		"limit_min" : [0.0,0.0],
+		"limit_max" : [0.0,0.0],
+		"center"    : [0.0,0.0],
+		"radius"    : 0.0,
+		"points_x"  : [0.0,0.0,0.0],
+		"points_y"  : [0.0,0.0,0.0]
+	},
+	"Sink": [
+	{
+		"shape"     : "rectangle"/"circle"/"polygon",
+		"interval"  : [0.0,0.0],
+		"limit_min" : [0.0,0.0],
+		"limit_max" : [0.0,0.0],
+		"center"    : [0.0,0.0],
+		"radius"    : 0.0,
+		"points_x"  : [0.0,0.0,0.0],
+		"points_y"  : [0.0,0.0,0.0]
+	},{
+		"shape"     : "rectangle"/"circle"/"polygon",
+		"interval"  : [0.0,0.0],
+		"limit_min" : [0.0,0.0],
+		"limit_max" : [0.0,0.0],
+		"center"    : [0.0,0.0],
+		"radius"    : 0.0,
+		"points_x"  : [0.0,0.0,0.0],
+		"points_y"  : [0.0,0.0,0.0]
+	}
+	],
+	"GlobalCondition": {
+		"gravity"             : [0.0,0.0],
+		"damping_translation" : 0.0,
+		"damping_rotation"    : 0.0,
+		"porosity"            : 0.0,
+		"fluid_velocity"      : [0.0,0.0],
+		"fluid_temperature"   : 0.0
+	},
+	"InitialCondition": {
+		"translational_velocity": {
+			"model_parts" : ["mp_name","PARTICLES"],
+			"particles"   : [0,0,0],
+			"value"       : [0.0,0.0]
+		},
+		"rotational_velocity": {
+			"model_parts" : ["mp_name","PARTICLES"],
+			"particles"   : [0,0,0],
+			"value"       : 0.0
+		},
+		"temperature": {
+			"model_parts" : ["mp_name","PARTICLES"],
+			"particles"   : [0,0,0],
+			"value"       : 0.0
+		}
+	},
+	"PrescribedCondition": {
+		"force": [
+		{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES"],
+			"particles"     : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : [0.0,0.0],
+			"initial_value" : [0.0,0.0],
+			"slope"         : [0.0,0.0],
+			"base_value"    : [0.0,0.0],
+			"amplitude"     : [0.0,0.0],
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		},{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES"],
+			"particles"     : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : [0.0,0.0],
+			"initial_value" : [0.0,0.0],
+			"slope"         : [0.0,0.0],
+			"base_value"    : [0.0,0.0],
+			"amplitude"     : [0.0,0.0],
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		}
+		],
+		"torque": [
+		{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES"],
+			"particles"     : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : 0.0,
+			"initial_value" : 0.0,
+			"slope"         : 0.0,
+			"base_value"    : 0.0,
+			"amplitude"     : 0.0,
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		},{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES"],
+			"particles"     : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : 0.0,
+			"initial_value" : 0.0,
+			"slope"         : 0.0,
+			"base_value"    : 0.0,
+			"amplitude"     : 0.0,
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		}
+		],
+		"heat_flux": [
+		{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES"],
+			"particles"     : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : 0.0,
+			"initial_value" : 0.0,
+			"slope"         : 0.0,
+			"base_value"    : 0.0,
+			"amplitude"     : 0.0,
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		},{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES"],
+			"particles"     : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : 0.0,
+			"initial_value" : 0.0,
+			"slope"         : 0.0,
+			"base_value"    : 0.0,
+			"amplitude"     : 0.0,
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		}
+		],
+		"heat_rate": [
+		{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES"],
+			"particles"     : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : 0.0,
+			"initial_value" : 0.0,
+			"slope"         : 0.0,
+			"base_value"    : 0.0,
+			"amplitude"     : 0.0,
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		},{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES"],
+			"particles"     : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : 0.0,
+			"initial_value" : 0.0,
+			"slope"         : 0.0,
+			"base_value"    : 0.0,
+			"amplitude"     : 0.0,
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		}
+		]
+	},
+	"FixedCondition": {
+		"velocity_translation": [
+		{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES","WALLS"],
+			"particles"     : [0,0,0],
+			"walls"         : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : [0.0,0.0],
+			"initial_value" : [0.0,0.0],
+			"slope"         : [0.0,0.0],
+			"base_value"    : [0.0,0.0],
+			"amplitude"     : [0.0,0.0],
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		},{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES","WALLS"],
+			"particles"     : [0,0,0],
+			"walls"         : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : [0.0,0.0],
+			"initial_value" : [0.0,0.0],
+			"slope"         : [0.0,0.0],
+			"base_value"    : [0.0,0.0],
+			"amplitude"     : [0.0,0.0],
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		}
+		],
+		"velocity_rotation": [
+		{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES","WALLS"],
+			"particles"     : [0,0,0],
+			"walls"         : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : 0.0,
+			"initial_value" : 0.0,
+			"slope"         : 0.0,
+			"base_value"    : 0.0,
+			"amplitude"     : 0.0,
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		},{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES","WALLS"],
+			"particles"     : [0,0,0],
+			"walls"         : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : 0.0,
+			"initial_value" : 0.0,
+			"slope"         : 0.0,
+			"base_value"    : 0.0,
+			"amplitude"     : 0.0,
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		}
+		],
+		"temperature": [
+		{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES","WALLS"],
+			"particles"     : [0,0,0],
+			"walls"         : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : 0.0,
+			"initial_value" : 0.0,
+			"slope"         : 0.0,
+			"base_value"    : 0.0,
+			"amplitude"     : 0.0,
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		},{
+			"type"          : "constant"/"linear"/"oscillatory"/"table",
+			"model_parts"   : ["mp_name","PARTICLES","WALLS"],
+			"particles"     : [0,0,0],
+			"walls"         : [0,0,0],
+			"interval"      : [0.0,0.0],
+			"value"         : 0.0,
+			"initial_value" : 0.0,
+			"slope"         : 0.0,
+			"base_value"    : 0.0,
+			"amplitude"     : 0.0,
+			"period"        : 0.0,
+			"shift"         : 0.0,
+			"values"        : [[0.0,0.0,0.0],[0.0,0.0,0.0]],
+			"file"          : "table.txt",
+			"interpolation" : "linear"/"makima"/"pchip"/"spline"
+		}
+		]
+	},
+	
+	
+	
+	
+	
+	
+	"Material": {
+		"name"          : "solid_material",
+		"type"          : "solid",
+		"model_parts"   : ["PARTICLES","WALLS"],
+		"density"              : 10,
+		"young_modulus"        : 1000000,
+		"poisson_ratio"        : 0.3,
+		"thermal_conductivity" : 1000,
+		"heat_capacity"        : 10
+	},
+	"InteractionModel": {
+		"contact_force_normal": {
+			"model"                      : "viscoelastic_linear",
+			"stiff_formula"              : "energy",
+			"restitution_coeff"          : 0.8,
+			"remove_artificial_cohesion" : true
+		},
+		"contact_force_tangent": {
+			"model"          : "spring_slider",
+			"friction_coeff" : 0.3
+		},
+		"direct_conduction": {
+			"model" : "bob"
+		}
+	},
+	"Output": {
+		"progress_print" : 1.0,
+		"number_output"  : 200,
+		"save_workspace" : false
+	},
+	"Animation": [
+	{
+		"title"        : "Motion",
+		"result"       : "motion",
+		"auto_play"    : true,
+		"bounding_box" : [-2.0,2.0,-1.0,3.0]
+	},{
+		"title"        : "Temperature",
+		"result"       : "temperature",
+		"auto_play"    : true,
+		"bounding_box" : [-2.0,2.0,-1.0,3.0]
+	}
+	],
+	"Graph": [
+	{
+		"title"  : "Vertical Position",
+		"axis_x" : "time",
+		"axis_y" : "coordinate_y",
+		"curve"  : {
+			"name"       : "particle 1",
+			"particle_y" : 1
+		}
+	},{
+		"title"  : "Temperature",
+		"axis_x" : "time",
+		"axis_y" : "temperature",
+		"curve"  : {
+			"name"       : "particle 1",
+			"particle_y" : 1
+		}
+	}
+	]
+}
