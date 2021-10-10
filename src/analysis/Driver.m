@@ -99,10 +99,11 @@ classdef Driver < handle
         
         % Output generation
         path_out   string    = string.empty;      % path to output folder
-        result     Result    = Result.empty;      % handle to object of Result class
-        graphs     Graph     = Graph.empty;       % handles to objects of Graph class
-        animations Animation = Animation.empty;   % handles to objects of Animation class
         save_ws    logical   = logical.empty;     % flag for saving workspace into a storage file
+        result     Result    = Result.empty;      % handle to object of Result class
+        animations Animation = Animation.empty;   % handles to objects of Animation class
+        graphs     Graph     = Graph.empty;       % handles to objects of Graph class
+        print      Print     = Print.empty;       % handle to object of Print class
         
         % Output control
         nprog double  = double.empty;    % progress print frequency (% of total time)
@@ -170,6 +171,9 @@ classdef Driver < handle
                     save(strcat(drv.path_out,drv.name));
                     drv.total_time = drv.start_time + toc;
                 end
+                if (~isempty(drv.print))
+                    drv.print.execute(drv);
+                end
                 drv.tout = drv.tout + drv.nout - 10e-10; % tollerance to deal with precision issues
                 drv.result.updateIndex();
                 drv.store = true;
@@ -204,6 +208,9 @@ classdef Driver < handle
                     w = this.walls(i);
                     this.result.storeWallPosition(w);
                     this.result.storeWallTemperature(w);
+                end
+                if (~isempty(this.print))
+                    this.print.execute(this);
                 end
             end
         end

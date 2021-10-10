@@ -194,6 +194,11 @@ classdef Driver_ThermoMechanical < Driver
                 this.result.storeWallTemperature(w);   % initial
             end
             
+            % Print initial configuration
+            if (~isempty(this.print))
+                this.print.execute(this);
+            end
+            
             % Initialize output control variables
             this.initOutputVars();
         end

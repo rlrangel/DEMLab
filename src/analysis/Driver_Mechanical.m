@@ -162,6 +162,11 @@ classdef Driver_Mechanical < Driver
                 this.result.storeWallPosition(w);
             end
             
+            % Print initial configuration
+            if (~isempty(this.print))
+                this.print.execute(this);
+            end
+            
             % Initialize output control variables
             this.initOutputVars();
         end

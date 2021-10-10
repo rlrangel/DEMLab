@@ -105,10 +105,13 @@ classdef Read < handle
                 status = this.getOutput(json,drv);
             end
             if (status)
+                status = this.getAnimation(json,drv);
+            end
+            if (status)
                 status = this.getGraph(json,drv);
             end
             if (status)
-                status = this.getAnimation(json,drv);
+                status = this.getPrint(json,drv);
             end
         end
         
@@ -3126,7 +3129,7 @@ classdef Read < handle
                 drv.save_ws = save_ws;
             end
             
-            % Reults to store (besides those always saved and needed for graphs/animations)
+            % Reults to store (besides those always saved and needed for graphs/animations/print)
             if (isfield(OUT,'saved_results'))
                 % Possible results
                 results_general = ["time","step","radius","mass","coord_x","coord_y","orientation","wall_position"];
@@ -3241,6 +3244,190 @@ classdef Read < handle
                     elseif (strcmp(res,'conduction_indirect_total'))
                         drv.result.has_tot_conduction_indirect = true;
                     end
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function status = getAnimation(this,json,drv)
+            status = 1;
+            if (~isfield(json,'Animation'))
+                return;
+            end
+            
+            for i = 1:length(json.Animation)
+                if (isstruct(json.Animation))
+                    ANM = json.Animation(i);
+                elseif (iscell(json.Animation))
+                    ANM = json.Animation{i};
+                end
+                
+                % Create animation object
+                anim = Animation();
+                drv.animations(i) = anim;
+                
+                % Title
+                if (isfield(ANM,'title'))
+                    title = string(ANM.title);
+                    if (~this.isStringArray(title,1))
+                        this.invalidParamError('Animation.title','It must be a string with the title of the animation');
+                        status = 0; return;
+                    end
+                    anim.anim_title = title;
+                else
+                    anim.anim_title = sprintf('Animation %d',i);
+                end
+                
+                % Results colorbar range (for scalar results)
+                if (isfield(ANM,'colorbar_range'))
+                    range = ANM.colorbar_range;
+                    if (~this.isDoubleArray(range,2) || range(1) >= range(2))
+                        this.invalidParamError('Animation.colorbar_range','It must be a pair of numeric values: [min,max] where min < max');
+                        status = 0; return;
+                    end
+                    anim.res_range = range;
+                end
+                
+                % Automatic play
+                if (isfield(ANM,'auto_play'))
+                    play = ANM.auto_play;
+                    if (~this.isLogicalArray(play,1))
+                        this.invalidParamError('Animation.auto_play','It must be a boolean: true or false');
+                        status = 0; return;
+                    end
+                    anim.play = play;
+                end
+                
+                % Plot particles IDs
+                if (isfield(ANM,'particle_ids'))
+                    pids = ANM.particle_ids;
+                    if (~this.isLogicalArray(pids,1))
+                        this.invalidParamError('Animation.particle_id','It must be a boolean: true or false');
+                        status = 0; return;
+                    end
+                    anim.pids = pids;
+                end
+                
+                % Bounding box
+                if (isfield(ANM,'bounding_box'))
+                    bbox = ANM.bounding_box;
+                    if (~this.isDoubleArray(bbox,4) || bbox(1) >= bbox(2) || bbox(3) >= bbox(4))
+                        this.invalidParamError('Animation.bounding_box','It must be a numeric array with four values: Xmin, Xmax, Ymin, Ymax');
+                        status = 0; return;
+                    end
+                    anim.bbox = bbox;
+                else
+                    this.warnMsg('Animation has no fixed limits (bounding box). It may lead to unsatisfactory animation behavior.');
+                end
+                
+                % Array of possible results
+                results_general = ["radius","mass",...
+                                   "motion","coordinate_x","coordinate_y","orientation"];
+                results_mech    = ["force_vector","force_modulus","force_x","force_y","torque",...
+                                   "velocity_vector","velocity_modulus","velocity_x","velocity_y","velocity_rot",...
+                                   "acceleration_vector","acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
+                results_therm   = ["heat_rate","temperature"];
+                
+                % Result type
+                if (~isfield(ANM,'result'))
+                    this.missingDataError('Animation.result');
+                    status = 0; return;
+                end
+                result = string(ANM.result);
+                if (~this.isStringArray(result,1) ||...
+                   (~ismember(result,results_general) && ~ismember(result,results_mech) && ~ismember(result,results_therm)))
+                    this.invalidParamError('Animation.result','Available result options can be checked in the documentation');
+                    status = 0; return;
+                elseif (drv.type == drv.MECHANICAL && ismember(result,results_therm))
+                    this.invalidParamError('Animation.result','Available result options can be checked in the documentation');
+                    status = 0; return;
+                elseif (drv.type == drv.THERMAL && ismember(result,results_mech))
+                    this.invalidParamError('Animation.result','Available result options can be checked in the documentation');
+                    status = 0; return;
+                elseif (strcmp(result,'radius'))
+                    anim.res_type = drv.result.RADIUS;
+                    drv.result.has_radius = true;
+                elseif (strcmp(result,'mass'))
+                    anim.res_type = drv.result.MASS;
+                    drv.result.has_mass = true;
+                elseif (strcmp(result,'motion'))
+                    anim.res_type = drv.result.MOTION;
+                    drv.result.has_orientation = true;
+                elseif (strcmp(result,'coordinate_x'))
+                    anim.res_type = drv.result.COORDINATE_X;
+                    drv.result.has_coord_x = true;
+                elseif (strcmp(result,'coordinate_y'))
+                    anim.res_type = drv.result.COORDINATE_Y;
+                    drv.result.has_coord_y = true;
+                elseif (strcmp(result,'orientation'))
+                    anim.res_type = drv.result.ORIENTATION;
+                    drv.result.has_orientation = true;
+                elseif (strcmp(result,'force_vector'))
+                    anim.res_type = drv.result.FORCE_VEC;
+                    drv.result.has_force_x = true;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(result,'force_modulus'))
+                    anim.res_type = drv.result.FORCE_MOD;
+                    drv.result.has_force_x = true;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(result,'force_x'))
+                    anim.res_type = drv.result.FORCE_X;
+                    drv.result.has_force_x = true;
+                elseif (strcmp(result,'force_y'))
+                    anim.res_type = drv.result.FORCE_Y;
+                    drv.result.has_force_y = true;
+                elseif (strcmp(result,'torque'))
+                    anim.res_type = drv.result.TORQUE;
+                    drv.result.has_torque = true;
+                elseif (strcmp(result,'velocity_vector'))
+                    anim.res_type = drv.result.VELOCITY_VEC;
+                    drv.result.has_velocity_x = true;
+                    drv.result.has_velocity_y = true;
+                elseif (strcmp(result,'velocity_modulus'))
+                    anim.res_type = drv.result.VELOCITY_MOD;
+                    drv.result.has_velocity_x = true;
+                    drv.result.has_velocity_y = true;
+                elseif (strcmp(result,'velocity_x'))
+                    anim.res_type = drv.result.VELOCITY_X;
+                    drv.result.has_velocity_x = true;
+                elseif (strcmp(result,'velocity_y'))
+                    anim.res_type = drv.result.VELOCITY_Y;
+                    drv.result.has_velocity_y = true;
+                elseif (strcmp(result,'velocity_rot'))
+                    anim.res_type = drv.result.VELOCITY_ROT;
+                    drv.result.has_velocity_rot = true;
+                elseif (strcmp(result,'acceleration_vector'))
+                    anim.res_type = drv.result.ACCELERATION_VEC;
+                    drv.result.has_acceleration_x = true;
+                    drv.result.has_acceleration_y = true;
+                elseif (strcmp(result,'acceleration_modulus'))
+                    anim.res_type = drv.result.ACCELERATION_MOD;
+                    drv.result.has_acceleration_x = true;
+                    drv.result.has_acceleration_y = true;
+                elseif (strcmp(result,'acceleration_x'))
+                    anim.res_type = drv.result.ACCELERATION_X;
+                    drv.result.has_acceleration_x = true;
+                elseif (strcmp(result,'acceleration_y'))
+                    anim.res_type = drv.result.ACCELERATION_Y;
+                    drv.result.has_acceleration_y = true;
+                elseif (strcmp(result,'acceleration_rot'))
+                    anim.res_type = drv.result.ACCELERATION_ROT;
+                    drv.result.has_acceleration_rot = true;
+                elseif (strcmp(result,'temperature'))
+                    anim.res_type = drv.result.TEMPERATURE;
+                    drv.result.has_temperature = true;
+                    drv.result.has_wall_temperature = true;
+                elseif (strcmp(result,'heat_rate'))
+                    anim.res_type = drv.result.HEAT_RATE;
+                    drv.result.has_heat_rate = true;
+                end
+            end
+            
+            % Check for animations with same title
+            for i = 1:length(drv.animations)
+                if (length(findobj(drv.animations,'anim_title',drv.animations(i).anim_title)) > 1)
+                    this.invalidParamError('Repeated animation title.','Animation titles must be unique');
+                    status = 0; return;
                 end
             end
         end
@@ -3672,185 +3859,60 @@ classdef Read < handle
         end
         
         %------------------------------------------------------------------
-        function status = getAnimation(this,json,drv)
+        function status = getPrint(this,json,drv)
             status = 1;
-            if (~isfield(json,'Animation'))
+            if (~isfield(json,'Print'))
                 return;
             end
             
-            for i = 1:length(json.Animation)
-                if (isstruct(json.Animation))
-                    ANM = json.Animation(i);
-                elseif (iscell(json.Animation))
-                    ANM = json.Animation{i};
-                end
-                
-                % Create animation object
-                anim = Animation();
-                drv.animations(i) = anim;
-                
-                % Title
-                if (isfield(ANM,'title'))
-                    title = string(ANM.title);
-                    if (~this.isStringArray(title,1))
-                        this.invalidParamError('Animation.title','It must be a string with the title of the animation');
-                        status = 0; return;
-                    end
-                    anim.anim_title = title;
-                else
-                    anim.anim_title = sprintf('Animation %d',i);
-                end
-                
-                % Results colorbar range (for scalar results)
-                if (isfield(ANM,'colorbar_range'))
-                    range = ANM.colorbar_range;
-                    if (~this.isDoubleArray(range,2) || range(1) >= range(2))
-                        this.invalidParamError('Animation.colorbar_range','It must be a pair of numeric values: [min,max] where min < max');
-                        status = 0; return;
-                    end
-                    anim.res_range = range;
-                end
-                
-                % Automatic play
-                if (isfield(ANM,'auto_play'))
-                    play = ANM.auto_play;
-                    if (~this.isLogicalArray(play,1))
-                        this.invalidParamError('Animation.auto_play','It must be a boolean: true or false');
-                        status = 0; return;
-                    end
-                    anim.play = play;
-                end
-                
-                % Plot particles IDs
-                if (isfield(ANM,'particle_ids'))
-                    pids = ANM.particle_ids;
-                    if (~this.isLogicalArray(pids,1))
-                        this.invalidParamError('Animation.particle_id','It must be a boolean: true or false');
-                        status = 0; return;
-                    end
-                    anim.pids = pids;
-                end
-                
-                % Bounding box
-                if (isfield(ANM,'bounding_box'))
-                    bbox = ANM.bounding_box;
-                    if (~this.isDoubleArray(bbox,4) || bbox(1) >= bbox(2) || bbox(3) >= bbox(4))
-                        this.invalidParamError('Animation.bounding_box','It must be a numeric array with four values: Xmin, Xmax, Ymin, Ymax');
-                        status = 0; return;
-                    end
-                    anim.bbox = bbox;
-                else
-                    this.warnMsg('Animation has no fixed limits (bounding box). It may lead to unsatisfactory animation behavior.');
-                end
-                
-                % Array of possible results
-                results_general = ["radius","mass",...
-                                   "motion","coordinate_x","coordinate_y","orientation"];
-                results_mech    = ["force_vector","force_modulus","force_x","force_y","torque",...
-                                   "velocity_vector","velocity_modulus","velocity_x","velocity_y","velocity_rot",...
-                                   "acceleration_vector","acceleration_modulus","acceleration_x","acceleration_y","acceleration_rot"];
-                results_therm   = ["heat_rate","temperature"];
-                
-                % Result type
-                if (~isfield(ANM,'result'))
-                    this.missingDataError('Animation.result');
-                    status = 0; return;
-                end
-                result = string(ANM.result);
-                if (~this.isStringArray(result,1) ||...
-                   (~ismember(result,results_general) && ~ismember(result,results_mech) && ~ismember(result,results_therm)))
-                    this.invalidParamError('Animation.result','Available result options can be checked in the documentation');
-                    status = 0; return;
-                elseif (drv.type == drv.MECHANICAL && ismember(result,results_therm))
-                    this.invalidParamError('Animation.result','Available result options can be checked in the documentation');
-                    status = 0; return;
-                elseif (drv.type == drv.THERMAL && ismember(result,results_mech))
-                    this.invalidParamError('Animation.result','Available result options can be checked in the documentation');
-                    status = 0; return;
-                elseif (strcmp(result,'radius'))
-                    anim.res_type = drv.result.RADIUS;
-                    drv.result.has_radius = true;
-                elseif (strcmp(result,'mass'))
-                    anim.res_type = drv.result.MASS;
-                    drv.result.has_mass = true;
-                elseif (strcmp(result,'motion'))
-                    anim.res_type = drv.result.MOTION;
-                    drv.result.has_orientation = true;
-                elseif (strcmp(result,'coordinate_x'))
-                    anim.res_type = drv.result.COORDINATE_X;
-                    drv.result.has_coord_x = true;
-                elseif (strcmp(result,'coordinate_y'))
-                    anim.res_type = drv.result.COORDINATE_Y;
-                    drv.result.has_coord_y = true;
-                elseif (strcmp(result,'orientation'))
-                    anim.res_type = drv.result.ORIENTATION;
-                    drv.result.has_orientation = true;
-                elseif (strcmp(result,'force_vector'))
-                    anim.res_type = drv.result.FORCE_VEC;
-                    drv.result.has_force_x = true;
-                    drv.result.has_force_y = true;
-                elseif (strcmp(result,'force_modulus'))
-                    anim.res_type = drv.result.FORCE_MOD;
-                    drv.result.has_force_x = true;
-                    drv.result.has_force_y = true;
-                elseif (strcmp(result,'force_x'))
-                    anim.res_type = drv.result.FORCE_X;
-                    drv.result.has_force_x = true;
-                elseif (strcmp(result,'force_y'))
-                    anim.res_type = drv.result.FORCE_Y;
-                    drv.result.has_force_y = true;
-                elseif (strcmp(result,'torque'))
-                    anim.res_type = drv.result.TORQUE;
-                    drv.result.has_torque = true;
-                elseif (strcmp(result,'velocity_vector'))
-                    anim.res_type = drv.result.VELOCITY_VEC;
-                    drv.result.has_velocity_x = true;
-                    drv.result.has_velocity_y = true;
-                elseif (strcmp(result,'velocity_modulus'))
-                    anim.res_type = drv.result.VELOCITY_MOD;
-                    drv.result.has_velocity_x = true;
-                    drv.result.has_velocity_y = true;
-                elseif (strcmp(result,'velocity_x'))
-                    anim.res_type = drv.result.VELOCITY_X;
-                    drv.result.has_velocity_x = true;
-                elseif (strcmp(result,'velocity_y'))
-                    anim.res_type = drv.result.VELOCITY_Y;
-                    drv.result.has_velocity_y = true;
-                elseif (strcmp(result,'velocity_rot'))
-                    anim.res_type = drv.result.VELOCITY_ROT;
-                    drv.result.has_velocity_rot = true;
-                elseif (strcmp(result,'acceleration_vector'))
-                    anim.res_type = drv.result.ACCELERATION_VEC;
-                    drv.result.has_acceleration_x = true;
-                    drv.result.has_acceleration_y = true;
-                elseif (strcmp(result,'acceleration_modulus'))
-                    anim.res_type = drv.result.ACCELERATION_MOD;
-                    drv.result.has_acceleration_x = true;
-                    drv.result.has_acceleration_y = true;
-                elseif (strcmp(result,'acceleration_x'))
-                    anim.res_type = drv.result.ACCELERATION_X;
-                    drv.result.has_acceleration_x = true;
-                elseif (strcmp(result,'acceleration_y'))
-                    anim.res_type = drv.result.ACCELERATION_Y;
-                    drv.result.has_acceleration_y = true;
-                elseif (strcmp(result,'acceleration_rot'))
-                    anim.res_type = drv.result.ACCELERATION_ROT;
-                    drv.result.has_acceleration_rot = true;
-                elseif (strcmp(result,'temperature'))
-                    anim.res_type = drv.result.TEMPERATURE;
-                    drv.result.has_temperature = true;
-                    drv.result.has_wall_temperature = true;
-                elseif (strcmp(result,'heat_rate'))
-                    anim.res_type = drv.result.HEAT_RATE;
-                    drv.result.has_heat_rate = true;
-                end
+            % Create print object
+            print = Print();
+            drv.print = print;
+            
+            % Array of possible results
+            results_general = "position";
+            results_mech    = ["velocity","acceleration"];
+            results_therm   = "temperature";
+            
+            % Set results to be printed
+            RES = json.Print.printed_results;
+            if (~isfield(json.Print,'printed_results'))
+                return;
             end
             
-            % Check for animations with same title
-            for i = 1:length(drv.animations)
-                if (length(findobj(drv.animations,'anim_title',drv.animations(i).anim_title)) > 1)
-                    this.invalidParamError('Repeated animation title.','Animation titles must be unique');
+            for i = 1:length(RES)
+                res = string(RES(i));
+                
+                % Check data
+                if (~this.isStringArray(res,1))
+                    this.invalidParamError('Print.printed_results','It must be a list of pre-defined strings of the result types');
                     status = 0; return;
+                elseif (~ismember(res,results_general) &&...
+                        ~ismember(res,results_mech)    &&...
+                        ~ismember(res,results_therm))
+                    this.warnMsg('Result %s is not available for printing in this type of analysis.',res);
+                    continue;
+                elseif (drv.type == drv.MECHANICAL     &&...
+                        ~ismember(res,results_general) &&...
+                        ~ismember(res,results_mech))
+                    this.warnMsg('Result %s is not available for printing in this type of analysis.',res);
+                    continue;
+                elseif (drv.type == drv.THERMAL        &&...
+                        ~ismember(res,results_general) &&...
+                        ~ismember(res,results_therm))
+                    this.warnMsg('Result %s is not available for printing in this type of analysis.',res);
+                    continue;
+                end
+                
+                % Set flag
+                if (strcmp(res,'position'))
+                    print.results(i) = drv.result.MOTION;
+                elseif (strcmp(res,'velocity'))
+                    print.results(i) = drv.result.VELOCITY_VEC;
+                elseif (strcmp(res,'acceleration'))
+                    print.results(i) = drv.result.ACCELERATION_VEC;
+                elseif (strcmp(res,'temperature'))
+                    print.results(i) = drv.result.TEMPERATURE;
                 end
             end
         end

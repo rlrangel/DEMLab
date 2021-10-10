@@ -508,5 +508,8 @@
 		}
 		]
 	}
-	]
+	],
+	"Print": {
+		"printed_results" : ["position","velocity","acceleration","temperature"]
+	}
 }

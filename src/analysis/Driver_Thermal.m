@@ -209,6 +209,11 @@ classdef Driver_Thermal < Driver
             % Erase handles to removed interactions from global list
             this.interacts(~isvalid(this.interacts)) = [];
             this.n_interacts = length(this.interacts);
+            
+            % Print initial configuration
+            if (~isempty(this.print))
+                this.print.execute(this);
+            end
         end
         
         %------------------------------------------------------------------
