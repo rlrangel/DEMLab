@@ -24,7 +24,7 @@ classdef Master
             this.printHeader();
             
             % Get input file name and path
-            if (isempty(file_fullname))
+            if (isempty(file_fullname) || file_fullname == "")
                 filter  = {'*.json','Parameters File (*.json)';'*.mat','Storage File (*.mat)'};
                 title   = 'DEMLab - Input file';
                 default = 'ProjectParameters.json';
