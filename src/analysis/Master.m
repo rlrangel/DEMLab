@@ -19,42 +19,51 @@ classdef Master
     %% Public methods: main function
     methods
         %------------------------------------------------------------------
-        function execute(this,file_fullname)
+        function execute(this,file_fullnames)
             % Print header
             this.printHeader();
             
-            % Get input file name and path
-            if (isempty(file_fullname) || file_fullname == "")
+            % Get input files
+            if (isempty(file_fullnames) || (length(file_fullnames) == 1 && file_fullnames == ""))
+                % Open selection dialog
                 filter  = {'*.json','Parameters File (*.json)';'*.mat','Storage File (*.mat)'};
                 title   = 'DEMLab - Input file';
                 default = 'ProjectParameters.json';
-                [file_name,path_in] = uigetfile(filter,title,default,'MultiSelect','on');
-                if (isequal(file_name,0))
+                [file_names,path_in] = uigetfile(filter,title,default,'MultiSelect','on');
+                if (isequal(file_names,0))
                     fprintf('No file selected.\n');
                     fprintf('\nExiting program...\n');
                     return;
                 end
-                file_fullname = fullfile(path_in,file_name);
+                file_fullnames = fullfile(path_in,file_names);
                 
-                % Convert to cell to allow multiple files
-                if (~iscell(file_fullname))
-                    file_fullname = {file_fullname};
-                end
+                % Convert to string array
+                file_fullnames = string(file_fullnames);
+                path_in        = string(path_in);
             else
-                path_in = strcat(fileparts(file_fullname(1)),'\');
+                % Convert to string array
+                file_fullnames = string(file_fullnames);
                 
-                % Convert to cell to allow multiple files
-                if (length(file_fullname) > 1)
-                    file_fullname = cellstr(file_fullname);
+                % Eliminate empty strings
+                file_fullnames = file_fullnames(file_fullnames~="");
+                
+                % Check for non empty files
+                if (isempty(file_fullnames))
+                    fprintf('No file selected.\n');
+                    fprintf('\nExiting program...\n');
+                    return;
                 end
+                
+                % Get path of input files
+                path_in = strcat(fileparts(file_fullnames(1)),'\');
             end
             
             % Display input files
-            n_files = length(file_fullname);
+            n_files = length(file_fullnames);
             if (n_files > 1)
                 fprintf('%d input files selected:\n',n_files);
                 for i = 1:n_files
-                    fprintf('%s\n',string(file_fullname(i)));
+                    fprintf('%s\n',file_fullnames(i));
                 end
                 fprintf('\n------------------------------------------------------------------\n\n');
             end
@@ -64,7 +73,7 @@ classdef Master
                 is_last = (i == n_files);
                 
                 % Check extension
-                cur_file = string(file_fullname(i));
+                cur_file = file_fullnames(i);
                 [~,~,ext] = fileparts(cur_file);
                 
                 % Clear driver

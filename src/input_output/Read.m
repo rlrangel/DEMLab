@@ -3102,8 +3102,8 @@ classdef Read < handle
             % Progress print frequency
             if (isfield(OUT,'progress_print'))
                 prog = OUT.progress_print;
-                if (~this.isDoubleArray(prog,1) || prog <= 0 || prog > 100)
-                    this.invalidParamError('Output.progress_print','It must be a numeric value between 0.0 and 100.0');
+                if (~this.isDoubleArray(prog,1) || prog <= 0)
+                    this.invalidParamError('Output.progress_print','It must be a positive value');
                     status = 0; return;
                 end
                 drv.nprog = prog;
