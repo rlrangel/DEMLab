@@ -28,9 +28,9 @@
 %
 % There are two ways to select an input file:
 %
-% * Provide its complete path thorugh the string variable _file_ in the end
-%   of this script (e.g. file = "C:\...\ProjectParameters.json").
-% * Leave the string variable _file_ blank (file = "") and use the
+% * Provide its complete path thorugh the string variable _files_ in the
+%   end of this script (e.g. files = "C:\...\ProjectParameters.json").
+% * Leave the string variable _files_ blank (files = "") and use the
 %   selection dialog that appears when running this script.
 %
 % In both cases, multiple files can be selected to run simulations

@@ -338,19 +338,16 @@ classdef Master
         
         %------------------------------------------------------------------
         function compareTest(~,drv)
-%             name_1 = strcat(drv.path_out,"base_results.pos");
-%             name_2 = strcat(drv.path_out,drv.name,"mech_bounce_10001.pos");
-%             
-%             file_1 = javaObject('java.io.File',name_1);
-%             file_2 = javaObject('java.io.File',name_2);
-% 
-%             is_equal = javaMethod('contentEquals','org.apache.commons.io.FileUtils',file_1,file_2);
-%             
-%             if (is_equal)
-%                 fprintf('\nTest passed!\n');
-%             else
-%                 fprintf('\nResults are different!\n');
-%             end
+            file_1 = javaObject('java.io.File',strcat(drv.path_out,"base_results.pos"));
+            file_2 = javaObject('java.io.File',strcat(drv.path_out,drv.name,".pos"));
+            
+            is_equal = javaMethod('contentEquals','org.apache.commons.io.FileUtils',file_1,file_2);
+            
+            if (is_equal)
+                fprintf(1,'\nTest passed!\n');
+            else
+                fprintf(2,'\nResults are different!\n');
+            end
         end
         
         %------------------------------------------------------------------
