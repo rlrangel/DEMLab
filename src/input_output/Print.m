@@ -34,7 +34,11 @@ classdef Print < handle
             % Create file
             if (this.single_file)
                 fname = strcat(drv.path_out,drv.name,".pos");
-                fid = fopen(fname,'a');
+                if (drv.step == 0)
+                    fid = fopen(fname,'w'); % clear and write
+                else
+                    fid = fopen(fname,'a'); % append
+                end
             else
                 fname = strcat(drv.path_out,drv.name,"_",num2str(drv.step),".pos");
                 fid = fopen(fname,'w');
