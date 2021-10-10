@@ -92,4 +92,4 @@
 clc; clearvars; close all;
 files = "";
 addpath(genpath(pwd));
-Master().execute(files);
+Master().execute(files,1);

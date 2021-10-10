@@ -19,7 +19,12 @@ classdef Master
     %% Public methods: main function
     methods
         %------------------------------------------------------------------
-        function execute(this,file_fullnames)
+        function execute(this,file_fullnames,echo)
+            % Set default echo level
+            if (nargin == 2)
+                echo = 1;
+            end
+            
             % Print header
             this.printHeader();
             
@@ -60,7 +65,7 @@ classdef Master
             
             % Display input files
             n_files = length(file_fullnames);
-            if (n_files > 1)
+            if (n_files > 1 && echo > 0)
                 fprintf('%d input files selected:\n',n_files);
                 for i = 1:n_files
                     fprintf('%s\n',file_fullnames(i));
@@ -91,7 +96,9 @@ classdef Master
                     end
                     
                     % Read parameters file
-                    fprintf('\nReading parameters file...\n');
+                    if (echo > 0)
+                        fprintf('\nReading parameters file...\n');
+                    end
                     read = Read();
                     [status,drv,storage] = read.execute(path_in,fid);
                     
@@ -102,7 +109,9 @@ classdef Master
                         
                     elseif (status == 1) % start analysis from the beggining
                         % Check input data
-                        fprintf('\nChecking consistency of input data...\n');
+                        if (echo > 0)
+                            fprintf('\nChecking consistency of input data...\n');
+                        end
                         status = read.check(drv);
                         if (~status)
                             this.printExit(is_last);
@@ -110,16 +119,20 @@ classdef Master
                         end
                         
                         % Pre-process
-                        fprintf('\nPre-processing...\n');
+                        if (echo > 0)
+                            fprintf('\nPre-processing...\n');
+                        end
                         if (~drv.preProcess())
                             this.printExit(is_last);
                             continue;
                         end
                         
                         % Print simulation information
-                        this.printSimulationInfo(drv);
-                        fprintf('\nStarting analysis:\n');
-                        fprintf('%s\n',datestr(now));
+                        if (echo > 0)
+                            this.printSimulationInfo(drv);
+                            fprintf('\nStarting analysis:\n');
+                            fprintf('%s\n',datestr(now));
+                        end
                         
                     elseif (status == 2) % continue analysis from previous state
                         f = dir(storage);
@@ -145,20 +158,26 @@ classdef Master
                         drv.start_time = drv.total_time;
 
                         % Print simulation information
-                        this.printSimulationInfo(drv);
-                        fprintf('\nStarting analysis from previous results:\n');
-                        fprintf('%s\n',datestr(now));
+                        if (echo > 0)
+                            this.printSimulationInfo(drv);
+                            fprintf('\nStarting analysis from previous results:\n');
+                            fprintf('%s\n',datestr(now));
+                        end
                     end
                     
                     % Show starting configuration
-                    Animation().curConfig(drv,'Starting');
+                    if (echo > 0)
+                        Animation().curConfig(drv,'Starting');
+                    end
                     
                     % Execute analysis
                     tic;
                     drv.process();
                     
                     % Print finished status
-                    this.printFinishedStatus(drv,status);
+                    if (echo > 0)
+                        this.printFinishedStatus(drv,status);
+                    end
                     
                 elseif (strcmp(ext,'.mat'))
                     f = dir(cur_file);
@@ -181,7 +200,9 @@ classdef Master
                     end
                     
                     % Show current configuration
-                    Animation().curConfig(drv,'');
+                    if (echo > 0)
+                        Animation().curConfig(drv,'');
+                    end
                 else
                     fprintf(2,'\nInvalid input file extension.\n');
                     this.printExit(is_last);
