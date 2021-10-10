@@ -11,27 +11,36 @@
 classdef Print < handle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
-        results uint8 = uint8.empty;   % vector of flags for types of results to print
+        single_file logical = logical.empty;   % flag for printing all steps in a single file
+        results     uint8   = uint8.empty;     % vector of flags for types of results to print
     end
     
     %% Constructor method
     methods
         function this = Print()
-            
+            this.setDefaultProps();
         end
     end
     
     %% Public methods
     methods
         %------------------------------------------------------------------
+        function setDefaultProps(this)
+            this.single_file = false;
+        end
+        
+        %------------------------------------------------------------------
         function execute(this,drv)
-            if (isempty(this.results))
-                return;
+            % Create file
+            if (this.single_file)
+                fname = strcat(drv.path_out,drv.name,".pos");
+                fid = fopen(fname,'a');
+            else
+                fname = strcat(drv.path_out,drv.name,"_",num2str(drv.step),".pos");
+                fid = fopen(fname,'w');
             end
             
-            % Create file
-            fname = strcat(drv.path_out,drv.name,"_",num2str(drv.step),".pos");
-            fid = fopen(fname,'w');
+            % Check if file could be open
             if (fid < 0)
                 fprintf('\nResults could not be printed in step %d.',drv.step);
                 fclose(fid);
@@ -39,6 +48,9 @@ classdef Print < handle
             end
             
             % Current step info
+            if (this.single_file)
+                fprintf(fid,'---------------------------------------------------------------------------\n');
+            end
             fprintf(fid,'%%STEP %d\n',drv.step);
             fprintf(fid,'%%TIME %.6f\n',drv.time);
             fprintf(fid,'\n');

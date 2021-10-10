@@ -19,10 +19,17 @@ classdef Master
     %% Public methods: main function
     methods
         %------------------------------------------------------------------
-        function execute(this,file_fullnames,echo)
-            % Set default echo level
-            if (nargin == 2)
+        function execute(this,file_fullnames,echo,test)
+            % Check input arguments
+            if (nargin < 2)
+                fprintf('No file selected.\n');
+                fprintf('\nExiting program...\n');
+                return;
+            elseif (nargin < 3)
                 echo = 1;
+                test = false;
+            elseif (nargin < 4)
+                test = false;
             end
             
             % Print header
@@ -211,7 +218,13 @@ classdef Master
                 
                 % Pos-process
                 drv.posProcess();
-                fprintf('\nFinished!\n');
+                
+                % Finish current analysis
+                if (test)
+                    this.compareTest(drv);
+                else
+                    fprintf('\nFinished!\n');
+                end
                 if (~is_last)
                     fprintf('\n------------------------------------------------------------------\n\n');
                 end
@@ -321,6 +334,23 @@ classdef Master
                 fprintf('\nAborted!\n');
                 fprintf('\n------------------------------------------------------------------\n\n');
             end
+        end
+        
+        %------------------------------------------------------------------
+        function compareTest(~,drv)
+%             name_1 = strcat(drv.path_out,"base_results.pos");
+%             name_2 = strcat(drv.path_out,drv.name,"mech_bounce_10001.pos");
+%             
+%             file_1 = javaObject('java.io.File',name_1);
+%             file_2 = javaObject('java.io.File',name_2);
+% 
+%             is_equal = javaMethod('contentEquals','org.apache.commons.io.FileUtils',file_1,file_2);
+%             
+%             if (is_equal)
+%                 fprintf('\nTest passed!\n');
+%             else
+%                 fprintf('\nResults are different!\n');
+%             end
         end
         
         %------------------------------------------------------------------

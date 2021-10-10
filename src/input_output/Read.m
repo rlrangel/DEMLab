@@ -3869,6 +3869,17 @@ classdef Read < handle
             print = Print();
             drv.print = print;
             
+            % Single file option
+            if (isfield(json.Print,'single_file'))
+                if (~this.isLogicalArray(json.Print.single_file,1))
+                    this.invalidParamError('Print.single_file','It must be a boolean: true or false');
+                    status = 0; return;
+                end
+                print.single_file = json.Print.single_file;
+            else
+                print.single_file = false;
+            end
+            
             % Array of possible results
             results_general = "position";
             results_mech    = ["velocity","acceleration"];

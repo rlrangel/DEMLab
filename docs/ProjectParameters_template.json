@@ -510,6 +510,7 @@
 	}
 	],
 	"Print": {
+		"single_file"     : true/false,
 		"printed_results" : ["position","velocity","acceleration","temperature"]
 	}
 }
