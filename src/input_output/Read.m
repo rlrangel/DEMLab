@@ -3866,7 +3866,7 @@ classdef Read < handle
             end
             
             % Create print object
-            print = Print();
+            print = Print_Pos();
             drv.print = print;
             
             % Single file option
