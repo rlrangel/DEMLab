@@ -35,13 +35,18 @@ classdef Master
                     return;
                 end
                 file_fullname = fullfile(path_in,file_name);
+                
+                % Convert to cell to allow multiple files
+                if (~iscell(file_fullname))
+                    file_fullname = {file_fullname};
+                end
             else
-                path_in = strcat(fileparts(file_fullname),'\');
-            end
-            
-            % Convert to cell to allow multiple files
-            if (~iscell(file_fullname))
-                file_fullname = {file_fullname};
+                path_in = strcat(fileparts(file_fullname(1)),'\');
+                
+                % Convert to cell to allow multiple files
+                if (length(file_fullname) > 1)
+                    file_fullname = cellstr(file_fullname);
+                end
             end
             
             % Display input files

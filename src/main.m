@@ -29,10 +29,12 @@
 % There are two ways to select an input file:
 %
 % * Provide its complete path thorugh the string variable _file_ in the end
-%   of this script (e.g. file = 'C:\...\ProjectParameters.json').
-% * Leave the string variable _file_ blank (file = '') and use the
-%   selection dialog that appears when running this script (multiple files
-%   can be selected to run simulations sequentially).
+%   of this script (e.g. file = "C:\...\ProjectParameters.json").
+% * Leave the string variable _file_ blank (file = "") and use the
+%   selection dialog that appears when running this script.
+%
+% In both cases, multiple files can be selected to run simulations
+% sequentially, as long as they are located in the same folder.
 %
 % A folder with the problem name plus the suffix "_out" is created to
 % receive the output files.
@@ -42,30 +44,31 @@
 % This program adopts an Object Oriented Programming (OOP) paradigm.
 % The following OOP super-classes are implemented:
 %
-% * <master.html Master>
-% * <driver.html Driver>
-% * <search.html Search>
-% * <scheme.html Scheme>
-% * <particle.html Particle>
-% * <wall.html Wall>
-% * <modelpart.html ModelPart>
-% * <material.html Material>
-% * <condition.html Condition>
-% * <bbox.html BBox>
-% * <sink.html Sink>
-% * <interact.html Interact>
-% * <binkinematics.html BinKinematics>
-% * <contactforcen.html ContactForceN>
-% * <contactforcet.html ContactForceT>
-% * <rollresist.html RollResist>
+% * <animation.html Animation>
 % * <areacorrect.html AreaCorrect>
+% * <bbox.html BBox>
+% * <binkinematics.html BinKinematics>
+% * <condition.html Condition>
 % * <conductiondirect.html ConductionDirect>
 % * <conductionindirect.html ConductionIndirect>
+% * <contactforcen.html ContactForceN>
+% * <contactforcet.html ContactForceT>
+% * <driver.html Driver>
+% * <graph.html Graph>
+% * <interact.html Interact>
+% * <master.html Master>
+% * <material.html Material>
+% * <modelpart.html ModelPart>
 % * <nusselt.html Nusselt>
+% * <particle.html Particle>
+% * <print.html Print>
 % * <read.html Read>
 % * <result.html Result>
-% * <animation.html Animation>
-% * <graph.html Graph>
+% * <rollresist.html RollResist>
+% * <scheme.html Scheme>
+% * <search.html Search>
+% * <sink.html Sink>
+% * <wall.html Wall>
 %
 %% Authors
 %
@@ -87,17 +90,6 @@
 %
 %% Initialization
 clc; clearvars; close all;
-file = '';
-addpath('algorithms',...
-        'analysis',...
-        'components',...
-        'conditions',...
-        'inlet_outlet',...
-        'input_output',...
-        'interactions',...
-        'interactions/kinematics',...
-        'interactions/force',...
-        'interactions/rolling_resistance',...
-        'interactions/heat_transfer',...
-        'interactions/contact_area_fix');
-Master().execute(file);
+files = "";
+addpath(genpath(pwd));
+Master().execute(files);
