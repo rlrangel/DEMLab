@@ -1,29 +1,30 @@
 {
 	"ProblemData": {
-		"name"             : "pack_fall",
+		"name"             : "mech_rotating_drum",
 		"analysis_type"    : "mechanical",
-		"model_parts_file" : "ModelParts.txt"
+		"model_parts_file" : "mech_rotating_drum.txt"
 	},
 	"Solver": {
 		"integr_scheme_trans" : "forward_euler",
 		"integr_scheme_rotat" : "forward_euler",
 		"time_step"           : 5.0e-5,
-		"final_time"          : 3.0
+		"final_time"          : 0.05
 	},
 	"Search": {
 		"scheme"           : "verlet_list",
 		"search_frequency" : 20,
-		"verlet_frequency" : 2000,
-		"verlet_distance"  : 0.3
-	},
-	"BoundingBox": {
-		"shape"     : "rectangle",
-		"interval"  : [0.000,0.001],
-		"limit_min" : [0.000,0.500],
-		"limit_max" : [1.000,1.000]
+		"verlet_frequency" : 1000,
+		"verlet_distance"  : 0.2
 	},
 	"GlobalCondition": {
 		"gravity" : [0.00,-9.81]
+	},
+	"FixedCondition": {
+		"velocity_rotation": {
+			"type"  : "constant",
+			"walls" : [1],
+			"value" : 1.0
+		}
 	},
 	"Material": {
 		"name"          : "solid_material",
@@ -36,26 +37,23 @@
 	"InteractionModel": {
 		"contact_force_normal": {
 			"model"                      : "viscoelastic_nonlinear",
-			"damping_formula"            : "critical_ratio",
-			"ratio"                      : 0.5,
+			"damping_formula"            : "LH",
+			"damping_coeff"              : 100.0,
 			"remove_artificial_cohesion" : true
 		},
 		"contact_force_tangent": {
 			"model"             : "sds_nonlinear",
-			"formula"           : "TTI",
-			"friction_coeff"    : 0.7,
-			"damping_coeff"     : 100.0
+			"formula"           : "DD",
+			"friction_coeff"    : 0.3
 		}
 	},
 	"Output": {
-		"progress_print" : 1.0,
-		"number_output"  : 100,
+		"progress_print" : 1000,
+		"number_output"  : 5,
 		"save_workspace" : false
 	},
-	"Animation": {
-		"title"        : "motion",
-		"result"       : "motion",
-		"auto_play"    : true,
-		"bounding_box" : [-0.1,1.1,-0.1,1.1]
+	"Print": {
+		"single_file"     : true,
+		"printed_results" : ["position","velocity","acceleration"]
 	}
 }

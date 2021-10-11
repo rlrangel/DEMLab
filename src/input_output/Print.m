@@ -2,15 +2,15 @@
 %
 %% Description
 %
-% This is a handle super-class responsible for printing output files with
-% the required results.
+% This is a handle heterogeneous super-class responsible for printing
+% output files with the required results.
 %
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <print_pos.html Print_Pos>
+% * <print_pos.html Print_Pos> (default)
 %
-classdef Print < handle
+classdef Print < handle & matlab.mixin.Heterogeneous
     %% Constant values
     properties (Constant = true, Access = public)
         % Types of output formats
@@ -28,6 +28,13 @@ classdef Print < handle
             if (nargin > 0)
                 this.type = type;
             end
+        end
+    end
+    
+    %% Default sub-class definition
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = Print_Pos;
         end
     end
     
