@@ -343,7 +343,11 @@ classdef Master
             
             if (exist(name_1,'file') ~= 2)
                 fprintf(2,'\nMissing reference results file!\n');
-                delete(sprintf('%s',name_2));
+                if (exist(name_2,'file') ~= 2)
+                    warning off MATLAB:DELETE:FileNotFound
+                    delete(sprintf('%s',name_2));
+                    warning on MATLAB:DELETE:FileNotFound
+                end
                 return;
             end
             
@@ -354,9 +358,13 @@ classdef Master
             
             if (is_equal)
                 fprintf(1,'\nTest passed!\n');
-                delete(sprintf('%s',name_2));
             else
                 fprintf(2,'\nResults are different!\n');
+            end
+            if (exist(name_2,'file') ~= 2)
+                warning off MATLAB:DELETE:FileNotFound
+                delete(sprintf('%s',name_2));
+                warning on MATLAB:DELETE:FileNotFound
             end
         end
         

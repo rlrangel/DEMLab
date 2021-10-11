@@ -8,7 +8,8 @@
 clc; clearvars; close all;
 files = ["test_models\mech_bounce_straight.json",...
          "test_models\mech_bounce_oblique.json",...
-         "test_models\mech_collision.json"];
+         "test_models\mech_collision.json"...
+         "test_models\mech_hopper.json"];
 
 addpath(genpath(pwd));
 addpath(genpath('..\src'));

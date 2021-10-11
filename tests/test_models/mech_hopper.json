@@ -1,18 +1,25 @@
 {
 	"ProblemData": {
-		"name"             : "mech_bounce_oblique",
+		"name"             : "mech_hopper",
 		"analysis_type"    : "mechanical",
-		"model_parts_file" : "mech_bounce_oblique.txt"
+		"model_parts_file" : "mech_hopper.txt"
 	},
 	"Solver": {
-		"integr_scheme_trans" : "taylor_2",
-		"integr_scheme_rotat" : "taylor_2",
-		"time_step"           : 1.0e-4,
-		"final_time"          : 2.0
+		"integr_scheme_trans" : "modified_euler",
+		"integr_scheme_rotat" : "modified_euler",
+		"time_step"           : 2.0e-5,
+		"final_time"          : 0.02
 	},
 	"Search": {
-		"scheme"           : "simple_loop",
-		"search_frequency" : 10
+		"scheme"           : "verlet_list",
+		"search_frequency" : 50,
+		"verlet_frequency" : 2000,
+		"verlet_distance"  : 0.2
+	},
+	"BoundingBox": {
+		"shape"     : "rectangle",
+		"limit_min" : [-1.0,-0.1],
+		"limit_max" : [1.0,1.5]
 	},
 	"GlobalCondition": {
 		"gravity" : [0.00,-9.81]
@@ -28,18 +35,19 @@
 	"InteractionModel": {
 		"contact_force_normal": {
 			"model"                      : "viscoelastic_nonlinear",
-			"damping_formula"            : "critical_ratio",
-			"ratio"                      : 0.1,
+			"damping_formula"            : "TTI",
+			"restitution_coeff"          : 0.5,
 			"remove_artificial_cohesion" : true
 		},
 		"contact_force_tangent": {
-			"model"          : "spring_slider",
-			"friction_coeff" : 0.3
+			"model"             : "sds_linear",
+			"friction_coeff"    : 0.3,
+			"restitution_coeff" : 0.5
 		}
 	},
 	"Output": {
 		"progress_print" : 1000,
-		"number_output"  : 10,
+		"number_output"  : 5,
 		"save_workspace" : false
 	},
 	"Print": {
