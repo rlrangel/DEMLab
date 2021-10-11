@@ -5598,8 +5598,10 @@ classdef Read < handle
                     end
                 end
                 if (drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.ELASTOPLASTIC_LINEAR)
-                    fprintf(2,'The selected normal contact force model requires the coefficient of restitution.\n');
-                    status = 0; return;
+                    if (isempty(drv.search.b_interact.cforcen.restitution))
+                        fprintf(2,'The selected normal contact force model requires the coefficient of restitution.\n');
+                        status = 0; return;
+                    end
                 end
                 if (length(findobj(drv.solids,'young',[])) > 1)
                     fprintf(2,'The selected normal contact force model requires the Young modulus of materials.\n');
