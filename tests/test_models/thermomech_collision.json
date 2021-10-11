@@ -1,0 +1,98 @@
+{
+	"ProblemData": {
+		"name"             : "thermomech_collision",
+		"analysis_type"    : "thermo_mechanical",
+		"model_parts_file" : "thermomech_collision.txt"
+	},
+	"Solver": {
+		"integr_scheme_trans" : "modified_euler",
+		"integr_scheme_rotat" : "taylor_2",
+		"integr_scheme_therm" : "forward_euler",
+		"time_step"           : 1.0e-5,
+		"final_time"          : 1.0
+	},
+	"Search": {
+		"scheme"           : "simple_loop",
+		"search_frequency" : 10
+	},
+	"GlobalCondition": {
+		"fluid_velocity"    : [0.0,0.0],
+		"fluid_temperature" : 350.0
+	},
+	"InitialCondition": {
+		"temperature": [
+		{
+			"value"     : 300.0,
+			"particles" : [1]
+		},{
+			"value"     : 400.0,
+			"particles" : [2]
+		}
+		],
+		"translational_velocity": [
+		{
+			"value"     : [2.0,0.0],
+			"particles" : [1]
+		},{
+			"value"     : [-2.0,0.0],
+			"particles" : [2]
+		}
+		]
+	},
+	"Material": [
+	{
+		"name"                 : "solid_material",
+		"type"                 : "solid",
+		"model_parts"          : ["PARTICLES"],
+		"density"              : 10,
+		"young_modulus"        : 1000000,
+		"young_modulus_real"   : 10000000,
+		"poisson_ratio"        : 0.3,
+		"thermal_conductivity" : 1000,
+		"heat_capacity"        : 5
+	},{
+		"name"                 : "fluid_material",
+		"type"                 : "fluid",
+		"density"              : 1.0,
+		"thermal_conductivity" : 10.0,
+		"heat_capacity"        : 1.0,
+		"viscosity"            : 10.0
+	}
+	],
+	"ConvectionModel": {
+		"nusselt_correlation" : "sphere_whitaker",
+		"model_parts"         : ["PARTICLES"]
+	},
+	"InteractionModel": {
+		"contact_force_normal": {
+			"model"                : "elastoplastic_linear",
+			"load_stiff_formula"   : "overlap",
+			"unload_stiff_formula" : "constant",
+			"restitution_coeff"    : 0.9
+		},
+		"contact_force_tangent": {
+			"model"          : "spring_slider",
+			"friction_coeff" : 0.3
+		},
+		"area_correction": {
+			"model" : "LMLB"
+		},
+		"direct_conduction": {
+			"model" : "collisional"
+		},
+		"indirect_conduction": {
+			"model"        : "surrounding_layer",
+			"layer_thick"  : 0.4,
+			"min_distance" : 0.0000000275
+		}
+	},
+	"Output": {
+		"progress_print" : 1000,
+		"number_output"  : 10,
+		"save_workspace" : false
+	},
+	"Print": {
+		"single_file"     : true,
+		"printed_results" : ["position","velocity","acceleration","temperature"]
+	}
+}

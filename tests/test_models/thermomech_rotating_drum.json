@@ -1,0 +1,111 @@
+{
+	"ProblemData": {
+		"name"             : "thermomech_rotating_drum",
+		"analysis_type"    : "thermo_mechanical",
+		"model_parts_file" : "thermomech_rotating_drum.txt"
+	},
+	"Solver": {
+		"integr_scheme_trans" : "taylor_2",
+		"integr_scheme_rotat" : "modified_euler",
+		"integr_scheme_therm" : "forward_euler",
+		"time_step"           : 1.0e-5,
+		"final_time"          : 0.005
+	},
+	"Search": {
+		"scheme"           : "verlet_list",
+		"search_frequency" : 20,
+		"verlet_frequency" : 1000,
+		"verlet_distance"  : 0.2
+	},
+	"GlobalCondition": {
+		"gravity"           : [0.00,-9.81],
+		"fluid_velocity"    : [0.0,0.0],
+		"fluid_temperature" : 350.0
+	},
+	"InitialCondition": {
+		"temperature": {
+			"model_parts" : ["PARTICLES"],
+			"value"       : 300.0
+		}
+	},
+	"FixedCondition": {
+		"velocity_rotation": {
+			"type"  : "constant",
+			"walls" : [1],
+			"value" : 0.5
+		},
+		"temperature": {
+			"type"  : "constant",
+			"walls" : [1],
+			"value" : 400.0
+		}
+	},
+	"Material": [
+	{
+		"name"                 : "particle_material",
+		"type"                 : "solid",
+		"model_parts"          : ["PARTICLES"],
+		"density"              : 2000,
+		"young_modulus"        : 5000000,
+		"young_modulus_real"   : 10000000,
+		"poisson_ratio"        : 0.3,
+		"thermal_conductivity" : 1000,
+		"heat_capacity"        : 10
+	},{
+		"name"                 : "wall_material",
+		"type"                 : "solid",
+		"model_parts"          : ["WALLS"],
+		"density"              : 10,
+		"young_modulus"        : 1000000,
+		"young_modulus_real"   : 1000000,
+		"poisson_ratio"        : 0.3,
+		"thermal_conductivity" : 500,
+		"heat_capacity"        : 10
+	},{
+		"name"                 : "fluid_material",
+		"type"                 : "fluid",
+		"density"              : 1.0,
+		"thermal_conductivity" : 10.0,
+		"heat_capacity"        : 1.0,
+		"viscosity"            : 10.0
+	}
+	],
+	"ConvectionModel": {
+		"nusselt_correlation" : "sphere_hanz_marshall",
+		"model_parts"         : ["PARTICLES"]
+	},
+	"InteractionModel": {
+		"contact_force_normal": {
+			"model"                      : "viscoelastic_nonlinear",
+			"damping_formula"            : "critical_ratio",
+			"ratio"                      : 0.5,
+			"remove_artificial_cohesion" : true
+		},
+		"contact_force_tangent": {
+			"model"          : "sds_nonlinear",
+			"formula"        : "LTH",
+			"friction_coeff" : 0.3,
+			"damping_coeff"  : 100.0
+		},
+		"area_correction": {
+			"model" : "MPMH"
+		},
+		"direct_conduction": {
+			"model" : "thermal_pipe"
+		},
+		"indirect_conduction": {
+			"model"        : "surrounding_layer",
+			"layer_thick"  : 0.4,
+			"min_distance" : 0.0000000275
+		}
+	},
+	"Output": {
+		"progress_print" : 1.0,
+		"number_output"  : 5,
+		"save_workspace" : false
+	},
+	"Print": {
+		"single_file"     : true,
+		"printed_results" : ["position","velocity","acceleration","temperature"]
+	}
+}
