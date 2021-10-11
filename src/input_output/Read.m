@@ -5591,7 +5591,7 @@ classdef Read < handle
                 end
                 if (drv.search.b_interact.cforcen.type == drv.search.b_interact.cforcen.VISCOELASTIC_NONLINEAR)
                     if (drv.search.b_interact.cforcen.damp_formula == drv.search.b_interact.cforcen.TTI)
-                        if (isempty(drv.search.b_interact.cforcen.damp))
+                        if (isempty(drv.search.b_interact.cforcen.damp) && isempty(drv.search.b_interact.cforcen.restitution))
                             fprintf(2,'The selected normal contact force model requires the coefficient of restitution.\n');
                             status = 0; return;
                         end
