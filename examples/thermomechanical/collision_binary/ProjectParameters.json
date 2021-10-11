@@ -36,9 +36,9 @@
 		]
 	},
 	"Material": {
-		"name"          : "solid_material",
-		"type"          : "solid",
-		"model_parts"   : ["PARTICLES"],
+		"name"                 : "solid_material",
+		"type"                 : "solid",
+		"model_parts"          : ["PARTICLES"],
 		"density"              : 10,
 		"young_modulus"        : 1000000,
 		"poisson_ratio"        : 0.3,

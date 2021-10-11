@@ -230,8 +230,8 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             R2 = int.elem2.radius;
             Rc = int.kinemat.contact_radius;
             d  = int.kinemat.dist;
-            k1 = int.elem1.conduct;
-            k2 = int.elem2.conduct;
+            k1 = int.elem1.material.conduct;
+            k2 = int.elem2.material.conduct;
             kf = drv.fluid.conduct;
             c  = this.core;
             An = this.getConductArea(int,drv,(R1+R2)/2); % Assumption: average radius

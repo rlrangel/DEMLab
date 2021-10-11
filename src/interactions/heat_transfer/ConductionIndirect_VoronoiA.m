@@ -208,12 +208,12 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             R2 = int.elem2.radius;
             Rc = int.kinemat.contact_radius;
             d  = int.kinemat.dist;
-            k1 = int.elem1.conduct;
-            k2 = int.elem2.conduct;
+            k1 = int.elem1.material.conduct;
+            k2 = int.elem2.material.conduct;
             kf = drv.fluid.conduct;
             
             % Parameters
-            if (int.kinematic.is_contact)
+            if (int.kinemat.is_contact)
                 D1 = sqrt(R1^2 - Rc^2);
             else
                 D1 = (R1^2 - R2^2 + d^2) / (2*d);
@@ -221,7 +221,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             D2 = d - D1;
             
             ri = this.getConductRadius(int,drv,(R1+R2)/2); % Assumption: average radius
-            if (rij <= 0 || isinf(rij))
+            if (ri <= 0 || isinf(ri))
                 h = 0;
                 return;
             elseif (R1 <= R2)

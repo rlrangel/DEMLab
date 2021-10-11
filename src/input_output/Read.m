@@ -5471,7 +5471,7 @@ classdef Read < handle
                 status = 0; return;
             elseif (drv.search.type == drv.search.VERLET_LIST)
                 Rmax = max([drv.particles.radius]);
-                if (drv.search.verlet_dist <= 2*Rmax+drv.search.cutoff)
+                if (drv.search.verlet_dist <= Rmax * (2 + drv.search.cutoff))
                     this.warnMsg('Verlet distance may be too small');
                 end
             end

@@ -46,8 +46,8 @@ classdef AreaCorrect_MPMH < AreaCorrect
         function this = fixRadius(this,int)
             % Area correction
             % Assumption: time correction negleted (valid for static systems)
-            if (~isempty(int.cforcen))
-                fn = int.cforcen.total_force;
+            if (~isempty(int.cforcen.total_force))
+                fn = norm(int.cforcen.total_force);
             else
                 % Assumption: computed with Hertz model
                 fn = 4 * sqrt(int.eff_radius) * int.eff_young * int.kinemat.ovlp_n^(3/2) / 3;

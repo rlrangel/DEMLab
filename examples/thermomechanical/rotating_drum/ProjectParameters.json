@@ -33,9 +33,9 @@
 			"value" : 0.5
 		},
 		"temperature": {
-			"type"        : "constant",
-			"walls"       : [1],
-			"value"       : 400.0
+			"type"  : "constant",
+			"walls" : [1],
+			"value" : 400.0
 		}
 	},
 	"Material": [
