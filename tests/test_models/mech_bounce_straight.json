@@ -1,8 +1,8 @@
 {
 	"ProblemData": {
-		"name"             : "mech_bounce",
+		"name"             : "mech_bounce_straight",
 		"analysis_type"    : "mechanical",
-		"model_parts_file" : "mech_bounce.txt"
+		"model_parts_file" : "mech_bounce_straight.txt"
 	},
 	"Solver": {
 		"integr_scheme_trans" : "forward_euler",

@@ -1,45 +1,36 @@
 {
 	"ProblemData": {
-		"name"             : "mech_collision",
+		"name"             : "mech_bounce_oblique",
 		"analysis_type"    : "mechanical",
-		"model_parts_file" : "mech_collision.txt"
+		"model_parts_file" : "mech_bounce_oblique.txt"
 	},
 	"Solver": {
 		"integr_scheme_trans" : "forward_euler",
 		"integr_scheme_rotat" : "forward_euler",
 		"time_step"           : 1.0e-4,
-		"final_time"          : 1.0
+		"final_time"          : 2.0
 	},
 	"Search": {
 		"scheme"           : "simple_loop",
 		"search_frequency" : 10
 	},
-	"InitialCondition": {
-		"translational_velocity": [
-		{
-			"value"       : [2.0,0.0],
-			"model_parts" : "Left"
-		},{
-			"value"       : [-2.0,0.0],
-			"model_parts" : "Right"
-		}
-		]
+	"GlobalCondition": {
+		"gravity" : [0.00,-9.81]
 	},
 	"Material": {
 		"name"          : "solid_material",
 		"type"          : "solid",
-		"model_parts"   : ["PARTICLES"],
+		"model_parts"   : ["PARTICLES","WALLS"],
 		"density"       : 1e3,
 		"young_modulus" : 1e6,
 		"poisson_ratio" : 0.3
 	},
 	"InteractionModel": {
 		"contact_force_normal": {
-			"model"                      : "elastoplastic_linear",
-			"load_stiff_formula"         : "energy",
-			"unload_stiff_formula"       : "variable",
-			"unload_param"               : 2,
-			"restitution_coeff"          : 0.9
+			"model"                      : "viscoelastic_nonlinear",
+			"damping_formula"            : "critical_ratio",
+			"ratio"                      : 0.1,
+			"remove_artificial_cohesion" : true
 		},
 		"contact_force_tangent": {
 			"model"          : "spring_slider",

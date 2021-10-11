@@ -338,13 +338,23 @@ classdef Master
         
         %------------------------------------------------------------------
         function compareTest(~,drv)
-            file_1 = javaObject('java.io.File',strcat(drv.path_out,"base_results.pos"));
-            file_2 = javaObject('java.io.File',strcat(drv.path_out,drv.name,".pos"));
+            name_1 = strcat(drv.path_out,"reference_results.pos");
+            name_2 = strcat(drv.path_out,drv.name,".pos");
+            
+            if (exist(name_1,'file') ~= 2)
+                fprintf(2,'\nMissing reference results file!\n');
+                delete(sprintf('%s',name_2));
+                return;
+            end
+            
+            file_1 = javaObject('java.io.File',name_1);
+            file_2 = javaObject('java.io.File',name_2);
             
             is_equal = javaMethod('contentEquals','org.apache.commons.io.FileUtils',file_1,file_2);
             
             if (is_equal)
                 fprintf(1,'\nTest passed!\n');
+                delete(sprintf('%s',name_2));
             else
                 fprintf(2,'\nResults are different!\n');
             end
