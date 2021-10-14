@@ -158,9 +158,6 @@ classdef BinKinematics_SphereWlin < BinKinematics
             if (~isempty(int.corarea))
                 int.corarea.fixRadius(int);
             end
-            
-            % Contact area
-            this.contact_area = pi * this.contact_radius^2;
         end
         
         %------------------------------------------------------------------

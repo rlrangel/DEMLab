@@ -124,10 +124,6 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             if (~isempty(int.corarea))
                 int.corarea.fixRadius(int);
             end
-            
-            % Contact area
-            % Assumption: rectangular area
-            this.contact_area = 2 * this.contact_radius * l;
         end
         
         %------------------------------------------------------------------

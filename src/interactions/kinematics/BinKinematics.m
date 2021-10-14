@@ -68,7 +68,6 @@ classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
         contact_start  double  = double.empty;    % starting time
         contact_time   double  = double.empty;    % duration since starting time
         contact_radius double  = double.empty;    % contact radius
-        contact_area   double  = double.empty;    % contact area
         
         % Others
         vedge double = double.empty;   % edge of neighboring cells of voronoi diagram
@@ -143,7 +142,6 @@ classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
             this.ovlp_t         = 0;
             this.contact_time   = 0;
             this.contact_radius = 0;
-            this.contact_area   = 0;
         end
     end
 end
