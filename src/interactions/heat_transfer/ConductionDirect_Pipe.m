@@ -72,7 +72,7 @@ classdef ConductionDirect_Pipe < ConductionDirect
                 case int.elem1.CYLINDER
                     A = 2 * int.kinemat.contact_radius * int.elem1.len;
             end
-            this.total_hrate = A * int.avg_conduct * (int.elem2.temperature-int.elem1.temperature) / int.kinemat.dist;
+            this.total_hrate = A * int.avg_conduct * (int.elem2.temperature-int.elem1.temperature) / int.kinemat.distc;
         end
     end
 end

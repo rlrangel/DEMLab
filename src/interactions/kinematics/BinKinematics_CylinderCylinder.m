@@ -17,6 +17,7 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             if (nargin == 3)
                 this.dir   = dir;
                 this.dist  = dist;
+                this.distc = dist;
                 this.separ = separ;
             end
         end
@@ -55,6 +56,7 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
         function this = setRelPos(this,p1,p2)
             this.dir   = p2.coord - p1.coord;
             this.dist  = norm(this.dir);
+            this.distc = this.dist;
             this.separ = this.dist - p1.radius - p2.radius;
         end
         
@@ -110,7 +112,6 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
         function this = setContactArea(this,int)
             % Needed properties
             d    = this.dist;
-            l    = int.elem1.len;
             r1   = int.elem1.radius;
             r2   = int.elem2.radius;
             r1_2 = r1 * r1;
@@ -120,9 +121,13 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
             % (abs to avoid imag. numbers when particles are inside each other)
             this.contact_radius = sqrt(abs(r1_2 - ((r1_2-r2_2+d^2)/(2*d))^2));
             
-            % Contact radius correction
+            % Contact correction
             if (~isempty(int.corarea))
+                % Adjusted radius
                 int.corarea.fixRadius(int);
+                
+                % Adjusted distance consistent with adjusted radius
+                this.distc = sqrt(r1^2-this.contact_radius^2) + sqrt(r2^2-this.contact_radius^2);
             end
         end
         

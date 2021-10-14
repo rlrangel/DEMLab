@@ -90,6 +90,7 @@ classdef BinKinematics_CylinderWlin < BinKinematics
             
             % Distance between particle surface and line segment
             this.dist  = norm(this.dir);
+            this.distc = this.dist;
             this.separ = this.dist - p.radius;
         end
         
@@ -149,15 +150,18 @@ classdef BinKinematics_CylinderWlin < BinKinematics
         function this = setContactArea(this,int)
             % Needed properties
             r = int.elem1.radius;
-            l = int.elem1.len;
-            ovlp = this.ovlp_n;
+            d = this.dist;
             
             % Contact radius
-            this.contact_radius = sqrt(r^2-(r-ovlp)^2);
+            this.contact_radius = sqrt(r^2-d^2);
             
-            % Contact radius correction
+            % Contact correction
             if (~isempty(int.corarea))
+                % Adjusted radius
                 int.corarea.fixRadius(int);
+                
+                % Adjusted distance consistent with adjusted radius
+                this.distc = sqrt(r^2-this.contact_radius^2);
             end
         end
         

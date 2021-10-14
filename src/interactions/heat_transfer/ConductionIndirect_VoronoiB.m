@@ -202,7 +202,7 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             % Needed properties
             Rp = int.elem1.radius;
             Rc = int.kinemat.contact_radius;
-            D  = int.kinemat.dist/2;
+            D  = int.kinemat.distc/2;
             ks = int.eff_conduct;
             kf = drv.fluid.conduct;
             rc = this.core * Rp;
@@ -229,7 +229,7 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             R1 = int.elem1.radius;
             R2 = int.elem2.radius;
             Rc = int.kinemat.contact_radius;
-            d  = int.kinemat.dist;
+            d  = int.kinemat.distc;
             k1 = int.elem1.material.conduct;
             k2 = int.elem2.material.conduct;
             kf = drv.fluid.conduct;

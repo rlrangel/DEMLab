@@ -45,6 +45,7 @@ classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
         % Relative position
         dir   double = double.empty;   % direction vector between centroids
         dist  double = double.empty;   % distance between centroids
+        distc double = double.empty;   % corrected distance between centroids (consistent with adjusted contact radius)
         separ double = double.empty;   % separation between surfaces
         
         % Relative velocities

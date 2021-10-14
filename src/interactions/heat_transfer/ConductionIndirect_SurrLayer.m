@@ -166,7 +166,7 @@ classdef ConductionIndirect_SurrLayer < ConductionIndirect
             Rj = max(R1,R2);
             Lj = this.layer*Rj;
             kf = drv.fluid.conduct;
-            d  = int.kinemat.dist;
+            d  = int.kinemat.distc;
             S  = this.dist_min;
             
             % Parameters
@@ -193,10 +193,11 @@ classdef ConductionIndirect_SurrLayer < ConductionIndirect
             L  = this.layer*Rp;
             kf = drv.fluid.conduct;
             d  = int.kinemat.dist;
+            dc = int.kinemat.distc;
             S  = this.dist_min;
             
             % Parameters
-            a = (d-Rp)/Rp;
+            a = (dc-Rp)/Rp;
             
             if (d > Rp+S)
                 rin = 0;

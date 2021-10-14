@@ -78,12 +78,13 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
                 this.dir    = direction;
                 this.separ  = w.radius - d - p.radius;
                 this.dist   = p.radius + this.separ;
-                
+                this.distc  = this.dist;
             else % Particle outside circle
                 this.inside = false;
                 this.dir    = -direction;
                 this.separ  = d - w.radius - p.radius;
                 this.dist   = p.radius + this.separ;
+                this.distc  = this.dist;
             end
         end
         
@@ -146,7 +147,6 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
         function this = setContactArea(this,int)
             % Needed properties
             d    = norm(this.dir);
-            l    = int.elem1.len;
             r1   = int.elem1.radius;
             r2   = int.elem2.radius;
             r1_2 = r1 * r1;
@@ -155,9 +155,17 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
             % Contact radius
             this.contact_radius = sqrt(r1_2-((r1_2-r2_2+d^2)/(2*d))^2);
             
-            % Contact radius correction
+            % Contact correction
             if (~isempty(int.corarea))
+                % Adjusted radius
                 int.corarea.fixRadius(int);
+                
+                % Adjusted distance consistent with adjusted radius
+                if (this.inside)
+                    this.distc = r2 - sqrt(r2_2-this.contact_radius^2) + sqrt(r1_2-this.contact_radius^2);
+                else
+                    this.distc = sqrt(r1_2-this.contact_radius^2) + sqrt(r2_2-this.contact_radius^2) - r2;
+                end
             end
         end
         
