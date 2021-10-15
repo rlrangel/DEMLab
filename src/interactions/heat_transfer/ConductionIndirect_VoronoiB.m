@@ -293,7 +293,8 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
                 else
                     por = int.elem1.porosity; % Assumption: particle porosity only
                 end
-                An = 0.985 * Rp^2 * (1-por)^(-2/3);
+                r  = 0.56 * Rp * (1-por)^(-1/3);
+                An = pi * r^2;
             end
         end
     end
