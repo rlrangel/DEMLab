@@ -166,12 +166,41 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
     methods
         %------------------------------------------------------------------
         function h = heatTransCoeff(this,int,drv)
-            if (int.kinemat.gen_type == int.kinemat.PARTICLE_WALL ||...
-                int.elem1.radius == int.elem2.radius)
-                % Assumption: Particle-Wall is treated as 2 equal size particles
-                h = this.evalIntegralMonosize(int,drv);
+            if (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                if (int.elem1.radius == int.elem2.radius)
+                    h = this.evalIntegralMonosize(int,drv);
+                else
+                    h = this.evalIntegralMultisize(int,drv);
+                end
             else
-                h = this.evalIntegralMultisize(int,drv);
+                % Assumption: walls are always considered as lines
+                h = this.evalIntegralWall(int,drv);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function h = evalIntegralWall(this,int,drv)
+            % Needed properties
+            Rp = int.elem1.radius;
+            Rc = int.kinemat.contact_radius;
+            d  = int.kinemat.distc;
+            kp = int.elem1.material.conduct;
+            kf = drv.fluid.conduct;
+            
+            % Parameters
+            rij = this.getConductRadius(int,drv,Rp);
+            if (rij <= Rc || rij <= 0 || isinf(rij))
+                h = 0;
+                return;
+            end
+            rsf = Rp * rij / sqrt(rij^2 + d^2);
+            
+            % Evaluate integral numerically
+            fun = @(r) 2*pi*r / ((sqrt(Rp^2-r.^2)-d*r/rij)/kp + (d-sqrt(Rp^2-r.^2))/kf);
+            try
+                h = integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
+            catch
+                h = 0;
             end
         end
         
@@ -186,14 +215,14 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             
             % Parameters
             rij = this.getConductRadius(int,drv,Rp);
-            if (rij <= 0 || isinf(rij))
+            if (rij <= Rc || rij <= 0 || isinf(rij))
                 h = 0;
                 return;
             end
             rsf = Rp * rij / sqrt(rij^2 + D^2);
             
             % Evaluate integral numerically
-            fun = @(r) 2*pi*r / ((sqrt(Rp^2-r.^2)-r*D/rij)/ks + 2*(D-sqrt(Rp^2-r.^2))/kf);
+            fun = @(r) 2*pi*r / ((sqrt(Rp^2-r.^2)-D*r/rij)/ks + 2*(D-sqrt(Rp^2-r.^2))/kf);
             try
                 h = integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
             catch
@@ -221,7 +250,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             D2 = d - D1;
             
             ri = this.getConductRadius(int,drv,(R1+R2)/2); % Assumption: average radius
-            if (ri <= 0 || isinf(ri))
+            if (rij <= Rc || ri <= 0 || isinf(ri))
                 h = 0;
                 return;
             elseif (R1 <= R2)
@@ -232,7 +261,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             rj = D2*rsf / sqrt(R2^2 - rsf^2);
             
             % Evaluate integral numerically
-            fun = @(r) 2*pi*r / ((sqrt(R1^2-r^2)-r*D1/ri)/k1 + (sqrt(R2^2-r^2)-r*D2/rj)/k2 + (d-sqrt(R1^2-r^2)-sqrt(R2^2-r^2))/kf);
+            fun = @(r) 2*pi*r / ((sqrt(R1^2-r^2)-D1*r/ri)/k1 + (sqrt(R2^2-r^2)-D2*r/rj)/k2 + (d-sqrt(R1^2-r^2)-sqrt(R2^2-r^2))/kf);
             try
                 h = integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
             catch
