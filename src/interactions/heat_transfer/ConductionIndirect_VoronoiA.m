@@ -189,7 +189,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             
             % Parameters
             rij = this.getConductRadius(int,drv,Rp);
-            if (rij <= Rc || rij <= 0 || isinf(rij))
+            if (rij <= Rc || isinf(rij))
                 h = 0;
                 return;
             end
@@ -215,7 +215,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             
             % Parameters
             rij = this.getConductRadius(int,drv,Rp);
-            if (rij <= Rc || rij <= 0 || isinf(rij))
+            if (rij <= Rc || isinf(rij))
                 h = 0;
                 return;
             end
@@ -250,7 +250,7 @@ classdef ConductionIndirect_VoronoiA < ConductionIndirect
             D2 = d - D1;
             
             ri = this.getConductRadius(int,drv,(R1+R2)/2); % Assumption: average radius
-            if (rij <= Rc || ri <= 0 || isinf(ri))
+            if (rij <= Rc || isinf(ri))
                 h = 0;
                 return;
             elseif (R1 <= R2)
