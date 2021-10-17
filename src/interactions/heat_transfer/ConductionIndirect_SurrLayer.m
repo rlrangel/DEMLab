@@ -152,6 +152,7 @@ classdef ConductionIndirect_SurrLayer < ConductionIndirect
             if (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
                 h = this.evalIntegralParticleParticle(int,drv);
             else
+                % Assumption: walls are always considered as lines
                 h = this.analyticSolutionParticleWall(int,drv);
             end
         end
