@@ -188,12 +188,46 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
     methods
         %------------------------------------------------------------------
         function h = heatTransCoeff(this,int,drv)
-            if (int.kinemat.gen_type == int.kinemat.PARTICLE_WALL ||...
-                int.elem1.radius == int.elem2.radius)
-                % Assumption: Particle-Wall is treated as 2 equal size particles
-                h = this.evalExpressionMonosize(int,drv);
+            if (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                if (int.elem1.radius == int.elem2.radius)
+                    h = this.evalExpressionMonosize(int,drv);
+                else
+                    h = this.evalExpressionMultisize(int,drv);
+                end
             else
-                h = this.evalExpressionMultisize(int,drv);
+                % Assumption: walls are always considered as lines
+                h = this.evalExpressionWall(int,drv);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        function h = evalExpressionWall(this,int,drv)
+            % Needed properties
+            Rp = int.elem1.radius;
+            Rc = int.kinemat.contact_radius;
+            d  = int.kinemat.distc;
+            kp = int.elem1.material.conduct;
+            kf = drv.fluid.conduct;
+            rc = this.core * Rp;
+            
+            % Parameters
+            rij = this.getConductRadius(int,drv,Rp);
+            if (rij <= Rc || isinf(rij))
+                h = 0;
+                return;
+            end
+            
+            a  = (1/rc - 1/Rp)/(2*kp) + 1/(2*kf*Rp);
+            b  = 1/(2*kf*d);
+            c0 = d / sqrt(rij^2 + d^2);
+            c1 = d / sqrt(Rc^2  + d^2);
+            
+            % Heat transfer coeff
+            ln = log((a-b*c0)/(a-b*c1));
+            if isreal(ln)
+                h = pi * ln / b;
+            else
+                h = pi * real(ln) / b;
             end
         end
         
@@ -209,10 +243,15 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             
             % Parameters
             rij = this.getConductRadius(int,drv,Rp);
-            a   = (1/rc - 1/Rp)/(2*ks) + 1/(kf*Rp);
-            b   = 1/(kf*D);
-            c0  = D / sqrt(rij^2 + D^2);
-            c1  = D / sqrt(Rc^2  + D^2);
+            if (rij <= Rc || isinf(rij))
+                h = 0;
+                return;
+            end
+            
+            a  = (1/rc - 1/Rp)/(2*ks) + 1/(kf*Rp);
+            b  = 1/(kf*D);
+            c0 = D / sqrt(rij^2 + D^2);
+            c1 = D / sqrt(Rc^2  + D^2);
             
             % Heat transfer coeff
             ln = log((a-b*c0)/(a-b*c1));
@@ -234,9 +273,15 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
             k2 = int.elem2.material.conduct;
             kf = drv.fluid.conduct;
             c  = this.core;
-            An = this.getConductArea(int,drv,(R1+R2)/2); % Assumption: average radius
             
             % Parameters
+            rij = this.getConductRadius(int,drv,(R1+R2)/2); % Assumption: average radius
+            if (rij <= Rc)
+                h = 0;
+                return;
+            end
+            An = pi * rij^2;
+            
             gamma1 = R1/d;
             gamma2 = R2/d;
             dgamma = gamma2 - gamma1;
@@ -278,23 +323,6 @@ classdef ConductionIndirect_VoronoiB < ConductionIndirect
                     por = int.elem1.porosity; % Assumption: particle porosity only
                 end
                 r = 0.56 * Rp * (1-por)^(-1/3);
-            end
-        end
-        
-        %------------------------------------------------------------------
-        function An = getConductArea(this,int,drv,Rp)
-            if (this.method == this.VORONOI_DIAGRAM)
-                An = int.kinemat.vedge^2 * pi / 4;
-            else
-                if (this.method == this.POROSITY_GLOBAL)
-                    por = drv.porosity;
-                elseif (this.method == this.POROSITY_LOCAL && int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
-                    por = (int.elem1.porosity+int.elem2.porosity)/2; % Assumption: average porosity
-                else
-                    por = int.elem1.porosity; % Assumption: particle porosity only
-                end
-                r  = 0.56 * Rp * (1-por)^(-1/3);
-                An = pi * r^2;
             end
         end
     end
