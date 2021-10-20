@@ -443,8 +443,9 @@ classdef Read < handle
                         status = 0; return;
                     end
                     drv.search.verlet_freq = json.Search.verlet_frequency;
+                    drv.search.auto_freq   = false;
                 else
-                    drv.search.verlet_freq = 10 * drv.search.freq;
+                    drv.search.auto_freq = true;
                 end
                 
                 % Verlet distance
@@ -456,7 +457,7 @@ classdef Read < handle
                     drv.search.verlet_dist = json.Search.verlet_distance;
                 else
                     Rmax = max([drv.particles.radius]);
-                    drv.search.verlet_dist = 5*Rmax;
+                    drv.search.verlet_dist = 3*Rmax;
                 end
             end
         end
@@ -5471,7 +5472,7 @@ classdef Read < handle
                 status = 0; return;
             elseif (drv.search.type == drv.search.VERLET_LIST)
                 Rmax = max([drv.particles.radius]);
-                if (drv.search.verlet_dist <= Rmax * (2 + drv.search.cutoff))
+                if (drv.search.verlet_dist <= 1.5 * Rmax * drv.search.cutoff)
                     this.warnMsg('Verlet distance may be too small');
                 end
             end

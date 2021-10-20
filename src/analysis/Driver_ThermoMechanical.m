@@ -199,6 +199,9 @@ classdef Driver_ThermoMechanical < Driver
                 this.print.execute(this);
             end
             
+            % Initialize search algorithm
+            this.search.initialize(this);
+            
             % Initialize output control variables
             this.initOutputVars();
         end

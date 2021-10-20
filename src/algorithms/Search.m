@@ -62,6 +62,9 @@ classdef Search < handle & matlab.mixin.Heterogeneous
         setDefaultProps(this);
         
         %------------------------------------------------------------------
+        initialize(this,drv);
+        
+        %------------------------------------------------------------------
         execute(this,drv);
     end
     

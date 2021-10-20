@@ -162,6 +162,7 @@ classdef Driver_Thermal < Driver
             
             % Interactions search (only once as particles do not move)
             fprintf('\nCreating particle interactions...\n');
+            this.search.initialize(this);
             this.search.execute(this);
             
             % 2nd loop over all particles (interaction-dependent properties)

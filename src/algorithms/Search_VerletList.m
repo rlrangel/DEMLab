@@ -25,8 +25,10 @@ classdef Search_VerletList < Search
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Verlet properties
-        verlet_dist double = double.empty;   % threshold distance to include particles in the verlet list
-        verlet_freq uint32 = uint32.empty;   % verlet list update frequency (in steps)
+        verlet_dist double  = double.empty;    % threshold surface separation distance to include particles in the verlet list
+        verlet_freq uint32  = uint32.empty;    % verlet list update frequency (in steps)
+        auto_freq   logical = logical.empty;   % flag for automatic setting the update frequency
+        last_search double  = double.empty;    % last step when search was executed over all elements (double to allow inf value)
         
         % Base objects for kinematics
         kinpp_sph      BinKinematics = BinKinematics.empty;   % sphere particle - sphere particle
@@ -54,6 +56,7 @@ classdef Search_VerletList < Search
             this.cutoff         = 0;
             this.verlet_dist    = inf;
             this.verlet_freq    = 100;
+            this.auto_freq      = true;
             this.kinpp_sph      = BinKinematics_SphereSphere();
             this.kinpw_sph_line = BinKinematics_SphereWlin();
             this.kinpw_sph_circ = BinKinematics_SphereWcirc();
@@ -63,13 +66,31 @@ classdef Search_VerletList < Search
         end
         
         %------------------------------------------------------------------
+        function initialize(this,drv)
+            % Initialize last search step
+            % (large negative value to call searchAll in the 1st step)
+            this.last_search = -inf;
+            
+            % Set update frequency
+            if (this.auto_freq)
+                vmax = max(vecnorm([drv.particles.veloc_trl]));
+                rmax = max([drv.particles.radius]);
+                if (vmax == 0)
+                    this.verlet_freq = 10 * this.freq;
+                else
+                    this.verlet_freq = (this.verlet_dist - this.cutoff * rmax) / (2 * vmax * drv.time_step);
+                end
+            end
+        end
+        
+        %------------------------------------------------------------------
         function execute(this,drv)
             % Set flags
             this.done = true;
             
             % Check if it is time to search through all particles and
             % update verlet list
-            if (mod(drv.step,this.verlet_freq) == 0)
+            if (drv.step-this.last_search > this.verlet_freq)
                 this.searchAll(drv);
             else
                 this.searchVerlet(drv);
@@ -84,9 +105,27 @@ classdef Search_VerletList < Search
             % Set flags
             rmv = false;
             
+            % Initialize maximum velocity and radius
+            vmax = 0;
+            rmax = 0;
+            
+            % Save search step
+            this.last_search = drv.step;
+            
             % Outer loop over reference particles
             for i = 1:drv.n_particles
                 p1 = drv.particles(i);
+                
+                % Update maximum velocity
+                if (this.auto_freq)
+                    vparticle = vecnorm(p1.veloc_trl);
+                    if (vparticle > vmax)
+                        vmax = vparticle;
+                    end
+                    if (p1.radius > rmax)
+                        rmax = p1.radius;
+                    end
+                end
                 
                 % Reset verlet lists
                 p1.verlet_p = Particle.empty;
@@ -179,6 +218,15 @@ classdef Search_VerletList < Search
             
             % Update total number of interactions
             drv.n_interacts = length(drv.interacts);
+            
+            % Set new verlet update frequency
+            if (this.auto_freq)
+                if (vmax == 0)
+                    this.verlet_freq = 10 * this.freq;
+                else
+                    this.verlet_freq = (this.verlet_dist - this.cutoff * rmax) / (2 * vmax * drv.time_step);
+                end
+            end
         end
         
         %------------------------------------------------------------------
@@ -186,9 +234,24 @@ classdef Search_VerletList < Search
             % Set flags
             rmv = false;
             
+            % Initialize maximum velocity and radius
+            vmax = 0;
+            rmax = 0;
+            
             % Outer loop over reference particles
             for i = 1:drv.n_particles
                 p1 = drv.particles(i);
+                
+                % Update maximum velocity
+                if (this.auto_freq)
+                    vparticle = vecnorm(p1.veloc_trl);
+                    if (vparticle > vmax)
+                        vmax = vparticle;
+                    end
+                    if (p1.radius > rmax)
+                        rmax = p1.radius;
+                    end
+                end
                 
                 % Inner loop over particles in the verlet list
                 for j = 1:length(p1.verlet_p)
@@ -270,6 +333,15 @@ classdef Search_VerletList < Search
             
             % Update total number of interactions
             drv.n_interacts = length(drv.interacts);
+            
+            % Set new verlet update frequency
+            if (this.auto_freq)
+                if (vmax == 0)
+                    this.verlet_freq = 10 * this.freq;
+                else
+                    this.verlet_freq = (this.verlet_dist - this.cutoff * rmax) / (2 * vmax * drv.time_step);
+                end
+            end
         end
         
         %------------------------------------------------------------------
@@ -283,7 +355,7 @@ classdef Search_VerletList < Search
             separ = dist - p1.radius - p2.radius;
             
             % Check if particle is within verlet distance
-            if (addVL && dist < this.verlet_dist)
+            if (addVL && separ < this.verlet_dist)
                 p1.verlet_p(end+1) = p2;
             end
             
@@ -323,7 +395,7 @@ classdef Search_VerletList < Search
             switch (this.pwInteractionType(p,w))
                 case 1
                     this.kinpw_sph_line.setRelPos(p,w);
-                    if (addVL && this.kinpw_sph_line.dist < this.verlet_dist)
+                    if (addVL && this.kinpw_sph_line.separ < this.verlet_dist)
                         p.verlet_w(end+1) = w;
                     end
                     if (this.kinpw_sph_line.separ >= this.cutoff * p.radius)
@@ -332,7 +404,7 @@ classdef Search_VerletList < Search
                     kin = copy(this.kinpw_sph_line);
                 case 2
                     this.kinpw_sph_circ.setRelPos(p,w);
-                    if (addVL && this.kinpw_sph_circ.dist < this.verlet_dist)
+                    if (addVL && this.kinpw_sph_circ.separ < this.verlet_dist)
                         p.verlet_w(end+1) = w;
                     end
                     if (this.kinpw_sph_circ.separ >= this.cutoff * p.radius)
@@ -341,7 +413,7 @@ classdef Search_VerletList < Search
                     kin = copy(this.kinpw_sph_circ);
                 case 3
                     this.kinpw_cyl_line.setRelPos(p,w);
-                    if (addVL && this.kinpw_cyl_line.dist < this.verlet_dist)
+                    if (addVL && this.kinpw_cyl_line.separ < this.verlet_dist)
                         p.verlet_w(end+1) = w;
                     end
                     if (this.kinpw_cyl_line.separ >= this.cutoff * p.radius)
@@ -350,7 +422,7 @@ classdef Search_VerletList < Search
                     kin = copy(this.kinpw_cyl_line);
                 case 4
                     this.kinpw_cyl_circ.setRelPos(p,w);
-                    if (addVL && this.kinpw_cyl_circ.dist < this.verlet_dist)
+                    if (addVL && this.kinpw_cyl_circ.separ < this.verlet_dist)
                         p.verlet_w(end+1) = w;
                     end
                     if (this.kinpw_cyl_circ.separ >= this.cutoff * p.radius)

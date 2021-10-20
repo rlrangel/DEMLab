@@ -52,6 +52,11 @@ classdef Search_SimpleLoop < Search
         end
         
         %------------------------------------------------------------------
+        function initialize(~,~)
+            
+        end
+        
+        %------------------------------------------------------------------
         function execute(this,drv)
             % Set flags
             this.done = true;
