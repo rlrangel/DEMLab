@@ -34,7 +34,7 @@
 %
 % $$C_{3} = -5.758 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right )^{2} + 24.464 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right ) - 20.511$$
 %
-% $$R_{c}^{max} = \left ( \frac{15}{16} \frac{m_{eff}R_{eff}}{E_{eff}} \left ( \dot{\delta}_{n}^{0} \right )^{2} \right )^{1/5}$$
+% $$R_{c}^{max} = \left ( \frac{15}{16} \frac{m_{eff}R_{eff}^{2}}{E_{eff}} \left ( \dot{\delta}_{n}^{0} \right )^{2} \right )^{1/5}$$
 %
 % $$t_{c} = 2.87 \left ( \frac{m_{eff}^{2}}{R_{eff}E_{eff}^{2}\dot{\delta}_{n}^{0}} \right )^{1/5}$$
 %
@@ -131,7 +131,7 @@ classdef ConductionDirect_Collisional < ConductionDirect
             b2 = b^2;
             
             % Maximum contact radius and total collision time
-            Rc = (15 * m * r * v0^2 / (16 * y))^(1/5);
+            Rc = (15 * m * r^2 * v0^2 / (16 * y))^(1/5);
             tc = 2.87 * (m^2 / (r * y^2 * v0))^(1/5);
             
             % Fourier number
