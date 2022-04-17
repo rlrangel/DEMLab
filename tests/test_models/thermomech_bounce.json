@@ -5,11 +5,11 @@
 		"model_parts_file" : "thermomech_bounce.txt"
 	},
 	"Solver": {
-		"integr_scheme_trans" : "taylor_2",
-		"integr_scheme_rotat" : "modified_euler",
-		"integr_scheme_therm" : "forward_euler",
-		"time_step"           : 1.0e-4,
-		"final_time"          : 1.0
+		"integration_scheme_translation" : "taylor_2",
+		"integration_scheme_rotation"    : "modified_euler",
+		"integration_scheme_thermal"     : "forward_euler",
+		"time_step"                      : 1.0e-4,
+		"final_time"                     : 1.0
 	},
 	"Search": {
 		"scheme"           : "simple_loop",

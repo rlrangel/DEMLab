@@ -311,13 +311,13 @@ classdef Read < handle
             end
             
             % Time integration scheme: translational velocity
-            if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_trans'))
-                scheme = string(json.Solver.integr_scheme_trans);
+            if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integration_scheme_translation'))
+                scheme = string(json.Solver.integration_scheme_translation);
                 if (~this.isStringArray(scheme,1)    ||...
                    (~strcmp(scheme,'forward_euler')  &&...
                     ~strcmp(scheme,'modified_euler') &&...
                     ~strcmp(scheme,'taylor_2')))
-                    this.invalidOptError('Solver.integr_scheme_trans','forward_euler, modified_euler, taylor_2');
+                    this.invalidOptError('Solver.integration_scheme_translation','forward_euler, modified_euler, taylor_2');
                     status = 0; return;
                 end
                 if (strcmp(scheme,'forward_euler'))
@@ -330,13 +330,13 @@ classdef Read < handle
             end
             
             % Time integration scheme: rotational velocity
-            if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_rotat'))
-                scheme = string(json.Solver.integr_scheme_rotat);
+            if ((drv.type == drv.MECHANICAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integration_scheme_rotation'))
+                scheme = string(json.Solver.integration_scheme_rotation);
                 if (~this.isStringArray(scheme,1)    ||...
                    (~strcmp(scheme,'forward_euler')  &&...
                     ~strcmp(scheme,'modified_euler') &&...
                     ~strcmp(scheme,'taylor_2')))
-                    this.invalidOptError('Solver.integr_scheme_rotat','forward_euler, modified_euler, taylor_2');
+                    this.invalidOptError('Solver.integration_scheme_rotation','forward_euler, modified_euler, taylor_2');
                     status = 0; return;
                 end
                 if (strcmp(scheme,'forward_euler'))
@@ -349,11 +349,11 @@ classdef Read < handle
             end
             
             % Time integration scheme: temperature
-            if ((drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integr_scheme_therm'))
-                scheme = string(json.Solver.integr_scheme_therm);
+            if ((drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL) && isfield(json.Solver,'integration_scheme_thermal'))
+                scheme = string(json.Solver.integration_scheme_thermal);
                 if (~this.isStringArray(scheme,1) ||...
                     ~strcmp(scheme,'forward_euler'))
-                    this.invalidOptError('Solver.integr_scheme_therm','forward_euler');
+                    this.invalidOptError('Solver.integration_scheme_thermal','forward_euler');
                     status = 0; return;
                 end
                 if (strcmp(scheme,'forward_euler'))

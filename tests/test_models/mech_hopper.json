@@ -5,10 +5,10 @@
 		"model_parts_file" : "mech_hopper.txt"
 	},
 	"Solver": {
-		"integr_scheme_trans" : "modified_euler",
-		"integr_scheme_rotat" : "modified_euler",
-		"time_step"           : 2.0e-5,
-		"final_time"          : 0.02
+		"integration_scheme_translation" : "modified_euler",
+		"integration_scheme_rotation"    : "modified_euler",
+		"time_step"                      : 2.0e-5,
+		"final_time"                     : 0.02
 	},
 	"Search": {
 		"scheme"           : "verlet_list",

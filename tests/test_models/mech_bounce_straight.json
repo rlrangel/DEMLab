@@ -5,10 +5,10 @@
 		"model_parts_file" : "mech_bounce_straight.txt"
 	},
 	"Solver": {
-		"integr_scheme_trans" : "forward_euler",
-		"integr_scheme_rotat" : "forward_euler",
-		"time_step"           : 1.0e-4,
-		"final_time"          : 1.0
+		"integration_scheme_translation" : "forward_euler",
+		"integration_scheme_rotation"    : "forward_euler",
+		"time_step"                      : 1.0e-4,
+		"final_time"                     : 1.0
 	},
 	"Search": {
 		"scheme"           : "simple_loop",

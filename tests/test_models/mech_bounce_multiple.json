@@ -5,10 +5,10 @@
 		"model_parts_file" : "mech_bounce_multiple.txt"
 	},
 	"Solver": {
-		"integr_scheme_trans" : "taylor_2",
-		"integr_scheme_rotat" : "taylor_2",
-		"time_step"           : 1.0e-4,
-		"final_time"          : 1.0
+		"integration_scheme_translation" : "taylor_2",
+		"integration_scheme_rotation"    : "taylor_2",
+		"time_step"                      : 1.0e-4,
+		"final_time"                     : 1.0
 	},
 	"Search": {
 		"scheme"           : "simple_loop",

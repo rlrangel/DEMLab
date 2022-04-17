@@ -5,9 +5,9 @@
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
-		"integr_scheme_therm" : "forward_euler",
-		"time_step"           : 1.0e-2,
-		"final_time"          : 10.0
+		"integration_scheme_thermal" : "forward_euler",
+		"time_step"                  : 1.0e-2,
+		"final_time"                 : 10.0
 	},
 	"GlobalCondition": {
 		"fluid_velocity"    : [0.0,0.0],

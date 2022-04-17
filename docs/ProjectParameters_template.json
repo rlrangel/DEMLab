@@ -5,13 +5,13 @@
 		"model_parts_file" : "ModelParts.txt"
 	},
 	"Solver": {
-		"integr_scheme_trans" : "forward_euler"/"modified_euler"/"taylor_2",
-		"integr_scheme_rotat" : "forward_euler"/"modified_euler"/"taylor_2",
-		"integr_scheme_therm" : "forward_euler",
-		"auto_time_step"      : true/false,
-		"time_step"           : 0.0,
-		"final_time"          : 0.0,
-		"eval_frequency"      : 0
+		"integration_scheme_translation" : "forward_euler"/"modified_euler"/"taylor_2",
+		"integration_scheme_rotation"    : "forward_euler"/"modified_euler"/"taylor_2",
+		"integration_scheme_thermal"     : "forward_euler",
+		"auto_time_step"                 : true/false,
+		"time_step"                      : 0.0,
+		"final_time"                     : 0.0,
+		"eval_frequency"                 : 0
 	},
 	"Search": {
 		"scheme"           : "simple_loop"/"verlet_list",
