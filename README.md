@@ -18,7 +18,7 @@
 
 # DEMLab - Discrete Element Method Laboratory
 
-<p align=center><img height="100.0%" width="100.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logo_demlab.png"></p>
+<p align=center><img height="100.0%" width="100.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_demlab.png"></p>
 
 [![Release][release_image]][releases_link] [![License][license_image]][license_link] [![DOI][doi_image]][doi_link]
 
@@ -40,9 +40,9 @@ Polytechnic University of Catalonia ([UPC BarcelonaTech][upc_website])
 
 <p float="left">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logo_cimne.png" width="350"/>
+<img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_cimne.png" width="350"/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logo_upc.png" width="350"/> 
+<img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_upc.png" width="350"/> 
 </p>
 
 ## License
