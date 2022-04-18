@@ -1,0 +1,337 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ContactForceN_ElastoPlasticLinear class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="ContactForceN_ElastoPlasticLinear.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>ContactForceN_ElastoPlasticLinear class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="contactforcen.html">ContactForceN</a> class for the implementation of the <b>Linear Elasto-Plastic</b> normal contact force model.</p><p>This model assumes that the normal contact force has only an elastic component <img src="ContactForceN_ElastoPlasticLinear_eq03313484026905533924.png" alt="$F_{n}^{e}$" style="width:16px;height:14px;"> that is provided by a hysteric linear spring.</p><p>The hysteric spring stiffness adopts different values depending on whether elements approach or depart from each other. The unloading stiffness is always greater than the loading stiffness.</p><p>The energy dissipation in this model is due to the spring hysteresis and it is able to simulate the plastic deformation of elements during collisions.</p><p><img src="ContactForceN_ElastoPlasticLinear_eq00707627108190457159.png" alt="$$\left \{ F_{n} \right \} = -F_{n}^{e} \{-\hat{n}\}$$" style="width:112px;height:15px;"></p><div><ul><li><b>Loading</b> (<img src="ContactForceN_ElastoPlasticLinear_eq07199587971001351588.png" alt="$\dot{\delta_{n}}&gt;0$" style="width:39px;height:17px;">):</li></ul></div><p><img src="ContactForceN_ElastoPlasticLinear_eq12773691268591185211.png" alt="$$F_{n}^{e} = K_{n}^{L}\delta_{n}$$" style="width:70px;height:18px;"></p><div><ul><li><b>Unloading (before detachment)</b> (<img src="ContactForceN_ElastoPlasticLinear_eq10209806941465127334.png" alt="$\dot{\delta_{n}}<0, \delta_{n}&gt;\delta_{n}^{res}$" style="width:101px;height:18px;">):</li></ul></div><p><img src="ContactForceN_ElastoPlasticLinear_eq01070915712358136388.png" alt="$$F_{n}^{e} = K_{n}^{U} \left ( \delta_{n}-\delta_{n}^{res} \right )$$" style="width:125px;height:18px;"></p><div><ul><li><b>Unloading (after detachment)</b> (<img src="ContactForceN_ElastoPlasticLinear_eq17660434141913591234.png" alt="$\dot{\delta_{n}}<0, \delta_{n}\leq\delta_{n}^{res}$" style="width:101px;height:18px;">):</li></ul></div><p><img src="ContactForceN_ElastoPlasticLinear_eq09103056779619198466.png" alt="$$F_{n}^{e} = 0$$" style="width:43px;height:15px;"></p><p>The loading stiffness coefficient <img src="ContactForceN_ElastoPlasticLinear_eq18326203471568379562.png" alt="$K_{n}^{L}$" style="width:20px;height:17px;"> can be computed by 3 different formulas, if its value is not provided:</p><div><ul><li><b>Equivalent energy</b>:</li></ul></div><p><img src="ContactForceN_ElastoPlasticLinear_eq01138646515539514318.png" alt="$$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5}$$" style="width:221px;height:30px;"></p><div><ul><li><b>Equivalent overlap</b>:</li></ul></div><p><img src="ContactForceN_ElastoPlasticLinear_eq10208728972815859396.png" alt="$$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( 1+\beta^{-2} \right )$$" style="width:284px;height:30px;"></p><div><ul><li><b>Equivalent time</b>:</li></ul></div><p><img src="ContactForceN_ElastoPlasticLinear_eq04386676940021557440.png" alt="$$K_{n} = 1.198 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( exp \left ( -\frac{tg^{-1}(\beta)}{\beta} \right ) \right )^{2}$$" style="width:359px;height:40px;"></p><p>The unloading stiffness coefficient <img src="ContactForceN_ElastoPlasticLinear_eq06940021353607503515.png" alt="$K_{n}^{U}$" style="width:22px;height:17px;"> can be computed by 2 different formulas:</p><div><ul><li><b>Constant</b>:</li></ul></div><p><img src="ContactForceN_ElastoPlasticLinear_eq01257831337041450424.png" alt="$$K_{n}^{U} = \frac{K_{n}^{L}}{e^{2}}$$" style="width:65px;height:33px;"></p><div><ul><li><b>Variable</b>:</li></ul></div><p><img src="ContactForceN_ElastoPlasticLinear_eq05538857522549025049.png" alt="$$K_{n}^{U} = K_{n}^{L} + SF_{n}^{max}$$" style="width:122px;height:18px;"></p><p><img src="ContactForceN_ElastoPlasticLinear_eq17920350706517233440.png" alt="$$F_{n}^{max} = K_{n}^{L}\dot{\delta}_{n}^{0}\sqrt{\frac{m_{eff}}{K_{n}^{L}}}$$" style="width:135px;height:36px;"></p><p>The residual overlap due to palstic deformation is computed as:</p><p><img src="ContactForceN_ElastoPlasticLinear_eq08424882270795238587.png" alt="$$\delta_{n}^{res} = \dot{\delta}_{n}^{0} \sqrt{\frac{m_{eff}}{K_{n}^{L}}}(1-e^{2})$$" style="width:152px;height:36px;"></p><p><b>Notation</b>:</p><p><img src="ContactForceN_ElastoPlasticLinear_eq01053953801552351832.png" alt="$\hat{n}$" style="width:9px;height:11px;">: Normal direction between elements</p><p><img src="ContactForceN_ElastoPlasticLinear_eq09065624731070659725.png" alt="$\delta_{n}$" style="width:13px;height:14px;">: Normal overlap</p><p><img src="ContactForceN_ElastoPlasticLinear_eq05345183001595785157.png" alt="$\dot{\delta_{n}}$" style="width:13px;height:17px;">: Time rate of change of normal overlap</p><p><img src="ContactForceN_ElastoPlasticLinear_eq04101632213741913129.png" alt="$\dot{\delta}_{n}^{0}$" style="width:13px;height:18px;">: Time rate of change of normal overlap at the impact moment</p><p><img src="ContactForceN_ElastoPlasticLinear_eq02602891172830952942.png" alt="$R_{eff}$" style="width:28px;height:15px;">: Effective contact radius</p><p><img src="ContactForceN_ElastoPlasticLinear_eq02651269392019945628.png" alt="$E_{eff}$" style="width:28px;height:15px;">: Effective Young modulus</p><p><img src="ContactForceN_ElastoPlasticLinear_eq06291617511541824668.png" alt="$m_{eff}$" style="width:30px;height:11px;">: Effective mass</p><p><img src="ContactForceN_ElastoPlasticLinear_eq12226254761175012236.png" alt="$e$" style="width:6px;height:7px;">: Normal coefficient of restitution</p><p><img src="ContactForceN_ElastoPlasticLinear_eq02558339637829878863.png" alt="$\beta = \frac{\pi}{ln(e)}$" style="width:53px;height:18px;"></p><p><img src="ContactForceN_ElastoPlasticLinear_eq14663648698641962978.png" alt="$S$" style="width:9px;height:11px;">: Variable unload stiffness coefficient parameter</p><p><b>References</b>:</p><div><ul><li><a href="https://doi.org/10.1122/1.549893">O.R. Walton and R.L. Braun. Viscosity, granular temperature, and stress calculations for shearing assemblies of inelastic, frictional disks, <i>J. Rheol.</i>, 30:949, 1986</a> (proposal)</li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ContactForceN_ElastoPlasticLinear &lt; ContactForceN
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Formulation options</span>
+        load_stiff_formula   <span class="string">uint8</span> <span class="string">=</span> <span class="string">uint8.empty</span>;   <span class="comment">% flag for type of loading stiffness formulation</span>
+        unload_stiff_formula <span class="string">uint8</span> <span class="string">=</span> <span class="string">uint8.empty</span>;   <span class="comment">% flag for type of unloading stiffness formulation</span>
+
+        <span class="comment">% Contact parameters</span>
+        unload_stiff <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% unloading stiffness coefficient</span>
+        unload_param <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% variable unload stiffness coefficient parameter</span>
+        residue      <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% residual overlap</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = ContactForceN_ElastoPlasticLinear()
+            this = this@ContactForceN(ContactForceN.ELASTOPLASTIC_LINEAR);
+            this = this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setDefaultProps(this)
+            this.load_stiff_formula   = this.ENERGY;
+            this.unload_stiff_formula = this.CONSTANT;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setCteParams(this,int)
+            <span class="comment">% Needed properties</span>
+            r    = int.eff_radius;
+            m    = int.eff_mass;
+            y    = int.eff_young;
+            v0   = abs(int.kinemat.v0_n);
+            e    = this.restitution;
+            e2   = e^2;
+            S    = this.unload_param;
+            beta = pi/log(e);
+
+            <span class="comment">% Loading stiffness coefficient</span>
+            <span class="keyword">switch</span> this.load_stiff_formula
+                <span class="keyword">case</span> this.ENERGY
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5);
+                <span class="keyword">case</span> this.OVERLAP
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5) * exp(-atan(beta)/beta)^2;
+                <span class="keyword">case</span> this.TIME
+                    this.stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+1/beta^2);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Unloading stiffness coefficient</span>
+            <span class="keyword">switch</span> this.unload_stiff_formula
+                <span class="keyword">case</span> this.CONSTANT
+                    this.unload_stiff = this.stiff / e2;
+                <span class="keyword">case</span> this.VARIABLE
+                    fmax = this.stiff * v0 * sqrt(m/this.stiff);
+                    this.unload_stiff = this.stiff + S * fmax;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Residual overlap</span>
+            this.residue = v0 * sqrt(m/this.stiff) * (1-e2);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = evalForce(this,int)
+            <span class="comment">% Needed properties</span>
+            dir  = int.kinemat.dir_n;
+            ovlp = int.kinemat.ovlp_n;
+            vel  = int.kinemat.vel_n;
+            res  = this.residue;
+            kl   = this.stiff;
+            ku   = this.unload_stiff;
+
+            <span class="comment">% Elastic force according to loading or unloading behavior</span>
+            <span class="keyword">if</span> (vel &gt; 0) <span class="comment">% loading</span>
+                f = kl * ovlp;
+            <span class="keyword">elseif</span> (vel &lt; 0 &amp;&amp; ovlp &gt; res) <span class="comment">% unloading</span>
+                f = ku * (ovlp - res);
+            <span class="keyword">else</span>
+                f = 0;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Total tangential force vector (against deformation and motion)</span>
+            this.total_force = -f * dir;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% ContactForceN_ElastoPlasticLinear class
+%
+%% Description
+%
+% This is a sub-class of the <contactforcen.html ContactForceN> class for
+% the implementation of the *Linear Elasto-Plastic* normal contact force
+% model.
+%
+% This model assumes that the normal contact force has only an elastic
+% component $F_{n}^{e}$ that is provided by a hysteric linear spring.
+%
+% The hysteric spring stiffness adopts different values depending on
+% whether elements approach or depart from each other.
+% The unloading stiffness is always greater than the loading stiffness.
+% 
+% The energy dissipation in this model is due to the spring hysteresis and
+% it is able to simulate the plastic deformation of elements during
+% collisions.
+%
+% $$\left \{ F_{n} \right \} = -F_{n}^{e} \{-\hat{n}\}$$
+%
+% * *Loading* ($\dot{\delta_{n}}>0$):
+%
+% $$F_{n}^{e} = K_{n}^{L}\delta_{n}$$
+%
+% * *Unloading (before detachment)* ($\dot{\delta_{n}}<0, \delta_{n}>\delta_{n}^{res}$):
+%
+% $$F_{n}^{e} = K_{n}^{U} \left ( \delta_{n}-\delta_{n}^{res} \right )$$
+%
+% * *Unloading (after detachment)* ($\dot{\delta_{n}}<0, \delta_{n}\leq\delta_{n}^{res}$):
+%
+% $$F_{n}^{e} = 0$$
+%
+% The loading stiffness coefficient $K_{n}^{L}$ can be computed by 3
+% different formulas, if its value is not provided:
+%
+% * *Equivalent energy*:
+%
+% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5}$$
+%
+% * *Equivalent overlap*:
+%
+% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( 1+\beta^{-2} \right )$$
+%
+% * *Equivalent time*:
+%
+% $$K_{n} = 1.198 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( exp \left ( -\frac{tg^{-1}(\beta)}{\beta} \right ) \right )^{2}$$
+%
+% The unloading stiffness coefficient $K_{n}^{U}$ can be computed by 2
+% different formulas:
+%
+% * *Constant*:
+%
+% $$K_{n}^{U} = \frac{K_{n}^{L}}{e^{2}}$$
+%
+% * *Variable*:
+%
+% $$K_{n}^{U} = K_{n}^{L} + SF_{n}^{max}$$
+%
+% $$F_{n}^{max} = K_{n}^{L}\dot{\delta}_{n}^{0}\sqrt{\frac{m_{eff}}{K_{n}^{L}}}$$
+%
+% The residual overlap due to palstic deformation is computed as:
+%
+% $$\delta_{n}^{res} = \dot{\delta}_{n}^{0} \sqrt{\frac{m_{eff}}{K_{n}^{L}}}(1-e^{2})$$
+%
+% *Notation*:
+%
+% $\hat{n}$: Normal direction between elements
+%
+% $\delta_{n}$: Normal overlap
+%
+% $\dot{\delta_{n}}$: Time rate of change of normal overlap
+%
+% $\dot{\delta}_{n}^{0}$: Time rate of change of normal overlap at the impact moment
+%
+% $R_{eff}$: Effective contact radius
+%
+% $E_{eff}$: Effective Young modulus
+%
+% $m_{eff}$: Effective mass
+%
+% $e$: Normal coefficient of restitution
+%
+% $\beta = \frac{\pi}{ln(e)}$
+%
+% $S$: Variable unload stiffness coefficient parameter
+%
+% *References*:
+%
+% * <https://doi.org/10.1122/1.549893
+% O.R. Walton and R.L. Braun.
+% Viscosity, granular temperature, and stress calculations for shearing assemblies of inelastic, frictional disks, _J. Rheol._, 30:949, 1986>
+% (proposal)
+%
+classdef ContactForceN_ElastoPlasticLinear < ContactForceN
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Formulation options
+        load_stiff_formula   uint8 = uint8.empty;   % flag for type of loading stiffness formulation
+        unload_stiff_formula uint8 = uint8.empty;   % flag for type of unloading stiffness formulation
+        
+        % Contact parameters
+        unload_stiff double = double.empty;   % unloading stiffness coefficient
+        unload_param double = double.empty;   % variable unload stiffness coefficient parameter
+        residue      double = double.empty;   % residual overlap
+    end
+    
+    %% Constructor method
+    methods
+        function this = ContactForceN_ElastoPlasticLinear()
+            this = this@ContactForceN(ContactForceN.ELASTOPLASTIC_LINEAR);
+            this = this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setDefaultProps(this)
+            this.load_stiff_formula   = this.ENERGY;
+            this.unload_stiff_formula = this.CONSTANT;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setCteParams(this,int)
+            % Needed properties
+            r    = int.eff_radius;
+            m    = int.eff_mass;
+            y    = int.eff_young;
+            v0   = abs(int.kinemat.v0_n);
+            e    = this.restitution;
+            e2   = e^2;
+            S    = this.unload_param;
+            beta = pi/log(e);
+            
+            % Loading stiffness coefficient
+            switch this.load_stiff_formula
+                case this.ENERGY
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5);
+                case this.OVERLAP
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5) * exp(-atan(beta)/beta)^2;
+                case this.TIME
+                    this.stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+1/beta^2);
+            end
+            
+            % Unloading stiffness coefficient
+            switch this.unload_stiff_formula
+                case this.CONSTANT
+                    this.unload_stiff = this.stiff / e2;
+                case this.VARIABLE
+                    fmax = this.stiff * v0 * sqrt(m/this.stiff);
+                    this.unload_stiff = this.stiff + S * fmax;
+            end
+            
+            % Residual overlap
+            this.residue = v0 * sqrt(m/this.stiff) * (1-e2);
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = evalForce(this,int)
+            % Needed properties
+            dir  = int.kinemat.dir_n;
+            ovlp = int.kinemat.ovlp_n;
+            vel  = int.kinemat.vel_n;
+            res  = this.residue;
+            kl   = this.stiff;
+            ku   = this.unload_stiff;
+            
+            % Elastic force according to loading or unloading behavior
+            if (vel > 0) % loading
+                f = kl * ovlp;
+            elseif (vel < 0 && ovlp > res) % unloading
+                f = ku * (ovlp - res);
+            else
+                f = 0;
+            end
+            
+            % Total tangential force vector (against deformation and motion)
+            this.total_force = -f * dir;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

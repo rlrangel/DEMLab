@@ -1,0 +1,330 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ContactForceN_ViscoElasticNonlinear class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="ContactForceN_ViscoElasticNonlinear.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>ContactForceN_ViscoElasticNonlinear class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="contactforcen.html">ContactForceN</a> class for the implementation of the <b>Nonlinear Visco-Elastic</b> normal contact force model.</p><p>This model assumes that the normal contact force has an elastic <img src="ContactForceN_ViscoElasticNonlinear_eq03313484026905533924.png" alt="$F_{n}^{e}$" style="width:16px;height:14px;"> and a viscous <img src="ContactForceN_ViscoElasticNonlinear_eq02928106406494179922.png" alt="$F_{n}^{v}$" style="width:17px;height:14px;"> component, provided by a nonlinear spring and dashpot, respectively.</p><p><img src="ContactForceN_ViscoElasticNonlinear_eq04257026307176133686.png" alt="$$\left \{ F_{n} \right \} = (F_{n}^{e} + F_{n}^{v}) \{-\hat{n}\}$$" style="width:148px;height:15px;"></p><p>The elastic force is always computed according to Hertz contact theory:</p><p><img src="ContactForceN_ViscoElasticNonlinear_eq07094277290690568366.png" alt="$$F_{n}^{e} = K_{hz} \delta_{n}^{3/2}$$" style="width:82px;height:18px;"></p><p><img src="ContactForceN_ViscoElasticNonlinear_eq03919229475093501951.png" alt="$$K_{hz} = \frac{4}{3} E_{eff} \sqrt{R_{eff}}$$" style="width:127px;height:30px;"></p><p>The viscous force can be computed by 3 different formulas:</p><div><ul><li><b>Critical ratio</b>:</li></ul></div><p><img src="ContactForceN_ViscoElasticNonlinear_eq17550548240878444674.png" alt="$$F_{n}^{v} = \xi\sqrt{8m_{eff}E_{eff}\sqrt{R_{eff}}}\delta_{n}^{1/4}\dot{\delta_{n}}$$" style="width:205px;height:27px;"></p><p>Perfectly elastic: <img src="ContactForceN_ViscoElasticNonlinear_eq11776722355837982839.png" alt="$\xi = 0$" style="width:34px;height:14px;"></p><p>Critically damped: <img src="ContactForceN_ViscoElasticNonlinear_eq18279761377518324274.png" alt="$\xi = 1$" style="width:33px;height:14px;"></p><div><ul><li><b>TTI (Tsuji, Tanaka, Ishida)</b>:</li></ul></div><p><img src="ContactForceN_ViscoElasticNonlinear_eq06532992265341529872.png" alt="$$F_{n}^{v} = \eta_{n}\delta_{n}^{1/4}\dot{\delta_{n}}$$" style="width:87px;height:18px;"></p><p><img src="ContactForceN_ViscoElasticNonlinear_eq06074546402339201922.png" alt="$$\eta_{n} = -2.2664\frac{ln(e)\sqrt{m_{eff}K_{hz}}}{\sqrt{ln(e)^{2}+10.1354}}$$" style="width:206px;height:41px;"></p><div><ul><li><b>KK (Kuwabara &amp; Kono)</b>:</li></ul></div><p><img src="ContactForceN_ViscoElasticNonlinear_eq07255674683227368279.png" alt="$$F_{n}^{v} = \eta_{n}\delta_{n}^{1/2}\dot{\delta_{n}}$$" style="width:87px;height:18px;"></p><div><ul><li><b>LH (Lee &amp; Herrmann)</b>:</li></ul></div><p><img src="ContactForceN_ViscoElasticNonlinear_eq04646331145657674655.png" alt="$$F_{n}^{v} = \eta_{n}m_{eff}\dot{\delta_{n}}$$" style="width:94px;height:18px;"></p><p>The damping coefficient <img src="ContactForceN_ViscoElasticNonlinear_eq08571881854051520796.png" alt="$\eta_{n}$" style="width:13px;height:10px;"> must be provided for models KK and LH.</p><p><b>Notation</b>:</p><p><img src="ContactForceN_ViscoElasticNonlinear_eq01053953801552351832.png" alt="$\hat{n}$" style="width:9px;height:11px;">: Normal direction between elements</p><p><img src="ContactForceN_ViscoElasticNonlinear_eq09065624731070659725.png" alt="$\delta_{n}$" style="width:13px;height:14px;">: Normal overlap</p><p><img src="ContactForceN_ViscoElasticNonlinear_eq05345183001595785157.png" alt="$\dot{\delta_{n}}$" style="width:13px;height:17px;">: Time rate of change of normal overlap</p><p><img src="ContactForceN_ViscoElasticNonlinear_eq02602891172830952942.png" alt="$R_{eff}$" style="width:28px;height:15px;">: Effective contact radius</p><p><img src="ContactForceN_ViscoElasticNonlinear_eq02651269392019945628.png" alt="$E_{eff}$" style="width:28px;height:15px;">: Effective Young modulus</p><p><img src="ContactForceN_ViscoElasticNonlinear_eq06291617511541824668.png" alt="$m_{eff}$" style="width:30px;height:11px;">: Effective mass</p><p><img src="ContactForceN_ViscoElasticNonlinear_eq12226254761175012236.png" alt="$e$" style="width:6px;height:7px;">: Normal coefficient of restitution</p><p><b>References</b>:</p><div><ul><li><a href="https://doi.org/10.1515/crll.1882.92.156">H. Hertz. Ueber die Beruhrung fester elastischer Korper, <i>J.f. reine u. Angewandte Math.</i>, 92:156-171, 1882</a> (Hertz contact theory)</li></ul></div><div><ul><li><a href="https://www.cambridge.org/core/books/contact-mechanics/E3707F77C2EBCE727C3911AFBD2E4AC2">K.L. Johnson. <i>Contact Mechanics</i>, Cambridge University Press, 1985</a> (Hertz contact theory)</li></ul></div><div><ul><li><a href="https://link.springer.com/article/10.1007/s40430-020-02465-5">O. Quintana-Ruiz and E. Campello. A coupled thermo?mechanical model for the simulation of discrete particle systems, <i>J. Braz. Soc. Mech. Sci.</i>, 42:387, 2020</a> (critical damping ratio model)</li></ul></div><div><ul><li><a href="https://doi.org/10.1016/0032-5910(92)88030-L">Y. Tsuji, T. Tanaka and T. Ishida. Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, <i>Powder Technol.</i>, 71(3):239-250, 1992</a> (TTI viscous model)</li></ul></div><div><ul><li><a href="https://www.wiley.com/en-ai/Coupled+CFD+DEM+Modeling%3A+Formulation%2C+Implementation+and+Application+to+Multiphase+Flows-p-9781119005131">H.R. Norouzi, R. Zarghami, R. Sotudeh-Gharebagh and N. Mostoufi. <i>Coupled CFD-DEM Modeling: Formulation, Implementation and Application to Multiphase Flows</i>, Wiley, 2016</a> (damping coefficient formula in TTI viscous model)</li></ul></div><div><ul><li><a href="https://iopscience.iop.org/article/10.1143/JJAP.26.1230/meta">G. Kuwabara and K. Kono. Restitution coefficient in collision between two spheres, <i>Jpn. J. Appl. Phys.</i>, 26:1230-1233, 1987</a> (KK viscous model)</li></ul></div><div><ul><li><a href="https://doi.org/10.1088/0305-4470/26/2/021">J. Lee and H.J. Herrmann. Angle of repose and angle of marginal stability-molecular-dynamics of granular particles, <i>J. Phys. A: Math. Gen.</i>, 26(2):373-383, 1993</a> (LH viscous model)</li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ContactForceN_ViscoElasticNonlinear &lt; ContactForceN
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Formulation options</span>
+        damp_formula    <span class="string">uint8</span>   <span class="string">=</span> <span class="string">uint8.empty</span>;     <span class="comment">% flag for type of damping formulation</span>
+        damp_ratio      <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% ratio of the critical damping</span>
+        remove_cohesion <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for removing artificial cohesion</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = ContactForceN_ViscoElasticNonlinear()
+            this = this@ContactForceN(ContactForceN.VISCOELASTIC_NONLINEAR);
+            this = this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setDefaultProps(this)
+            this.damp_formula    = this.TTI;
+            this.damp_ratio      = 0;
+            this.remove_cohesion = true;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setCteParams(this,int)
+            <span class="comment">% Stiffness coefficient (Hertz model)</span>
+            this.stiff = 4 * int.eff_young * sqrt(int.eff_radius) / 3;
+
+            <span class="comment">% Damping coefficient</span>
+            <span class="keyword">if</span> (isempty(this.damp))
+                <span class="keyword">if</span> (this.damp_formula == this.CRITICAL_RATIO)
+                    this.damp = this.damp_ratio * sqrt(8 * int.eff_young * int.eff_mass * sqrt(int.eff_radius));
+                <span class="keyword">elseif</span> (this.damp_formula == this.TTI)
+                    ln = log(this.restitution);
+                    this.damp = -2.2664 * ln * sqrt(int.eff_mass * this.stiff) / sqrt(10.1354 + ln^2);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = evalForce(this,int)
+            <span class="comment">% Needed properties</span>
+            dir  = int.kinemat.dir_n;
+            ovlp = int.kinemat.ovlp_n;
+            vel  = int.kinemat.vel_n;
+            k    = this.stiff;
+            d    = this.damp;
+            m    = int.eff_mass;
+
+            <span class="comment">% Elastic force (Hertz model)</span>
+            fe = k * ovlp^(3/2);
+
+            <span class="comment">% Viscous force</span>
+            <span class="keyword">switch</span> this.damp_formula
+                <span class="keyword">case</span> this.NONE_DAMP
+                    fv = d * vel;
+                <span class="keyword">case</span> this.CRITICAL_RATIO
+                    fv = d * ovlp^(1/4) * vel;
+                <span class="keyword">case</span> this.TTI
+                    fv = d * ovlp^(1/4) * vel;
+                <span class="keyword">case</span> this.KK
+                    fv = d * ovlp^(1/2) * vel;
+                <span class="keyword">case</span> this.LH
+                    fv = d * m * vel;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Force modulus</span>
+            f = fe + fv;
+
+            <span class="comment">% Remove artificial cohesion</span>
+            <span class="keyword">if</span> (f &lt; 0 &amp;&amp; this.remove_cohesion)
+                f = 0;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Total tangential force vector (against deformation and motion)</span>
+            this.total_force = -f * dir;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% ContactForceN_ViscoElasticNonlinear class
+%
+%% Description
+%
+% This is a sub-class of the <contactforcen.html ContactForceN> class for
+% the implementation of the *Nonlinear Visco-Elastic* normal contact force
+% model.
+%
+% This model assumes that the normal contact force has an elastic
+% $F_{n}^{e}$ and a viscous $F_{n}^{v}$ component, provided by a nonlinear
+% spring and dashpot, respectively.
+%
+% $$\left \{ F_{n} \right \} = (F_{n}^{e} + F_{n}^{v}) \{-\hat{n}\}$$
+%
+% The elastic force is always computed according to Hertz contact theory:
+%
+% $$F_{n}^{e} = K_{hz} \delta_{n}^{3/2}$$
+%
+% $$K_{hz} = \frac{4}{3} E_{eff} \sqrt{R_{eff}}$$
+%
+% The viscous force can be computed by 3 different formulas:
+%
+% * *Critical ratio*:
+%
+% $$F_{n}^{v} = \xi\sqrt{8m_{eff}E_{eff}\sqrt{R_{eff}}}\delta_{n}^{1/4}\dot{\delta_{n}}$$
+%
+% Perfectly elastic: $\xi = 0$
+%
+% Critically damped: $\xi = 1$
+%
+% * *TTI (Tsuji, Tanaka, Ishida)*:
+%
+% $$F_{n}^{v} = \eta_{n}\delta_{n}^{1/4}\dot{\delta_{n}}$$
+%
+% $$\eta_{n} = -2.2664\frac{ln(e)\sqrt{m_{eff}K_{hz}}}{\sqrt{ln(e)^{2}+10.1354}}$$
+%
+% * *KK (Kuwabara & Kono)*:
+%
+% $$F_{n}^{v} = \eta_{n}\delta_{n}^{1/2}\dot{\delta_{n}}$$
+%
+% * *LH (Lee & Herrmann)*:
+%
+% $$F_{n}^{v} = \eta_{n}m_{eff}\dot{\delta_{n}}$$
+%
+% The damping coefficient $\eta_{n}$ must be provided for models KK and LH.
+%
+% *Notation*:
+%
+% $\hat{n}$: Normal direction between elements
+%
+% $\delta_{n}$: Normal overlap
+%
+% $\dot{\delta_{n}}$: Time rate of change of normal overlap
+%
+% $R_{eff}$: Effective contact radius
+%
+% $E_{eff}$: Effective Young modulus
+%
+% $m_{eff}$: Effective mass
+%
+% $e$: Normal coefficient of restitution
+%
+% *References*:
+%
+% * <https://doi.org/10.1515/crll.1882.92.156
+% H. Hertz.
+% Ueber die Beruhrung fester elastischer Korper, _J.f. reine u. Angewandte Math._, 92:156-171, 1882>
+% (Hertz contact theory)
+%
+% * <https://www.cambridge.org/core/books/contact-mechanics/E3707F77C2EBCE727C3911AFBD2E4AC2
+% K.L. Johnson.
+% _Contact Mechanics_, Cambridge University Press, 1985>
+% (Hertz contact theory)
+%
+% * <https://link.springer.com/article/10.1007/s40430-020-02465-5
+% O. Quintana-Ruiz and E. Campello.
+% A coupled thermo?mechanical model for the simulation of discrete particle systems, _J. Braz. Soc. Mech. Sci._, 42:387, 2020>
+% (critical damping ratio model)
+%
+% * <https://doi.org/10.1016/0032-5910(92)88030-L
+% Y. Tsuji, T. Tanaka and T. Ishida.
+% Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, _Powder Technol._, 71(3):239-250, 1992>
+% (TTI viscous model)
+%
+% * <https://www.wiley.com/en-ai/Coupled+CFD+DEM+Modeling%3A+Formulation%2C+Implementation+and+Application+to+Multiphase+Flows-p-9781119005131
+% H.R. Norouzi, R. Zarghami, R. Sotudeh-Gharebagh and N. Mostoufi.
+% _Coupled CFD-DEM Modeling: Formulation, Implementation and Application to Multiphase Flows_, Wiley, 2016>
+% (damping coefficient formula in TTI viscous model)
+%
+% * <https://iopscience.iop.org/article/10.1143/JJAP.26.1230/meta
+% G. Kuwabara and K. Kono.
+% Restitution coefficient in collision between two spheres, _Jpn. J. Appl. Phys._, 26:1230-1233, 1987>
+% (KK viscous model)
+%
+% * <https://doi.org/10.1088/0305-4470/26/2/021
+% J. Lee and H.J. Herrmann.
+% Angle of repose and angle of marginal stability-molecular-dynamics of granular particles, _J. Phys. A: Math. Gen._, 26(2):373-383, 1993>
+% (LH viscous model)
+%
+classdef ContactForceN_ViscoElasticNonlinear < ContactForceN
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Formulation options
+        damp_formula    uint8   = uint8.empty;     % flag for type of damping formulation
+        damp_ratio      double  = double.empty;    % ratio of the critical damping
+        remove_cohesion logical = logical.empty;   % flag for removing artificial cohesion
+    end
+    
+    %% Constructor method
+    methods
+        function this = ContactForceN_ViscoElasticNonlinear()
+            this = this@ContactForceN(ContactForceN.VISCOELASTIC_NONLINEAR);
+            this = this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setDefaultProps(this)
+            this.damp_formula    = this.TTI;
+            this.damp_ratio      = 0;
+            this.remove_cohesion = true;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setCteParams(this,int)
+            % Stiffness coefficient (Hertz model)
+            this.stiff = 4 * int.eff_young * sqrt(int.eff_radius) / 3;
+            
+            % Damping coefficient
+            if (isempty(this.damp))
+                if (this.damp_formula == this.CRITICAL_RATIO)
+                    this.damp = this.damp_ratio * sqrt(8 * int.eff_young * int.eff_mass * sqrt(int.eff_radius));
+                elseif (this.damp_formula == this.TTI)
+                    ln = log(this.restitution);
+                    this.damp = -2.2664 * ln * sqrt(int.eff_mass * this.stiff) / sqrt(10.1354 + ln^2);
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = evalForce(this,int)
+            % Needed properties
+            dir  = int.kinemat.dir_n;
+            ovlp = int.kinemat.ovlp_n;
+            vel  = int.kinemat.vel_n;
+            k    = this.stiff;
+            d    = this.damp;
+            m    = int.eff_mass;
+            
+            % Elastic force (Hertz model)
+            fe = k * ovlp^(3/2);
+            
+            % Viscous force
+            switch this.damp_formula
+                case this.NONE_DAMP
+                    fv = d * vel;
+                case this.CRITICAL_RATIO
+                    fv = d * ovlp^(1/4) * vel;
+                case this.TTI
+                    fv = d * ovlp^(1/4) * vel;
+                case this.KK
+                    fv = d * ovlp^(1/2) * vel;
+                case this.LH
+                    fv = d * m * vel;
+            end
+            
+            % Force modulus
+            f = fe + fv;
+            
+            % Remove artificial cohesion
+            if (f < 0 && this.remove_cohesion)
+                f = 0;
+            end
+            
+            % Total tangential force vector (against deformation and motion)
+            this.total_force = -f * dir;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

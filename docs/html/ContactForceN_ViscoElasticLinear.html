@@ -1,0 +1,278 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ContactForceN_ViscoElasticLinear class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="ContactForceN_ViscoElasticLinear.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>ContactForceN_ViscoElasticLinear class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="contactforcen.html">ContactForceN</a> class for the implementation of the <b>Linear Visco-Elastic</b> normal contact force model.</p><p>This model assumes that the normal contact force has an elastic <img src="ContactForceN_ViscoElasticLinear_eq03313484026905533924.png" alt="$F_{n}^{e}$" style="width:16px;height:14px;"> and a viscous <img src="ContactForceN_ViscoElasticLinear_eq02928106406494179922.png" alt="$F_{n}^{v}$" style="width:17px;height:14px;"> component, provided by a linear spring and dashpot, respectively.</p><p><img src="ContactForceN_ViscoElasticLinear_eq04257026307176133686.png" alt="$$\left \{ F_{n} \right \} = (F_{n}^{e} + F_{n}^{v}) \{-\hat{n}\}$$" style="width:148px;height:15px;"></p><p><img src="ContactForceN_ViscoElasticLinear_eq08875395268692249328.png" alt="$$F_{n}^{e} = K_{n} \delta_{n}$$" style="width:68px;height:15px;"></p><p><img src="ContactForceN_ViscoElasticLinear_eq03004389820441970915.png" alt="$$F_{n}^{v} = \eta_{n} \dot{\delta_{n}}$$" style="width:64px;height:18px;"></p><p>The stiffness coefficient <img src="ContactForceN_ViscoElasticLinear_eq01324158102978469580.png" alt="$K_{n}$" style="width:18px;height:13px;"> can be computed by 3 different formulas, if its value is not provided:</p><div><ul><li><b>Equivalent energy</b>:</li></ul></div><p><img src="ContactForceN_ViscoElasticLinear_eq01138646515539514318.png" alt="$$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5}$$" style="width:221px;height:30px;"></p><div><ul><li><b>Equivalent overlap</b>:</li></ul></div><p><img src="ContactForceN_ViscoElasticLinear_eq10208728972815859396.png" alt="$$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( 1+\beta^{-2} \right )$$" style="width:284px;height:30px;"></p><div><ul><li><b>Equivalent time</b>:</li></ul></div><p><img src="ContactForceN_ViscoElasticLinear_eq04386676940021557440.png" alt="$$K_{n} = 1.198 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( exp \left ( -\frac{tg^{-1}(\beta)}{\beta} \right ) \right )^{2}$$" style="width:359px;height:40px;"></p><p>The damping coefficient <img src="ContactForceN_ViscoElasticLinear_eq08571881854051520796.png" alt="$\eta_{n}$" style="width:13px;height:10px;"> is computed with the following formula, if its value is not provided:</p><p><img src="ContactForceN_ViscoElasticLinear_eq15511422045056622491.png" alt="$$\eta_{n} = \sqrt{\frac{4m_{eff}K_{n}}{1+\beta^{2}}}$$" style="width:110px;height:45px;"></p><p><b>Notation</b>:</p><p><img src="ContactForceN_ViscoElasticLinear_eq01053953801552351832.png" alt="$\hat{n}$" style="width:9px;height:11px;">: Normal direction between elements</p><p><img src="ContactForceN_ViscoElasticLinear_eq09065624731070659725.png" alt="$\delta_{n}$" style="width:13px;height:14px;">: Normal overlap</p><p><img src="ContactForceN_ViscoElasticLinear_eq05345183001595785157.png" alt="$\dot{\delta_{n}}$" style="width:13px;height:17px;">: Time rate of change of normal overlap</p><p><img src="ContactForceN_ViscoElasticLinear_eq04101632213741913129.png" alt="$\dot{\delta}_{n}^{0}$" style="width:13px;height:18px;">: Time rate of change of normal overlap at the impact moment</p><p><img src="ContactForceN_ViscoElasticLinear_eq02602891172830952942.png" alt="$R_{eff}$" style="width:28px;height:15px;">: Effective contact radius</p><p><img src="ContactForceN_ViscoElasticLinear_eq02651269392019945628.png" alt="$E_{eff}$" style="width:28px;height:15px;">: Effective Young modulus</p><p><img src="ContactForceN_ViscoElasticLinear_eq06291617511541824668.png" alt="$m_{eff}$" style="width:30px;height:11px;">: Effective mass</p><p><img src="ContactForceN_ViscoElasticLinear_eq02558339637829878863.png" alt="$\beta = \frac{\pi}{ln(e)}$" style="width:53px;height:18px;">, where <i>e</i> is the normal coefficient of restitution</p><p><b>References</b>:</p><div><ul><li><a href="https://doi.org/10.1680/geot.1979.29.1.47">P.A. Cundall and O.D.L. Strack. A discrete numerical model for granular assemblies, <i>Geotechnique</i>, 29:47-65, 1979</a> (proposal)</li></ul></div><div><ul><li><a href="https://www.wiley.com/en-ai/Coupled+CFD+DEM+Modeling%3A+Formulation%2C+Implementation+and+Application+to+Multiphase+Flows-p-9781119005131">H.R. Norouzi, R. Zarghami, R. Sotudeh-Gharebagh and N. Mostoufi. <i>Coupled CFD-DEM Modeling: Formulation, Implementation and Application to Multiphase Flows</i>, Wiley, 2016</a> (damping coefficient formula)</li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ContactForceN_ViscoElasticLinear &lt; ContactForceN
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Formulation options</span>
+        stiff_formula   <span class="string">uint8</span>   <span class="string">=</span> <span class="string">uint8.empty</span>;     <span class="comment">% flag for type of stiffness formulation</span>
+        remove_cohesion <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for removing artificial cohesion</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = ContactForceN_ViscoElasticLinear()
+            this = this@ContactForceN(ContactForceN.VISCOELASTIC_LINEAR);
+            this = this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setDefaultProps(this)
+            this.stiff_formula   = this.ENERGY;
+            this.remove_cohesion = true;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setCteParams(this,int)
+            <span class="comment">% Needed properties</span>
+            r    = int.eff_radius;
+            m    = int.eff_mass;
+            y    = int.eff_young;
+            v0   = abs(int.kinemat.v0_n);
+            e    = this.restitution;
+            beta = pi/log(e);
+
+            <span class="comment">% Stiffness coefficient</span>
+            <span class="keyword">switch</span> this.stiff_formula
+                <span class="keyword">case</span> this.ENERGY
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5);
+                <span class="keyword">case</span> this.OVERLAP
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5) * (exp(-atan(beta)/beta))^2;
+                <span class="keyword">case</span> this.TIME
+                    this.stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+beta^(-2));
+            <span class="keyword">end</span>
+
+            <span class="comment">% Damping coefficient</span>
+            <span class="keyword">if</span> (isempty(this.damp))
+                this.damp = sqrt(4*m*this.stiff/(1+beta^2));
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = evalForce(this,int)
+            <span class="comment">% Needed properties</span>
+            dir  = int.kinemat.dir_n;
+            ovlp = int.kinemat.ovlp_n;
+            vel  = int.kinemat.vel_n;
+            k    = this.stiff;
+            d    = this.damp;
+
+            <span class="comment">% Force modulus (elastic and viscous contributions)</span>
+            f = k * ovlp + d * vel;
+
+            <span class="comment">% Remove artificial cohesion</span>
+            <span class="keyword">if</span> (f &lt; 0 &amp;&amp; this.remove_cohesion)
+                f = 0;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Total tangential force vector (against deformation and motion)</span>
+            this.total_force = -f * dir;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% ContactForceN_ViscoElasticLinear class
+%
+%% Description
+%
+% This is a sub-class of the <contactforcen.html ContactForceN> class for
+% the implementation of the *Linear Visco-Elastic* normal contact force
+% model.
+%
+% This model assumes that the normal contact force has an elastic
+% $F_{n}^{e}$ and a viscous $F_{n}^{v}$ component, provided by a linear
+% spring and dashpot, respectively.
+%
+% $$\left \{ F_{n} \right \} = (F_{n}^{e} + F_{n}^{v}) \{-\hat{n}\}$$
+%
+% $$F_{n}^{e} = K_{n} \delta_{n}$$
+%
+% $$F_{n}^{v} = \eta_{n} \dot{\delta_{n}}$$
+%
+% The stiffness coefficient $K_{n}$ can be computed by 3
+% different formulas, if its value is not provided:
+%
+% * *Equivalent energy*:
+%
+% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5}$$
+%
+% * *Equivalent overlap*:
+%
+% $$K_{n} = 1.053 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( 1+\beta^{-2} \right )$$
+%
+% * *Equivalent time*:
+%
+% $$K_{n} = 1.198 \left ( \dot{\delta}_{n}^{0}R_{eff}E_{eff}^{2}\sqrt{m_{eff}} \right )^{2/5} \left ( exp \left ( -\frac{tg^{-1}(\beta)}{\beta} \right ) \right )^{2}$$
+%
+% The damping coefficient $\eta_{n}$ is computed with the following formula, if its value is not provided:
+%
+% $$\eta_{n} = \sqrt{\frac{4m_{eff}K_{n}}{1+\beta^{2}}}$$
+%
+% *Notation*:
+%
+% $\hat{n}$: Normal direction between elements
+%
+% $\delta_{n}$: Normal overlap
+%
+% $\dot{\delta_{n}}$: Time rate of change of normal overlap
+%
+% $\dot{\delta}_{n}^{0}$: Time rate of change of normal overlap at the impact moment
+%
+% $R_{eff}$: Effective contact radius
+%
+% $E_{eff}$: Effective Young modulus
+%
+% $m_{eff}$: Effective mass
+%
+% $\beta = \frac{\pi}{ln(e)}$, where _e_ is the normal coefficient of restitution
+%
+% *References*:
+%
+% * <https://doi.org/10.1680/geot.1979.29.1.47
+% P.A. Cundall and O.D.L. Strack.
+% A discrete numerical model for granular assemblies, _Geotechnique_, 29:47-65, 1979>
+% (proposal)
+%
+% * <https://www.wiley.com/en-ai/Coupled+CFD+DEM+Modeling%3A+Formulation%2C+Implementation+and+Application+to+Multiphase+Flows-p-9781119005131
+% H.R. Norouzi, R. Zarghami, R. Sotudeh-Gharebagh and N. Mostoufi.
+% _Coupled CFD-DEM Modeling: Formulation, Implementation and Application to Multiphase Flows_, Wiley, 2016>
+% (damping coefficient formula)
+%
+classdef ContactForceN_ViscoElasticLinear < ContactForceN
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Formulation options
+        stiff_formula   uint8   = uint8.empty;     % flag for type of stiffness formulation
+        remove_cohesion logical = logical.empty;   % flag for removing artificial cohesion
+    end
+    
+    %% Constructor method
+    methods
+        function this = ContactForceN_ViscoElasticLinear()
+            this = this@ContactForceN(ContactForceN.VISCOELASTIC_LINEAR);
+            this = this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setDefaultProps(this)
+            this.stiff_formula   = this.ENERGY;
+            this.remove_cohesion = true;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setCteParams(this,int)
+            % Needed properties
+            r    = int.eff_radius;
+            m    = int.eff_mass;
+            y    = int.eff_young;
+            v0   = abs(int.kinemat.v0_n);
+            e    = this.restitution;
+            beta = pi/log(e);
+            
+            % Stiffness coefficient
+            switch this.stiff_formula
+                case this.ENERGY
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5);
+                case this.OVERLAP
+                    this.stiff = 1.053*(v0*r*y^2*sqrt(m))^(2/5) * (exp(-atan(beta)/beta))^2;
+                case this.TIME
+                    this.stiff = 1.198*(v0*r*y^2*sqrt(m))^(2/5) * (1+beta^(-2));
+            end
+            
+            % Damping coefficient
+            if (isempty(this.damp))
+                this.damp = sqrt(4*m*this.stiff/(1+beta^2));
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = evalForce(this,int)
+            % Needed properties
+            dir  = int.kinemat.dir_n;
+            ovlp = int.kinemat.ovlp_n;
+            vel  = int.kinemat.vel_n;
+            k    = this.stiff;
+            d    = this.damp;
+            
+            % Force modulus (elastic and viscous contributions)
+            f = k * ovlp + d * vel;
+            
+            % Remove artificial cohesion
+            if (f < 0 && this.remove_cohesion)
+                f = 0;
+            end
+            
+            % Total tangential force vector (against deformation and motion)
+            this.total_force = -f * dir;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>
