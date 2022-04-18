@@ -24,7 +24,7 @@ The merge of new developments into the master branch is subjected to the author'
 
 ## Authorship
 
-- **Rafael Lopez Rangel** (<rrangel@cimne.upc.edu>)
+- **Rafael López Rangel** (<rrangel@cimne.upc.edu>)
 
 International Center for Numerical Methods in Engineering ([CIMNE][cimne_website]) 
 and
