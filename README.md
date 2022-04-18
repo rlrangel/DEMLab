@@ -29,5 +29,5 @@ Polytechnic University of Catalonia
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logo_cimne.png" width="350"/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logo_upc_back_white.png" width="350"/> 
+<img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logo_upc.png" width="350"/> 
 </p>
