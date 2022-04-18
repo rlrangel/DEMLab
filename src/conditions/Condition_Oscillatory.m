@@ -2,16 +2,14 @@
 %
 %% Description
 %
-% This is a sub-class of the <Condition.html Condition> class for the
+% This is a sub-class of the <condition.html Condition> class for the
 % implementation of *Oscillatory* conditions.
 %
 % In a given time _t_, an oscillatory condition value _y_ is obtained as:
 %
-% $$y(t) = y_{0} + \lambda sin \left (  \frac{2pi}{\tau}(t-t_{0}) + \phi \right )$$
+% $$y(t) = y_{0} + \lambda sin \left (  \frac{2\pi}{\tau}(t-t_{0}) + \phi \right )$$
 %
 % Where:
-%
-% $t_{0}$: Initial time (when condition is activated)
 %
 % $y_{0}$: Base value for oscillation
 %
@@ -20,6 +18,8 @@
 % $\tau$: Oscillation period
 %
 % $\phi$: Oscillation phase shift
+%
+% $t_{0}$: Initial time (when condition is activated)
 %
 classdef Condition_Oscillatory < Condition
     %% Public properties

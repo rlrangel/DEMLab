@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <Condition.html Condition> class for the
+% This is a sub-class of the <condition.html Condition> class for the
 % implementation of *Linear* conditions.
 %
 % In a given time _t_, a linear condition value _y_ is obtained as:
@@ -11,11 +11,11 @@
 %
 % Where:
 %
-% $t_{0}$: Initial time (when condition is activated)
-%
 % $y_{0}$: Value at initial time
 %
 % $s$: Time rate of change
+%
+% $t_{0}$: Initial time (when condition is activated)
 %
 classdef Condition_Linear < Condition
     %% Public properties

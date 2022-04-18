@@ -1,0 +1,156 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Condition_Oscillatory class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Condition_Oscillatory.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Condition_Oscillatory class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="condition.html">Condition</a> class for the implementation of <b>Oscillatory</b> conditions.</p><p>In a given time <i>t</i>, an oscillatory condition value <i>y</i> is obtained as:</p><p><img src="Condition_Oscillatory_eq02567653405286545422.png" alt="$$y(t) = y_{0} + \lambda sin \left (  \frac{2\pi}{\tau}(t-t_{0}) + \phi \right )$$" style="width:218px;height:36px;"></p><p>Where:</p><p><img src="Condition_Oscillatory_eq17116540591535912302.png" alt="$y_{0}$" style="width:12px;height:10px;">: Base value for oscillation</p><p><img src="Condition_Oscillatory_eq07657233533591063549.png" alt="$\lambda$" style="width:8px;height:11px;">: Oscillation amplitude around base value</p><p><img src="Condition_Oscillatory_eq14593889327204786447.png" alt="$\tau$" style="width:8px;height:7px;">: Oscillation period</p><p><img src="Condition_Oscillatory_eq06401276552089372917.png" alt="$\phi$" style="width:9px;height:14px;">: Oscillation phase shift</p><p><img src="Condition_Oscillatory_eq12771330298290437042.png" alt="$t_{0}$" style="width:10px;height:12px;">: Initial time (when condition is activated)</p><pre class="codeinput"><span class="keyword">classdef</span> Condition_Oscillatory &lt; Condition
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        base_value <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% base condition value for oscillation</span>
+        amplitude  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% amplitude of oscillation around base value</span>
+        period     <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% period of oscillation</span>
+        shift      <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% shift from initial point of oscillation (phase angle)</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Condition_Oscillatory()
+            this = this@Condition(Condition.OSCILLATORY);
+            this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setDefaultProps(this)
+            this.base_value = 0;
+            this.amplitude  = 0;
+            this.period     = inf;
+            this.shift      = 0;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> val = getValue(this,time)
+            val = this.base_value + this.amplitude * sin(2*pi*(time-this.init_time)/this.period + this.shift);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Condition_Oscillatory class
+%
+%% Description
+%
+% This is a sub-class of the <condition.html Condition> class for the
+% implementation of *Oscillatory* conditions.
+%
+% In a given time _t_, an oscillatory condition value _y_ is obtained as:
+%
+% $$y(t) = y_{0} + \lambda sin \left (  \frac{2\pi}{\tau}(t-t_{0}) + \phi \right )$$
+%
+% Where:
+%
+% $y_{0}$: Base value for oscillation
+%
+% $\lambda$: Oscillation amplitude around base value
+%
+% $\tau$: Oscillation period
+%
+% $\phi$: Oscillation phase shift
+%
+% $t_{0}$: Initial time (when condition is activated)
+%
+classdef Condition_Oscillatory < Condition
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        base_value double = double.empty;   % base condition value for oscillation
+        amplitude  double = double.empty;   % amplitude of oscillation around base value
+        period     double = double.empty;   % period of oscillation
+        shift      double = double.empty;   % shift from initial point of oscillation (phase angle)
+    end
+    
+    %% Constructor method
+    methods
+        function this = Condition_Oscillatory()
+            this = this@Condition(Condition.OSCILLATORY);
+            this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setDefaultProps(this)
+            this.base_value = 0;
+            this.amplitude  = 0;
+            this.period     = inf;
+            this.shift      = 0;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function val = getValue(this,time)
+            val = this.base_value + this.amplitude * sin(2*pi*(time-this.init_time)/this.period + this.shift);
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

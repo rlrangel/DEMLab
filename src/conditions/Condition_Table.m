@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <Condition.html Condition> class for the
+% This is a sub-class of the <condition.html Condition> class for the
 % implementation of *Table* conditions.
 %
 % Different methods can be used for interpolating the table values:
