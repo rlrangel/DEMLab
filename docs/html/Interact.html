@@ -1,0 +1,308 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Interact class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Interact.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Interact class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods</a></li></ul></div><h2 id="1">Description</h2><p>This is a handle heterogeneous super-class for the definition of binary interactions between elements (particle-particle and particle-wall).</p><p>It stores the effective properties of the interaction and contains handles to specific interaction models for kinematics, force and heat transfer.</p><pre class="codeinput"><span class="keyword">classdef</span> Interact &lt; handle &amp; matlab.mixin.Copyable
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Members</span>
+        elem1;   <span class="comment">% handle to object of the 1st interaction element (defines the sign convection)</span>
+        elem2;   <span class="comment">% handle to object of the 2nd interaction element</span>
+
+        <span class="comment">% Behavior flags</span>
+        insulated <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for insulated interaction (no heat exchange)</span>
+
+        <span class="comment">% Effective parameters</span>
+        eff_radius  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        eff_mass    <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        eff_young   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        eff_young0  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        eff_shear   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        eff_conduct <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">% Average parameters</span>
+        avg_poisson <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% Simple average of Poisson ratios</span>
+        avg_conduct <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% Weighted average of particles conductivity (not considering wall)</span>
+
+        <span class="comment">% Mechanical interaction models (value class objects)</span>
+        kinemat <span class="string">BinKinematics</span> <span class="string">=</span> <span class="string">BinKinematics.empty</span>;   <span class="comment">% general binary kinematics (always exist)</span>
+        cforcen <span class="string">ContactForceN</span> <span class="string">=</span> <span class="string">ContactForceN.empty</span>;   <span class="comment">% contact force normal (may be empty)</span>
+        cforcet <span class="string">ContactForceT</span> <span class="string">=</span> <span class="string">ContactForceT.empty</span>;   <span class="comment">% contact force tangent (may be empty)</span>
+        rollres <span class="string">RollResist</span>    <span class="string">=</span> <span class="string">RollResist.empty</span>;      <span class="comment">% rolling resistance (may be empty)</span>
+        corarea <span class="string">AreaCorrect</span>   <span class="string">=</span> <span class="string">AreaCorrect.empty</span>;     <span class="comment">% contact area correction (may be empty)</span>
+
+        <span class="comment">% Thermal interaction models (value class objects)</span>
+        dconduc <span class="string">ConductionDirect</span>   <span class="string">=</span> <span class="string">ConductionDirect.empty</span>;     <span class="comment">% direct thermal conduction</span>
+        iconduc <span class="string">ConductionIndirect</span> <span class="string">=</span> <span class="string">ConductionIndirect.empty</span>;   <span class="comment">% indirect thermal conduction</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Interact()
+
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setFixParamsTherm(this,drv)
+            <span class="keyword">if</span> (this.insulated)
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(this.dconduc) &amp;&amp; this.kinemat.is_contact)
+                this.dconduc = this.dconduc.setFixParams(this);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(this.iconduc))
+                this.iconduc = this.iconduc.setFixParams(this,drv);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setCteParamsMech(this)
+            <span class="keyword">if</span> (~isempty(this.cforcen))
+                this.cforcen = this.cforcen.setCteParams(this);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(this.cforcet))
+                this.cforcet = this.cforcet.setCteParams(this);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(this.rollres))
+                this.rollres = this.rollres.setCteParams(this);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setCteParamsTherm(this,drv)
+            <span class="keyword">if</span> (this.insulated)
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(this.dconduc) &amp;&amp; this.kinemat.is_contact)
+                this.dconduc = this.dconduc.setCteParams(this);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(this.iconduc))
+                this.iconduc = this.iconduc.setCteParams(this,drv);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> evalResultsMech(this)
+            <span class="keyword">if</span> (~isempty(this.cforcen))
+                this.cforcen = this.cforcen.evalForce(this);
+                this.kinemat.addContactForceNormalToParticles(this);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(this.cforcet))
+                this.cforcet = this.cforcet.evalForce(this);
+                this.kinemat.addContactForceTangentToParticles(this);
+                this.kinemat.addContactTorqueTangentToParticles(this);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(this.rollres))
+                this.rollres = this.rollres.evalTorque(this);
+                this.kinemat.addRollResistTorqueToParticles(this);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> evalResultsTherm(this,drv)
+            <span class="keyword">if</span> (this.insulated)
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(this.dconduc) &amp;&amp; this.kinemat.is_contact)
+                this.dconduc = this.dconduc.evalHeatRate(this);
+                this.kinemat.addDirectConductionToParticles(this);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(this.iconduc))
+                this.iconduc = this.iconduc.evalHeatRate(this,drv);
+                this.kinemat.addIndirectConductionToParticles(this);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Interact class
+%
+%% Description
+%
+% This is a handle heterogeneous super-class for the definition of binary
+% interactions between elements (particle-particle and particle-wall).
+%
+% It stores the effective properties of the interaction and contains
+% handles to specific interaction models for kinematics, force and heat
+% transfer.
+%
+classdef Interact < handle & matlab.mixin.Copyable
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Members
+        elem1;   % handle to object of the 1st interaction element (defines the sign convection)
+        elem2;   % handle to object of the 2nd interaction element
+        
+        % Behavior flags
+        insulated logical = logical.empty;   % flag for insulated interaction (no heat exchange)
+        
+        % Effective parameters
+        eff_radius  double = double.empty;
+        eff_mass    double = double.empty;
+        eff_young   double = double.empty;
+        eff_young0  double = double.empty;
+        eff_shear   double = double.empty;
+        eff_conduct double = double.empty;
+        
+        % Average parameters
+        avg_poisson double = double.empty;   % Simple average of Poisson ratios
+        avg_conduct double = double.empty;   % Weighted average of particles conductivity (not considering wall)
+        
+        % Mechanical interaction models (value class objects)
+        kinemat BinKinematics = BinKinematics.empty;   % general binary kinematics (always exist)
+        cforcen ContactForceN = ContactForceN.empty;   % contact force normal (may be empty)
+        cforcet ContactForceT = ContactForceT.empty;   % contact force tangent (may be empty)
+        rollres RollResist    = RollResist.empty;      % rolling resistance (may be empty)
+        corarea AreaCorrect   = AreaCorrect.empty;     % contact area correction (may be empty)
+        
+        % Thermal interaction models (value class objects)
+        dconduc ConductionDirect   = ConductionDirect.empty;     % direct thermal conduction
+        iconduc ConductionIndirect = ConductionIndirect.empty;   % indirect thermal conduction
+    end
+    
+    %% Constructor method
+    methods
+        function this = Interact()
+            
+        end
+    end
+    
+    %% Public methods
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setFixParamsTherm(this,drv)
+            if (this.insulated)
+                return;
+            end
+            if (~isempty(this.dconduc) && this.kinemat.is_contact)
+                this.dconduc = this.dconduc.setFixParams(this);
+            end
+            if (~isempty(this.iconduc))
+                this.iconduc = this.iconduc.setFixParams(this,drv);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setCteParamsMech(this)
+            if (~isempty(this.cforcen))
+                this.cforcen = this.cforcen.setCteParams(this);
+            end
+            if (~isempty(this.cforcet))
+                this.cforcet = this.cforcet.setCteParams(this);
+            end
+            if (~isempty(this.rollres))
+                this.rollres = this.rollres.setCteParams(this);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setCteParamsTherm(this,drv)
+            if (this.insulated)
+                return;
+            end
+            if (~isempty(this.dconduc) && this.kinemat.is_contact)
+                this.dconduc = this.dconduc.setCteParams(this);
+            end
+            if (~isempty(this.iconduc))
+                this.iconduc = this.iconduc.setCteParams(this,drv);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function evalResultsMech(this)
+            if (~isempty(this.cforcen))
+                this.cforcen = this.cforcen.evalForce(this);
+                this.kinemat.addContactForceNormalToParticles(this);
+            end
+            if (~isempty(this.cforcet))
+                this.cforcet = this.cforcet.evalForce(this);
+                this.kinemat.addContactForceTangentToParticles(this);
+                this.kinemat.addContactTorqueTangentToParticles(this);
+            end
+            if (~isempty(this.rollres))
+                this.rollres = this.rollres.evalTorque(this);
+                this.kinemat.addRollResistTorqueToParticles(this);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function evalResultsTherm(this,drv)
+            if (this.insulated)
+                return;
+            end
+            if (~isempty(this.dconduc) && this.kinemat.is_contact)
+                this.dconduc = this.dconduc.evalHeatRate(this);
+                this.kinemat.addDirectConductionToParticles(this);
+            end
+            if (~isempty(this.iconduc))
+                this.iconduc = this.iconduc.evalHeatRate(this,drv);
+                this.kinemat.addIndirectConductionToParticles(this);
+            end
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>
