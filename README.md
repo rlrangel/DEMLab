@@ -6,6 +6,7 @@
 [doi_link]: https://doi.org/10.5281/zenodo.3234644
 [cimne_website]: https://www.cimne.com/
 [upc_website]: https://camins.upc.edu/
+[mit_license_link]: https://choosealicense.com/licenses/mit/
 
 # DEMLab - Discrete Element Method Laboratory
 
@@ -15,15 +16,19 @@
 
 DEMLab is a program for performing numerical simulations of particle systems using the Discrete Element Method (DEM).
 
+## How to Contribute
+
+New implementations can be made by anyone in separate branches.
+
+The merge of new developments into the master branch is subjected to the author's approval upon a merge request.
+
 ## Authorship
 
-- Rafael Lopez Rangel (<rrangel@cimne.upc.edu>)
+- **Rafael Lopez Rangel** (<rrangel@cimne.upc.edu>)
 
-International Center for Numerical Methods in Engineering
-([CIMNE][cimne_website])
-
-Polytechnic University of Catalonia
-([UPC BarcelonaTech][upc_website])
+International Center for Numerical Methods in Engineering ([CIMNE][cimne_website]) 
+and
+Polytechnic University of Catalonia ([UPC BarcelonaTech][upc_website])
 
 <p float="left">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -31,3 +36,8 @@ Polytechnic University of Catalonia
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logo_upc.png" width="350"/> 
 </p>
+
+## License
+
+DEMLab is licensed under the [MIT license][mit_license_link], which allows the program to be freely used by anyone for modification, private use, commercial use, and distribution, only requiring preservation of copyright and license notices.
+No liability and warranty are provided.
