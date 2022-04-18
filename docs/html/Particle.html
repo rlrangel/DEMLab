@@ -1,0 +1,686 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Particle class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Particle.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Particle class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Default sub-class definition</a></li><li><a href="#6">Abstract methods: implemented in derived sub-classes</a></li><li><a href="#7">Public methods</a></li></ul></div><h2 id="1">Description</h2><p>This is a handle heterogeneous super-class for the definition of particles.</p><p>In DEM, particles are assumed to be soft, so that contact forces and heat exchange are originated by overlaps. Furthermore, their shapes are assumed to be preserved after collisions.</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="particle_sphere.html">Particle_Sphere</a> (default)</li><li><a href="particle_cylinder.html">Particle_Cylinder</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> Particle &lt; handle &amp; matlab.mixin.Heterogeneous
+</pre><h2 id="2">Constant values</h2><pre class="codeinput">    properties (Constant = true, Access = public)
+        <span class="comment">% Types of particle</span>
+        SPHERE   = uint8(1);
+        CYLINDER = uint8(2);
+    <span class="keyword">end</span>
+</pre><h2 id="3">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Identification</span>
+        type <span class="string">uint8</span>  <span class="string">=</span> <span class="string">uint8.empty</span>;    <span class="comment">% flag for type of particle</span>
+        id   <span class="string">uint32</span> <span class="string">=</span> <span class="string">uint32.empty</span>;   <span class="comment">% identification number</span>
+
+        <span class="comment">% Geometric properties</span>
+        char_len <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% characteristic length</span>
+        surface  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% surface area</span>
+        cross    <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% in-plane cross-sectional area</span>
+        volume   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% volume</span>
+        minertia <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% moment of inertia</span>
+
+        <span class="comment">% Physical properties</span>
+        material   <span class="string">Material</span> <span class="string">=</span> <span class="string">Material.empty</span>;   <span class="comment">% handle to object of Material_Solid subclass</span>
+        mass       <span class="string">double</span>   <span class="string">=</span> <span class="string">double.empty</span>;     <span class="comment">% mass (density * volume)</span>
+        weight     <span class="string">double</span>   <span class="string">=</span> <span class="string">double.empty</span>;     <span class="comment">% weight vector (mass * gravity)</span>
+        tinertia   <span class="string">double</span>   <span class="string">=</span> <span class="string">double.empty</span>;     <span class="comment">% thermal inertia (mass * heat_capacity)</span>
+        conv_coeff <span class="string">double</span>   <span class="string">=</span> <span class="string">double.empty</span>;     <span class="comment">% convection coefficient</span>
+
+        <span class="comment">% Particle-fluid interaction</span>
+        nusselt   <span class="comment">% handle to object of Nusselt class</span>
+
+        <span class="comment">% Neighbors Interactions</span>
+        <span class="comment">% Attention: These properties may contain references to deleted particles</span>
+        interacts <span class="string">Interact</span> <span class="string">=</span> <span class="string">Interact.empty</span>;   <span class="comment">% handles to objects of Interact class</span>
+        neigh_p   <span class="string">Particle</span> <span class="string">=</span> <span class="string">Particle.empty</span>;   <span class="comment">% handles to objects of Particle class of neighbour particles</span>
+        neigh_w   <span class="string">Wall</span>     <span class="string">=</span> <span class="string">Wall.empty</span>;       <span class="comment">% handles to objects of Wall class of neighbour walls</span>
+        neigh_pid <span class="string">uint32</span>   <span class="string">=</span> <span class="string">uint32.empty</span>;     <span class="comment">% vector of neighbour particles IDs (int is faster to search than obj)</span>
+        neigh_wid <span class="string">uint32</span>   <span class="string">=</span> <span class="string">uint32.empty</span>;     <span class="comment">% vector of neighbour walls IDs (int is faster to search than obj)</span>
+        verlet_p  <span class="string">Particle</span> <span class="string">=</span> <span class="string">Particle.empty</span>;   <span class="comment">% handles to objects of Particle class in the verlet list</span>
+        verlet_w  <span class="string">Wall</span>     <span class="string">=</span> <span class="string">Wall.empty</span>;       <span class="comment">% handles to objects of Wall class in the verlet list</span>
+
+        <span class="comment">% Porosity data</span>
+        porosity <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% average porosity (void ratio) around particle</span>
+        por_freq <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% average porosity update frequency (in steps) (double to accept NaN)</span>
+
+        <span class="comment">% Behavior flags</span>
+        free_trl   <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for translational free particle</span>
+        free_rot   <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for rotational free particle</span>
+        free_therm <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for thermally free particle</span>
+
+        <span class="comment">% Prescribed conditions (handles to objects of Condition class)</span>
+        pc_force    <span class="string">Condition</span> <span class="string">=</span> <span class="string">Condition.empty</span>;
+        pc_torque   <span class="string">Condition</span> <span class="string">=</span> <span class="string">Condition.empty</span>;
+        pc_heatflux <span class="string">Condition</span> <span class="string">=</span> <span class="string">Condition.empty</span>;
+        pc_heatrate <span class="string">Condition</span> <span class="string">=</span> <span class="string">Condition.empty</span>;
+
+        <span class="comment">% Fixed conditions (handles to objects of Condition class)</span>
+        fc_translation <span class="string">Condition</span> <span class="string">=</span> <span class="string">Condition.empty</span>;
+        fc_rotation    <span class="string">Condition</span> <span class="string">=</span> <span class="string">Condition.empty</span>;
+        fc_temperature <span class="string">Condition</span> <span class="string">=</span> <span class="string">Condition.empty</span>;
+
+        <span class="comment">% Total forcing terms</span>
+        force     <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        torque    <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        heat_rate <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">% Current mechanical state</span>
+        coord     <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% coordinates of centroid</span>
+        orient    <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% orientation angle</span>
+        veloc_trl <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% translational velocity</span>
+        veloc_rot <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% rotational velocity</span>
+        accel_trl <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% translational acceleration</span>
+        accel_rot <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% rotational acceleration</span>
+
+        <span class="comment">% Current thermal state</span>
+        temperature <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% temperature</span>
+        temp_change <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% temperature rate of change</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Particle(type)
+            <span class="keyword">if</span> (nargin &gt; 0)
+                this.type = type;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="5">Default sub-class definition</h2><pre class="codeinput">    methods (Static, Access = protected)
+        <span class="keyword">function</span> defaultObject = getDefaultScalarElement
+            defaultObject = Particle_Sphere;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="6">Abstract methods: implemented in derived sub-classes</h2><pre class="codeinput">    methods (Abstract)
+        <span class="comment">%------------------------------------------------------------------</span>
+        setDefaultProps(this);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        setCharLen(this);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        setSurface(this);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        setCrossSec(this);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        setVolume(this);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        setMInertia(this);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        setLocalPorosity(this,por);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        [x1,y1,x2,y2] = getBBoxLimits(this);
+    <span class="keyword">end</span>
+</pre><h2 id="7">Public methods</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setMass(this)
+            this.mass = this.volume * this.material.density;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setWeight(this,g)
+            this.weight = this.mass * g;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setTInertia(this)
+            this.tinertia = this.mass * this.material.hcapacity;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setConvCoeff(this,drv)
+            <span class="keyword">if</span> (~isempty(this.nusselt))
+                Nu = this.nusselt.getValue(this,drv);
+                this.conv_coeff = Nu * drv.fluid.conduct / this.char_len;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> resetForcingTerms(this)
+            this.force     = [0;0];
+            this.torque    = 0;
+            this.heat_rate = 0;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addWeight(this)
+            <span class="keyword">if</span> (~isempty(this.weight))
+                this.force = this.force + this.weight;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addGblDampTransl(this,damp_coeff)
+            this.force = this.force - damp_coeff * this.veloc_trl;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addGblDampRot(this,damp_coeff)
+            this.torque = this.torque - damp_coeff * this.veloc_rot;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addPCForce(this,time)
+            <span class="keyword">for</span> i = 1:length(this.pc_force)
+                <span class="keyword">if</span> (this.pc_force(i).isActive(time))
+                    this.force = this.force + this.pc_force(i).getValue(time);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addPCTorque(this,time)
+            <span class="keyword">for</span> i = 1:length(this.pc_torque)
+                <span class="keyword">if</span> (this.pc_torque(i).isActive(time))
+                    this.torque = this.torque + this.pc_torque(i).getValue(time);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addPCHeatFlux(this,time)
+            <span class="keyword">for</span> i = 1:length(this.pc_heatflux)
+                <span class="keyword">if</span> (this.pc_heatflux(i).isActive(time))
+                    hr = this.pc_heatflux(i).getValue(time) * this.surface;
+                    this.heat_rate = this.heat_rate + hr;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addPCHeatRate(this,time)
+            <span class="keyword">for</span> i = 1:length(this.pc_heatrate)
+                <span class="keyword">if</span> (this.pc_heatrate(i).isActive(time))
+                    this.heat_rate = this.heat_rate + this.pc_heatrate(i).getValue(time);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addConvection(this,drv)
+            <span class="keyword">if</span> (~isempty(this.conv_coeff))
+                this.heat_rate = this.heat_rate + this.conv_coeff * this.surface * (drv.fluid_temp-this.temperature);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setFixedMech(this,time)
+            this.free_trl = true;
+            this.free_rot = true;
+            <span class="keyword">for</span> i = 1:length(this.fc_translation)
+                <span class="keyword">if</span> (this.fc_translation(i).isActive(time))
+                    this.free_trl = false;
+                    <span class="keyword">break</span>;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            <span class="keyword">for</span> i = 1:length(this.fc_rotation)
+                <span class="keyword">if</span> (this.fc_rotation(i).isActive(time))
+                    this.free_rot = false;
+                    <span class="keyword">break</span>;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setFixedThermal(this,time)
+            this.free_therm = true;
+            <span class="keyword">for</span> i = 1:length(this.fc_temperature)
+                <span class="keyword">if</span> (this.fc_temperature(i).isActive(time))
+                    this.free_therm = false;
+                    <span class="keyword">return</span>;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setFCTranslation(this,time,dt)
+            <span class="keyword">if</span> (this.free_trl)
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+            v = [0;0];
+            <span class="keyword">for</span> i = 1:length(this.fc_translation)
+                <span class="keyword">if</span> (this.fc_translation(i).isActive(time))
+                    v = v + this.fc_translation(i).getValue(time);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            this.accel_trl = (v-this.veloc_trl) / dt;
+            this.veloc_trl =  v;
+            this.coord     =  this.coord + v * dt;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setFCRotation(this,time,dt)
+            <span class="keyword">if</span> (this.free_rot)
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+            w = 0;
+            <span class="keyword">for</span> i = 1:length(this.fc_rotation)
+                <span class="keyword">if</span> (this.fc_rotation(i).isActive(time))
+                    w = w + this.fc_rotation(i).getValue(time);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            this.accel_rot = (w-this.veloc_rot) / dt;
+            this.veloc_rot =  w;
+            this.orient    =  this.orient + w * dt;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setFCTemperature(this,time)
+            <span class="keyword">if</span> (this.free_therm)
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+            <span class="keyword">for</span> i = 1:length(this.fc_temperature)
+                <span class="keyword">if</span> (this.fc_temperature(i).isActive(time))
+                    this.temperature = this.fc_temperature(i).getValue(time);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setAccelTrl(this)
+            this.accel_trl = this.force / this.mass;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setAccelRot(this)
+            this.accel_rot = this.torque / this.minertia;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setTempChange(this)
+            this.temp_change = this.heat_rate / this.tinertia;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Particle class
+%
+%% Description
+%
+% This is a handle heterogeneous super-class for the definition of
+% particles.
+%
+% In DEM, particles are assumed to be soft, so that contact forces and heat
+% exchange are originated by overlaps.
+% Furthermore, their shapes are assumed to be preserved after collisions.
+%
+% This super-class defines abstract methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <particle_sphere.html Particle_Sphere> (default)
+% * <particle_cylinder.html Particle_Cylinder>
+%
+classdef Particle < handle & matlab.mixin.Heterogeneous
+    %% Constant values
+    properties (Constant = true, Access = public)
+        % Types of particle
+        SPHERE   = uint8(1);
+        CYLINDER = uint8(2);
+    end
+    
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Identification
+        type uint8  = uint8.empty;    % flag for type of particle
+        id   uint32 = uint32.empty;   % identification number
+        
+        % Geometric properties
+        char_len double = double.empty;   % characteristic length
+        surface  double = double.empty;   % surface area
+        cross    double = double.empty;   % in-plane cross-sectional area
+        volume   double = double.empty;   % volume
+        minertia double = double.empty;   % moment of inertia
+        
+        % Physical properties
+        material   Material = Material.empty;   % handle to object of Material_Solid subclass
+        mass       double   = double.empty;     % mass (density * volume)
+        weight     double   = double.empty;     % weight vector (mass * gravity)
+        tinertia   double   = double.empty;     % thermal inertia (mass * heat_capacity)
+        conv_coeff double   = double.empty;     % convection coefficient
+        
+        % Particle-fluid interaction
+        nusselt   % handle to object of Nusselt class
+        
+        % Neighbors Interactions
+        % Attention: These properties may contain references to deleted particles
+        interacts Interact = Interact.empty;   % handles to objects of Interact class
+        neigh_p   Particle = Particle.empty;   % handles to objects of Particle class of neighbour particles
+        neigh_w   Wall     = Wall.empty;       % handles to objects of Wall class of neighbour walls
+        neigh_pid uint32   = uint32.empty;     % vector of neighbour particles IDs (int is faster to search than obj)
+        neigh_wid uint32   = uint32.empty;     % vector of neighbour walls IDs (int is faster to search than obj)
+        verlet_p  Particle = Particle.empty;   % handles to objects of Particle class in the verlet list
+        verlet_w  Wall     = Wall.empty;       % handles to objects of Wall class in the verlet list
+        
+        % Porosity data
+        porosity double = double.empty;   % average porosity (void ratio) around particle
+        por_freq double = double.empty;   % average porosity update frequency (in steps) (double to accept NaN)
+        
+        % Behavior flags
+        free_trl   logical = logical.empty;   % flag for translational free particle
+        free_rot   logical = logical.empty;   % flag for rotational free particle
+        free_therm logical = logical.empty;   % flag for thermally free particle
+        
+        % Prescribed conditions (handles to objects of Condition class)
+        pc_force    Condition = Condition.empty;
+        pc_torque   Condition = Condition.empty;
+        pc_heatflux Condition = Condition.empty;
+        pc_heatrate Condition = Condition.empty;
+        
+        % Fixed conditions (handles to objects of Condition class)
+        fc_translation Condition = Condition.empty;
+        fc_rotation    Condition = Condition.empty;
+        fc_temperature Condition = Condition.empty;
+        
+        % Total forcing terms
+        force     double = double.empty;
+        torque    double = double.empty;
+        heat_rate double = double.empty;
+        
+        % Current mechanical state
+        coord     double = double.empty;   % coordinates of centroid
+        orient    double = double.empty;   % orientation angle
+        veloc_trl double = double.empty;   % translational velocity
+        veloc_rot double = double.empty;   % rotational velocity
+        accel_trl double = double.empty;   % translational acceleration
+        accel_rot double = double.empty;   % rotational acceleration
+        
+        % Current thermal state
+        temperature double = double.empty;   % temperature
+        temp_change double = double.empty;   % temperature rate of change
+    end
+    
+    %% Constructor method
+    methods
+        function this = Particle(type)
+            if (nargin > 0)
+                this.type = type;
+            end
+        end
+    end
+    
+    %% Default sub-class definition
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = Particle_Sphere;
+        end
+    end
+    
+    %% Abstract methods: implemented in derived sub-classes
+    methods (Abstract)
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setDefaultProps(this);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setCharLen(this);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setSurface(this);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setCrossSec(this);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setVolume(this);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setMInertia(this);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setLocalPorosity(this,por);
+            
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        [x1,y1,x2,y2] = getBBoxLimits(this);
+    end
+    
+    %% Public methods
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setMass(this)
+            this.mass = this.volume * this.material.density;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setWeight(this,g)
+            this.weight = this.mass * g;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setTInertia(this)
+            this.tinertia = this.mass * this.material.hcapacity;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setConvCoeff(this,drv)
+            if (~isempty(this.nusselt))
+                Nu = this.nusselt.getValue(this,drv);
+                this.conv_coeff = Nu * drv.fluid.conduct / this.char_len;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function resetForcingTerms(this)
+            this.force     = [0;0];
+            this.torque    = 0;
+            this.heat_rate = 0;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addWeight(this)
+            if (~isempty(this.weight))
+                this.force = this.force + this.weight;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addGblDampTransl(this,damp_coeff)
+            this.force = this.force - damp_coeff * this.veloc_trl;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addGblDampRot(this,damp_coeff)
+            this.torque = this.torque - damp_coeff * this.veloc_rot;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addPCForce(this,time)
+            for i = 1:length(this.pc_force)
+                if (this.pc_force(i).isActive(time))
+                    this.force = this.force + this.pc_force(i).getValue(time);
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addPCTorque(this,time)
+            for i = 1:length(this.pc_torque)
+                if (this.pc_torque(i).isActive(time))
+                    this.torque = this.torque + this.pc_torque(i).getValue(time);
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addPCHeatFlux(this,time)
+            for i = 1:length(this.pc_heatflux)
+                if (this.pc_heatflux(i).isActive(time))
+                    hr = this.pc_heatflux(i).getValue(time) * this.surface;
+                    this.heat_rate = this.heat_rate + hr;
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addPCHeatRate(this,time)
+            for i = 1:length(this.pc_heatrate)
+                if (this.pc_heatrate(i).isActive(time))
+                    this.heat_rate = this.heat_rate + this.pc_heatrate(i).getValue(time);
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addConvection(this,drv)
+            if (~isempty(this.conv_coeff))
+                this.heat_rate = this.heat_rate + this.conv_coeff * this.surface * (drv.fluid_temp-this.temperature);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setFixedMech(this,time)
+            this.free_trl = true;
+            this.free_rot = true;
+            for i = 1:length(this.fc_translation)
+                if (this.fc_translation(i).isActive(time))
+                    this.free_trl = false;
+                    break;
+                end
+            end
+            for i = 1:length(this.fc_rotation)
+                if (this.fc_rotation(i).isActive(time))
+                    this.free_rot = false;
+                    break;
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setFixedThermal(this,time)
+            this.free_therm = true;
+            for i = 1:length(this.fc_temperature)
+                if (this.fc_temperature(i).isActive(time))
+                    this.free_therm = false;
+                    return;
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setFCTranslation(this,time,dt)
+            if (this.free_trl)
+                return;
+            end
+            v = [0;0];
+            for i = 1:length(this.fc_translation)
+                if (this.fc_translation(i).isActive(time))
+                    v = v + this.fc_translation(i).getValue(time);
+                end
+            end
+            this.accel_trl = (v-this.veloc_trl) / dt;
+            this.veloc_trl =  v;
+            this.coord     =  this.coord + v * dt;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setFCRotation(this,time,dt)
+            if (this.free_rot)
+                return;
+            end
+            w = 0;
+            for i = 1:length(this.fc_rotation)
+                if (this.fc_rotation(i).isActive(time))
+                    w = w + this.fc_rotation(i).getValue(time);
+                end
+            end
+            this.accel_rot = (w-this.veloc_rot) / dt;
+            this.veloc_rot =  w;
+            this.orient    =  this.orient + w * dt;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setFCTemperature(this,time)
+            if (this.free_therm)
+                return;
+            end
+            for i = 1:length(this.fc_temperature)
+                if (this.fc_temperature(i).isActive(time))
+                    this.temperature = this.fc_temperature(i).getValue(time);
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setAccelTrl(this)
+            this.accel_trl = this.force / this.mass;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setAccelRot(this)
+            this.accel_rot = this.torque / this.minertia;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setTempChange(this)
+            this.temp_change = this.heat_rate / this.tinertia;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

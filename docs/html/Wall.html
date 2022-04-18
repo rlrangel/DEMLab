@@ -1,0 +1,310 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Wall class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Wall.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Wall class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Default sub-class definition</a></li><li><a href="#6">Abstract methods: implemented in derived sub-classes</a></li><li><a href="#7">Public methods</a></li></ul></div><h2 id="1">Description</h2><p>This is a handle heterogeneous super-class for the definition of rigid walls.</p><p>Rigid walls are not solved with mechanical and / or thermal equilibrium equations. Their motion and / or temperature are not influenced by their interactions with other elements.</p><p>A wall may or may not have an assigned solid material. If it does, the effective interaction properties take into account the material properties from both the wall and the particle. Otherwise, the effective interaction properties for the mechanical behavior are set as the particle material, and the wall is considered insulated (no heat exchange with particles).</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="wall_line.html">Wall_Line</a> (default)</li><li><a href="wall_circle.html">Wall_Circle</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> Wall &lt; handle &amp; matlab.mixin.Heterogeneous
+</pre><h2 id="2">Constant values</h2><pre class="codeinput">    properties (Constant = true, Access = public)
+        <span class="comment">% Types of wall</span>
+        LINE   = uint8(1);
+        CIRCLE = uint8(2);
+    <span class="keyword">end</span>
+</pre><h2 id="3">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Identification</span>
+        type <span class="string">uint8</span>  <span class="string">=</span> <span class="string">uint8.empty</span>;    <span class="comment">% flag for type of wall</span>
+        id   <span class="string">uint32</span> <span class="string">=</span> <span class="string">uint32.empty</span>;   <span class="comment">% identification number</span>
+
+        <span class="comment">% Physical properties</span>
+        material <span class="string">Material</span> <span class="string">=</span> <span class="string">Material.empty</span>;   <span class="comment">% handle to object of Material_Solid subclass</span>
+
+        <span class="comment">% Behavior flags</span>
+        fixed_motion <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for fixed motion wall</span>
+        fixed_therm  <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for fixed temperature wall</span>
+        insulated    <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for insulated wall (no heat transfer with particles)</span>
+
+        <span class="comment">% Fixed conditions (handles to objects of Condition class)</span>
+        fc_translation <span class="string">Condition</span> <span class="string">=</span> <span class="string">Condition.empty</span>;
+        fc_rotation    <span class="string">Condition</span> <span class="string">=</span> <span class="string">Condition.empty</span>;
+        fc_temperature <span class="string">Condition</span> <span class="string">=</span> <span class="string">Condition.empty</span>;
+
+        <span class="comment">% Current mechanical state</span>
+        veloc_trl <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% translational velocity</span>
+        veloc_rot <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% rotational velocity</span>
+
+        <span class="comment">% Current thermal state</span>
+        temperature <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+    <span class="keyword">end</span>
+</pre><h2 id="4">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Wall(type)
+            <span class="keyword">if</span> (nargin &gt; 0)
+                this.type = type;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="5">Default sub-class definition</h2><pre class="codeinput">    methods (Static, Access = protected)
+        <span class="keyword">function</span> defaultObject = getDefaultScalarElement
+            defaultObject = Wall_Line;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="6">Abstract methods: implemented in derived sub-classes</h2><pre class="codeinput">    methods (Abstract)
+        <span class="comment">%------------------------------------------------------------------</span>
+        setDefaultProps(this);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        setFCMotion(this,time,dt);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        [x1,y1,x2,y2] = getBBoxLimits(this);
+    <span class="keyword">end</span>
+</pre><h2 id="7">Public methods</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setFixedMotion(this,time)
+            <span class="keyword">if</span> (isempty(this.fc_translation) &amp;&amp; isempty(this.fc_rotation))
+                this.fixed_motion = false;
+            <span class="keyword">else</span>
+                <span class="keyword">for</span> i = 1:length(this.fc_translation)
+                    <span class="keyword">if</span> (this.fc_translation(i).isActive(time))
+                        this.fixed_motion = true;
+                        <span class="keyword">return</span>;
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+                <span class="keyword">for</span> i = 1:length(this.fc_rotation)
+                    <span class="keyword">if</span> (this.fc_rotation(i).isActive(time))
+                        this.fixed_motion = true;
+                        <span class="keyword">return</span>;
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setFixedThermal(this,time)
+            <span class="keyword">if</span> (isempty(this.fc_temperature))
+                this.fixed_therm = false;
+            <span class="keyword">else</span>
+                <span class="keyword">for</span> i = 1:length(this.fc_temperature)
+                    <span class="keyword">if</span> (this.fc_temperature(i).isActive(time))
+                        this.fixed_therm = true;
+                        <span class="keyword">return</span>;
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setFCTemperature(this,time)
+            <span class="keyword">if</span> (~this.fixed_therm)
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+            <span class="keyword">for</span> i = 1:length(this.fc_temperature)
+                <span class="keyword">if</span> (this.fc_temperature(i).isActive(time))
+                    this.temperature = this.fc_temperature(i).getValue(time);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Wall class
+%
+%% Description
+%
+% This is a handle heterogeneous super-class for the definition of rigid
+% walls.
+%
+% Rigid walls are not solved with mechanical and / or thermal equilibrium
+% equations.
+% Their motion and / or temperature are not influenced by their
+% interactions with other elements.
+%
+% A wall may or may not have an assigned solid material.
+% If it does, the effective interaction properties take into account the
+% material properties from both the wall and the particle.
+% Otherwise, the effective interaction properties for the mechanical
+% behavior are set as the particle material, and the wall is considered
+% insulated (no heat exchange with particles).
+%
+% This super-class defines abstract methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <wall_line.html Wall_Line> (default)
+% * <wall_circle.html Wall_Circle>
+%
+classdef Wall < handle & matlab.mixin.Heterogeneous
+    %% Constant values
+    properties (Constant = true, Access = public)
+        % Types of wall
+        LINE   = uint8(1);
+        CIRCLE = uint8(2);
+    end
+    
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Identification
+        type uint8  = uint8.empty;    % flag for type of wall
+        id   uint32 = uint32.empty;   % identification number
+        
+        % Physical properties
+        material Material = Material.empty;   % handle to object of Material_Solid subclass
+        
+        % Behavior flags
+        fixed_motion logical = logical.empty;   % flag for fixed motion wall
+        fixed_therm  logical = logical.empty;   % flag for fixed temperature wall
+        insulated    logical = logical.empty;   % flag for insulated wall (no heat transfer with particles)
+        
+        % Fixed conditions (handles to objects of Condition class)
+        fc_translation Condition = Condition.empty;
+        fc_rotation    Condition = Condition.empty;
+        fc_temperature Condition = Condition.empty;
+        
+        % Current mechanical state
+        veloc_trl double = double.empty;   % translational velocity
+        veloc_rot double = double.empty;   % rotational velocity
+        
+        % Current thermal state
+        temperature double = double.empty;
+    end
+    
+    %% Constructor method
+    methods
+        function this = Wall(type)
+            if (nargin > 0)
+                this.type = type;
+            end
+        end
+    end
+    
+    %% Default sub-class definition
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = Wall_Line;
+        end
+    end
+    
+    %% Abstract methods: implemented in derived sub-classes
+    methods (Abstract)
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setDefaultProps(this);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setFCMotion(this,time,dt);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        [x1,y1,x2,y2] = getBBoxLimits(this);
+    end
+    
+    %% Public methods
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setFixedMotion(this,time)
+            if (isempty(this.fc_translation) && isempty(this.fc_rotation))
+                this.fixed_motion = false;
+            else
+                for i = 1:length(this.fc_translation)
+                    if (this.fc_translation(i).isActive(time))
+                        this.fixed_motion = true;
+                        return;
+                    end
+                end
+                for i = 1:length(this.fc_rotation)
+                    if (this.fc_rotation(i).isActive(time))
+                        this.fixed_motion = true;
+                        return;
+                    end
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setFixedThermal(this,time)
+            if (isempty(this.fc_temperature))
+                this.fixed_therm = false;
+            else
+                for i = 1:length(this.fc_temperature)
+                    if (this.fc_temperature(i).isActive(time))
+                        this.fixed_therm = true;
+                        return;
+                    end
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setFCTemperature(this,time)
+            if (~this.fixed_therm)
+                return;
+            end
+            for i = 1:length(this.fc_temperature)
+                if (this.fc_temperature(i).isActive(time))
+                    this.temperature = this.fc_temperature(i).getValue(time);
+                end
+            end
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>
