@@ -1,0 +1,829 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Driver_Mechanical class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Driver_Mechanical.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Driver_Mechanical class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li><li><a href="#5">Public methods: sub-class specifics</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="driver.html">Driver</a> class for the implementation of the <b>Mechanical</b> analysis driver.</p><p>In this type of analysis only the mechanical behavior of particles is simulated (kinetics and kinematics).</p><p>This class is responsible for solving all the time steps of a mechanical simulation by performing loops over all interactions, particles and walls in order to compute the changes of motion.</p><pre class="codeinput"><span class="keyword">classdef</span> Driver_Mechanical &lt; Driver
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Forces / torques evaluation</span>
+        eval_freq <span class="string">uint32</span>  <span class="string">=</span> <span class="string">uint32.empty</span>;    <span class="comment">% evaluation frequency (in steps)</span>
+        eval      <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for evaluating forces in current step</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Driver_Mechanical()
+            this = this@Driver(Driver.MECHANICAL);
+            this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setDefaultProps(this)
+            <span class="comment">% Scalars</span>
+            this.n_mparts    = 0;
+            this.n_particles = 0;
+            this.n_walls     = 0;
+            this.n_interacts = 0;
+            this.n_solids    = 0;
+            this.alpha       = inf; <span class="comment">% convex hull</span>
+            this.por_freq    = NaN; <span class="comment">% never compute</span>
+            this.vor_freq    = NaN; <span class="comment">% never compute</span>
+            this.eval_freq   = 1;   <span class="comment">% always compute</span>
+            this.workers     = parcluster(<span class="string">'local'</span>).NumWorkers; <span class="comment">% max. available</span>
+            this.nprog       = 1;
+            this.nout        = 100;
+            <span class="comment">% Vectors</span>
+            this.fluid_vel   = [0;0];
+            <span class="comment">% Booleans</span>
+            this.has_bbox    = false;
+            this.has_sink    = false;
+            this.auto_step   = false;
+            this.eval        = true;  <span class="comment">% according to eval_freq</span>
+            this.parallel    = false; <span class="comment">% according to workers</span>
+            this.save_ws     = true;  <span class="comment">% according to nout</span>
+            <span class="comment">% Objects</span>
+            this.search      = Search_SimpleLoop();
+            this.scheme_trl  = Scheme_EulerForward();
+            this.scheme_rot  = Scheme_EulerForward();
+            this.result      = Result();
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setParticleProps(this,p)
+            p.setCharLen();
+            p.setSurface();
+            p.setCrossSec();
+            p.setVolume();
+            p.setMass();
+            p.setMInertia();
+            <span class="keyword">if</span> (~isempty(this.gravity))
+                p.setWeight(this.gravity);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> dt = criticalTimeStep(~,p)
+            <span class="comment">% Refs.:</span>
+            <span class="comment">% Li et al. A comparison of discrete element simulations and experiments for sandpiles composed of spherical particles, 2005</span>
+            dt = pi * p.radius * sqrt(p.material.density / p.material.shear) / (0.8766 + 0.163 * p.material.poisson);
+
+            <span class="comment">% Apply reduction coefficient</span>
+            dt = dt * 0.01;
+
+            <span class="comment">% Limit time step</span>
+            <span class="keyword">if</span> (dt &gt; 0.001)
+                dt = 0.001;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> status = preProcess(this)
+            status = 1;
+            this.initTime();
+
+            <span class="comment">% Initialize result arrays and add initial time and step values</span>
+            <span class="comment">% (initialze arrays with NaN for all initial particles)</span>
+            this.result.initialize(this);
+            this.result.storeTime(this);
+
+            <span class="comment">% loop over all particles</span>
+            erase = false;
+            <span class="keyword">for</span> i = 1:this.n_particles
+                p = this.particles(i);
+
+                <span class="comment">% Remove particles not respecting bbox and sinks</span>
+                <span class="keyword">if</span> (this.removeParticle(p))
+                    erase = true;
+                    <span class="keyword">continue</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Initialize properties and forcing terms</span>
+                this.setParticleProps(p);
+                p.resetForcingTerms();
+
+                <span class="comment">% Add initial particle values to result arrays:</span>
+                <span class="comment">% Some results are not available yet and are zero, such as</span>
+                <span class="comment">% forcing terms, but will receive a copy of the next step</span>
+                <span class="comment">% (work-around).</span>
+                this.result.storeParticleProp(p);          <span class="comment">% fixed all steps</span>
+                this.result.storeParticlePosition(p);      <span class="comment">% initial</span>
+                this.result.storeParticleForce(p);         <span class="comment">% zero (reset after 1st step)</span>
+                this.result.storeParticleVelocity(p);      <span class="comment">% zero (reset after 1st step)</span>
+                this.result.storeParticleAcceleration(p);  <span class="comment">% zero (reset after 1st step)</span>
+
+                <span class="comment">% Compute critical time step for current particle</span>
+                <span class="keyword">if</span> (this.auto_step)
+                    dt = this.criticalTimeStep(p);
+                    <span class="keyword">if</span> (i == 1 || dt &lt; this.time_step)
+                        this.time_step = dt;
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Update global properties depending on total number of particles</span>
+            <span class="keyword">if</span> (erase)
+                this.erasePropsOfRemovedParticle();
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.n_particles == 0)
+                fprintf(2,<span class="string">'The model has no particle inside the domain to initialize the analysis.\n'</span>);
+                status = 0;
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Set global properties</span>
+            <span class="comment">% Assumption: particles porosity depends on interaction search,</span>
+            <span class="comment">% so it is initially set as the global porosity.</span>
+            this.setTotalParticlesProps();
+            this.setGlobalVol();
+            <span class="keyword">if</span> (isempty(this.porosity))
+                this.setGlobalPorosity();
+            <span class="keyword">end</span>
+            <span class="keyword">for</span> i = 1:this.n_particles
+                this.particles(i).setLocalPorosity(this.porosity);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Loop over all walls</span>
+            <span class="keyword">for</span> i = 1:this.n_walls
+                <span class="comment">% Add initial wall values to result arrays</span>
+                w = this.walls(i);
+                this.result.storeWallPosition(w);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Print initial configuration</span>
+            <span class="keyword">if</span> (~isempty(this.print))
+                this.print.execute(this);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Initialize search algorithm</span>
+            this.search.initialize(this);
+
+            <span class="comment">% Initialize output control variables</span>
+            this.initOutputVars();
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> process(this)
+            <span class="keyword">while</span> (this.time &lt;= this.max_time)
+                <span class="comment">% Check if it is time to store results:</span>
+                <span class="comment">% Time &amp; step not stored after 1st step as it was already stored in preprocess.</span>
+                <span class="comment">% Global model results stored after 1st step as some results were not ready before.</span>
+                this.storeResults()
+                <span class="keyword">if</span> (this.store || this.step == 1)
+                    <span class="keyword">if</span> (this.store)
+                        this.result.storeTime(this);
+                    <span class="keyword">end</span>
+                    this.result.storeAvgVelocity(this);
+                    this.result.storeExtVelocity(this);
+                    this.result.storeAvgAcceleration(this);
+                    this.result.storeExtAcceleration(this);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Interactions search</span>
+                <span class="keyword">if</span> (mod(this.step,this.search.freq) == 0)
+                    this.search.execute(this);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Update global volume/porosity</span>
+                <span class="keyword">if</span> (mod(this.step,this.por_freq) == 0)
+                    this.setGlobalVol();
+                    this.setGlobalPorosity();
+                <span class="keyword">end</span>
+
+                <span class="comment">% Update voronoi diagram</span>
+                <span class="keyword">if</span> (mod(this.step,this.vor_freq) == 0)
+                    this.setVoronoiDiagram();
+                <span class="keyword">end</span>
+
+                <span class="comment">% Loop over all interactions</span>
+                <span class="keyword">if</span> (this.eval)
+                    this.interactionLoop();
+                <span class="keyword">end</span>
+
+                <span class="comment">% Loop over all particles and walls</span>
+                this.particleLoop();
+                this.wallLoop();
+
+                <span class="comment">% Print progress</span>
+                this.printProgress();
+
+                <span class="comment">% Update variables for next step</span>
+                this.time = this.time + this.time_step;
+                this.step = this.step + 1;
+                this.search.done = false;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Ensure that last step was saved</span>
+            this.printProgress();
+            this.storeResultsFinal();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="5">Public methods: sub-class specifics</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> interactionLoop(this)
+            <span class="comment">% Evaluate interactions:</span>
+            <span class="keyword">for</span> i = 1:this.n_interacts
+                int = this.interacts(i);
+
+                <span class="comment">% Update relative position (if not already done in search)</span>
+                <span class="keyword">if</span> (~this.search.done)
+                    int.kinemat = int.kinemat.setRelPos(int.elem1,int.elem2);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Update voronoi edges</span>
+                <span class="keyword">if</span> (mod(this.step,this.vor_freq) == 0)
+                    int.kinemat = int.kinemat.setVoronoiEdge(this,int);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Check if elements are in contact</span>
+                <span class="comment">% (only contact interactions available in mechanical analysis)</span>
+                <span class="keyword">if</span> (int.kinemat.separ &gt;= 0)
+                    <span class="keyword">continue</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Update overlap parameters and contact area</span>
+                int.kinemat = int.kinemat.setOverlaps(int,this.time_step);
+                int.kinemat = int.kinemat.setContactArea(int);
+
+                <span class="comment">% Set initial and constant contact parameters</span>
+                <span class="keyword">if</span> (isempty(int.kinemat.is_contact))
+                    int.kinemat = int.kinemat.setInitContactParams(this.time);
+                    int.setCteParamsMech();
+                <span class="keyword">end</span>
+
+                <span class="comment">% Compute and add interaction results to particles</span>
+                int.evalResultsMech();
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> particleLoop(this)
+            <span class="comment">% Initialize flags</span>
+            rmv = false;
+
+            <span class="comment">% Loop over all particles</span>
+            <span class="keyword">for</span> i = 1:this.n_particles
+                p = this.particles(i);
+
+                <span class="comment">% Set flags for fixed motion</span>
+                p.setFixedMech(this.time);
+
+                <span class="comment">% Solve translational motion</span>
+                <span class="keyword">if</span> (p.free_trl)
+                    <span class="comment">% Evaluate particle forces</span>
+                    <span class="keyword">if</span> (this.eval)
+                        <span class="comment">% Add global conditions</span>
+                        p.addWeight();
+                        <span class="keyword">if</span> (~isempty(this.damp_trl))
+                            p.addGblDampTransl(this.damp_trl);
+                        <span class="keyword">end</span>
+
+                        <span class="comment">% Add prescribed conditions</span>
+                        p.addPCForce(this.time);
+                    <span class="keyword">end</span>
+
+                    <span class="comment">% Evaluate equation of motion (update acceleration)</span>
+                    p.setAccelTrl();
+
+                    <span class="comment">% Numerical integration (update vel, coord)</span>
+                    this.scheme_trl.updatePosition(p,this.time_step);
+                <span class="keyword">else</span>
+                    <span class="comment">% Set fixed translation (update accel, vel, coord)</span>
+                    p.setFCTranslation(this.time,this.time_step);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Remove particles not respecting bbox and sinks</span>
+                <span class="keyword">if</span> (this.removeParticle(p))
+                    rmv = true;
+                    <span class="keyword">continue</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Solve rotational motion</span>
+                <span class="keyword">if</span> (p.free_rot)
+                    <span class="comment">% Evaluate particle torques</span>
+                    <span class="keyword">if</span> (this.eval)
+                        <span class="comment">% Add global conditions</span>
+                        <span class="keyword">if</span> (~isempty(this.damp_rot))
+                            p.addGblDampRot(this.damp_rot);
+                        <span class="keyword">end</span>
+
+                        <span class="comment">% Add prescribed conditions</span>
+                        p.addPCTorque(this.time);
+                    <span class="keyword">end</span>
+
+                    <span class="comment">% Evaluate equation of motion (update acceleration)</span>
+                    p.setAccelRot();
+
+                    <span class="comment">% Numerical integration (update vel, orientation)</span>
+                    this.scheme_rot.updateOrientation(p,this.time_step);
+                <span class="keyword">else</span>
+                    <span class="comment">% Set fixed rotation (update accel, vel, orientation)</span>
+                    p.setFCRotation(this.time,this.time_step);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Update local porosity</span>
+                <span class="keyword">if</span> (mod(this.step,p.por_freq) == 0)
+                    p.setLocalPorosity([]);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Store results</span>
+                <span class="keyword">if</span> (this.step == 0)
+                    <span class="comment">% Work-around to fill null initial values stored in pre-process</span>
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticleVelocity(p);
+                    this.result.storeParticleAcceleration(p);
+                <span class="keyword">elseif</span> (this.store)
+                    this.result.storeParticlePosition(p);
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticleVelocity(p);
+                    this.result.storeParticleAcceleration(p);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Reset forcing terms for next step</span>
+                <span class="keyword">if</span> (this.eval_freq == 1)
+                    p.resetForcingTerms();
+                <span class="keyword">elseif</span> (mod(this.step+1,this.eval_freq) == 0)
+                    p.resetForcingTerms();
+                    this.eval = true;
+                <span class="keyword">else</span>
+                    this.eval = false;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Erase handles to removed particles from global list and model parts</span>
+            <span class="keyword">if</span> (rmv)
+                this.erasePropsOfRemovedParticle;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> wallLoop(this)
+            <span class="keyword">for</span> i = 1:this.n_walls
+                w = this.walls(i);
+
+                <span class="comment">% Set fixed motion (also update vel, coord)</span>
+                w.setFixedMotion(this.time);
+                w.setFCMotion(this.time,this.time_step);
+
+                <span class="comment">% Store results</span>
+                <span class="keyword">if</span> (this.store)
+                    this.result.storeWallPosition(w);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Driver_Mechanical class
+%
+%% Description
+%
+% This is a sub-class of the <driver.html Driver> class for the
+% implementation of the *Mechanical* analysis driver.
+%
+% In this type of analysis only the mechanical behavior of particles is
+% simulated (kinetics and kinematics).
+%
+% This class is responsible for solving all the time steps of a mechanical
+% simulation by performing loops over all interactions, particles and walls
+% in order to compute the changes of motion.
+%
+classdef Driver_Mechanical < Driver
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Forces / torques evaluation
+        eval_freq uint32  = uint32.empty;    % evaluation frequency (in steps)
+        eval      logical = logical.empty;   % flag for evaluating forces in current step
+    end
+    
+    %% Constructor method
+    methods
+        function this = Driver_Mechanical()
+            this = this@Driver(Driver.MECHANICAL);
+            this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setDefaultProps(this)
+            % Scalars
+            this.n_mparts    = 0;
+            this.n_particles = 0;
+            this.n_walls     = 0;
+            this.n_interacts = 0;
+            this.n_solids    = 0;
+            this.alpha       = inf; % convex hull
+            this.por_freq    = NaN; % never compute
+            this.vor_freq    = NaN; % never compute
+            this.eval_freq   = 1;   % always compute
+            this.workers     = parcluster('local').NumWorkers; % max. available
+            this.nprog       = 1;
+            this.nout        = 100;
+            % Vectors
+            this.fluid_vel   = [0;0];
+            % Booleans
+            this.has_bbox    = false;
+            this.has_sink    = false;
+            this.auto_step   = false;
+            this.eval        = true;  % according to eval_freq
+            this.parallel    = false; % according to workers
+            this.save_ws     = true;  % according to nout
+            % Objects
+            this.search      = Search_SimpleLoop();
+            this.scheme_trl  = Scheme_EulerForward();
+            this.scheme_rot  = Scheme_EulerForward();
+            this.result      = Result();
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setParticleProps(this,p)
+            p.setCharLen();
+            p.setSurface();
+            p.setCrossSec();
+            p.setVolume();
+            p.setMass();
+            p.setMInertia();
+            if (~isempty(this.gravity))
+                p.setWeight(this.gravity);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function dt = criticalTimeStep(~,p)
+            % Refs.:
+            % Li et al. A comparison of discrete element simulations and experiments for sandpiles composed of spherical particles, 2005
+            dt = pi * p.radius * sqrt(p.material.density / p.material.shear) / (0.8766 + 0.163 * p.material.poisson);
+            
+            % Apply reduction coefficient
+            dt = dt * 0.01;
+            
+            % Limit time step
+            if (dt > 0.001)
+                dt = 0.001;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function status = preProcess(this)
+            status = 1;
+            this.initTime();
+            
+            % Initialize result arrays and add initial time and step values
+            % (initialze arrays with NaN for all initial particles)
+            this.result.initialize(this);
+            this.result.storeTime(this);
+            
+            % loop over all particles
+            erase = false;
+            for i = 1:this.n_particles
+                p = this.particles(i);
+                
+                % Remove particles not respecting bbox and sinks
+                if (this.removeParticle(p))
+                    erase = true;
+                    continue;
+                end
+                
+                % Initialize properties and forcing terms
+                this.setParticleProps(p);
+                p.resetForcingTerms();
+                
+                % Add initial particle values to result arrays:
+                % Some results are not available yet and are zero, such as
+                % forcing terms, but will receive a copy of the next step
+                % (work-around).
+                this.result.storeParticleProp(p);          % fixed all steps
+                this.result.storeParticlePosition(p);      % initial
+                this.result.storeParticleForce(p);         % zero (reset after 1st step)
+                this.result.storeParticleVelocity(p);      % zero (reset after 1st step)
+                this.result.storeParticleAcceleration(p);  % zero (reset after 1st step)
+                
+                % Compute critical time step for current particle
+                if (this.auto_step)
+                    dt = this.criticalTimeStep(p);
+                    if (i == 1 || dt < this.time_step)
+                        this.time_step = dt;
+                    end
+                end
+            end
+            
+            % Update global properties depending on total number of particles 
+            if (erase)
+                this.erasePropsOfRemovedParticle();
+            end
+            if (this.n_particles == 0)
+                fprintf(2,'The model has no particle inside the domain to initialize the analysis.\n');
+                status = 0;
+                return;
+            end
+            
+            % Set global properties
+            % Assumption: particles porosity depends on interaction search,
+            % so it is initially set as the global porosity.
+            this.setTotalParticlesProps();
+            this.setGlobalVol();
+            if (isempty(this.porosity))
+                this.setGlobalPorosity();
+            end
+            for i = 1:this.n_particles
+                this.particles(i).setLocalPorosity(this.porosity);
+            end
+            
+            % Loop over all walls
+            for i = 1:this.n_walls
+                % Add initial wall values to result arrays
+                w = this.walls(i);
+                this.result.storeWallPosition(w);
+            end
+            
+            % Print initial configuration
+            if (~isempty(this.print))
+                this.print.execute(this);
+            end
+            
+            % Initialize search algorithm
+            this.search.initialize(this);
+            
+            % Initialize output control variables
+            this.initOutputVars();
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function process(this)
+            while (this.time <= this.max_time)
+                % Check if it is time to store results:
+                % Time & step not stored after 1st step as it was already stored in preprocess.
+                % Global model results stored after 1st step as some results were not ready before.
+                this.storeResults()
+                if (this.store || this.step == 1)
+                    if (this.store)
+                        this.result.storeTime(this);
+                    end
+                    this.result.storeAvgVelocity(this);
+                    this.result.storeExtVelocity(this);
+                    this.result.storeAvgAcceleration(this);
+                    this.result.storeExtAcceleration(this);
+                end
+                
+                % Interactions search
+                if (mod(this.step,this.search.freq) == 0)
+                    this.search.execute(this);
+                end
+                
+                % Update global volume/porosity
+                if (mod(this.step,this.por_freq) == 0)
+                    this.setGlobalVol();
+                    this.setGlobalPorosity();
+                end
+                
+                % Update voronoi diagram
+                if (mod(this.step,this.vor_freq) == 0)
+                    this.setVoronoiDiagram();
+                end
+                
+                % Loop over all interactions
+                if (this.eval)
+                    this.interactionLoop();
+                end
+                
+                % Loop over all particles and walls
+                this.particleLoop();
+                this.wallLoop();
+                
+                % Print progress
+                this.printProgress();
+                
+                % Update variables for next step
+                this.time = this.time + this.time_step;
+                this.step = this.step + 1;
+                this.search.done = false;
+            end
+            
+            % Ensure that last step was saved
+            this.printProgress();
+            this.storeResultsFinal();
+        end
+    end
+    
+   %% Public methods: sub-class specifics
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function interactionLoop(this)
+            % Evaluate interactions:
+            for i = 1:this.n_interacts
+                int = this.interacts(i);
+                
+                % Update relative position (if not already done in search)
+                if (~this.search.done)
+                    int.kinemat = int.kinemat.setRelPos(int.elem1,int.elem2);
+                end
+                
+                % Update voronoi edges
+                if (mod(this.step,this.vor_freq) == 0)
+                    int.kinemat = int.kinemat.setVoronoiEdge(this,int);
+                end
+                
+                % Check if elements are in contact
+                % (only contact interactions available in mechanical analysis)
+                if (int.kinemat.separ >= 0)
+                    continue;
+                end
+                
+                % Update overlap parameters and contact area
+                int.kinemat = int.kinemat.setOverlaps(int,this.time_step);
+                int.kinemat = int.kinemat.setContactArea(int);
+                
+                % Set initial and constant contact parameters
+                if (isempty(int.kinemat.is_contact))
+                    int.kinemat = int.kinemat.setInitContactParams(this.time);
+                    int.setCteParamsMech();
+                end
+                
+                % Compute and add interaction results to particles
+                int.evalResultsMech();
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function particleLoop(this)
+            % Initialize flags
+            rmv = false;
+            
+            % Loop over all particles
+            for i = 1:this.n_particles
+                p = this.particles(i);
+                
+                % Set flags for fixed motion
+                p.setFixedMech(this.time);
+                
+                % Solve translational motion
+                if (p.free_trl)
+                    % Evaluate particle forces
+                    if (this.eval)
+                        % Add global conditions
+                        p.addWeight();
+                        if (~isempty(this.damp_trl))
+                            p.addGblDampTransl(this.damp_trl);
+                        end
+
+                        % Add prescribed conditions
+                        p.addPCForce(this.time);
+                    end
+                    
+                    % Evaluate equation of motion (update acceleration)
+                    p.setAccelTrl();
+                    
+                    % Numerical integration (update vel, coord)
+                    this.scheme_trl.updatePosition(p,this.time_step);
+                else
+                    % Set fixed translation (update accel, vel, coord)
+                    p.setFCTranslation(this.time,this.time_step);
+                end
+                
+                % Remove particles not respecting bbox and sinks
+                if (this.removeParticle(p))
+                    rmv = true;
+                    continue;
+                end
+                
+                % Solve rotational motion
+                if (p.free_rot)
+                    % Evaluate particle torques
+                    if (this.eval)
+                        % Add global conditions
+                        if (~isempty(this.damp_rot))
+                            p.addGblDampRot(this.damp_rot);
+                        end
+                        
+                        % Add prescribed conditions
+                        p.addPCTorque(this.time);
+                    end
+                    
+                    % Evaluate equation of motion (update acceleration)
+                    p.setAccelRot();
+                    
+                    % Numerical integration (update vel, orientation)
+                    this.scheme_rot.updateOrientation(p,this.time_step);
+                else
+                    % Set fixed rotation (update accel, vel, orientation)
+                    p.setFCRotation(this.time,this.time_step);
+                end
+                
+                % Update local porosity
+                if (mod(this.step,p.por_freq) == 0)
+                    p.setLocalPorosity([]);
+                end
+                
+                % Store results
+                if (this.step == 0)
+                    % Work-around to fill null initial values stored in pre-process
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticleVelocity(p);
+                    this.result.storeParticleAcceleration(p);
+                elseif (this.store)
+                    this.result.storeParticlePosition(p);
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticleVelocity(p);
+                    this.result.storeParticleAcceleration(p);
+                end
+                
+                % Reset forcing terms for next step
+                if (this.eval_freq == 1)
+                    p.resetForcingTerms();
+                elseif (mod(this.step+1,this.eval_freq) == 0)
+                    p.resetForcingTerms();
+                    this.eval = true;
+                else
+                    this.eval = false;
+                end
+            end
+            
+            % Erase handles to removed particles from global list and model parts
+            if (rmv)
+                this.erasePropsOfRemovedParticle;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function wallLoop(this)
+            for i = 1:this.n_walls
+                w = this.walls(i);
+                
+                % Set fixed motion (also update vel, coord)
+                w.setFixedMotion(this.time);
+                w.setFCMotion(this.time,this.time_step);
+                
+                % Store results
+                if (this.store)
+                    this.result.storeWallPosition(w);
+                end
+            end
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

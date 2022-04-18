@@ -1,0 +1,772 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Driver class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Driver.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Driver class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Abstract methods: implemented in derived sub-classes</a></li><li><a href="#6">Public methods</a></li></ul></div><h2 id="1">Description</h2><p>This is a handle super-class for the definition of an analysis driver.</p><p>An analysis driver is the core of the simulation, being responsible to perform the time steps of the different types of analysis, and also the pre and pos processing tasks.</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="driver_mechanical.html">Driver_Mechanical</a></li><li><a href="driver_thermal.html">Driver_Thermal</a></li><li><a href="driver_thermomechanical.html">Driver_ThermoMechanical</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> Driver &lt; handle
+</pre><h2 id="2">Constant values</h2><pre class="codeinput">    properties (Constant = true, Access = public)
+        <span class="comment">% Types of analysis</span>
+        MECHANICAL        = uint8(1);
+        THERMAL           = uint8(2);
+        THERMO_MECHANICAL = uint8(3);
+    <span class="keyword">end</span>
+</pre><h2 id="3">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Problem data</span>
+        name    <span class="string">string</span> <span class="string">=</span> <span class="string">string.empty</span>;   <span class="comment">% problem name</span>
+        type    <span class="string">uint8</span>  <span class="string">=</span> <span class="string">uint8.empty</span>;    <span class="comment">% flag for type of analysis</span>
+        path_in <span class="string">string</span> <span class="string">=</span> <span class="string">string.empty</span>;   <span class="comment">% path to input files folder</span>
+
+        <span class="comment">% Model components: handle to objects</span>
+        mparts    <span class="string">ModelPart</span> <span class="string">=</span> <span class="string">ModelPart.empty</span>;   <span class="comment">% handles to objects of ModelPart class</span>
+        particles <span class="string">Particle</span>  <span class="string">=</span> <span class="string">Particle.empty</span>;    <span class="comment">% handles to objects of Particle class</span>
+        walls     <span class="string">Wall</span>      <span class="string">=</span> <span class="string">Wall.empty</span>;        <span class="comment">% handles to objects of Wall class</span>
+        interacts <span class="string">Interact</span>  <span class="string">=</span> <span class="string">Interact.empty</span>;    <span class="comment">% handles to objects of Interact class</span>
+        solids    <span class="string">Material</span>  <span class="string">=</span> <span class="string">Material.empty</span>;    <span class="comment">% handles to objects of Material_Solid subclass</span>
+        fluid     <span class="string">Material</span>  <span class="string">=</span> <span class="string">Material.empty</span>;    <span class="comment">% handles to object of Material_Fluid subclass</span>
+
+        <span class="comment">% Model components: total numbers</span>
+        n_mparts    <span class="string">uint32</span> <span class="string">=</span> <span class="string">uint32.empty</span>;   <span class="comment">% number of model parts</span>
+        n_particles <span class="string">uint32</span> <span class="string">=</span> <span class="string">uint32.empty</span>;   <span class="comment">% number of particles</span>
+        n_walls     <span class="string">uint32</span> <span class="string">=</span> <span class="string">uint32.empty</span>;   <span class="comment">% number of walls</span>
+        n_interacts <span class="string">uint32</span> <span class="string">=</span> <span class="string">uint32.empty</span>;   <span class="comment">% number of binary interactions</span>
+        n_solids    <span class="string">uint32</span> <span class="string">=</span> <span class="string">uint32.empty</span>;   <span class="comment">% number of solid materials</span>
+
+        <span class="comment">% Global properties</span>
+        gravity    <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% vector of gravity components value</span>
+        damp_trl   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% damping for translational motion</span>
+        damp_rot   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% damping for rotational motion</span>
+        fluid_vel  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% interstitial fluid velocity vector</span>
+        fluid_temp <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% interstitial fluid temperature</span>
+
+        <span class="comment">% Model domain properties</span>
+        alpha      <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% alpha radius</span>
+        vol_domain <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% total volume (unity depth) of the alpha-shape polygon of all particles</span>
+        porosity   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% average porosity (void ratio) of the alpha-shape polygon</span>
+        por_freq   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% average porosity update frequency (in steps) (double to accept NaN)</span>
+        vor_freq   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% voronoi diagram update frequency (in steps) (double to accept NaN)</span>
+        vor_vtx    <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% vertices coordinates of voronoi diagram</span>
+        vor_idx    <span class="string">cell</span>   <span class="string">=</span> <span class="string">cell.empty</span>;     <span class="comment">% vertices indices of voronoi diagram cells</span>
+
+        <span class="comment">% Total particle properties</span>
+        surf_particle  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% total surface area of all particles</span>
+        cross_particle <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% total cross-sectional area of all particles</span>
+        vol_particle   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% total volume of all particles</span>
+        mass_particle  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% total mass of all particles</span>
+
+        <span class="comment">% Model limits</span>
+        has_bbox <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for existing bbox</span>
+        has_sink <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for existing sinks</span>
+        bbox     <span class="string">BBox</span>    <span class="string">=</span> <span class="string">BBox.empty</span>;      <span class="comment">% handle to object of BBox class</span>
+        sink     <span class="string">Sink</span>    <span class="string">=</span> <span class="string">Sink.empty</span>;      <span class="comment">% handles to objects of Sink class</span>
+
+        <span class="comment">% Paralelization</span>
+        parallel <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for parallelization of simulation</span>
+        workers  <span class="string">uint16</span>  <span class="string">=</span> <span class="string">uint16.empty</span>;    <span class="comment">% number of workers for parallelization</span>
+
+        <span class="comment">% Neighbours search</span>
+        search <span class="string">Search</span> <span class="string">=</span> <span class="string">Search.empty</span>;   <span class="comment">% handle to object of Search class</span>
+
+        <span class="comment">% Time integration</span>
+        scheme_trl  <span class="string">Scheme</span> <span class="string">=</span> <span class="string">Scheme.empty</span>;   <span class="comment">% handle to object of Scheme class for translation integration</span>
+        scheme_rot  <span class="string">Scheme</span> <span class="string">=</span> <span class="string">Scheme.empty</span>;   <span class="comment">% handle to object of Scheme class for rotation integration</span>
+        scheme_temp <span class="string">Scheme</span> <span class="string">=</span> <span class="string">Scheme.empty</span>;   <span class="comment">% handle to object of Scheme class for temperature integration</span>
+
+        <span class="comment">% Time advancing</span>
+        auto_step <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for computing time step automatically</span>
+        time_step <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% time step value</span>
+        max_time  <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% maximum simulation time</span>
+        time      <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% current simulation time</span>
+        step      <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% current simulation step (double to perform NaN operations in frequency checks)</span>
+
+        <span class="comment">% Elapsed time control (real analysis time)</span>
+        start_time <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% starting elapsed time for current analysis run</span>
+        total_time <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% total elapsed time for all analysis runs</span>
+
+        <span class="comment">% Output generation</span>
+        path_out   <span class="string">string</span>    <span class="string">=</span> <span class="string">string.empty</span>;      <span class="comment">% path to output folder</span>
+        save_ws    <span class="string">logical</span>   <span class="string">=</span> <span class="string">logical.empty</span>;     <span class="comment">% flag for saving workspace into a storage file</span>
+        result     <span class="string">Result</span>    <span class="string">=</span> <span class="string">Result.empty</span>;      <span class="comment">% handle to object of Result class</span>
+        animations <span class="string">Animation</span> <span class="string">=</span> <span class="string">Animation.empty</span>;   <span class="comment">% handles to objects of Animation class</span>
+        graphs     <span class="string">Graph</span>     <span class="string">=</span> <span class="string">Graph.empty</span>;       <span class="comment">% handles to objects of Graph class</span>
+        print      <span class="string">Print</span>     <span class="string">=</span> <span class="string">Print.empty</span>;       <span class="comment">% handle to object of Print class</span>
+
+        <span class="comment">% Output control</span>
+        nprog <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% progress print frequency (% of total time)</span>
+        tprog <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% next time for printing progress</span>
+        nout  <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% number of outputs</span>
+        tout  <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% next time for storing results</span>
+        store <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for step to store results</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Driver(type)
+            <span class="keyword">if</span> (nargin &gt; 0)
+                this.type = type;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="5">Abstract methods: implemented in derived sub-classes</h2><pre class="codeinput">    methods (Abstract)
+        <span class="comment">%------------------------------------------------------------------</span>
+        setDefaultProps(this);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        setParticleProps(this,particle);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        preProcess(this);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        process(this);
+    <span class="keyword">end</span>
+</pre><h2 id="6">Public methods</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> initTime(this)
+            this.start_time = 0;
+            this.time       = 0;
+            this.step       = 0;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> initOutputVars(this)
+            this.nprog = this.nprog * this.max_time / 100; <span class="comment">% convert to time per print</span>
+            this.nout  = this.max_time / this.nout;        <span class="comment">% convert to time per output</span>
+            this.tprog = this.nprog;
+            this.tout  = this.nout;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> printProgress(this)
+            <span class="keyword">if</span> (this.time &gt;= this.tprog)
+                fprintf(<span class="string">'\n%.1f%%: time %.3f, step %d'</span>,100*this.time/this.max_time,this.time,this.step);
+                this.tprog = this.tprog + this.nprog - 10e-15; <span class="comment">% tollerance to deal with precision issues</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="comment">% Object must be called 'drv' here to load it from storage file.</span>
+        <span class="keyword">function</span> storeResults(drv)
+            <span class="keyword">if</span> (drv.time &gt;= drv.tout)
+                <span class="keyword">if</span> (drv.save_ws)
+                    drv.createOutFolder();
+                    save(strcat(drv.path_out,drv.name));
+                    drv.total_time = drv.start_time + toc;
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~isempty(drv.print))
+                    drv.print.execute(drv);
+                <span class="keyword">end</span>
+                drv.tout = drv.tout + drv.nout - 10e-10; <span class="comment">% tollerance to deal with precision issues</span>
+                drv.result.updateIndex();
+                drv.store = true;
+            <span class="keyword">else</span>
+                drv.store = false;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeResultsFinal(this)
+            <span class="keyword">if</span> (this.result.idx &lt; length(this.result.times))
+                this.result.updateIndex();
+                this.result.storeTime(this);
+                this.result.storeAvgVelocity(this);
+                this.result.storeExtVelocity(this);
+                this.result.storeAvgAcceleration(this);
+                this.result.storeExtAcceleration(this);
+                this.result.storeAvgTemperature(this);
+                this.result.storeExtTemperature(this);
+                this.result.storeTotalHeatRate(this);
+                <span class="keyword">for</span> i = 1:this.n_particles
+                    p = this.particles(i);
+                    this.result.storeParticleProp(p);
+                    this.result.storeParticlePosition(p);
+                    this.result.storeParticleTemperature(p);
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticleVelocity(p);
+                    this.result.storeParticleAcceleration(p);
+                    this.result.storeParticleHeatRate(p);
+                <span class="keyword">end</span>
+                <span class="keyword">for</span> i = 1:this.n_walls
+                    w = this.walls(i);
+                    this.result.storeWallPosition(w);
+                    this.result.storeWallTemperature(w);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~isempty(this.print))
+                    this.print.execute(this);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setVoronoiDiagram(this)
+            <span class="comment">% Assumption: walls are ignored</span>
+            <span class="keyword">try</span>
+                [this.vor_vtx,this.vor_idx] = voronoiDiagram(delaunayTriangulation([this.particles.coord]'));
+            <span class="keyword">catch</span>
+                fprintf(2,<span class="string">'Could not build Voronoi diagram in step %d\n'</span>,this.step);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setGlobalVol(this)
+            <span class="comment">% Assumption: in-plane projection area (unity depth)</span>
+            vol = area(alphaShape([this.particles.coord]',this.alpha));
+
+            <span class="comment">% Avoid null volume (aligned particles)</span>
+            <span class="comment">% Assumption: set total particle volume (area) when volume is null</span>
+            <span class="keyword">if</span> (vol ~= 0)
+                this.vol_domain = vol;
+            <span class="keyword">else</span>
+                <span class="keyword">if</span> (isempty(this.cross_particle))
+                    this.cross_particle = sum([this.particles.cross]);
+                <span class="keyword">end</span>
+                this.vol_domain = this.cross_particle;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setGlobalPorosity(this)
+            <span class="keyword">if</span> (isempty(this.vol_domain))
+                this.setGlobalVol();
+            <span class="keyword">else</span>
+                <span class="comment">% Assumption: total volume of particles computed as the</span>
+                <span class="comment">% in-plane cross-sectional area (unity depth)</span>
+                this.porosity = 1 - this.cross_particle/this.vol_domain;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setTotalParticlesProps(this)
+            this.surf_particle  = sum([this.particles.surface]);
+            this.cross_particle = sum([this.particles.cross]);
+            this.vol_particle   = sum([this.particles.volume]);
+            this.mass_particle  = sum([this.particles.mass]);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> do = removeParticle(this,p)
+            do = false;
+
+            <span class="comment">% Remove particles not respecting bbox</span>
+            <span class="keyword">if</span> (this.has_bbox)
+                <span class="keyword">if</span> (this.bbox.removeParticle(p,this.time))
+                    do = true;
+
+                    <span class="comment">% Remove particle and its interactions</span>
+                    delete(p.interacts);
+                    delete(p);
+
+                    <span class="comment">% Erase handles from global list of interactions</span>
+                    this.interacts(~isvalid(this.interacts)) = [];
+                    this.n_interacts = length(this.interacts);
+                    <span class="keyword">return</span>;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Remove particles not respecting sinks</span>
+            <span class="keyword">if</span> (this.has_sink)
+                <span class="keyword">for</span> i = 1:length(this.sink)
+                    <span class="keyword">if</span> (this.sink(i).removeParticle(p,this.time))
+                        do = true;
+
+                        <span class="comment">% Remove particle and its interactions</span>
+                        delete(p.interacts);
+                        delete(p);
+
+                        <span class="comment">% Erase handles from global list of interactions</span>
+                        this.interacts(~isvalid(this.interacts)) = [];
+                        this.n_interacts = length(this.interacts);
+                        <span class="keyword">return</span>;
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> erasePropsOfRemovedParticle(this)
+            <span class="comment">% Erase handles from global list</span>
+            this.particles(~isvalid(this.particles)) = [];
+            this.n_particles = length(this.particles);
+
+            <span class="comment">% Erase handles from model parts</span>
+            <span class="keyword">for</span> i = 1:this.n_mparts
+                mp = this.mparts(i);
+                mp.particles(~isvalid(mp.particles)) = [];
+                mp.n_particles = length(mp.particles);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Update total particles properties</span>
+            this.setTotalParticlesProps();
+
+            <span class="comment">% Attention:</span>
+            <span class="comment">% To avoid additional computational costs, references to the</span>
+            <span class="comment">% deleted particle from other particles (e.g. neighbohring</span>
+            <span class="comment">% lists) are not removed.</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> createOutFolder(this)
+            <span class="keyword">if</span> (~exist(this.path_out,<span class="string">'dir'</span>) ~= 7) <span class="comment">% 7 = ID for folders</span>
+                warning <span class="string">off</span> <span class="string">MATLAB:MKDIR:DirectoryExists</span>
+                mkdir(this.path_out)
+                warning <span class="string">on</span> <span class="string">MATLAB:MKDIR:DirectoryExists</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> posProcess(this)
+            <span class="keyword">if</span> (isnan(this.result.times(1)))
+                fprintf(<span class="string">'\nNo valid results to show.\n'</span>);
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Create and write graphs</span>
+            <span class="keyword">if</span> (~isempty(this.graphs))
+                fprintf(<span class="string">'\nCreating graphs...\n'</span>);
+                <span class="keyword">for</span> i = 1:length(this.graphs)
+                    this.graphs(i).execute(this);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Create and show animations</span>
+            <span class="keyword">if</span> (~isempty(this.animations))
+                <span class="keyword">for</span> i = 1:length(this.animations)
+                    fprintf(<span class="string">'\nCreating animation "%s"...'</span>,this.animations(i).anim_title);
+                    this.animations(i).animate(this);
+                <span class="keyword">end</span>
+                fprintf(<span class="string">'\n'</span>);
+                <span class="keyword">for</span> i = 1:length(this.animations)
+                    this.animations(i).showAnimation();
+                <span class="keyword">end</span>
+                fprintf(<span class="string">'\n'</span>);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Driver class
+%
+%% Description
+%
+% This is a handle super-class for the definition of an analysis driver.
+%
+% An analysis driver is the core of the simulation, being responsible to
+% perform the time steps of the different types of analysis,
+% and also the pre and pos processing tasks.
+%
+% This super-class defines abstract methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <driver_mechanical.html Driver_Mechanical>
+% * <driver_thermal.html Driver_Thermal>
+% * <driver_thermomechanical.html Driver_ThermoMechanical>
+%
+classdef Driver < handle
+    %% Constant values
+    properties (Constant = true, Access = public)
+        % Types of analysis
+        MECHANICAL        = uint8(1);
+        THERMAL           = uint8(2);
+        THERMO_MECHANICAL = uint8(3);
+    end
+    
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Problem data
+        name    string = string.empty;   % problem name
+        type    uint8  = uint8.empty;    % flag for type of analysis
+        path_in string = string.empty;   % path to input files folder
+        
+        % Model components: handle to objects
+        mparts    ModelPart = ModelPart.empty;   % handles to objects of ModelPart class
+        particles Particle  = Particle.empty;    % handles to objects of Particle class
+        walls     Wall      = Wall.empty;        % handles to objects of Wall class
+        interacts Interact  = Interact.empty;    % handles to objects of Interact class
+        solids    Material  = Material.empty;    % handles to objects of Material_Solid subclass
+        fluid     Material  = Material.empty;    % handles to object of Material_Fluid subclass
+        
+        % Model components: total numbers
+        n_mparts    uint32 = uint32.empty;   % number of model parts
+        n_particles uint32 = uint32.empty;   % number of particles
+        n_walls     uint32 = uint32.empty;   % number of walls
+        n_interacts uint32 = uint32.empty;   % number of binary interactions
+        n_solids    uint32 = uint32.empty;   % number of solid materials
+        
+        % Global properties
+        gravity    double = double.empty;   % vector of gravity components value
+        damp_trl   double = double.empty;   % damping for translational motion
+        damp_rot   double = double.empty;   % damping for rotational motion
+        fluid_vel  double = double.empty;   % interstitial fluid velocity vector
+        fluid_temp double = double.empty;   % interstitial fluid temperature
+        
+        % Model domain properties
+        alpha      double = double.empty;   % alpha radius
+        vol_domain double = double.empty;   % total volume (unity depth) of the alpha-shape polygon of all particles
+        porosity   double = double.empty;   % average porosity (void ratio) of the alpha-shape polygon
+        por_freq   double = double.empty;   % average porosity update frequency (in steps) (double to accept NaN)
+        vor_freq   double = double.empty;   % voronoi diagram update frequency (in steps) (double to accept NaN)
+        vor_vtx    double = double.empty;   % vertices coordinates of voronoi diagram
+        vor_idx    cell   = cell.empty;     % vertices indices of voronoi diagram cells
+        
+        % Total particle properties
+        surf_particle  double = double.empty;   % total surface area of all particles
+        cross_particle double = double.empty;   % total cross-sectional area of all particles
+        vol_particle   double = double.empty;   % total volume of all particles
+        mass_particle  double = double.empty;   % total mass of all particles
+        
+        % Model limits
+        has_bbox logical = logical.empty;   % flag for existing bbox
+        has_sink logical = logical.empty;   % flag for existing sinks
+        bbox     BBox    = BBox.empty;      % handle to object of BBox class
+        sink     Sink    = Sink.empty;      % handles to objects of Sink class
+        
+        % Paralelization
+        parallel logical = logical.empty;   % flag for parallelization of simulation
+        workers  uint16  = uint16.empty;    % number of workers for parallelization
+        
+        % Neighbours search
+        search Search = Search.empty;   % handle to object of Search class
+        
+        % Time integration
+        scheme_trl  Scheme = Scheme.empty;   % handle to object of Scheme class for translation integration
+        scheme_rot  Scheme = Scheme.empty;   % handle to object of Scheme class for rotation integration
+        scheme_temp Scheme = Scheme.empty;   % handle to object of Scheme class for temperature integration
+        
+        % Time advancing
+        auto_step logical = logical.empty;   % flag for computing time step automatically
+        time_step double  = double.empty;    % time step value
+        max_time  double  = double.empty;    % maximum simulation time
+        time      double  = double.empty;    % current simulation time
+        step      double  = double.empty;    % current simulation step (double to perform NaN operations in frequency checks)
+        
+        % Elapsed time control (real analysis time)
+        start_time double  = double.empty;   % starting elapsed time for current analysis run
+        total_time double  = double.empty;   % total elapsed time for all analysis runs
+        
+        % Output generation
+        path_out   string    = string.empty;      % path to output folder
+        save_ws    logical   = logical.empty;     % flag for saving workspace into a storage file
+        result     Result    = Result.empty;      % handle to object of Result class
+        animations Animation = Animation.empty;   % handles to objects of Animation class
+        graphs     Graph     = Graph.empty;       % handles to objects of Graph class
+        print      Print     = Print.empty;       % handle to object of Print class
+        
+        % Output control
+        nprog double  = double.empty;    % progress print frequency (% of total time)
+        tprog double  = double.empty;    % next time for printing progress
+        nout  double  = double.empty;    % number of outputs
+        tout  double  = double.empty;    % next time for storing results
+        store logical = logical.empty;   % flag for step to store results
+    end
+    
+    %% Constructor method
+    methods
+        function this = Driver(type)
+            if (nargin > 0)
+                this.type = type;
+            end
+        end
+    end
+    
+    %% Abstract methods: implemented in derived sub-classes
+    methods (Abstract)
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setDefaultProps(this);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setParticleProps(this,particle);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        preProcess(this);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        process(this);
+    end
+    
+    %% Public methods
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function initTime(this)
+            this.start_time = 0;
+            this.time       = 0;
+            this.step       = 0;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function initOutputVars(this)
+            this.nprog = this.nprog * this.max_time / 100; % convert to time per print
+            this.nout  = this.max_time / this.nout;        % convert to time per output
+            this.tprog = this.nprog;
+            this.tout  = this.nout;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function printProgress(this)
+            if (this.time >= this.tprog)
+                fprintf('\n%.1f%%: time %.3f, step %d',100*this.time/this.max_time,this.time,this.step);
+                this.tprog = this.tprog + this.nprog - 10e-15; % tollerance to deal with precision issues
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Object must be called 'drv' here to load it from storage file.
+        function storeResults(drv)
+            if (drv.time >= drv.tout)
+                if (drv.save_ws)
+                    drv.createOutFolder();
+                    save(strcat(drv.path_out,drv.name));
+                    drv.total_time = drv.start_time + toc;
+                end
+                if (~isempty(drv.print))
+                    drv.print.execute(drv);
+                end
+                drv.tout = drv.tout + drv.nout - 10e-10; % tollerance to deal with precision issues
+                drv.result.updateIndex();
+                drv.store = true;
+            else
+                drv.store = false;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeResultsFinal(this)
+            if (this.result.idx < length(this.result.times))
+                this.result.updateIndex();
+                this.result.storeTime(this);
+                this.result.storeAvgVelocity(this);
+                this.result.storeExtVelocity(this);
+                this.result.storeAvgAcceleration(this);
+                this.result.storeExtAcceleration(this);
+                this.result.storeAvgTemperature(this);
+                this.result.storeExtTemperature(this);
+                this.result.storeTotalHeatRate(this);
+                for i = 1:this.n_particles
+                    p = this.particles(i);
+                    this.result.storeParticleProp(p);
+                    this.result.storeParticlePosition(p);
+                    this.result.storeParticleTemperature(p);
+                    this.result.storeParticleForce(p);
+                    this.result.storeParticleVelocity(p);
+                    this.result.storeParticleAcceleration(p);
+                    this.result.storeParticleHeatRate(p);
+                end
+                for i = 1:this.n_walls
+                    w = this.walls(i);
+                    this.result.storeWallPosition(w);
+                    this.result.storeWallTemperature(w);
+                end
+                if (~isempty(this.print))
+                    this.print.execute(this);
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setVoronoiDiagram(this)
+            % Assumption: walls are ignored
+            try
+                [this.vor_vtx,this.vor_idx] = voronoiDiagram(delaunayTriangulation([this.particles.coord]'));
+            catch
+                fprintf(2,'Could not build Voronoi diagram in step %d\n',this.step);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setGlobalVol(this)
+            % Assumption: in-plane projection area (unity depth)
+            vol = area(alphaShape([this.particles.coord]',this.alpha));
+            
+            % Avoid null volume (aligned particles)
+            % Assumption: set total particle volume (area) when volume is null
+            if (vol ~= 0)
+                this.vol_domain = vol;
+            else
+                if (isempty(this.cross_particle))
+                    this.cross_particle = sum([this.particles.cross]);
+                end
+                this.vol_domain = this.cross_particle;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setGlobalPorosity(this)
+            if (isempty(this.vol_domain))
+                this.setGlobalVol();
+            else
+                % Assumption: total volume of particles computed as the
+                % in-plane cross-sectional area (unity depth)
+                this.porosity = 1 - this.cross_particle/this.vol_domain;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setTotalParticlesProps(this)
+            this.surf_particle  = sum([this.particles.surface]);
+            this.cross_particle = sum([this.particles.cross]);
+            this.vol_particle   = sum([this.particles.volume]);
+            this.mass_particle  = sum([this.particles.mass]);
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function do = removeParticle(this,p)
+            do = false;
+            
+            % Remove particles not respecting bbox
+            if (this.has_bbox)
+                if (this.bbox.removeParticle(p,this.time))
+                    do = true;
+                    
+                    % Remove particle and its interactions
+                    delete(p.interacts);
+                    delete(p);
+                    
+                    % Erase handles from global list of interactions
+                    this.interacts(~isvalid(this.interacts)) = [];
+                    this.n_interacts = length(this.interacts);
+                    return;
+                end
+            end
+            
+            % Remove particles not respecting sinks
+            if (this.has_sink)
+                for i = 1:length(this.sink)
+                    if (this.sink(i).removeParticle(p,this.time))
+                        do = true;
+                        
+                        % Remove particle and its interactions
+                        delete(p.interacts);
+                        delete(p);
+                        
+                        % Erase handles from global list of interactions
+                        this.interacts(~isvalid(this.interacts)) = [];
+                        this.n_interacts = length(this.interacts);
+                        return;
+                    end
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function erasePropsOfRemovedParticle(this)
+            % Erase handles from global list
+            this.particles(~isvalid(this.particles)) = [];
+            this.n_particles = length(this.particles);
+            
+            % Erase handles from model parts
+            for i = 1:this.n_mparts
+                mp = this.mparts(i);
+                mp.particles(~isvalid(mp.particles)) = [];
+                mp.n_particles = length(mp.particles);
+            end
+            
+            % Update total particles properties
+            this.setTotalParticlesProps();
+            
+            % Attention:
+            % To avoid additional computational costs, references to the
+            % deleted particle from other particles (e.g. neighbohring
+            % lists) are not removed.
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function createOutFolder(this)
+            if (~exist(this.path_out,'dir') ~= 7) % 7 = ID for folders
+                warning off MATLAB:MKDIR:DirectoryExists
+                mkdir(this.path_out)
+                warning on MATLAB:MKDIR:DirectoryExists
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function posProcess(this)
+            if (isnan(this.result.times(1)))
+                fprintf('\nNo valid results to show.\n');
+                return;
+            end
+            
+            % Create and write graphs
+            if (~isempty(this.graphs))
+                fprintf('\nCreating graphs...\n');
+                for i = 1:length(this.graphs)
+                    this.graphs(i).execute(this);
+                end
+            end
+            
+            % Create and show animations
+            if (~isempty(this.animations))
+                for i = 1:length(this.animations)
+                    fprintf('\nCreating animation "%s"...',this.animations(i).anim_title);
+                    this.animations(i).animate(this);
+                end
+                fprintf('\n');
+                for i = 1:length(this.animations)
+                    this.animations(i).showAnimation();
+                end
+                fprintf('\n');
+            end
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

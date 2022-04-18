@@ -1,0 +1,857 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Master class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Master.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Master class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constructor method</a></li><li><a href="#3">Public methods: main function</a></li><li><a href="#4">Public methods: auxiliary functions</a></li></ul></div><h2 id="1">Description</h2><p>This is the main class for running simulations in DEMLab.</p><p>It is responsible for managing the high-level tasks and call the appropriate methods to perform each stage of a simulation, from the reading of input files to the showing of results.</p><pre class="codeinput"><span class="keyword">classdef</span> Master
+</pre><h2 id="2">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Master()
+
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Public methods: main function</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> execute(this,file_fullnames,echo,test)
+            <span class="comment">% Check input arguments</span>
+            <span class="keyword">if</span> (nargin &lt; 2)
+                fprintf(<span class="string">'No file selected.\n'</span>);
+                fprintf(<span class="string">'\nExiting program...\n'</span>);
+                <span class="keyword">return</span>;
+            <span class="keyword">elseif</span> (nargin &lt; 3)
+                echo = 1;
+                test = false;
+            <span class="keyword">elseif</span> (nargin &lt; 4)
+                test = false;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Print header</span>
+            this.printHeader();
+
+            <span class="comment">% Get input files</span>
+            <span class="keyword">if</span> (isempty(file_fullnames) || (length(file_fullnames) == 1 &amp;&amp; file_fullnames == <span class="string">""</span>))
+                <span class="comment">% Open selection dialog</span>
+                filter  = {<span class="string">'*.json'</span>,<span class="string">'Parameters File (*.json)'</span>;<span class="string">'*.mat'</span>,<span class="string">'Storage File (*.mat)'</span>};
+                title   = <span class="string">'DEMLab - Input file'</span>;
+                default = <span class="string">'ProjectParameters.json'</span>;
+                [file_names,path_in] = uigetfile(filter,title,default,<span class="string">'MultiSelect'</span>,<span class="string">'on'</span>);
+                <span class="keyword">if</span> (isequal(file_names,0))
+                    fprintf(<span class="string">'No file selected.\n'</span>);
+                    fprintf(<span class="string">'\nExiting program...\n'</span>);
+                    <span class="keyword">return</span>;
+                <span class="keyword">end</span>
+                file_fullnames = fullfile(path_in,file_names);
+
+                <span class="comment">% Convert to string array</span>
+                file_fullnames = string(file_fullnames);
+                path_in        = string(path_in);
+            <span class="keyword">else</span>
+                <span class="comment">% Convert to string array</span>
+                file_fullnames = string(file_fullnames);
+
+                <span class="comment">% Eliminate empty strings</span>
+                file_fullnames = file_fullnames(file_fullnames~=<span class="string">""</span>);
+
+                <span class="comment">% Check for non empty files</span>
+                <span class="keyword">if</span> (isempty(file_fullnames))
+                    fprintf(<span class="string">'No file selected.\n'</span>);
+                    fprintf(<span class="string">'\nExiting program...\n'</span>);
+                    <span class="keyword">return</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Get path of input files</span>
+                path_in = strcat(fileparts(file_fullnames(1)),<span class="string">'\'</span>);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Display input files</span>
+            n_files = length(file_fullnames);
+            <span class="keyword">if</span> (n_files &gt; 1 &amp;&amp; echo &gt; 0)
+                fprintf(<span class="string">'%d input files selected:\n'</span>,n_files);
+                <span class="keyword">for</span> i = 1:n_files
+                    fprintf(<span class="string">'%s\n'</span>,file_fullnames(i));
+                <span class="keyword">end</span>
+                fprintf(<span class="string">'\n------------------------------------------------------------------\n\n'</span>);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Run each input file</span>
+            <span class="keyword">for</span> i = 1:n_files
+                is_last = (i == n_files);
+
+                <span class="comment">% Check extension</span>
+                cur_file = file_fullnames(i);
+                [~,~,ext] = fileparts(cur_file);
+
+                <span class="comment">% Clear driver</span>
+                clearvars <span class="string">drv</span>;
+
+                <span class="comment">% Run according to input file type</span>
+                <span class="keyword">if</span> (strcmp(ext,<span class="string">'.json'</span>))
+                    <span class="comment">% Open parameters file</span>
+                    fprintf(<span class="string">'Parameters file:\n%s\n'</span>,cur_file);
+                    fid = fopen(cur_file,<span class="string">'rt'</span>);
+                    <span class="keyword">if</span> (fid &lt; 0)
+                        fprintf(2,<span class="string">'\nError opening parameters file.\n'</span>);
+                        this.printExit(is_last);
+                        <span class="keyword">continue</span>;
+                    <span class="keyword">end</span>
+
+                    <span class="comment">% Read parameters file</span>
+                    <span class="keyword">if</span> (echo &gt; 0)
+                        fprintf(<span class="string">'\nReading parameters file...\n'</span>);
+                    <span class="keyword">end</span>
+                    read = Read();
+                    [status,drv,storage] = read.execute(path_in,fid);
+
+                    <span class="comment">% Pre analysis tasks</span>
+                    <span class="keyword">if</span> (status == 0)
+                        this.printExit(is_last);
+                        <span class="keyword">continue</span>;
+
+                    <span class="keyword">elseif</span> (status == 1) <span class="comment">% start analysis from the beggining</span>
+                        <span class="comment">% Check input data</span>
+                        <span class="keyword">if</span> (echo &gt; 0)
+                            fprintf(<span class="string">'\nChecking consistency of input data...\n'</span>);
+                        <span class="keyword">end</span>
+                        status = read.check(drv);
+                        <span class="keyword">if</span> (~status)
+                            this.printExit(is_last);
+                            <span class="keyword">continue</span>;
+                        <span class="keyword">end</span>
+
+                        <span class="comment">% Pre-process</span>
+                        <span class="keyword">if</span> (echo &gt; 0)
+                            fprintf(<span class="string">'\nPre-processing...\n'</span>);
+                        <span class="keyword">end</span>
+                        <span class="keyword">if</span> (~drv.preProcess())
+                            this.printExit(is_last);
+                            <span class="keyword">continue</span>;
+                        <span class="keyword">end</span>
+
+                        <span class="comment">% Print simulation information</span>
+                        <span class="keyword">if</span> (echo &gt; 0)
+                            this.printSimulationInfo(drv);
+                            fprintf(<span class="string">'\nStarting analysis:\n'</span>);
+                            fprintf(<span class="string">'%s\n'</span>,datestr(now));
+                        <span class="keyword">end</span>
+
+                    <span class="keyword">elseif</span> (status == 2) <span class="comment">% continue analysis from previous state</span>
+                        f = dir(storage);
+                        fprintf(<span class="string">'\nStorage file found (%.3f Mb):\n%s\n'</span>,f.bytes/10e5,storage);
+
+                        <span class="comment">% Load storage file</span>
+                        <span class="keyword">try</span>
+                            warning <span class="string">off</span> <span class="string">MATLAB:load:variableNotFound</span>
+                            load(storage,<span class="string">'drv'</span>);
+                            warning <span class="string">on</span> <span class="string">MATLAB:load:variableNotFound</span>
+                        <span class="keyword">catch</span>
+                            fprintf(2,<span class="string">'\nError loading storage file.\n'</span>);
+                            this.printExit(is_last);
+                            <span class="keyword">continue</span>;
+                        <span class="keyword">end</span>
+                        <span class="keyword">if</span> (~exist(<span class="string">'drv'</span>,<span class="string">'var'</span>) || isempty(drv))
+                            fprintf(2,<span class="string">'\nInvalid stored data.\n'</span>);
+                            this.printExit(is_last);
+                            <span class="keyword">continue</span>;
+                        <span class="keyword">end</span>
+
+                        <span class="comment">% Update starting elapsed time</span>
+                        drv.start_time = drv.total_time;
+
+                        <span class="comment">% Print simulation information</span>
+                        <span class="keyword">if</span> (echo &gt; 0)
+                            this.printSimulationInfo(drv);
+                            fprintf(<span class="string">'\nStarting analysis from previous results:\n'</span>);
+                            fprintf(<span class="string">'%s\n'</span>,datestr(now));
+                        <span class="keyword">end</span>
+                    <span class="keyword">end</span>
+
+                    <span class="comment">% Show starting configuration</span>
+                    <span class="keyword">if</span> (echo &gt; 0)
+                        Animation().curConfig(drv,<span class="string">'Starting'</span>);
+                    <span class="keyword">end</span>
+
+                    <span class="comment">% Execute analysis</span>
+                    tic;
+                    drv.process();
+
+                    <span class="comment">% Print finished status</span>
+                    <span class="keyword">if</span> (echo &gt; 0)
+                        this.printFinishedStatus(drv,status);
+                    <span class="keyword">end</span>
+
+                <span class="keyword">elseif</span> (strcmp(ext,<span class="string">'.mat'</span>))
+                    f = dir(cur_file);
+                    fprintf(<span class="string">'Storage file (%.3f Mb):\n%s\n'</span>,f.bytes/10e5,cur_file);
+
+                    <span class="comment">% Load storage file</span>
+                    <span class="keyword">try</span>
+                        warning <span class="string">off</span> <span class="string">MATLAB:load:variableNotFound</span>
+                        load(cur_file,<span class="string">'drv'</span>);
+                        warning <span class="string">on</span> <span class="string">MATLAB:load:variableNotFound</span>
+                    <span class="keyword">catch</span>
+                        fprintf(2,<span class="string">'\nError loading storage file.\n'</span>);
+                        this.printExit(is_last);
+                        <span class="keyword">continue</span>;
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (~exist(<span class="string">'drv'</span>,<span class="string">'var'</span>) || isempty(drv))
+                        fprintf(2,<span class="string">'\nInvalid stored data.\n'</span>);
+                        this.printExit(is_last);
+                        <span class="keyword">continue</span>;
+                    <span class="keyword">end</span>
+
+                    <span class="comment">% Show current configuration</span>
+                    <span class="keyword">if</span> (echo &gt; 0)
+                        Animation().curConfig(drv,<span class="string">''</span>);
+                    <span class="keyword">end</span>
+                <span class="keyword">else</span>
+                    fprintf(2,<span class="string">'\nInvalid input file extension.\n'</span>);
+                    this.printExit(is_last);
+                    <span class="keyword">continue</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Pos-process</span>
+                drv.posProcess();
+
+                <span class="comment">% Finish current analysis</span>
+                <span class="keyword">if</span> (test)
+                    this.compareTest(drv);
+                <span class="keyword">else</span>
+                    fprintf(<span class="string">'\nFinished!\n'</span>);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~is_last)
+                    fprintf(<span class="string">'\n------------------------------------------------------------------\n\n'</span>);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: auxiliary functions</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> printHeader(~)
+            fprintf(<span class="string">'==================================================================\n'</span>);
+            fprintf(<span class="string">'           DEMLab - Discrete Element Method Laboratory            \n'</span>);
+            fprintf(<span class="string">'                  Version 1.0 - September 2021                    \n'</span>);
+            fprintf(<span class="string">' International Center for Numerical Methods in Engineering (CIMNE)\n'</span>);
+            fprintf(<span class="string">'      Polytechnic University of Catalonia (UPC BarcelonaTech)     \n'</span>);
+            fprintf(<span class="string">'==================================================================\n\n'</span>);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> printSimulationInfo(~,drv)
+            fprintf(<span class="string">'\nSimulation ready:\n'</span>);
+            <span class="keyword">if</span> (~isempty(drv.name))
+                fprintf(<span class="string">'Name...................: %s\n'</span>,drv.name);
+            <span class="keyword">end</span>
+            <span class="keyword">switch</span> drv.type
+                <span class="keyword">case</span> drv.MECHANICAL
+                    fprintf(<span class="string">'Type...................: Mechanical\n'</span>);
+                <span class="keyword">case</span> drv.type == drv.THERMAL
+                    fprintf(<span class="string">'Type...................: Thermal\n'</span>);
+                <span class="keyword">case</span> drv.THERMO_MECHANICAL
+                    fprintf(<span class="string">'Type...................: Thermo-mechanical\n'</span>);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(drv.n_walls))
+                fprintf(<span class="string">'Number of walls........: %d\n'</span>,drv.n_walls);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(drv.n_particles))
+                fprintf(<span class="string">'Number of particles....: %d\n'</span>,drv.n_particles);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(drv.particles))
+                ravg = mean([drv.particles.radius]);
+                rdev = std([drv.particles.radius]);
+                rmin = min([drv.particles.radius]);
+                rmax = max([drv.particles.radius]);
+                <span class="keyword">if</span> (rdev/rmin &lt; 1e-8)
+                    rdev = 0;
+                <span class="keyword">end</span>
+                fprintf(<span class="string">'Average radius.........: %.3e\n'</span>,ravg);
+                fprintf(<span class="string">'Radius deviation.......: %.3e\n'</span>,rdev);
+                <span class="keyword">if</span> (rdev ~= 0)
+                    fprintf(<span class="string">'Min radius.............: %.3e\n'</span>,rmin);
+                    fprintf(<span class="string">'Max radius.............: %.3e\n'</span>,rmax);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(drv.particles) &amp;&amp;<span class="keyword">...</span>
+               (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL))
+                tavg = mean([drv.particles.temperature]);
+                tdev = std([drv.particles.temperature]);
+                tmin = min([drv.particles.temperature]);
+                tmax = max([drv.particles.temperature]);
+                fprintf(<span class="string">'Average temperature....: %.3e\n'</span>,tavg);
+                fprintf(<span class="string">'Temperature deviation..: %.3e\n'</span>,tdev);
+                <span class="keyword">if</span> (tdev ~= 0)
+                    fprintf(<span class="string">'Min temperature........: %.3e\n'</span>,tmin);
+                    fprintf(<span class="string">'Max temperature........: %.3e\n'</span>,tmax);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(drv.mass_particle))
+                fprintf(<span class="string">'Total mass.............: %.3e\n'</span>,drv.mass_particle);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(drv.time_step))
+                fprintf(<span class="string">'Time step..............: %.3e\n'</span>,drv.time_step);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(drv.max_time))
+                fprintf(<span class="string">'Final time.............: %f\n'</span>,drv.max_time);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> printFinishedStatus(~,drv,status)
+            fprintf(<span class="string">'\n\nAnalysis finished:\n'</span>);
+            fprintf(<span class="string">'%s\n'</span>,datestr(now));
+            <span class="keyword">if</span> (status == 1)
+                time            = seconds(toc);
+                avg_time        = time/drv.step;
+                time.Format     = <span class="string">'hh:mm:ss.SS'</span>;
+                avg_time.Format = <span class="string">'s'</span>;
+                fprintf(<span class="string">'Total time:.....: %s\n'</span>,string(time));
+                fprintf(<span class="string">'Avg step time:..: %s\n'</span>,string(avg_time));
+            <span class="keyword">elseif</span> (status == 2)
+                curr_time         = seconds(toc);
+                total_time        = seconds(drv.total_time);
+                avg_time          = total_time/drv.step;
+                curr_time.Format  = <span class="string">'hh:mm:ss.SS'</span>;
+                total_time.Format = <span class="string">'hh:mm:ss.SS'</span>;
+                avg_time.Format   = <span class="string">'s'</span>;
+                fprintf(<span class="string">'Current analysis time:..: %s\n'</span>,string(curr_time));
+                fprintf(<span class="string">'Total simulation time:..: %s\n'</span>,string(total_time));
+                fprintf(<span class="string">'Avg step time:..........: %s\n'</span>,string(avg_time));
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> printExit(~,is_last)
+            <span class="keyword">if</span> (is_last)
+                fprintf(<span class="string">'\nExiting program...\n'</span>);
+            <span class="keyword">else</span>
+                fprintf(<span class="string">'\nAborted!\n'</span>);
+                fprintf(<span class="string">'\n------------------------------------------------------------------\n\n'</span>);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> compareTest(~,drv)
+            name_1 = strcat(drv.path_out,<span class="string">"reference_results.pos"</span>);
+            name_2 = strcat(drv.path_out,drv.name,<span class="string">".pos"</span>);
+
+            <span class="keyword">if</span> (exist(name_1,<span class="string">'file'</span>) ~= 2)
+                fprintf(2,<span class="string">'\nMissing reference results file!\n'</span>);
+                <span class="keyword">if</span> (exist(name_2,<span class="string">'file'</span>) == 2)
+                    warning <span class="string">off</span> <span class="string">MATLAB:DELETE:FileNotFound</span>
+                    delete(sprintf(<span class="string">'%s'</span>,name_2));
+                    warning <span class="string">on</span> <span class="string">MATLAB:DELETE:FileNotFound</span>
+                <span class="keyword">end</span>
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            file_1 = javaObject(<span class="string">'java.io.File'</span>,name_1);
+            file_2 = javaObject(<span class="string">'java.io.File'</span>,name_2);
+
+            is_equal = javaMethod(<span class="string">'contentEquals'</span>,<span class="string">'org.apache.commons.io.FileUtils'</span>,file_1,file_2);
+
+            <span class="keyword">if</span> (is_equal)
+                fprintf(1,<span class="string">'\nTest passed!\n'</span>);
+            <span class="keyword">else</span>
+                fprintf(2,<span class="string">'\nResults are different!\n'</span>);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (exist(name_2,<span class="string">'file'</span>) == 2)
+                warning <span class="string">off</span> <span class="string">MATLAB:DELETE:FileNotFound</span>
+                delete(sprintf(<span class="string">'%s'</span>,name_2));
+                warning <span class="string">on</span> <span class="string">MATLAB:DELETE:FileNotFound</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="comment">% To be called before the analysis (currently not available)</span>
+        <span class="keyword">function</span> startParallel(~,drv)
+            p = gcp(<span class="string">'nocreate'</span>);
+            <span class="keyword">if</span> (drv.parallel)
+                max_workers = parcluster(<span class="string">'local'</span>).NumWorkers;
+                <span class="keyword">if</span> (drv.workers &gt; max_workers)
+                    drv.workers = max_workers;
+                    warning(<span class="string">'off'</span>,<span class="string">'backtrace'</span>);
+                    warning(<span class="string">'The selected number of workers is greater than the available number of workers in this machine. The simulation will proceed with the %d available workers'</span>,max_workers);
+                    warning(<span class="string">'on'</span>,<span class="string">'backtrace'</span>);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (isempty(p))
+                    fprintf(<span class="string">'\n'</span>);
+                    parpool(drv.workers);
+                <span class="keyword">elseif</span> (p.NumWorkers ~= drv.workers)
+                    fprintf(<span class="string">'\n'</span>);
+                    delete(p)
+                    parpool(drv.workers);
+                <span class="keyword">end</span>
+            <span class="keyword">elseif</span> (~isempty(p))
+                fprintf(<span class="string">'\n'</span>);
+                delete(p);
+            <span class="keyword">end</span>
+            ps = parallel.Settings;
+            ps.Pool.AutoCreate = false;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Master class
+%
+%% Description
+%
+% This is the main class for running simulations in DEMLab.
+%
+% It is responsible for managing the high-level tasks and call the
+% appropriate methods to perform each stage of a simulation, from the
+% reading of input files to the showing of results.
+%
+classdef Master
+    %% Constructor method
+    methods
+        function this = Master()
+            
+        end
+    end
+    
+    %% Public methods: main function
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function execute(this,file_fullnames,echo,test)
+            % Check input arguments
+            if (nargin < 2)
+                fprintf('No file selected.\n');
+                fprintf('\nExiting program...\n');
+                return;
+            elseif (nargin < 3)
+                echo = 1;
+                test = false;
+            elseif (nargin < 4)
+                test = false;
+            end
+            
+            % Print header
+            this.printHeader();
+            
+            % Get input files
+            if (isempty(file_fullnames) || (length(file_fullnames) == 1 && file_fullnames == ""))
+                % Open selection dialog
+                filter  = {'*.json','Parameters File (*.json)';'*.mat','Storage File (*.mat)'};
+                title   = 'DEMLab - Input file';
+                default = 'ProjectParameters.json';
+                [file_names,path_in] = uigetfile(filter,title,default,'MultiSelect','on');
+                if (isequal(file_names,0))
+                    fprintf('No file selected.\n');
+                    fprintf('\nExiting program...\n');
+                    return;
+                end
+                file_fullnames = fullfile(path_in,file_names);
+                
+                % Convert to string array
+                file_fullnames = string(file_fullnames);
+                path_in        = string(path_in);
+            else
+                % Convert to string array
+                file_fullnames = string(file_fullnames);
+                
+                % Eliminate empty strings
+                file_fullnames = file_fullnames(file_fullnames~="");
+                
+                % Check for non empty files
+                if (isempty(file_fullnames))
+                    fprintf('No file selected.\n');
+                    fprintf('\nExiting program...\n');
+                    return;
+                end
+                
+                % Get path of input files
+                path_in = strcat(fileparts(file_fullnames(1)),'\');
+            end
+            
+            % Display input files
+            n_files = length(file_fullnames);
+            if (n_files > 1 && echo > 0)
+                fprintf('%d input files selected:\n',n_files);
+                for i = 1:n_files
+                    fprintf('%s\n',file_fullnames(i));
+                end
+                fprintf('\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
+            end
+            
+            % Run each input file
+            for i = 1:n_files
+                is_last = (i == n_files);
+                
+                % Check extension
+                cur_file = file_fullnames(i);
+                [~,~,ext] = fileparts(cur_file);
+                
+                % Clear driver
+                clearvars drv;
+                
+                % Run according to input file type
+                if (strcmp(ext,'.json'))
+                    % Open parameters file
+                    fprintf('Parameters file:\n%s\n',cur_file);
+                    fid = fopen(cur_file,'rt');
+                    if (fid < 0)
+                        fprintf(2,'\nError opening parameters file.\n');
+                        this.printExit(is_last);
+                        continue;
+                    end
+                    
+                    % Read parameters file
+                    if (echo > 0)
+                        fprintf('\nReading parameters file...\n');
+                    end
+                    read = Read();
+                    [status,drv,storage] = read.execute(path_in,fid);
+                    
+                    % Pre analysis tasks
+                    if (status == 0)
+                        this.printExit(is_last);
+                        continue;
+                        
+                    elseif (status == 1) % start analysis from the beggining
+                        % Check input data
+                        if (echo > 0)
+                            fprintf('\nChecking consistency of input data...\n');
+                        end
+                        status = read.check(drv);
+                        if (~status)
+                            this.printExit(is_last);
+                            continue;
+                        end
+                        
+                        % Pre-process
+                        if (echo > 0)
+                            fprintf('\nPre-processing...\n');
+                        end
+                        if (~drv.preProcess())
+                            this.printExit(is_last);
+                            continue;
+                        end
+                        
+                        % Print simulation information
+                        if (echo > 0)
+                            this.printSimulationInfo(drv);
+                            fprintf('\nStarting analysis:\n');
+                            fprintf('%s\n',datestr(now));
+                        end
+                        
+                    elseif (status == 2) % continue analysis from previous state
+                        f = dir(storage);
+                        fprintf('\nStorage file found (%.3f Mb):\n%s\n',f.bytes/10e5,storage);
+                        
+                        % Load storage file
+                        try
+                            warning off MATLAB:load:variableNotFound
+                            load(storage,'drv');
+                            warning on MATLAB:load:variableNotFound
+                        catch
+                            fprintf(2,'\nError loading storage file.\n');
+                            this.printExit(is_last);
+                            continue;
+                        end
+                        if (~exist('drv','var') || isempty(drv))
+                            fprintf(2,'\nInvalid stored data.\n');
+                            this.printExit(is_last);
+                            continue;
+                        end
+                        
+                        % Update starting elapsed time
+                        drv.start_time = drv.total_time;
+
+                        % Print simulation information
+                        if (echo > 0)
+                            this.printSimulationInfo(drv);
+                            fprintf('\nStarting analysis from previous results:\n');
+                            fprintf('%s\n',datestr(now));
+                        end
+                    end
+                    
+                    % Show starting configuration
+                    if (echo > 0)
+                        Animation().curConfig(drv,'Starting');
+                    end
+                    
+                    % Execute analysis
+                    tic;
+                    drv.process();
+                    
+                    % Print finished status
+                    if (echo > 0)
+                        this.printFinishedStatus(drv,status);
+                    end
+                    
+                elseif (strcmp(ext,'.mat'))
+                    f = dir(cur_file);
+                    fprintf('Storage file (%.3f Mb):\n%s\n',f.bytes/10e5,cur_file);
+                    
+                    % Load storage file
+                    try
+                        warning off MATLAB:load:variableNotFound
+                        load(cur_file,'drv');
+                        warning on MATLAB:load:variableNotFound
+                    catch
+                        fprintf(2,'\nError loading storage file.\n');
+                        this.printExit(is_last);
+                        continue;
+                    end
+                    if (~exist('drv','var') || isempty(drv))
+                        fprintf(2,'\nInvalid stored data.\n');
+                        this.printExit(is_last);
+                        continue;
+                    end
+                    
+                    % Show current configuration
+                    if (echo > 0)
+                        Animation().curConfig(drv,'');
+                    end
+                else
+                    fprintf(2,'\nInvalid input file extension.\n');
+                    this.printExit(is_last);
+                    continue;
+                end
+                
+                % Pos-process
+                drv.posProcess();
+                
+                % Finish current analysis
+                if (test)
+                    this.compareTest(drv);
+                else
+                    fprintf('\nFinished!\n');
+                end
+                if (~is_last)
+                    fprintf('\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
+                end
+            end
+        end
+    end
+    
+    %% Public methods: auxiliary functions
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function printHeader(~)
+            fprintf('==================================================================\n');
+            fprintf('           DEMLab - Discrete Element Method Laboratory            \n');
+            fprintf('                  Version 1.0 - September 2021                    \n');
+            fprintf(' International Center for Numerical Methods in Engineering (CIMNE)\n');
+            fprintf('      Polytechnic University of Catalonia (UPC BarcelonaTech)     \n');
+            fprintf('==================================================================\n\n');
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function printSimulationInfo(~,drv)
+            fprintf('\nSimulation ready:\n');
+            if (~isempty(drv.name))
+                fprintf('Name...................: %s\n',drv.name);
+            end
+            switch drv.type
+                case drv.MECHANICAL
+                    fprintf('Type...................: Mechanical\n');
+                case drv.type == drv.THERMAL
+                    fprintf('Type...................: Thermal\n');
+                case drv.THERMO_MECHANICAL
+                    fprintf('Type...................: Thermo-mechanical\n');
+            end
+            if (~isempty(drv.n_walls))
+                fprintf('Number of walls........: %d\n',drv.n_walls);
+            end
+            if (~isempty(drv.n_particles))
+                fprintf('Number of particles....: %d\n',drv.n_particles);
+            end
+            if (~isempty(drv.particles))
+                ravg = mean([drv.particles.radius]);
+                rdev = std([drv.particles.radius]);
+                rmin = min([drv.particles.radius]);
+                rmax = max([drv.particles.radius]);
+                if (rdev/rmin < 1e-8)
+                    rdev = 0;
+                end
+                fprintf('Average radius.........: %.3e\n',ravg);
+                fprintf('Radius deviation.......: %.3e\n',rdev);
+                if (rdev ~= 0)
+                    fprintf('Min radius.............: %.3e\n',rmin);
+                    fprintf('Max radius.............: %.3e\n',rmax);
+                end
+            end
+            if (~isempty(drv.particles) &&...
+               (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL))
+                tavg = mean([drv.particles.temperature]);
+                tdev = std([drv.particles.temperature]);
+                tmin = min([drv.particles.temperature]);
+                tmax = max([drv.particles.temperature]);
+                fprintf('Average temperature....: %.3e\n',tavg);
+                fprintf('Temperature deviation..: %.3e\n',tdev);
+                if (tdev ~= 0)
+                    fprintf('Min temperature........: %.3e\n',tmin);
+                    fprintf('Max temperature........: %.3e\n',tmax);
+                end
+            end
+            if (~isempty(drv.mass_particle))
+                fprintf('Total mass.............: %.3e\n',drv.mass_particle);
+            end
+            if (~isempty(drv.time_step))
+                fprintf('Time step..............: %.3e\n',drv.time_step);
+            end
+            if (~isempty(drv.max_time))
+                fprintf('Final time.............: %f\n',drv.max_time);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function printFinishedStatus(~,drv,status)
+            fprintf('\n\nAnalysis finished:\n');
+            fprintf('%s\n',datestr(now));
+            if (status == 1)
+                time            = seconds(toc);
+                avg_time        = time/drv.step;
+                time.Format     = 'hh:mm:ss.SS';
+                avg_time.Format = 's';
+                fprintf('Total time:.....: %s\n',string(time));
+                fprintf('Avg step time:..: %s\n',string(avg_time));
+            elseif (status == 2)
+                curr_time         = seconds(toc);
+                total_time        = seconds(drv.total_time);
+                avg_time          = total_time/drv.step;
+                curr_time.Format  = 'hh:mm:ss.SS';
+                total_time.Format = 'hh:mm:ss.SS';
+                avg_time.Format   = 's';
+                fprintf('Current analysis time:..: %s\n',string(curr_time));
+                fprintf('Total simulation time:..: %s\n',string(total_time));
+                fprintf('Avg step time:..........: %s\n',string(avg_time));
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function printExit(~,is_last)
+            if (is_last)
+                fprintf('\nExiting program...\n');
+            else
+                fprintf('\nAborted!\n');
+                fprintf('\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function compareTest(~,drv)
+            name_1 = strcat(drv.path_out,"reference_results.pos");
+            name_2 = strcat(drv.path_out,drv.name,".pos");
+            
+            if (exist(name_1,'file') ~= 2)
+                fprintf(2,'\nMissing reference results file!\n');
+                if (exist(name_2,'file') == 2)
+                    warning off MATLAB:DELETE:FileNotFound
+                    delete(sprintf('%s',name_2));
+                    warning on MATLAB:DELETE:FileNotFound
+                end
+                return;
+            end
+            
+            file_1 = javaObject('java.io.File',name_1);
+            file_2 = javaObject('java.io.File',name_2);
+            
+            is_equal = javaMethod('contentEquals','org.apache.commons.io.FileUtils',file_1,file_2);
+            
+            if (is_equal)
+                fprintf(1,'\nTest passed!\n');
+            else
+                fprintf(2,'\nResults are different!\n');
+            end
+            if (exist(name_2,'file') == 2)
+                warning off MATLAB:DELETE:FileNotFound
+                delete(sprintf('%s',name_2));
+                warning on MATLAB:DELETE:FileNotFound
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % To be called before the analysis (currently not available)
+        function startParallel(~,drv)
+            p = gcp('nocreate');
+            if (drv.parallel)
+                max_workers = parcluster('local').NumWorkers;
+                if (drv.workers > max_workers)
+                    drv.workers = max_workers;
+                    warning('off','backtrace');
+                    warning('The selected number of workers is greater than the available number of workers in this machine. The simulation will proceed with the %d available workers',max_workers);
+                    warning('on','backtrace');
+                end
+                if (isempty(p))
+                    fprintf('\n');
+                    parpool(drv.workers);
+                elseif (p.NumWorkers ~= drv.workers)
+                    fprintf('\n');
+                    delete(p)
+                    parpool(drv.workers);
+                end
+            elseif (~isempty(p))
+                fprintf('\n');
+                delete(p);
+            end
+            ps = parallel.Settings;
+            ps.Pool.AutoCreate = false;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

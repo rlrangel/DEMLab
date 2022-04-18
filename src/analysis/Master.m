@@ -240,6 +240,7 @@ classdef Master
             fprintf('           DEMLab - Discrete Element Method Laboratory            \n');
             fprintf('                  Version 1.0 - September 2021                    \n');
             fprintf(' International Center for Numerical Methods in Engineering (CIMNE)\n');
+            fprintf('      Polytechnic University of Catalonia (UPC BarcelonaTech)     \n');
             fprintf('==================================================================\n\n');
         end
         
