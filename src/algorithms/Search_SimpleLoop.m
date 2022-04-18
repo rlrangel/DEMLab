@@ -3,7 +3,7 @@
 %% Description
 %
 % This is a sub-class of the <search.html Search> class for the
-% implementation of the interaction search algorithm *Simple Loop*.
+% implementation of the search algorithm *Simple Loop*.
 %
 % This algorithm performs an outer loop over all particles and searches for
 % their interactions through inner loops over all particles with a higher

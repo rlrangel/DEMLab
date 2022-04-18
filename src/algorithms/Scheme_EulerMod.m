@@ -5,13 +5,13 @@
 % This is a sub-class of the <scheme.html Scheme> class for the
 % implementation of the time integration scheme *Modified Euler*.
 %
-% *Translational motion*:
+% * *Translational motion*:
 %
 % $$v_{i} = v_{i-1} + a_{i} \Delta t$$
 %
 % $$x_{i} = x_{i-1} + v_{i} \Delta t$$
 %
-% *Rotational motion*:
+% * *Rotational motion*:
 %
 % $$\omega_{i} = \omega_{i-1} + \alpha_{i} \Delta t$$
 %

@@ -3,7 +3,7 @@
 %% Description
 %
 % This is a sub-class of the <search.html Search> class for the
-% implementation of the interaction search algorithm *Verlet List*.
+% implementation of the search algorithm *Verlet List*.
 %
 % This algorithm performs an outer loop over all particles and searches for
 % their interactions through an inner loop over the particles that are

@@ -5,19 +5,19 @@
 % This is a sub-class of the <scheme.html Scheme> class for the
 % implementation of the time integration scheme *Forward Euler*.
 %
-% *Translational motion*:
+% * *Translational motion*:
 %
 % $$x_{i} = x_{i-1} + v_{i-1} \Delta t$$
 %
 % $$v_{i} = v_{i-1} + a_{i} \Delta t$$
 %
-% *Rotational motion*:
+% * *Rotational motion*:
 %
 % $$\theta_{i} = \theta_{i-1} + \omega_{i-1} \Delta t$$
 %
 % $$\omega_{i} = \omega_{i-1} + \alpha_{i} \Delta t$$
 %
-% *Thermal state*:
+% * *Thermal state*:
 %
 % $$T_{i} = T_{i-1} + \frac{\partial T}{\partial t_{i}} \Delta t$$
 %
@@ -40,7 +40,7 @@
 % $T$: Temperature
 %
 classdef Scheme_EulerForward < Scheme
-   %% Constructor method
+    %% Constructor method
     methods
         function this = Scheme_EulerForward()
             this = this@Scheme(Scheme.EULER_FORWARD);

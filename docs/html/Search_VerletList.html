@@ -1,0 +1,952 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Search_VerletList class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Search_VerletList.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Search_VerletList class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li><li><a href="#5">Public methods: sub-class specifics</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="search.html">Search</a> class for the implementation of the search algorithm <b>Verlet List</b>.</p><p>This algorithm performs an outer loop over all particles and searches for their interactions through an inner loop over the particles that are contained in their Verlet lists, and all walls.</p><p>The Verlet list of a particle contains other particles that are whithin a threshold distance, called Verlet distance, and have a higher ID number. This list is updated in a given frequency, which is smaller (less often) than the search frequency.</p><p>The reference element of each interaction (element 1) is the particle with smaller ID number.</p><p>For each interaction found, a binary <a href="interact.html">Interaction</a> object is created to manage the mechanical and / or thermal interaction between both elements.</p><pre class="codeinput"><span class="keyword">classdef</span> Search_VerletList &lt; Search
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Verlet properties</span>
+        verlet_dist <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% threshold surface separation distance to include particles in the verlet list</span>
+        verlet_freq <span class="string">uint32</span>  <span class="string">=</span> <span class="string">uint32.empty</span>;    <span class="comment">% verlet list update frequency (in steps)</span>
+        auto_freq   <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for automatic setting the update frequency</span>
+        last_search <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% last step when search was executed over all elements (double to allow inf value)</span>
+
+        <span class="comment">% Base objects for kinematics</span>
+        kinpp_sph      <span class="string">BinKinematics</span> <span class="string">=</span> <span class="string">BinKinematics.empty</span>;   <span class="comment">% sphere particle - sphere particle</span>
+        kinpw_sph_line <span class="string">BinKinematics</span> <span class="string">=</span> <span class="string">BinKinematics.empty</span>;   <span class="comment">% sphere particle - line wall</span>
+        kinpw_sph_circ <span class="string">BinKinematics</span> <span class="string">=</span> <span class="string">BinKinematics.empty</span>;   <span class="comment">% sphere particle - circle wall</span>
+        kinpp_cyl      <span class="string">BinKinematics</span> <span class="string">=</span> <span class="string">BinKinematics.empty</span>;   <span class="comment">% cylinder particle - sphere particle</span>
+        kinpw_cyl_line <span class="string">BinKinematics</span> <span class="string">=</span> <span class="string">BinKinematics.empty</span>;   <span class="comment">% cylinder particle - line wall</span>
+        kinpw_cyl_circ <span class="string">BinKinematics</span> <span class="string">=</span> <span class="string">BinKinematics.empty</span>;   <span class="comment">% cylinder particle - circle wall</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Search_VerletList()
+            this = this@Search(Search.VERLET_LIST);
+            this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setDefaultProps(this)
+            this.freq           = 1;
+            this.done           = false;
+            this.cutoff         = 0;
+            this.verlet_dist    = inf;
+            this.verlet_freq    = 100;
+            this.auto_freq      = true;
+            this.kinpp_sph      = BinKinematics_SphereSphere();
+            this.kinpw_sph_line = BinKinematics_SphereWlin();
+            this.kinpw_sph_circ = BinKinematics_SphereWcirc();
+            this.kinpp_cyl      = BinKinematics_CylinderCylinder();
+            this.kinpw_cyl_line = BinKinematics_CylinderWlin();
+            this.kinpw_cyl_circ = BinKinematics_CylinderWcirc();
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> initialize(this,drv)
+            <span class="comment">% Initialize last search step</span>
+            <span class="comment">% (large negative value to call searchAll in the 1st step)</span>
+            this.last_search = -inf;
+
+            <span class="comment">% Set update frequency</span>
+            <span class="keyword">if</span> (this.auto_freq)
+                vmax = max(vecnorm([drv.particles.veloc_trl]));
+                rmax = max([drv.particles.radius]);
+                <span class="keyword">if</span> (vmax == 0)
+                    this.verlet_freq = 10 * this.freq;
+                <span class="keyword">else</span>
+                    this.verlet_freq = (this.verlet_dist - this.cutoff * rmax) / (2 * vmax * drv.time_step);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> execute(this,drv)
+            <span class="comment">% Set flags</span>
+            this.done = true;
+
+            <span class="comment">% Check if it is time to search through all particles and</span>
+            <span class="comment">% update verlet list</span>
+            <span class="keyword">if</span> (drv.step-this.last_search &gt; this.verlet_freq)
+                this.searchAll(drv);
+            <span class="keyword">else</span>
+                this.searchVerlet(drv);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="5">Public methods: sub-class specifics</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> searchAll(this,drv)
+            <span class="comment">% Set flags</span>
+            rmv = false;
+
+            <span class="comment">% Initialize maximum velocity and radius</span>
+            vmax = 0;
+            rmax = 0;
+
+            <span class="comment">% Save search step</span>
+            this.last_search = drv.step;
+
+            <span class="comment">% Outer loop over reference particles</span>
+            <span class="keyword">for</span> i = 1:drv.n_particles
+                p1 = drv.particles(i);
+
+                <span class="comment">% Update maximum velocity</span>
+                <span class="keyword">if</span> (this.auto_freq)
+                    vparticle = vecnorm(p1.veloc_trl);
+                    <span class="keyword">if</span> (vparticle &gt; vmax)
+                        vmax = vparticle;
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (p1.radius &gt; rmax)
+                        rmax = p1.radius;
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+
+                <span class="comment">% Reset verlet lists</span>
+                p1.verlet_p = Particle.empty;
+                p1.verlet_w = Wall.empty;
+
+                <span class="comment">% Inner loop over all other particles with higher ID</span>
+                <span class="keyword">for</span> j = 1:drv.n_particles
+                    p2 = drv.particles(j);
+                    <span class="keyword">if</span> (p1.id &gt;= p2.id)
+                        <span class="keyword">continue</span>;
+                    <span class="keyword">end</span>
+
+                    <span class="comment">% Check for existing interaction</span>
+                    <span class="keyword">if</span> (any(p1.neigh_pid == p2.id))
+                        <span class="comment">% Get interaction object</span>
+                        int = findobj(p1.interacts,<span class="string">'elem2'</span>,p2);
+
+                        <span class="comment">% Compute separation between elements</span>
+                        int.kinemat = int.kinemat.setRelPos(p1,p2);
+
+                        <span class="comment">% Check if particle is within verlet distance</span>
+                        <span class="comment">% Assumption: particle do not go directly from</span>
+                        <span class="comment">% interaction to outside the verlet distance</span>
+                        p1.verlet_p(end+1) = p2;
+
+                        <span class="comment">% Check if separation is greater than cutoff distance</span>
+                        <span class="comment">% Assumption: cutoff ratio applies to maximum radius</span>
+                        <span class="keyword">if</span> (int.kinemat.separ &gt;= this.cutoff * max(p1.radius,p2.radius))
+                            <span class="comment">% Remove interaction references from elements</span>
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_p(p1.neigh_p==p2)        = [];
+                            p1.neigh_pid(p1.neigh_pid==p2.id) = [];
+                            p2.interacts(p2.interacts==int)   = [];
+                            p2.neigh_p(p2.neigh_p==p1)        = [];
+                            p2.neigh_pid(p2.neigh_pid==p1.id) = [];
+
+                            <span class="comment">% Delete interaction object</span>
+                            delete(int);
+                            rmv = true;
+                        <span class="keyword">end</span>
+                    <span class="keyword">else</span>
+                        <span class="comment">% Create new particle-particle interaction if needed</span>
+                        this.createInteractPP(drv,p1,p2,true);
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+
+                <span class="comment">% Inner loop over all walls</span>
+                <span class="keyword">for</span> j = 1:drv.n_walls
+                    w = drv.walls(j);
+
+                    <span class="comment">% Check for existing interaction</span>
+                    <span class="keyword">if</span> (any(p1.neigh_wid == w.id))
+                        <span class="comment">% Get interaction object</span>
+                        int = findobj(p1.interacts,<span class="string">'elem2'</span>,w);
+
+                        <span class="comment">% Compute separation between elements</span>
+                        int.kinemat = int.kinemat.setRelPos(p1,w);
+
+                        <span class="comment">% Check if wall is within verlet distance</span>
+                        <span class="comment">% Assumption: particle do not go directly from</span>
+                        <span class="comment">% interaction to outside the verlet distance</span>
+                        p1.verlet_w(end+1) = w;
+
+                        <span class="comment">% Check if separation is greater than cutoff distance</span>
+                        <span class="comment">% Assumption: cutoff ratio applies to particle radius</span>
+                        <span class="keyword">if</span> (int.kinemat.separ &gt;= this.cutoff * p1.radius)
+                            <span class="comment">% Remove interaction references from particle</span>
+                            <span class="comment">% (neigh_w is cleaned by searching the id</span>
+                            <span class="comment">%  to avoid error when it is heterogeneous:</span>
+                            <span class="comment">%  i.e. different wall types)</span>
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_w([p1.neigh_w.id]==w.id) = [];
+                            p1.neigh_wid(p1.neigh_wid==w.id)  = [];
+
+                            <span class="comment">% Delete interaction object</span>
+                            delete(int);
+                            rmv = true;
+                        <span class="keyword">end</span>
+                    <span class="keyword">else</span>
+                        <span class="comment">% Create new particle-wall interaction if needed</span>
+                        this.createInteractPW(drv,p1,w,true);
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Erase handles to removed interactions from global list</span>
+            <span class="keyword">if</span> (rmv)
+                drv.interacts(~isvalid(drv.interacts)) = [];
+            <span class="keyword">end</span>
+
+            <span class="comment">% Update total number of interactions</span>
+            drv.n_interacts = length(drv.interacts);
+
+            <span class="comment">% Set new verlet update frequency</span>
+            <span class="keyword">if</span> (this.auto_freq)
+                <span class="keyword">if</span> (vmax == 0)
+                    this.verlet_freq = 10 * this.freq;
+                <span class="keyword">else</span>
+                    this.verlet_freq = (this.verlet_dist - this.cutoff * rmax) / (2 * vmax * drv.time_step);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> searchVerlet(this,drv)
+            <span class="comment">% Set flags</span>
+            rmv = false;
+
+            <span class="comment">% Initialize maximum velocity and radius</span>
+            vmax = 0;
+            rmax = 0;
+
+            <span class="comment">% Outer loop over reference particles</span>
+            <span class="keyword">for</span> i = 1:drv.n_particles
+                p1 = drv.particles(i);
+
+                <span class="comment">% Update maximum velocity</span>
+                <span class="keyword">if</span> (this.auto_freq)
+                    vparticle = vecnorm(p1.veloc_trl);
+                    <span class="keyword">if</span> (vparticle &gt; vmax)
+                        vmax = vparticle;
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (p1.radius &gt; rmax)
+                        rmax = p1.radius;
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+
+                <span class="comment">% Inner loop over particles in the verlet list</span>
+                <span class="keyword">for</span> j = 1:length(p1.verlet_p)
+                    p2 = p1.verlet_p(j);
+
+                    <span class="comment">% Check if particle has been deleted</span>
+                    <span class="keyword">if</span> (~isvalid(p2))
+                        p1.neigh_p(~isvalid(p1.neigh_p)) = [];
+                        <span class="keyword">continue</span>;
+                    <span class="keyword">end</span>
+
+                    <span class="comment">% Check for existing interaction</span>
+                    <span class="keyword">if</span> (any(p1.neigh_pid == p2.id))
+                        <span class="comment">% Get interaction object</span>
+                        int = findobj(p1.interacts,<span class="string">'elem2'</span>,p2);
+
+                        <span class="comment">% Compute separation between elements</span>
+                        int.kinemat = int.kinemat.setRelPos(p1,p2);
+
+                        <span class="comment">% Check if separation is greater than cutoff distance</span>
+                        <span class="comment">% Assumption: cutoff ratio applies to maximum radius</span>
+                        <span class="keyword">if</span> (int.kinemat.separ &gt;= this.cutoff * max(p1.radius,p2.radius))
+                            <span class="comment">% Remove interaction references from elements</span>
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_p(p1.neigh_p==p2)        = [];
+                            p1.neigh_pid(p1.neigh_pid==p2.id) = [];
+                            p2.interacts(p2.interacts==int)   = [];
+                            p2.neigh_p(p2.neigh_p==p1)        = [];
+                            p2.neigh_pid(p2.neigh_pid==p1.id) = [];
+
+                            <span class="comment">% Delete interaction object</span>
+                            delete(int);
+                            rmv = true;
+                        <span class="keyword">end</span>
+                    <span class="keyword">else</span>
+                        <span class="comment">% Create new particle-particle interaction if needed</span>
+                        this.createInteractPP(drv,p1,p2,false);
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+
+                <span class="comment">% Inner loop over all walls</span>
+                <span class="keyword">for</span> j = 1:length(p1.verlet_w)
+                    w = p1.verlet_w(j);
+
+                    <span class="comment">% Check for existing interaction</span>
+                    <span class="keyword">if</span> (any(p1.neigh_wid == w.id))
+                        <span class="comment">% Get interaction object</span>
+                        int = findobj(p1.interacts,<span class="string">'elem2'</span>,w);
+
+                        <span class="comment">% Compute separation between elements</span>
+                        int.kinemat = int.kinemat.setRelPos(p1,w);
+
+                        <span class="comment">% Check if separation is greater than cutoff distance</span>
+                        <span class="comment">% Assumption: cutoff ratio applies to particle radius</span>
+                        <span class="keyword">if</span> (int.kinemat.separ &gt;= this.cutoff * p1.radius)
+                            <span class="comment">% Remove interaction references from particle</span>
+                            <span class="comment">% (neigh_w is cleaned by searching the id</span>
+                            <span class="comment">%  to avoid error when it is heterogeneous:</span>
+                            <span class="comment">%  i.e. different wall types)</span>
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_w([p1.neigh_w.id]==w.id) = [];
+                            p1.neigh_wid(p1.neigh_wid==w.id)  = [];
+
+                            <span class="comment">% Delete interaction object</span>
+                            delete(int);
+                            rmv = true;
+                        <span class="keyword">end</span>
+                    <span class="keyword">else</span>
+                        <span class="comment">% Create new particle-wall interaction if needed</span>
+                        this.createInteractPW(drv,p1,w,false);
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Erase handles to removed interactions from global list</span>
+            <span class="keyword">if</span> (rmv)
+                drv.interacts(~isvalid(drv.interacts)) = [];
+            <span class="keyword">end</span>
+
+            <span class="comment">% Update total number of interactions</span>
+            drv.n_interacts = length(drv.interacts);
+
+            <span class="comment">% Set new verlet update frequency</span>
+            <span class="keyword">if</span> (this.auto_freq)
+                <span class="keyword">if</span> (vmax == 0)
+                    this.verlet_freq = 10 * this.freq;
+                <span class="keyword">else</span>
+                    this.verlet_freq = (this.verlet_dist - this.cutoff * rmax) / (2 * vmax * drv.time_step);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> createInteractPP(this,drv,p1,p2,addVL)
+            <span class="comment">% Compute separation between particles surfaces</span>
+            <span class="comment">% PS: This is exclusive for round particles to avoid calling the</span>
+            <span class="comment">%     base kinematic object (a bit slower).</span>
+            <span class="comment">%     For other shapes, the base kinematic object will be used.</span>
+            dir   = p2.coord - p1.coord;
+            dist  = norm(dir);
+            separ = dist - p1.radius - p2.radius;
+
+            <span class="comment">% Check if particle is within verlet distance</span>
+            <span class="keyword">if</span> (addVL &amp;&amp; separ &lt; this.verlet_dist)
+                p1.verlet_p(end+1) = p2;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Check if interaction exists</span>
+            <span class="comment">% Assumption: cutoff ratio applies to maximum radius</span>
+            <span class="keyword">if</span> (separ &gt;= this.cutoff * max(p1.radius,p2.radius))
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Create new interaction object by copying base object</span>
+            int = copy(this.b_interact);
+
+            <span class="comment">% Set handles to interecting elements</span>
+            int.elem1 = p1;
+            int.elem2 = p2;
+
+            <span class="comment">% Create binary kinematic object</span>
+            kin = this.createPPKinematic(p1,dir,dist,separ);
+            kin.setEffParams(int);
+            int.kinemat = kin;
+
+            <span class="comment">% Add references of new interaction to both elements and global list</span>
+            p1.interacts(end+1)  = int;
+            p1.neigh_p(end+1)    = p2;
+            p1.neigh_pid(end+1)  = p2.id;
+            p2.interacts(end+1)  = int;
+            p2.neigh_p(end+1)    = p1;
+            p2.neigh_pid(end+1)  = p1.id;
+            drv.interacts(end+1) = int;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> createInteractPW(this,drv,p,w,addVL)
+            <span class="comment">% Check elements distance and separation and copy kinematics</span>
+            <span class="comment">% object from base object</span>
+            <span class="comment">% Assumption: cutoff ratio applies to particle radius</span>
+            <span class="keyword">switch</span> (this.pwInteractionType(p,w))
+                <span class="keyword">case</span> 1
+                    this.kinpw_sph_line.setRelPos(p,w);
+                    <span class="keyword">if</span> (addVL &amp;&amp; this.kinpw_sph_line.separ &lt; this.verlet_dist)
+                        p.verlet_w(end+1) = w;
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (this.kinpw_sph_line.separ &gt;= this.cutoff * p.radius)
+                        <span class="keyword">return</span>;
+                    <span class="keyword">end</span>
+                    kin = copy(this.kinpw_sph_line);
+                <span class="keyword">case</span> 2
+                    this.kinpw_sph_circ.setRelPos(p,w);
+                    <span class="keyword">if</span> (addVL &amp;&amp; this.kinpw_sph_circ.separ &lt; this.verlet_dist)
+                        p.verlet_w(end+1) = w;
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (this.kinpw_sph_circ.separ &gt;= this.cutoff * p.radius)
+                        <span class="keyword">return</span>;
+                    <span class="keyword">end</span>
+                    kin = copy(this.kinpw_sph_circ);
+                <span class="keyword">case</span> 3
+                    this.kinpw_cyl_line.setRelPos(p,w);
+                    <span class="keyword">if</span> (addVL &amp;&amp; this.kinpw_cyl_line.separ &lt; this.verlet_dist)
+                        p.verlet_w(end+1) = w;
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (this.kinpw_cyl_line.separ &gt;= this.cutoff * p.radius)
+                        <span class="keyword">return</span>;
+                    <span class="keyword">end</span>
+                    kin = copy(this.kinpw_cyl_line);
+                <span class="keyword">case</span> 4
+                    this.kinpw_cyl_circ.setRelPos(p,w);
+                    <span class="keyword">if</span> (addVL &amp;&amp; this.kinpw_cyl_circ.separ &lt; this.verlet_dist)
+                        p.verlet_w(end+1) = w;
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (this.kinpw_cyl_circ.separ &gt;= this.cutoff * p.radius)
+                        <span class="keyword">return</span>;
+                    <span class="keyword">end</span>
+                    kin = copy(this.kinpw_cyl_circ);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Create new interaction object by copying base object</span>
+            int = copy(this.b_interact);
+
+            <span class="comment">% Set handles to interecting elements</span>
+            int.elem1 = p;
+            int.elem2 = w;
+
+            <span class="comment">% Set binary kinematic object</span>
+            kin.setEffParams(int);
+            int.kinemat = kin;
+
+            <span class="comment">% Set flag for insulated interaction</span>
+            int.insulated = w.insulated;
+
+            <span class="comment">% Add references of new interaction to particle and global list</span>
+            p.interacts(end+1)   = int;
+            p.neigh_w(end+1)     = w;
+            p.neigh_wid(end+1)   = w.id;
+            drv.interacts(end+1) = int;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Search_VerletList class
+%
+%% Description
+%
+% This is a sub-class of the <search.html Search> class for the
+% implementation of the search algorithm *Verlet List*.
+%
+% This algorithm performs an outer loop over all particles and searches for
+% their interactions through an inner loop over the particles that are
+% contained in their Verlet lists, and all walls.
+%
+% The Verlet list of a particle contains other particles that are whithin a
+% threshold distance, called Verlet distance, and have a higher ID number.
+% This list is updated in a given frequency, which is smaller (less often)
+% than the search frequency.
+%
+% The reference element of each interaction (element 1) is the particle
+% with smaller ID number.
+%
+% For each interaction found, a binary <interact.html Interaction> object
+% is created to manage the mechanical and / or thermal interaction between
+% both elements.
+%
+classdef Search_VerletList < Search
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Verlet properties
+        verlet_dist double  = double.empty;    % threshold surface separation distance to include particles in the verlet list
+        verlet_freq uint32  = uint32.empty;    % verlet list update frequency (in steps)
+        auto_freq   logical = logical.empty;   % flag for automatic setting the update frequency
+        last_search double  = double.empty;    % last step when search was executed over all elements (double to allow inf value)
+        
+        % Base objects for kinematics
+        kinpp_sph      BinKinematics = BinKinematics.empty;   % sphere particle - sphere particle
+        kinpw_sph_line BinKinematics = BinKinematics.empty;   % sphere particle - line wall
+        kinpw_sph_circ BinKinematics = BinKinematics.empty;   % sphere particle - circle wall
+        kinpp_cyl      BinKinematics = BinKinematics.empty;   % cylinder particle - sphere particle
+        kinpw_cyl_line BinKinematics = BinKinematics.empty;   % cylinder particle - line wall
+        kinpw_cyl_circ BinKinematics = BinKinematics.empty;   % cylinder particle - circle wall
+    end
+    
+    %% Constructor method
+    methods
+        function this = Search_VerletList()
+            this = this@Search(Search.VERLET_LIST);
+            this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setDefaultProps(this)
+            this.freq           = 1;
+            this.done           = false;
+            this.cutoff         = 0;
+            this.verlet_dist    = inf;
+            this.verlet_freq    = 100;
+            this.auto_freq      = true;
+            this.kinpp_sph      = BinKinematics_SphereSphere();
+            this.kinpw_sph_line = BinKinematics_SphereWlin();
+            this.kinpw_sph_circ = BinKinematics_SphereWcirc();
+            this.kinpp_cyl      = BinKinematics_CylinderCylinder();
+            this.kinpw_cyl_line = BinKinematics_CylinderWlin();
+            this.kinpw_cyl_circ = BinKinematics_CylinderWcirc();
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function initialize(this,drv)
+            % Initialize last search step
+            % (large negative value to call searchAll in the 1st step)
+            this.last_search = -inf;
+            
+            % Set update frequency
+            if (this.auto_freq)
+                vmax = max(vecnorm([drv.particles.veloc_trl]));
+                rmax = max([drv.particles.radius]);
+                if (vmax == 0)
+                    this.verlet_freq = 10 * this.freq;
+                else
+                    this.verlet_freq = (this.verlet_dist - this.cutoff * rmax) / (2 * vmax * drv.time_step);
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function execute(this,drv)
+            % Set flags
+            this.done = true;
+            
+            % Check if it is time to search through all particles and
+            % update verlet list
+            if (drv.step-this.last_search > this.verlet_freq)
+                this.searchAll(drv);
+            else
+                this.searchVerlet(drv);
+            end
+        end
+    end
+    
+    %% Public methods: sub-class specifics
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function searchAll(this,drv)
+            % Set flags
+            rmv = false;
+            
+            % Initialize maximum velocity and radius
+            vmax = 0;
+            rmax = 0;
+            
+            % Save search step
+            this.last_search = drv.step;
+            
+            % Outer loop over reference particles
+            for i = 1:drv.n_particles
+                p1 = drv.particles(i);
+                
+                % Update maximum velocity
+                if (this.auto_freq)
+                    vparticle = vecnorm(p1.veloc_trl);
+                    if (vparticle > vmax)
+                        vmax = vparticle;
+                    end
+                    if (p1.radius > rmax)
+                        rmax = p1.radius;
+                    end
+                end
+                
+                % Reset verlet lists
+                p1.verlet_p = Particle.empty;
+                p1.verlet_w = Wall.empty;
+                
+                % Inner loop over all other particles with higher ID
+                for j = 1:drv.n_particles
+                    p2 = drv.particles(j);
+                    if (p1.id >= p2.id)
+                        continue;
+                    end
+                    
+                    % Check for existing interaction
+                    if (any(p1.neigh_pid == p2.id))
+                        % Get interaction object
+                        int = findobj(p1.interacts,'elem2',p2);
+                        
+                        % Compute separation between elements
+                        int.kinemat = int.kinemat.setRelPos(p1,p2);
+                        
+                        % Check if particle is within verlet distance
+                        % Assumption: particle do not go directly from
+                        % interaction to outside the verlet distance
+                        p1.verlet_p(end+1) = p2;
+                        
+                        % Check if separation is greater than cutoff distance
+                        % Assumption: cutoff ratio applies to maximum radius
+                        if (int.kinemat.separ >= this.cutoff * max(p1.radius,p2.radius))
+                            % Remove interaction references from elements
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_p(p1.neigh_p==p2)        = [];
+                            p1.neigh_pid(p1.neigh_pid==p2.id) = [];
+                            p2.interacts(p2.interacts==int)   = [];
+                            p2.neigh_p(p2.neigh_p==p1)        = [];
+                            p2.neigh_pid(p2.neigh_pid==p1.id) = [];
+                            
+                            % Delete interaction object
+                            delete(int);
+                            rmv = true;
+                        end
+                    else
+                        % Create new particle-particle interaction if needed
+                        this.createInteractPP(drv,p1,p2,true);
+                    end
+                end
+                
+                % Inner loop over all walls
+                for j = 1:drv.n_walls
+                    w = drv.walls(j);
+                    
+                    % Check for existing interaction
+                    if (any(p1.neigh_wid == w.id))
+                        % Get interaction object
+                        int = findobj(p1.interacts,'elem2',w);
+                        
+                        % Compute separation between elements
+                        int.kinemat = int.kinemat.setRelPos(p1,w);
+                        
+                        % Check if wall is within verlet distance
+                        % Assumption: particle do not go directly from
+                        % interaction to outside the verlet distance
+                        p1.verlet_w(end+1) = w;
+                        
+                        % Check if separation is greater than cutoff distance
+                        % Assumption: cutoff ratio applies to particle radius
+                        if (int.kinemat.separ >= this.cutoff * p1.radius)
+                            % Remove interaction references from particle
+                            % (neigh_w is cleaned by searching the id
+                            %  to avoid error when it is heterogeneous:
+                            %  i.e. different wall types)
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_w([p1.neigh_w.id]==w.id) = [];
+                            p1.neigh_wid(p1.neigh_wid==w.id)  = [];
+                            
+                            % Delete interaction object
+                            delete(int);
+                            rmv = true;
+                        end
+                    else
+                        % Create new particle-wall interaction if needed
+                        this.createInteractPW(drv,p1,w,true);
+                    end
+                end
+            end
+            
+            % Erase handles to removed interactions from global list
+            if (rmv)
+                drv.interacts(~isvalid(drv.interacts)) = [];
+            end
+            
+            % Update total number of interactions
+            drv.n_interacts = length(drv.interacts);
+            
+            % Set new verlet update frequency
+            if (this.auto_freq)
+                if (vmax == 0)
+                    this.verlet_freq = 10 * this.freq;
+                else
+                    this.verlet_freq = (this.verlet_dist - this.cutoff * rmax) / (2 * vmax * drv.time_step);
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function searchVerlet(this,drv)
+            % Set flags
+            rmv = false;
+            
+            % Initialize maximum velocity and radius
+            vmax = 0;
+            rmax = 0;
+            
+            % Outer loop over reference particles
+            for i = 1:drv.n_particles
+                p1 = drv.particles(i);
+                
+                % Update maximum velocity
+                if (this.auto_freq)
+                    vparticle = vecnorm(p1.veloc_trl);
+                    if (vparticle > vmax)
+                        vmax = vparticle;
+                    end
+                    if (p1.radius > rmax)
+                        rmax = p1.radius;
+                    end
+                end
+                
+                % Inner loop over particles in the verlet list
+                for j = 1:length(p1.verlet_p)
+                    p2 = p1.verlet_p(j);
+                    
+                    % Check if particle has been deleted
+                    if (~isvalid(p2))
+                        p1.neigh_p(~isvalid(p1.neigh_p)) = [];
+                        continue;
+                    end
+                    
+                    % Check for existing interaction
+                    if (any(p1.neigh_pid == p2.id))
+                        % Get interaction object
+                        int = findobj(p1.interacts,'elem2',p2);
+                        
+                        % Compute separation between elements
+                        int.kinemat = int.kinemat.setRelPos(p1,p2);
+                        
+                        % Check if separation is greater than cutoff distance
+                        % Assumption: cutoff ratio applies to maximum radius
+                        if (int.kinemat.separ >= this.cutoff * max(p1.radius,p2.radius))
+                            % Remove interaction references from elements
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_p(p1.neigh_p==p2)        = [];
+                            p1.neigh_pid(p1.neigh_pid==p2.id) = [];
+                            p2.interacts(p2.interacts==int)   = [];
+                            p2.neigh_p(p2.neigh_p==p1)        = [];
+                            p2.neigh_pid(p2.neigh_pid==p1.id) = [];
+                            
+                            % Delete interaction object
+                            delete(int);
+                            rmv = true;
+                        end
+                    else
+                        % Create new particle-particle interaction if needed
+                        this.createInteractPP(drv,p1,p2,false);
+                    end
+                end
+                
+                % Inner loop over all walls
+                for j = 1:length(p1.verlet_w)
+                    w = p1.verlet_w(j);
+                    
+                    % Check for existing interaction
+                    if (any(p1.neigh_wid == w.id))
+                        % Get interaction object
+                        int = findobj(p1.interacts,'elem2',w);
+                        
+                        % Compute separation between elements
+                        int.kinemat = int.kinemat.setRelPos(p1,w);
+                        
+                        % Check if separation is greater than cutoff distance
+                        % Assumption: cutoff ratio applies to particle radius
+                        if (int.kinemat.separ >= this.cutoff * p1.radius)
+                            % Remove interaction references from particle
+                            % (neigh_w is cleaned by searching the id
+                            %  to avoid error when it is heterogeneous:
+                            %  i.e. different wall types)
+                            p1.interacts(p1.interacts==int)   = [];
+                            p1.neigh_w([p1.neigh_w.id]==w.id) = [];
+                            p1.neigh_wid(p1.neigh_wid==w.id)  = [];
+                            
+                            % Delete interaction object
+                            delete(int);
+                            rmv = true;
+                        end
+                    else
+                        % Create new particle-wall interaction if needed
+                        this.createInteractPW(drv,p1,w,false);
+                    end
+                end
+            end
+            
+            % Erase handles to removed interactions from global list
+            if (rmv)
+                drv.interacts(~isvalid(drv.interacts)) = [];
+            end
+            
+            % Update total number of interactions
+            drv.n_interacts = length(drv.interacts);
+            
+            % Set new verlet update frequency
+            if (this.auto_freq)
+                if (vmax == 0)
+                    this.verlet_freq = 10 * this.freq;
+                else
+                    this.verlet_freq = (this.verlet_dist - this.cutoff * rmax) / (2 * vmax * drv.time_step);
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function createInteractPP(this,drv,p1,p2,addVL)
+            % Compute separation between particles surfaces
+            % PS: This is exclusive for round particles to avoid calling the
+            %     base kinematic object (a bit slower).
+            %     For other shapes, the base kinematic object will be used.
+            dir   = p2.coord - p1.coord;
+            dist  = norm(dir);
+            separ = dist - p1.radius - p2.radius;
+            
+            % Check if particle is within verlet distance
+            if (addVL && separ < this.verlet_dist)
+                p1.verlet_p(end+1) = p2;
+            end
+            
+            % Check if interaction exists
+            % Assumption: cutoff ratio applies to maximum radius
+            if (separ >= this.cutoff * max(p1.radius,p2.radius))
+                return;
+            end
+            
+            % Create new interaction object by copying base object
+            int = copy(this.b_interact);
+            
+            % Set handles to interecting elements
+            int.elem1 = p1;
+            int.elem2 = p2;
+            
+            % Create binary kinematic object
+            kin = this.createPPKinematic(p1,dir,dist,separ);
+            kin.setEffParams(int);
+            int.kinemat = kin;
+            
+            % Add references of new interaction to both elements and global list
+            p1.interacts(end+1)  = int;
+            p1.neigh_p(end+1)    = p2;
+            p1.neigh_pid(end+1)  = p2.id;
+            p2.interacts(end+1)  = int;
+            p2.neigh_p(end+1)    = p1;
+            p2.neigh_pid(end+1)  = p1.id;
+            drv.interacts(end+1) = int;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function createInteractPW(this,drv,p,w,addVL)
+            % Check elements distance and separation and copy kinematics
+            % object from base object
+            % Assumption: cutoff ratio applies to particle radius
+            switch (this.pwInteractionType(p,w))
+                case 1
+                    this.kinpw_sph_line.setRelPos(p,w);
+                    if (addVL && this.kinpw_sph_line.separ < this.verlet_dist)
+                        p.verlet_w(end+1) = w;
+                    end
+                    if (this.kinpw_sph_line.separ >= this.cutoff * p.radius)
+                        return;
+                    end
+                    kin = copy(this.kinpw_sph_line);
+                case 2
+                    this.kinpw_sph_circ.setRelPos(p,w);
+                    if (addVL && this.kinpw_sph_circ.separ < this.verlet_dist)
+                        p.verlet_w(end+1) = w;
+                    end
+                    if (this.kinpw_sph_circ.separ >= this.cutoff * p.radius)
+                        return;
+                    end
+                    kin = copy(this.kinpw_sph_circ);
+                case 3
+                    this.kinpw_cyl_line.setRelPos(p,w);
+                    if (addVL && this.kinpw_cyl_line.separ < this.verlet_dist)
+                        p.verlet_w(end+1) = w;
+                    end
+                    if (this.kinpw_cyl_line.separ >= this.cutoff * p.radius)
+                        return;
+                    end
+                    kin = copy(this.kinpw_cyl_line);
+                case 4
+                    this.kinpw_cyl_circ.setRelPos(p,w);
+                    if (addVL && this.kinpw_cyl_circ.separ < this.verlet_dist)
+                        p.verlet_w(end+1) = w;
+                    end
+                    if (this.kinpw_cyl_circ.separ >= this.cutoff * p.radius)
+                        return;
+                    end
+                    kin = copy(this.kinpw_cyl_circ);
+            end
+            
+            % Create new interaction object by copying base object
+            int = copy(this.b_interact);
+            
+            % Set handles to interecting elements
+            int.elem1 = p;
+            int.elem2 = w;
+            
+            % Set binary kinematic object
+            kin.setEffParams(int);
+            int.kinemat = kin;
+            
+            % Set flag for insulated interaction
+            int.insulated = w.insulated;
+            
+            % Add references of new interaction to particle and global list
+            p.interacts(end+1)   = int;
+            p.neigh_w(end+1)     = w;
+            p.neigh_wid(end+1)   = w.id;
+            drv.interacts(end+1) = int;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

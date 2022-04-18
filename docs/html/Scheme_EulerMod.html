@@ -1,0 +1,160 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Scheme_EulerMod class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Scheme_EulerMod.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Scheme_EulerMod class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constructor method</a></li><li><a href="#3">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="scheme.html">Scheme</a> class for the implementation of the time integration scheme <b>Modified Euler</b>.</p><div><ul><li><b>Translational motion</b>:</li></ul></div><p><img src="Scheme_EulerMod_eq02690683630814026592.png" alt="$$v_{i} = v_{i-1} + a_{i} \Delta t$$" style="width:102px;height:14px;"></p><p><img src="Scheme_EulerMod_eq15095327636765995352.png" alt="$$x_{i} = x_{i-1} + v_{i} \Delta t$$" style="width:105px;height:14px;"></p><div><ul><li><b>Rotational motion</b>:</li></ul></div><p><img src="Scheme_EulerMod_eq16015186568025715112.png" alt="$$\omega_{i} = \omega_{i-1} + \alpha_{i} \Delta t$$" style="width:109px;height:14px;"></p><p><img src="Scheme_EulerMod_eq07128824820977689019.png" alt="$$\theta_{i} = \theta_{i-1} + \omega_{i} \Delta t$$" style="width:104px;height:14px;"></p><p><b>Notation</b>:</p><p><img src="Scheme_EulerMod_eq07651498126111630170.png" alt="$\Delta t$" style="width:18px;height:11px;">: Time increment</p><p><img src="Scheme_EulerMod_eq12428413953531653171.png" alt="$x$" style="width:8px;height:7px;">: Coordinates</p><p><img src="Scheme_EulerMod_eq03158747792916826732.png" alt="$v$" style="width:7px;height:7px;">: Translational velocity</p><p><img src="Scheme_EulerMod_eq05508344529756732484.png" alt="$a$" style="width:7px;height:7px;">: Translational acceleration</p><p><img src="Scheme_EulerMod_eq08288499342375314727.png" alt="$\theta$" style="width:6px;height:11px;">: Angular orientation</p><p><img src="Scheme_EulerMod_eq08589834809570054062.png" alt="$\omega$" style="width:10px;height:7px;">: Angular velocity</p><p><img src="Scheme_EulerMod_eq14221827199139923399.png" alt="$\alpha$" style="width:9px;height:7px;">: Angular acceleration</p><pre class="codeinput"><span class="keyword">classdef</span> Scheme_EulerMod &lt; Scheme
+</pre><h2 id="2">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Scheme_EulerMod()
+            this = this@Scheme(Scheme.EULER_MODIFIED);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> updatePosition(~,p,dt)
+            p.veloc_trl = p.veloc_trl + p.accel_trl * dt;
+            p.coord     = p.coord     + p.veloc_trl * dt;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> updateOrientation(~,p,dt)
+            p.veloc_rot = p.veloc_rot + p.accel_rot * dt;
+            p.orient    = p.orient    + p.veloc_rot * dt;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> updateTemperature(~,~,~)
+            <span class="comment">% Not available</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Scheme_EulerMod class
+%
+%% Description
+%
+% This is a sub-class of the <scheme.html Scheme> class for the
+% implementation of the time integration scheme *Modified Euler*.
+%
+% * *Translational motion*:
+%
+% $$v_{i} = v_{i-1} + a_{i} \Delta t$$
+%
+% $$x_{i} = x_{i-1} + v_{i} \Delta t$$
+%
+% * *Rotational motion*:
+%
+% $$\omega_{i} = \omega_{i-1} + \alpha_{i} \Delta t$$
+%
+% $$\theta_{i} = \theta_{i-1} + \omega_{i} \Delta t$$
+%
+% *Notation*:
+%
+% $\Delta t$: Time increment
+%
+% $x$: Coordinates
+%
+% $v$: Translational velocity
+%
+% $a$: Translational acceleration
+%
+% $\theta$: Angular orientation
+%
+% $\omega$: Angular velocity
+%
+% $\alpha$: Angular acceleration
+%
+classdef Scheme_EulerMod < Scheme
+    %% Constructor method
+    methods
+        function this = Scheme_EulerMod()
+            this = this@Scheme(Scheme.EULER_MODIFIED);
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function updatePosition(~,p,dt)
+            p.veloc_trl = p.veloc_trl + p.accel_trl * dt;
+            p.coord     = p.coord     + p.veloc_trl * dt;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function updateOrientation(~,p,dt)
+            p.veloc_rot = p.veloc_rot + p.accel_rot * dt;
+            p.orient    = p.orient    + p.veloc_rot * dt;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function updateTemperature(~,~,~)
+            % Not available
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>
