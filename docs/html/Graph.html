@@ -1,0 +1,528 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Graph class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Graph.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Graph class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods</a></li></ul></div><h2 id="1">Description</h2><p>This is a handle class responsible for creating, displaying and saving a graph of a required result.</p><pre class="codeinput"><span class="keyword">classdef</span> Graph &lt; handle
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Identification</span>
+        gtitle <span class="string">string</span> <span class="string">=</span> <span class="string">string.empty</span>;   <span class="comment">% graph title</span>
+
+        <span class="comment">% Axes data</span>
+        res_x <span class="string">uint8</span> <span class="string">=</span> <span class="string">uint8.empty</span>;   <span class="comment">% flag for type of result in x axis</span>
+        res_y <span class="string">uint8</span> <span class="string">=</span> <span class="string">uint8.empty</span>;   <span class="comment">% flag for type of result in y axis</span>
+
+        <span class="comment">% Curves data</span>
+        n_curves <span class="string">uint8</span>  <span class="string">=</span> <span class="string">uint8.empty</span>;    <span class="comment">% number of curves in graph</span>
+        names    <span class="string">string</span> <span class="string">=</span> <span class="string">string.empty</span>;   <span class="comment">% vector of curves names</span>
+        px       <span class="string">uint32</span> <span class="string">=</span> <span class="string">uint32.empty</span>;   <span class="comment">% vector of particles IDs for x axis result</span>
+        py       <span class="string">uint32</span> <span class="string">=</span> <span class="string">uint32.empty</span>;   <span class="comment">% vector of particles IDs for y axis result</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Graph()
+
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> execute(this,drv)
+            this.plotData(drv);
+            this.writeData(drv);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> plotData(this,drv)
+            <span class="keyword">if</span> (isempty(this.n_curves))
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Create new figure</span>
+            fig = figure;
+
+            <span class="comment">% Set properties</span>
+            grid <span class="string">on</span>;
+            hold <span class="string">on</span>;
+            movegui(fig,<span class="string">'center'</span>);
+            title(this.gtitle);
+
+            <span class="comment">% Plot curves</span>
+            leg = strings(this.n_curves,1);
+            <span class="keyword">for</span> i = 1:this.n_curves
+                <span class="comment">% Get X,Y data arrays</span>
+                x = this.getData(drv,this.res_x,this.px(i));
+                y = this.getData(drv,this.res_y,this.py(i));
+
+                <span class="comment">% Remove NaN (Not a Number) and adjust array sizes</span>
+                <span class="comment">% (both vectors return with the same size)</span>
+                [x,y,idx] = this.removeNaN(x,y);
+
+                <span class="comment">% Check data consistency</span>
+                <span class="keyword">if</span> (idx == 0)
+                    warning(<span class="string">'off'</span>,<span class="string">'backtrace'</span>);
+                    warning(<span class="string">'Curve "%s" of graph "%s" has no valid results and was not ploted.'</span>,this.names(i),this.gtitle);
+                    warning(<span class="string">'on'</span>,<span class="string">'backtrace'</span>);
+                    <span class="keyword">continue</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Plot curve</span>
+                plot(x,y);
+                leg(i) = this.names(i);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Set legend</span>
+            warning <span class="string">off</span> <span class="string">MATLAB:legend:IgnoringExtraEntries</span>
+            legend(leg);
+
+            <span class="comment">% Save picture</span>
+            drv.createOutFolder();
+            file_name = strcat(drv.path_out,this.gtitle,<span class="string">'.png'</span>);
+            saveas(gcf,file_name);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> writeData(this,drv)
+            <span class="keyword">if</span> (isempty(this.n_curves))
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Create new file</span>
+            drv.createOutFolder();
+            file_name = strcat(drv.path_out,this.gtitle,<span class="string">'.txt'</span>);
+            fid = fopen(file_name,<span class="string">'w'</span>);
+
+            <span class="comment">% Write curves</span>
+            <span class="keyword">for</span> i = 1:this.n_curves
+                <span class="comment">% Write curve name</span>
+                fprintf(fid,<span class="string">'%s\n'</span>,this.names(i));
+
+                <span class="comment">% Get X,Y data arrays</span>
+                x = this.getData(drv,this.res_x,this.px(i));
+                y = this.getData(drv,this.res_y,this.py(i));
+
+                <span class="comment">% Remove NaN (Not a Number) and adjust array sizes</span>
+                <span class="comment">% (both vectors return with the same size)</span>
+                [x,y,idx] = this.removeNaN(x,y);
+
+                <span class="comment">% Check data consistency</span>
+                <span class="keyword">if</span> (idx == 0)
+                    <span class="keyword">continue</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Write values</span>
+                <span class="keyword">for</span> j = 1:length(x)
+                    fprintf(fid,<span class="string">'%.10f %.10f\n'</span>,x(j),y(j));
+                <span class="keyword">end</span>
+                fprintf(fid,<span class="string">'\n'</span>);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Close file</span>
+            fclose(fid);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> R = getData(~,drv,res,p)
+            <span class="keyword">switch</span> res
+                <span class="keyword">case</span> drv.result.TIME
+                    R = drv.result.times;
+                <span class="keyword">case</span> drv.result.STEP
+                    R = drv.result.steps;
+                <span class="keyword">case</span> drv.result.RADIUS
+                    R = drv.result.radius(p,:);
+                <span class="keyword">case</span> drv.result.MASS
+                    R = drv.result.mass(p,:);
+                <span class="keyword">case</span> drv.result.COORDINATE_X
+                    R = drv.result.coord_x(p,:);
+                <span class="keyword">case</span> drv.result.COORDINATE_Y
+                    R = drv.result.coord_y(p,:);
+                <span class="keyword">case</span> drv.result.ORIENTATION
+                    R = drv.result.orientation(p,:);
+                <span class="keyword">case</span> drv.result.FORCE_MOD
+                    x = drv.result.force_x(p,:);
+                    y = drv.result.force_y(p,:);
+                    R = vecnorm([x;y]);
+                <span class="keyword">case</span> drv.result.FORCE_X
+                    R = drv.result.force_x(p,:);
+                <span class="keyword">case</span> drv.result.FORCE_Y
+                    R = drv.result.force_y(p,:);
+                <span class="keyword">case</span> drv.result.TORQUE
+                    R = drv.result.torque(p,:);
+                <span class="keyword">case</span> drv.result.VELOCITY_MOD
+                    x = drv.result.velocity_x(p,:);
+                    y = drv.result.velocity_y(p,:);
+                    R = vecnorm([x;y]);
+                <span class="keyword">case</span> drv.result.VELOCITY_X
+                    R = drv.result.velocity_x(p,:);
+                <span class="keyword">case</span> drv.result.VELOCITY_Y
+                    R = drv.result.velocity_y(p,:);
+                <span class="keyword">case</span> drv.result.VELOCITY_ROT
+                    R = drv.result.velocity_rot(p,:);
+                <span class="keyword">case</span> drv.result.ACCELERATION_MOD
+                    x = drv.result.acceleration_x(p,:);
+                    y = drv.result.acceleration_y(p,:);
+                    R = vecnorm([x;y]);
+                <span class="keyword">case</span> drv.result.ACCELERATION_X
+                    R = drv.result.acceleration_x(p,:);
+                <span class="keyword">case</span> drv.result.ACCELERATION_Y
+                    R = drv.result.acceleration_y(p,:);
+                <span class="keyword">case</span> drv.result.ACCELERATION_ROT
+                    R = drv.result.acceleration_rot(p,:);
+                <span class="keyword">case</span> drv.result.TEMPERATURE
+                    R = drv.result.temperature(p,:);
+                <span class="keyword">case</span> drv.result.HEAT_RATE
+                    R = drv.result.heat_rate(p,:);
+                <span class="keyword">case</span> drv.result.AVG_VELOCITY_MOD
+                    R = drv.result.avg_velocity_mod;
+                <span class="keyword">case</span> drv.result.AVG_VELOCITY_ROT
+                    R = drv.result.avg_velocity_rot;
+                <span class="keyword">case</span> drv.result.AVG_ACCELERATION_MOD
+                    R = drv.result.avg_acceleration_mod;
+                <span class="keyword">case</span> drv.result.AVG_ACCELERATION_ROT
+                    R = drv.result.avg_acceleration_rot;
+                <span class="keyword">case</span> drv.result.AVG_TEMPERATURE
+                    R = drv.result.avg_temperature;
+                <span class="keyword">case</span> drv.result.MIN_VELOCITY_MOD
+                    R = drv.result.min_velocity_mod;
+                <span class="keyword">case</span> drv.result.MAX_VELOCITY_MOD
+                    R = drv.result.max_velocity_mod;
+                <span class="keyword">case</span> drv.result.MIN_VELOCITY_ROT
+                    R = drv.result.min_velocity_rot;
+                <span class="keyword">case</span> drv.result.MAX_VELOCITY_ROT
+                    R = drv.result.max_velocity_rot;
+                <span class="keyword">case</span> drv.result.MIN_ACCELERATION_MOD
+                    R = drv.result.min_acceleration_mod;
+                <span class="keyword">case</span> drv.result.MAX_ACCELERATION_MOD
+                    R = drv.result.max_acceleration_mod;
+                <span class="keyword">case</span> drv.result.MIN_ACCELERATION_ROT
+                    R = drv.result.min_acceleration_rot;
+                <span class="keyword">case</span> drv.result.MAX_ACCELERATION_ROT
+                    R = drv.result.max_acceleration_rot;
+                <span class="keyword">case</span> drv.result.MIN_TEMPERATURE
+                    R = drv.result.min_temperature;
+                <span class="keyword">case</span> drv.result.MAX_TEMPERATURE
+                    R = drv.result.max_temperature;
+                <span class="keyword">case</span> drv.result.TOT_HEAT_RATE_ALL
+                    R = drv.result.tot_heat_rate_all;
+                <span class="keyword">case</span> drv.result.TOT_CONDUCTION_DIRECT
+                    R = drv.result.tot_conduction_direct;
+                <span class="keyword">case</span> drv.result.TOT_CONDUCTION_INDIRECT
+                    R = drv.result.tot_conduction_indirect;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> [x,y,idx] = removeNaN(~,x,y)
+            nanx = find(isnan(x),1);
+            nany = find(isnan(y),1);
+            idx  = length(x);
+            <span class="keyword">if</span> (~isempty(nanx))
+                idx = min(idx,nanx-1);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~isempty(nany))
+                idx = min(idx,nany-1);
+            <span class="keyword">end</span>
+            x = x(1:idx);
+            y = y(1:idx);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Graph class
+%
+%% Description
+%
+% This is a handle class responsible for creating, displaying and saving
+% a graph of a required result.
+%
+classdef Graph < handle
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Identification
+        gtitle string = string.empty;   % graph title
+        
+        % Axes data
+        res_x uint8 = uint8.empty;   % flag for type of result in x axis
+        res_y uint8 = uint8.empty;   % flag for type of result in y axis
+        
+        % Curves data
+        n_curves uint8  = uint8.empty;    % number of curves in graph
+        names    string = string.empty;   % vector of curves names
+        px       uint32 = uint32.empty;   % vector of particles IDs for x axis result
+        py       uint32 = uint32.empty;   % vector of particles IDs for y axis result
+    end
+    
+    %% Constructor method
+    methods
+        function this = Graph()
+            
+        end
+    end
+    
+    %% Public methods
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function execute(this,drv)
+            this.plotData(drv);
+            this.writeData(drv);
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function plotData(this,drv)
+            if (isempty(this.n_curves))
+                return;
+            end
+            
+            % Create new figure
+            fig = figure;
+            
+            % Set properties
+            grid on;
+            hold on;
+            movegui(fig,'center');
+            title(this.gtitle);
+            
+            % Plot curves
+            leg = strings(this.n_curves,1);
+            for i = 1:this.n_curves
+                % Get X,Y data arrays
+                x = this.getData(drv,this.res_x,this.px(i));
+                y = this.getData(drv,this.res_y,this.py(i));
+                
+                % Remove NaN (Not a Number) and adjust array sizes
+                % (both vectors return with the same size)
+                [x,y,idx] = this.removeNaN(x,y);
+                
+                % Check data consistency
+                if (idx == 0)
+                    warning('off','backtrace');
+                    warning('Curve "%s" of graph "%s" has no valid results and was not ploted.',this.names(i),this.gtitle);
+                    warning('on','backtrace');
+                    continue;
+                end
+                
+                % Plot curve
+                plot(x,y);
+                leg(i) = this.names(i);
+            end
+            
+            % Set legend
+            warning off MATLAB:legend:IgnoringExtraEntries
+            legend(leg);
+            
+            % Save picture
+            drv.createOutFolder();
+            file_name = strcat(drv.path_out,this.gtitle,'.png');
+            saveas(gcf,file_name);
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function writeData(this,drv)
+            if (isempty(this.n_curves))
+                return;
+            end
+            
+            % Create new file
+            drv.createOutFolder();
+            file_name = strcat(drv.path_out,this.gtitle,'.txt');
+            fid = fopen(file_name,'w');
+            
+            % Write curves
+            for i = 1:this.n_curves
+                % Write curve name
+                fprintf(fid,'%s\n',this.names(i));
+                
+                % Get X,Y data arrays
+                x = this.getData(drv,this.res_x,this.px(i));
+                y = this.getData(drv,this.res_y,this.py(i));
+                
+                % Remove NaN (Not a Number) and adjust array sizes
+                % (both vectors return with the same size)
+                [x,y,idx] = this.removeNaN(x,y);
+                
+                % Check data consistency
+                if (idx == 0)
+                    continue;
+                end
+                
+                % Write values
+                for j = 1:length(x)
+                    fprintf(fid,'%.10f %.10f\n',x(j),y(j));
+                end
+                fprintf(fid,'\n');
+            end
+            
+            % Close file
+            fclose(fid);
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function R = getData(~,drv,res,p)
+            switch res
+                case drv.result.TIME
+                    R = drv.result.times;
+                case drv.result.STEP
+                    R = drv.result.steps;
+                case drv.result.RADIUS
+                    R = drv.result.radius(p,:);
+                case drv.result.MASS
+                    R = drv.result.mass(p,:);
+                case drv.result.COORDINATE_X
+                    R = drv.result.coord_x(p,:);
+                case drv.result.COORDINATE_Y
+                    R = drv.result.coord_y(p,:);
+                case drv.result.ORIENTATION
+                    R = drv.result.orientation(p,:);
+                case drv.result.FORCE_MOD
+                    x = drv.result.force_x(p,:);
+                    y = drv.result.force_y(p,:);
+                    R = vecnorm([x;y]);
+                case drv.result.FORCE_X
+                    R = drv.result.force_x(p,:);
+                case drv.result.FORCE_Y
+                    R = drv.result.force_y(p,:);
+                case drv.result.TORQUE
+                    R = drv.result.torque(p,:);
+                case drv.result.VELOCITY_MOD
+                    x = drv.result.velocity_x(p,:);
+                    y = drv.result.velocity_y(p,:);
+                    R = vecnorm([x;y]);
+                case drv.result.VELOCITY_X
+                    R = drv.result.velocity_x(p,:);
+                case drv.result.VELOCITY_Y
+                    R = drv.result.velocity_y(p,:);
+                case drv.result.VELOCITY_ROT
+                    R = drv.result.velocity_rot(p,:);
+                case drv.result.ACCELERATION_MOD
+                    x = drv.result.acceleration_x(p,:);
+                    y = drv.result.acceleration_y(p,:);
+                    R = vecnorm([x;y]);
+                case drv.result.ACCELERATION_X
+                    R = drv.result.acceleration_x(p,:);
+                case drv.result.ACCELERATION_Y
+                    R = drv.result.acceleration_y(p,:);
+                case drv.result.ACCELERATION_ROT
+                    R = drv.result.acceleration_rot(p,:);
+                case drv.result.TEMPERATURE
+                    R = drv.result.temperature(p,:);
+                case drv.result.HEAT_RATE
+                    R = drv.result.heat_rate(p,:);
+                case drv.result.AVG_VELOCITY_MOD
+                    R = drv.result.avg_velocity_mod;
+                case drv.result.AVG_VELOCITY_ROT
+                    R = drv.result.avg_velocity_rot;
+                case drv.result.AVG_ACCELERATION_MOD
+                    R = drv.result.avg_acceleration_mod;
+                case drv.result.AVG_ACCELERATION_ROT
+                    R = drv.result.avg_acceleration_rot;
+                case drv.result.AVG_TEMPERATURE
+                    R = drv.result.avg_temperature;
+                case drv.result.MIN_VELOCITY_MOD
+                    R = drv.result.min_velocity_mod;
+                case drv.result.MAX_VELOCITY_MOD
+                    R = drv.result.max_velocity_mod;
+                case drv.result.MIN_VELOCITY_ROT
+                    R = drv.result.min_velocity_rot;
+                case drv.result.MAX_VELOCITY_ROT
+                    R = drv.result.max_velocity_rot;
+                case drv.result.MIN_ACCELERATION_MOD
+                    R = drv.result.min_acceleration_mod;
+                case drv.result.MAX_ACCELERATION_MOD
+                    R = drv.result.max_acceleration_mod;
+                case drv.result.MIN_ACCELERATION_ROT
+                    R = drv.result.min_acceleration_rot;
+                case drv.result.MAX_ACCELERATION_ROT
+                    R = drv.result.max_acceleration_rot;
+                case drv.result.MIN_TEMPERATURE
+                    R = drv.result.min_temperature;
+                case drv.result.MAX_TEMPERATURE
+                    R = drv.result.max_temperature;
+                case drv.result.TOT_HEAT_RATE_ALL
+                    R = drv.result.tot_heat_rate_all;
+                case drv.result.TOT_CONDUCTION_DIRECT
+                    R = drv.result.tot_conduction_direct;
+                case drv.result.TOT_CONDUCTION_INDIRECT
+                    R = drv.result.tot_conduction_indirect;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function [x,y,idx] = removeNaN(~,x,y)
+            nanx = find(isnan(x),1);
+            nany = find(isnan(y),1);
+            idx  = length(x);
+            if (~isempty(nanx))
+                idx = min(idx,nanx-1);
+            end
+            if (~isempty(nany))
+                idx = min(idx,nany-1);
+            end
+            x = x(1:idx);
+            y = y(1:idx);
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

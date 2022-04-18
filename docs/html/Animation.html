@@ -1,0 +1,1830 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Animation class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Animation.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Animation class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values: animation types</a></li><li><a href="#3">Constant values: default drawing properties</a></li><li><a href="#4">Public properties</a></li><li><a href="#5">Constructor method</a></li><li><a href="#6">Public methods: managing methods</a></li><li><a href="#7">Public methods: auxiliary methods</a></li><li><a href="#8">Public methods: plotting methods</a></li></ul></div><h2 id="1">Description</h2><p>This is a handle class responsible for creating, displaying and saving an animation of a required result.</p><p>Three types of animated results are available:</p><div><ul><li><b>Motion</b>: Shows only the motion of particles and walls.</li></ul></div><div><ul><li><b>Scalar</b>: Shows the motion of the elements and fills the particles with a color scale to represent a scalar result.</li></ul></div><div><ul><li><b>Vector</b>: Shows the motion of the elements and uses arrows to indicate the direction and intensity of a vector result.</li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> Animation &lt; handle
+</pre><h2 id="2">Constant values: animation types</h2><pre class="codeinput">    properties (Constant = true, Access = public)
+        MOTION = uint8(1);   <span class="comment">% Particles motion with no result indication</span>
+        SCALAR = uint8(2);   <span class="comment">% Particles with color to indicate scalar result</span>
+        VECTOR = uint8(3);   <span class="comment">% Particles with arrow to indicate vector result</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constant values: default drawing properties</h2><pre class="codeinput">    properties (Constant = true, Access = public)
+        <span class="comment">% Colors</span>
+        col_pedge = char(<span class="string">'k'</span>);   <span class="comment">% color of particle edge</span>
+        col_pfill = char(<span class="string">'w'</span>);   <span class="comment">% color of particle interior when not showing scalar result</span>
+        col_wall  = char(<span class="string">'k'</span>);   <span class="comment">% color of wall when not showing scalar result</span>
+        col_bbox  = char(<span class="string">'b'</span>);   <span class="comment">% color of bounding box limit</span>
+        col_sink  = char(<span class="string">'r'</span>);   <span class="comment">% color of sink limit</span>
+
+        <span class="comment">% Line widths</span>
+        wid_pedge = double(0.1);   <span class="comment">% width of particle edge</span>
+        wid_wall  = double(2.0);   <span class="comment">% width of wall</span>
+        wid_bbox  = double(0.5);   <span class="comment">% width of bounding box</span>
+        wid_sink  = double(0.5);   <span class="comment">% width of sink</span>
+
+        <span class="comment">% Line styles</span>
+        sty_pedge = char(<span class="string">'-'</span>);    <span class="comment">% style of particle edge</span>
+        sty_wall  = char(<span class="string">'-'</span>);    <span class="comment">% style of wall</span>
+        sty_bbox  = char(<span class="string">'--'</span>);   <span class="comment">% style of bounding box</span>
+        sty_sink  = char(<span class="string">'--'</span>);   <span class="comment">% style of sink</span>
+
+        <span class="comment">% Particle ID size</span>
+        id_size = double(8);
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Identification</span>
+        res_type   <span class="string">uint8</span>  <span class="string">=</span> <span class="string">uint8.empty</span>;    <span class="comment">% flag for result type</span>
+        anim_type  <span class="string">uint8</span>  <span class="string">=</span> <span class="string">uint8.empty</span>;    <span class="comment">% flag for animation type</span>
+        anim_title <span class="string">string</span> <span class="string">=</span> <span class="string">string.empty</span>;   <span class="comment">% animation title</span>
+
+        <span class="comment">% Results: motion (common to all animation types)</span>
+        times    <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% array of simulation times of each step</span>
+        coord_x  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% array of particles x coordinates</span>
+        coord_y  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% array of particles y coordinates</span>
+        radius   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% array of particles radius</span>
+        wall_pos <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% array of wall positions</span>
+
+        <span class="comment">% Results: scalar</span>
+        res_part  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% array of scalar result to be exhibited for particles</span>
+        res_wall  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% array of scalar result to be exhibited for walls</span>
+        res_range <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% array of results range (minimum to maximum value)</span>
+        col_range <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% array of colorbar range (minimum to maximum value)</span>
+
+        <span class="comment">% Results: vector</span>
+        res_vecx  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% array of x vector result to be exhibited</span>
+        res_vecy  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% array of y vector result to be exhibited</span>
+        arrow_fct <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% Multiplication factor to define vetor arrow size</span>
+
+        <span class="comment">% Options</span>
+        play <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for playing animation in Matlab after creation</span>
+        pids <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for ploting particles IDs</span>
+        bbox <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% fixed limits for animation</span>
+
+        <span class="comment">% Animation components</span>
+        fig    <span class="string">matlab.ui.Figure</span> <span class="string">=</span> <span class="string">matlab.ui.Figure.empty</span>;             <span class="comment">% figure handle</span>
+        frames <span class="string">struct</span>           <span class="string">=</span> <span class="string">struct('cdata',[],'colormap',[])</span>;   <span class="comment">% array of movie frames</span>
+        fps    <span class="string">double</span>           <span class="string">=</span> <span class="string">double.empty</span>;                       <span class="comment">% movie frame rate</span>
+    <span class="keyword">end</span>
+</pre><h2 id="5">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Animation()
+            this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="6">Public methods: managing methods</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setDefaultProps(this)
+            this.play = true;
+            this.pids = false;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> curConfig(this,drv,prefix)
+            <span class="comment">% Create figure</span>
+            f = figure(<span class="string">'name'</span>,[prefix,<span class="string">' '</span>,<span class="string">'Configuration'</span>]);
+
+            <span class="comment">% Set figure properties</span>
+            f.Visible  = <span class="string">'off'</span>;
+            f.Units    = <span class="string">'normalized'</span>;
+            f.Position = [0.1 0.1 0.8 0.8];
+            axis(gca,<span class="string">'equal'</span>);
+            hold <span class="string">on</span>;
+
+            <span class="comment">% Get last stored results</span>
+            col = drv.result.idx;
+            this.times    = drv.result.times(col);
+            this.coord_x  = drv.result.coord_x(:,col);
+            this.coord_y  = drv.result.coord_y(:,col);
+            this.radius   = drv.result.radius(:,col);
+            this.wall_pos = drv.result.wall_position(:,col);
+
+            <span class="comment">% Check if there are results at current time</span>
+            <span class="keyword">if</span> (isnan(this.times))
+                close <span class="string">f</span>;
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Set axes limits</span>
+            <span class="keyword">if</span> (~isempty(this.bbox))
+                xlim(this.bbox(1:2))
+                ylim(this.bbox(3:4))
+            <span class="keyword">else</span>
+                this.setBBoxCur(drv);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Get default result to show for each type of analysis</span>
+            <span class="keyword">if</span> (drv.type == drv.MECHANICAL)
+                title(gca,[prefix,<span class="string">' '</span>,sprintf(<span class="string">'Configuration - Time: %.3f'</span>,drv.time)]);
+                this.anim_type = this.MOTION;
+                this.drawFrame(drv,1);
+
+            <span class="keyword">else</span>
+                title(gca,[prefix,<span class="string">' '</span>,sprintf(<span class="string">'Temperatures - Time: %.3f'</span>,drv.time)]);
+                this.anim_type = this.SCALAR;
+
+                <span class="comment">% Get last stored temperatures (must be available)</span>
+                <span class="keyword">if</span> (~isempty(drv.result.temperature(:,col)))
+                    this.res_part = drv.result.temperature(:,col);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~isempty(drv.result.wall_temperature(:,col)))
+                    this.res_wall = drv.result.wall_temperature(:,col);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Set result and colorbar ranges (always automatic for current configuration)</span>
+                this.setRange();
+
+                <span class="comment">% Draw model components</span>
+                this.drawFrame(drv,1);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Show figure</span>
+            f.Visible = <span class="string">'on'</span>;
+            pause(1);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> animate(this,drv)
+            <span class="comment">% Create new figure</span>
+            this.fig = figure(<span class="string">'Name'</span>,this.anim_title);
+
+            <span class="comment">% Set figure properties</span>
+            this.fig.Visible  = <span class="string">'off'</span>;
+            this.fig.Units    = <span class="string">'normalized'</span>;
+            this.fig.Position = [0.1 0.1 0.8 0.8];
+            axis(gca,<span class="string">'equal'</span>);
+            hold <span class="string">on</span>;
+
+            <span class="comment">% Set motion results (always needed to show model animation)</span>
+            this.times    = drv.result.times;
+            this.coord_x  = drv.result.coord_x;
+            this.coord_y  = drv.result.coord_y;
+            this.radius   = drv.result.radius;
+            this.wall_pos = drv.result.wall_position;
+
+            <span class="comment">% Set axes limits</span>
+            <span class="keyword">if</span> (~isempty(this.bbox))
+                xlim(this.bbox(1:2))
+                ylim(this.bbox(3:4))
+            <span class="keyword">else</span>
+                this.setBBoxAll(drv);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Set type and create animation</span>
+            this.setType(drv)
+            this.createAnimation(drv);
+
+            <span class="comment">% Save movie file</span>
+            drv.createOutFolder();
+            file_name = strcat(drv.path_out,this.anim_title);
+            writer = VideoWriter(file_name,<span class="string">'MPEG-4'</span>);
+            writer.FrameRate = this.fps;
+            open(writer);
+            writeVideo(writer,this.frames);
+            close(writer)
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> createAnimation(this,drv)
+            <span class="keyword">if</span> (this.anim_type == this.SCALAR)
+                this.setRange();
+            <span class="keyword">elseif</span> (this.anim_type == this.VECTOR)
+                this.setArrowSize();
+            <span class="keyword">end</span>
+
+            <span class="comment">% Get total number of valid movie frames</span>
+            nf = drv.result.idx;
+            <span class="keyword">if</span> (isnan(this.times(nf)))
+                nf = find(isnan(this.times)) - 1;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Preallocate movie frames array</span>
+            frams(nf) = struct(<span class="string">'cdata'</span>,[],<span class="string">'colormap'</span>,[]);
+
+            <span class="comment">% Create waitbar</span>
+            wb = waitbar(0.0,{sprintf(<span class="string">'Creating animation "%s"'</span>,this.anim_title),<span class="string">'0.0%'</span>},<span class="keyword">...</span>
+                         <span class="string">'Name'</span>,<span class="string">'Animation Creation'</span>,<span class="keyword">...</span>
+                         <span class="string">'CreateCancelBtn'</span>,<span class="string">'setappdata(gcbf,''canceling'',1)'</span>);
+            setappdata(wb,<span class="string">'canceling'</span>,0);
+
+            <span class="comment">% Generate movie frames (one for each results storage time)</span>
+            tim = this.times(1:nf);
+            tit = this.anim_title;
+            <span class="keyword">for</span> i = 1:nf
+                <span class="comment">% Draw frame</span>
+                set(0,<span class="string">'CurrentFigure'</span>,this.fig)
+                cla;
+                title(gca,strcat(tit,sprintf(<span class="string">' - Time: %.3f'</span>,tim(i))));
+                this.drawFrame(drv,i);
+                frams(i) = getframe(this.fig);
+
+                <span class="comment">% Update waitbar</span>
+                prog = double(i)/double(nf);
+                waitbar(prog,wb,{sprintf(<span class="string">'Creating animation "%s"'</span>,this.anim_title),<span class="keyword">...</span>
+                                 sprintf(<span class="string">'%.1f%%'</span>,100*prog)});
+                <span class="keyword">if</span> getappdata(wb,<span class="string">'canceling'</span>)
+                    <span class="keyword">break</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            delete(wb);
+
+            <span class="comment">% Get generated frames</span>
+            this.frames = frams(1:i);
+
+            <span class="comment">% Compute frame rate (frames / second)</span>
+            this.fps = ceil(nf/drv.time);
+            <span class="keyword">if</span> (this.fps &gt; 100)
+                this.fps = 100;
+            <span class="keyword">elseif</span> (this.fps &lt; 1)
+                this.fps = 1;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> showAnimation(this)
+            <span class="keyword">if</span>(this.play)
+                fprintf(<span class="string">'\nShowing animation "%s"...'</span>,this.anim_title);
+                this.fig.Visible = <span class="string">'on'</span>;
+                movie(this.fig,this.frames,10,this.fps);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> drawFrame(this,drv,f)
+            <span class="comment">% Draw particles</span>
+            this.drawParticles(f);
+
+            <span class="comment">% Draw walls</span>
+            <span class="keyword">for</span> i = 1:drv.n_walls
+                this.drawWall(drv.walls(i),f);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Draw bounding box</span>
+            <span class="keyword">if</span> (drv.has_bbox)
+                <span class="keyword">if</span> (drv.bbox.isActive(this.times(f)))
+                    this.drawBBox(drv.bbox);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Draw sinks</span>
+            <span class="keyword">for</span> i = 1:length(drv.sink)
+                <span class="keyword">if</span> (drv.sink(i).isActive(this.times(f)))
+                    this.drawSink(drv.sink(i));
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> drawParticles(this,f)
+            <span class="comment">% Loop over particles through the length of radius results</span>
+            <span class="comment">% (not drv.n_particles because it is the current number of particles)</span>
+            <span class="keyword">for</span> i = 1:size(this.radius,1)
+                <span class="comment">% Check if particle exists at this frame time</span>
+                <span class="comment">% (radius and coords should always be available for existing particles)</span>
+                <span class="keyword">if</span> (isnan(this.radius(i,f)) || isnan(this.coord_x(i,f)) || isnan(this.coord_y(i,f)))
+                    <span class="keyword">continue</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Draw particle with selected result</span>
+                <span class="comment">% (check if particle exists by looking at the required result)</span>
+                <span class="keyword">switch</span> this.anim_type
+                    <span class="keyword">case</span> this.MOTION
+                        <span class="comment">% Allow to pass when result is empty since this is</span>
+                        <span class="comment">% the case when drawing initial configuration</span>
+                        <span class="comment">% (orientation result is checked inside)</span>
+                        <span class="keyword">if</span> (~isempty(this.res_part) &amp;&amp; isnan(this.res_part(i,f)))
+                            <span class="keyword">continue</span>;
+                        <span class="keyword">end</span>
+                        this.drawParticleMotion(i,f);
+                    <span class="keyword">case</span> this.SCALAR
+                        <span class="keyword">if</span> (isnan(this.res_part(i,f)))
+                            <span class="keyword">continue</span>;
+                        <span class="keyword">end</span>
+                        this.drawParticleScalar(i,f);
+                    <span class="keyword">case</span> this.VECTOR
+                        <span class="keyword">if</span> (isnan(this.res_vecx(i,f)) || isnan(this.res_vecy(i,f)))
+                            <span class="keyword">continue</span>;
+                        <span class="keyword">end</span>
+                        this.drawParticleVector(i,f);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Show ID number</span>
+                <span class="keyword">if</span> (this.pids &amp;&amp;<span class="keyword">...</span>
+                    ~isnan(this.coord_x(i,f)) &amp;&amp; ~isnan(this.coord_y(i,f)))
+                    x = this.coord_x(i,f);
+                    y = this.coord_y(i,f);
+                    text(x,y,int2str(i),<span class="string">'FontSize'</span>,this.id_size);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="7">Public methods: auxiliary methods</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setType(this,drv)
+            <span class="keyword">switch</span> this.res_type
+                <span class="comment">% Motion</span>
+                <span class="keyword">case</span> drv.result.MOTION
+                    this.anim_type = this.MOTION;
+                    this.res_part  = drv.result.orientation;
+
+                <span class="comment">% Scalar</span>
+                <span class="keyword">case</span> drv.result.RADIUS
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.radius;
+
+                <span class="keyword">case</span> drv.result.MASS
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.mass;
+
+                <span class="keyword">case</span> drv.result.COORDINATE_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.coord_x;
+
+                <span class="keyword">case</span> drv.result.COORDINATE_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.coord_y;
+
+                <span class="keyword">case</span> drv.result.ORIENTATION
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.orientation;
+
+                <span class="keyword">case</span> drv.result.FORCE_MOD
+                    this.anim_type = this.SCALAR;
+                    x = drv.result.force_x;
+                    y = drv.result.force_y;
+                    this.res_part = sqrt(x.^2+y.^2);
+
+                <span class="keyword">case</span> drv.result.FORCE_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.force_x;
+
+                <span class="keyword">case</span> drv.result.FORCE_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.force_y;
+
+                <span class="keyword">case</span> drv.result.TORQUE
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.torque;
+
+                <span class="keyword">case</span> drv.result.VELOCITY_MOD
+                    this.anim_type = this.SCALAR;
+                    x = drv.result.velocity_x;
+                    y = drv.result.velocity_y;
+                    this.res_part = sqrt(x.^2+y.^2);
+
+                <span class="keyword">case</span> drv.result.VELOCITY_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.velocity_x;
+
+                <span class="keyword">case</span> drv.result.VELOCITY_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.velocity_y;
+
+                <span class="keyword">case</span> drv.result.VELOCITY_ROT
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.velocity_rot;
+
+                <span class="keyword">case</span> drv.result.ACCELERATION_MOD
+                    this.anim_type = this.SCALAR;
+                    x = drv.result.acceleration_x;
+                    y = drv.result.acceleration_y;
+                    this.res_part = sqrt(x.^2+y.^2);
+
+                <span class="keyword">case</span> drv.result.ACCELERATION_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.acceleration_x;
+
+                <span class="keyword">case</span> drv.result.ACCELERATION_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.acceleration_y;
+
+                <span class="keyword">case</span> drv.result.ACCELERATION_ROT
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.acceleration_rot;
+
+                <span class="keyword">case</span> drv.result.TEMPERATURE
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.temperature;
+                    this.res_wall  = drv.result.wall_temperature;
+
+                <span class="keyword">case</span> drv.result.HEAT_RATE
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.heat_rate;
+
+                <span class="comment">% Vector</span>
+                <span class="keyword">case</span> drv.result.FORCE_VEC
+                    this.anim_type = this.VECTOR;
+                    this.res_vecx  = drv.result.force_x;
+                    this.res_vecy  = drv.result.force_y;
+
+                <span class="keyword">case</span> drv.result.VELOCITY_VEC
+                    this.anim_type = this.VECTOR;
+                    this.res_vecx  = drv.result.velocity_x;
+                    this.res_vecy  = drv.result.velocity_y;
+
+                <span class="keyword">case</span> drv.result.ACCELERATION_VEC
+                    this.anim_type = this.VECTOR;
+                    this.res_vecx  = drv.result.acceleration_x;
+                    this.res_vecy  = drv.result.acceleration_y;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="comment">% Set the Animation BBox according to current existing particles.</span>
+        <span class="keyword">function</span> setBBoxCur(~,drv)
+            <span class="comment">% Initialize axes limits</span>
+            <span class="keyword">if</span> (drv.n_particles ~= 0 || drv.n_walls ~= 0)
+                xmin =  inf;
+                ymin =  inf;
+                xmax = -inf;
+                ymax = -inf;
+            <span class="keyword">else</span>
+                xmin = -1;
+                ymin = -1;
+                xmax =  1;
+                ymax =  1;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Compute axes limits</span>
+            <span class="keyword">for</span> i = 1:drv.n_particles
+                [xmin_p,ymin_p,xmax_p,ymax_p] = drv.particles(i).getBBoxLimits();
+                xmin = min(xmin,xmin_p);
+                ymin = min(ymin,ymin_p);
+                xmax = max(xmax,xmax_p);
+                ymax = max(ymax,ymax_p);
+            <span class="keyword">end</span>
+            <span class="keyword">for</span> i = 1:drv.n_walls
+                [xmin_w,ymin_w,xmax_w,ymax_w] = drv.walls(i).getBBoxLimits();
+                xmin = min(xmin,xmin_w);
+                ymin = min(ymin,ymin_w);
+                xmax = max(xmax,xmax_w);
+                ymax = max(ymax,ymax_w);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Create margin</span>
+            dx = xmax-xmin;
+            dy = ymax-ymin;
+            <span class="keyword">if</span> (dx == 0 &amp;&amp; dy == 0)
+                xmin = -1;
+                ymin = -1;
+                xmax =  1;
+                ymax =  1;
+            <span class="keyword">else</span>
+                <span class="keyword">if</span> (dx == 0)
+                    dx = dy;
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (dy == 0)
+                    dy = dx;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            xmin = xmin - dx/10;
+            ymin = ymin - dy/10;
+            xmax = xmax + dx/10;
+            ymax = ymax + dy/10;
+
+            <span class="comment">% Set axes limits</span>
+            xlim([xmin,xmax])
+            ylim([ymin,ymax])
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="comment">% Set the Animation BBox according to coordinates history.</span>
+        <span class="keyword">function</span> setBBoxAll(~,drv)
+            <span class="comment">% Extreme particle centroid coordinates</span>
+            xmin_p = min(min(drv.result.coord_x));
+            xmax_p = max(max(drv.result.coord_x));
+            ymin_p = min(min(drv.result.coord_y));
+            ymax_p = max(max(drv.result.coord_y));
+
+            <span class="comment">% Consider radius size</span>
+            rmax   = max(max(drv.result.radius));
+            xmin_p = xmin_p - rmax;
+            xmax_p = xmax_p + rmax;
+            ymin_p = ymin_p - rmax;
+            ymax_p = ymax_p + rmax;
+
+            <span class="comment">% Compute extreme wall coordinates</span>
+            xmin_w =  inf;
+            xmax_w = -inf;
+            ymin_w =  inf;
+            ymax_w = -inf;
+
+            <span class="keyword">for</span> i = 1:drv.n_walls
+                row = 4 * (drv.walls(i).id-1) + 1;
+                <span class="keyword">if</span> (drv.walls(i).type == drv.walls(i).LINE)
+                    xmin_ww = min(min(drv.result.wall_position([row+0,row+2],:)));
+                    xmax_ww = max(max(drv.result.wall_position([row+0,row+2],:)));
+                    ymin_ww = min(min(drv.result.wall_position([row+1,row+3],:)));
+                    ymax_ww = max(max(drv.result.wall_position([row+1,row+3],:)));
+                <span class="keyword">elseif</span> (drv.walls(i).type == drv.walls(i).CIRCLE)
+                    xmin_ww = min(drv.result.wall_position(row+0,:)-drv.result.wall_position(row+2,:));
+                    xmax_ww = max(drv.result.wall_position(row+0,:)+drv.result.wall_position(row+2,:));
+                    ymin_ww = min(drv.result.wall_position(row+1,:)-drv.result.wall_position(row+2,:));
+                    ymax_ww = max(drv.result.wall_position(row+1,:)+drv.result.wall_position(row+2,:));
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (xmin_ww &lt; xmin_w)
+                    xmin_w = xmin_ww;
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (xmax_ww &gt; xmax_w)
+                    xmax_w = xmax_ww;
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (ymin_ww &lt; ymin_w)
+                    ymin_w = ymin_ww;
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (ymax_ww &gt; ymax_w)
+                    ymax_w = ymax_ww;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Get total min/max coordinates</span>
+            xmin = min(xmin_p,xmin_w);
+            xmax = max(xmax_p,xmax_w);
+            ymin = min(ymin_p,ymin_w);
+            ymax = max(ymax_p,ymax_w);
+
+            <span class="comment">% Create margin</span>
+            dx = xmax-xmin;
+            dy = ymax-ymin;
+            <span class="keyword">if</span> (dx == 0 &amp;&amp; dy == 0)
+                xmin = -1;
+                ymin = -1;
+                xmax =  1;
+                ymax =  1;
+            <span class="keyword">else</span>
+                <span class="keyword">if</span> (dx == 0)
+                    dx = dy;
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (dy == 0)
+                    dy = dx;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            xmin = xmin - dx/10;
+            ymin = ymin - dy/10;
+            xmax = xmax + dx/10;
+            ymax = ymax + dy/10;
+
+            <span class="comment">% Set axes limits</span>
+            xlim([xmin,xmax])
+            ylim([ymin,ymax])
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> [min_val,max_val] = scalarValueLimits(this)
+            <span class="comment">% Limits of particles results</span>
+            <span class="keyword">if</span> (~isempty(this.res_part))
+                min_val_p = min(this.res_part(:));
+                max_val_p = max(this.res_part(:));
+            <span class="keyword">else</span>
+                min_val_p =  inf;
+                max_val_p = -inf;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Limits of walls results</span>
+            <span class="keyword">if</span> (~isempty(this.res_wall))
+                min_val_w = min(this.res_wall(:));
+                max_val_w = max(this.res_wall(:));
+            <span class="keyword">else</span>
+                min_val_w =  inf;
+                max_val_w = -inf;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Total limits of results</span>
+            min_val = min([min_val_p,min_val_w]);
+            max_val = max([max_val_p,max_val_w]);
+
+            <span class="comment">% Treat inf and NaN values</span>
+            <span class="keyword">if</span> ((isinf(min_val) &amp;&amp; isinf(max_val)) || (isnan(min_val) &amp;&amp; isnan(max_val)))
+                min_val = -1;
+                max_val = +1;
+            <span class="keyword">elseif</span> (isinf(min_val) || isnan(min_val))
+                min_val = max_val - 1;
+            <span class="keyword">elseif</span> (isinf(max_val) || isnan(max_val))
+                max_val = min_val + 1;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Treat equal values</span>
+            <span class="keyword">if</span> (min_val == max_val)
+                min_val = min_val - 1;
+                max_val = max_val + 1;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setRange(this)
+            <span class="comment">% Compute result limits</span>
+            [min_val,max_val] = this.scalarValueLimits();
+
+            <span class="comment">% Set result range</span>
+            <span class="keyword">if</span> (isempty(this.res_range))
+                this.res_range = [min_val,max_val];
+            <span class="keyword">end</span>
+
+            <span class="comment">% Set colorbar range</span>
+            this.col_range = linspace(this.res_range(1),this.res_range(2),256);
+            colormap <span class="string">jet</span>;
+            caxis([this.res_range(1),this.res_range(2)]);
+            colorbar;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setArrowSize(this)
+            <span class="comment">% Maximum vector norm value</span>
+            x = this.res_vecx;
+            y = this.res_vecy;
+            max_vec = max(max(sqrt(x.^2+y.^2)));
+
+            <span class="comment">% Figure size</span>
+            limitx = xlim;
+            limity = ylim;
+            dx = limitx(2)-limitx(1);
+            dy = limity(2)-limity(1);
+            d  = sqrt(dx^2+dy^2);
+
+            <span class="comment">% Multiplication factor</span>
+            <span class="keyword">if</span> (max_vec ~= 0 &amp;&amp; ~isnan(max_vec))
+                this.arrow_fct = 0.1 * d/max_vec;
+            <span class="keyword">else</span>
+                this.arrow_fct = 0;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="8">Public methods: plotting methods</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> drawParticleMotion(this,i,j)
+            <span class="comment">% Always check valid data for safety</span>
+            <span class="keyword">if</span> (isnan(this.radius(i,j)) || isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Position</span>
+            x   = this.coord_x(i,j);
+            y   = this.coord_y(i,j);
+            r   = this.radius(i,j);
+            pos = [x-r,y-r,2*r,2*r];
+
+            <span class="comment">% Plot particle (rectangle with rounded sides)</span>
+            c = this.col_pedge;
+            w = this.wid_pedge;
+            s = this.sty_pedge;
+            rectangle(<span class="string">'Position'</span>,pos,<span class="string">'Curvature'</span>,[1 1],<span class="string">'EdgeColor'</span>,c,<span class="string">'LineWidth'</span>,w,<span class="string">'LineStyle'</span>,s,<span class="string">'FaceColor'</span>,<span class="string">'none'</span>);
+
+            <span class="comment">% Plot orientation (default particle result of motion animations)</span>
+            <span class="keyword">if</span> (~isempty(this.res_part) &amp;&amp; ~isnan(this.res_part(i,j)))
+                o = this.res_part(i,j);
+                p = [x,y]+[r*cos(o),r*sin(o)];
+                line([x,p(1)],[y,p(2)],<span class="string">'Color'</span>,c,<span class="string">'LineWidth'</span>,w,<span class="string">'LineStyle'</span>,s);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> drawParticleScalar(this,i,j)
+            <span class="comment">% Always check valid data for safety</span>
+            <span class="keyword">if</span> (isnan(this.radius(i,j)) || isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Position</span>
+            x   = this.coord_x(i,j);
+            y   = this.coord_y(i,j);
+            r   = this.radius(i,j);
+            rr  = this.res_range;
+            cr  = this.col_range;
+            pos = [x-r,y-r,2*r,2*r];
+
+            <span class="comment">% Color according to result</span>
+            <span class="keyword">if</span> (~isempty(this.res_part) &amp;&amp;<span class="keyword">...</span>
+                all(this.res_part(i,j) &gt;= rr(1) &amp; this.res_part(i,j) &lt;= rr(2)))
+                clr = interp1(cr,colormap,this.res_part(i,j));
+            <span class="keyword">else</span>
+                clr = this.col_pfill;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Plot particle (rectangle with rounded sides)</span>
+            c = this.col_pedge;
+            w = this.wid_pedge;
+            s = this.sty_pedge;
+            rectangle(<span class="string">'Position'</span>,pos,<span class="string">'Curvature'</span>,[1 1],<span class="string">'EdgeColor'</span>,c,<span class="string">'LineWidth'</span>,w,<span class="string">'LineStyle'</span>,s,<span class="string">'FaceColor'</span>,clr);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> drawParticleVector(this,i,j)
+            <span class="comment">% Always check valid data for safety</span>
+            <span class="keyword">if</span> (isnan(this.radius(i,j)) || isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Position</span>
+            x   = this.coord_x(i,j);
+            y   = this.coord_y(i,j);
+            r   = this.radius(i,j);
+            pos = [x-r,y-r,2*r,2*r];
+
+            <span class="comment">% Plot particle (rectangle with rounded sides)</span>
+            c = this.col_pedge;
+            w = this.wid_pedge;
+            s = this.sty_pedge;
+            rectangle(<span class="string">'Position'</span>,pos,<span class="string">'Curvature'</span>,[1 1],<span class="string">'EdgeColor'</span>,c,<span class="string">'LineWidth'</span>,w,<span class="string">'LineStyle'</span>,s,<span class="string">'FaceColor'</span>,<span class="string">'none'</span>);
+
+            <span class="comment">% Plot vector arrow</span>
+            <span class="keyword">if</span> (~isempty(this.res_vecx)    &amp;&amp; ~isempty(this.res_vecy) &amp;&amp;<span class="keyword">...</span>
+                ~isnan(this.res_vecx(i,j)) &amp;&amp; ~isnan(this.res_vecy(i,j)))
+                vx = this.arrow_fct * this.res_vecx(i,j);
+                vy = this.arrow_fct * this.res_vecy(i,j);
+                line([x,x+vx],[y,y+vy],<span class="string">'Color'</span>,c,<span class="string">'LineWidth'</span>,w,<span class="string">'LineStyle'</span>,s);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> drawWall(this,wall,j)
+            w  = this.wid_wall;
+            s  = this.sty_wall;
+            rr = this.res_range;
+            cr = this.col_range;
+
+            <span class="comment">% Color according to result</span>
+            <span class="keyword">if</span> (~isempty(this.res_wall) &amp;&amp;<span class="keyword">...</span>
+                ~wall.insulated         &amp;&amp;<span class="keyword">...</span>
+                all(this.res_wall(wall.id,j) &gt;= rr(1) &amp; this.res_wall(wall.id,j) &lt;= rr(2)))
+                c = interp1(cr,colormap,this.res_wall(wall.id,j));
+            <span class="keyword">else</span>
+                c = this.col_wall;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Row ID</span>
+            row = 4 * (wall.id-1) + 1;
+
+            <span class="keyword">switch</span> wall.type
+                <span class="keyword">case</span> wall.LINE
+                    x1 = this.wall_pos(row+0,j);
+                    y1 = this.wall_pos(row+1,j);
+                    x2 = this.wall_pos(row+2,j);
+                    y2 = this.wall_pos(row+3,j);
+                    line([x1,x2],[y1,y2],<span class="string">'Color'</span>,c,<span class="string">'LineWidth'</span>,w,<span class="string">'LineStyle'</span>,s);
+
+                <span class="keyword">case</span> wall.CIRCLE
+                    x = this.wall_pos(row+0,j);
+                    y = this.wall_pos(row+1,j);
+                    r = this.wall_pos(row+2,j);
+                    this.drawCircle(x,y,r,c,w,s);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> drawBBox(this,bbox)
+            c = this.col_bbox;
+            w = this.wid_bbox;
+            s = this.sty_bbox;
+
+            <span class="keyword">switch</span> bbox.type
+                <span class="keyword">case</span> bbox.RECTANGLE
+                    x1 = bbox.limit_min(1);
+                    y1 = bbox.limit_min(2);
+                    x2 = bbox.limit_max(1);
+                    y2 = bbox.limit_max(2);
+                    <span class="keyword">if</span> (isinf(x1))
+                        ax = gca;
+                        x1 = ax.XLim(1);
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (isinf(y1))
+                        ax = gca;
+                        y1 = ax.YLim(1);
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (isinf(x2))
+                        ax = gca;
+                        x2 = ax.XLim(2);
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (isinf(y2))
+                        ax = gca;
+                        y2 = ax.YLim(2);
+                    <span class="keyword">end</span>
+                    pos = [x1,y1,x2-x1,y2-y1];
+                    rectangle(<span class="string">'Position'</span>,pos,<span class="string">'EdgeColor'</span>,c,<span class="string">'LineWidth'</span>,w,<span class="string">'LineStyle'</span>,s);
+
+                <span class="keyword">case</span> bbox.CIRCLE
+                    <span class="keyword">if</span> (~isinf(bbox.radius))
+                        r = bbox.radius;
+                    <span class="keyword">else</span>
+                        r = 0;
+                    <span class="keyword">end</span>
+                    this.drawCircle(bbox.center(1),bbox.center(2),r,c,w,s);
+
+                <span class="keyword">case</span> bbox.POLYGON
+                    pol = polyshape(bbox.coord_x,bbox.coord_y);
+                    plot(pol,<span class="string">'FaceColor'</span>,<span class="string">'none'</span>,<span class="string">'EdgeColor'</span>,c,<span class="string">'LineWidth'</span>,w,<span class="string">'LineStyle'</span>,s);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> drawSink(this,sink)
+            c = this.col_sink;
+            w = this.wid_sink;
+            s = this.sty_sink;
+
+            <span class="keyword">switch</span> sink.type
+                <span class="keyword">case</span> sink.RECTANGLE
+                    x1 = sink.limit_min(1);
+                    y1 = sink.limit_min(2);
+                    x2 = sink.limit_max(1);
+                    y2 = sink.limit_max(2);
+                    <span class="keyword">if</span> (isinf(x1))
+                        ax = gca;
+                        x1 = ax.XLim(1);
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (isinf(y1))
+                        ax = gca;
+                        y1 = ax.YLim(1);
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (isinf(x2))
+                        ax = gca;
+                        x2 = ax.XLim(2);
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (isinf(y2))
+                        ax = gca;
+                        y2 = ax.YLim(2);
+                    <span class="keyword">end</span>
+                    pos = [x1,y1,x2-x1,y2-y1];
+                    rectangle(<span class="string">'Position'</span>,pos,<span class="string">'EdgeColor'</span>,c,<span class="string">'LineWidth'</span>,w,<span class="string">'LineStyle'</span>,s);
+
+                <span class="keyword">case</span> sink.CIRCLE
+                    <span class="keyword">if</span> (~isinf(sink.radius))
+                        r = sink.radius;
+                    <span class="keyword">else</span>
+                        r = 0;
+                    <span class="keyword">end</span>
+                    this.drawCircle(sink.center(1),sink.center(2),r,c,w,s);
+
+                <span class="keyword">case</span> sink.POLYGON
+                    pol = polyshape(sink.coord_x,sink.coord_y);
+                    plot(pol,<span class="string">'FaceColor'</span>,<span class="string">'none'</span>,<span class="string">'EdgeColor'</span>,c,<span class="string">'LineWidth'</span>,w,<span class="string">'LineStyle'</span>,s);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> h = drawCircle(~,x,y,r,c,w,s)
+            t = 0:pi/50:2*pi;
+            x_circle = x + r * cos(t);
+            y_circle = y + r * sin(t);
+            h = plot(x_circle,y_circle,<span class="string">'Color'</span>,c,<span class="string">'LineWidth'</span>,w,<span class="string">'LineStyle'</span>,s);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Animation class
+%
+%% Description
+%
+% This is a handle class responsible for creating, displaying and saving
+% an animation of a required result.
+%
+% Three types of animated results are available:
+%
+% * *Motion*: Shows only the motion of particles and walls.
+%
+% * *Scalar*: Shows the motion of the elements and fills the particles with
+% a color scale to represent a scalar result.
+%
+% * *Vector*: Shows the motion of the elements and uses arrows to indicate
+% the direction and intensity of a vector result.
+%
+classdef Animation < handle
+    %% Constant values: animation types
+    properties (Constant = true, Access = public)
+        MOTION = uint8(1);   % Particles motion with no result indication
+        SCALAR = uint8(2);   % Particles with color to indicate scalar result
+        VECTOR = uint8(3);   % Particles with arrow to indicate vector result
+    end
+    
+    %% Constant values: default drawing properties
+    properties (Constant = true, Access = public)
+        % Colors
+        col_pedge = char('k');   % color of particle edge
+        col_pfill = char('w');   % color of particle interior when not showing scalar result
+        col_wall  = char('k');   % color of wall when not showing scalar result
+        col_bbox  = char('b');   % color of bounding box limit
+        col_sink  = char('r');   % color of sink limit
+        
+        % Line widths
+        wid_pedge = double(0.1);   % width of particle edge
+        wid_wall  = double(2.0);   % width of wall
+        wid_bbox  = double(0.5);   % width of bounding box
+        wid_sink  = double(0.5);   % width of sink
+        
+        % Line styles
+        sty_pedge = char('-');    % style of particle edge
+        sty_wall  = char('-');    % style of wall
+        sty_bbox  = char('REPLACE_WITH_DASH_DASH');   % style of bounding box
+        sty_sink  = char('REPLACE_WITH_DASH_DASH');   % style of sink
+        
+        % Particle ID size
+        id_size = double(8);
+    end
+    
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Identification
+        res_type   uint8  = uint8.empty;    % flag for result type
+        anim_type  uint8  = uint8.empty;    % flag for animation type 
+        anim_title string = string.empty;   % animation title
+        
+        % Results: motion (common to all animation types)
+        times    double = double.empty;   % array of simulation times of each step
+        coord_x  double = double.empty;   % array of particles x coordinates
+        coord_y  double = double.empty;   % array of particles y coordinates
+        radius   double = double.empty;   % array of particles radius
+        wall_pos double = double.empty;   % array of wall positions
+        
+        % Results: scalar
+        res_part  double = double.empty;   % array of scalar result to be exhibited for particles
+        res_wall  double = double.empty;   % array of scalar result to be exhibited for walls
+        res_range double = double.empty;   % array of results range (minimum to maximum value)
+        col_range double = double.empty;   % array of colorbar range (minimum to maximum value)
+        
+        % Results: vector
+        res_vecx  double = double.empty;   % array of x vector result to be exhibited
+        res_vecy  double = double.empty;   % array of y vector result to be exhibited
+        arrow_fct double = double.empty;   % Multiplication factor to define vetor arrow size
+        
+        % Options
+        play logical = logical.empty;   % flag for playing animation in Matlab after creation
+        pids logical = logical.empty;   % flag for ploting particles IDs
+        bbox double  = double.empty;    % fixed limits for animation
+        
+        % Animation components
+        fig    matlab.ui.Figure = matlab.ui.Figure.empty;             % figure handle
+        frames struct           = struct('cdata',[],'colormap',[]);   % array of movie frames
+        fps    double           = double.empty;                       % movie frame rate
+    end
+    
+    %% Constructor method
+    methods
+        function this = Animation()
+            this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: managing methods
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setDefaultProps(this)
+            this.play = true;
+            this.pids = false;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function curConfig(this,drv,prefix)
+            % Create figure
+            f = figure('name',[prefix,' ','Configuration']);
+            
+            % Set figure properties
+            f.Visible  = 'off';
+            f.Units    = 'normalized';
+            f.Position = [0.1 0.1 0.8 0.8];
+            axis(gca,'equal');
+            hold on;
+            
+            % Get last stored results
+            col = drv.result.idx;
+            this.times    = drv.result.times(col);
+            this.coord_x  = drv.result.coord_x(:,col);
+            this.coord_y  = drv.result.coord_y(:,col);
+            this.radius   = drv.result.radius(:,col);
+            this.wall_pos = drv.result.wall_position(:,col);
+            
+            % Check if there are results at current time
+            if (isnan(this.times))
+                close f;
+                return;
+            end
+            
+            % Set axes limits
+            if (~isempty(this.bbox))
+                xlim(this.bbox(1:2))
+                ylim(this.bbox(3:4))
+            else
+                this.setBBoxCur(drv);
+            end
+            
+            % Get default result to show for each type of analysis
+            if (drv.type == drv.MECHANICAL)
+                title(gca,[prefix,' ',sprintf('Configuration - Time: %.3f',drv.time)]);
+                this.anim_type = this.MOTION;
+                this.drawFrame(drv,1);
+                
+            else
+                title(gca,[prefix,' ',sprintf('Temperatures - Time: %.3f',drv.time)]);
+                this.anim_type = this.SCALAR;
+                
+                % Get last stored temperatures (must be available)
+                if (~isempty(drv.result.temperature(:,col)))
+                    this.res_part = drv.result.temperature(:,col);
+                end
+                if (~isempty(drv.result.wall_temperature(:,col)))
+                    this.res_wall = drv.result.wall_temperature(:,col);
+                end
+                
+                % Set result and colorbar ranges (always automatic for current configuration)
+                this.setRange();
+                
+                % Draw model components
+                this.drawFrame(drv,1);
+            end
+            
+            % Show figure
+            f.Visible = 'on';
+            pause(1);
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function animate(this,drv)
+            % Create new figure
+            this.fig = figure('Name',this.anim_title);
+            
+            % Set figure properties
+            this.fig.Visible  = 'off';
+            this.fig.Units    = 'normalized';
+            this.fig.Position = [0.1 0.1 0.8 0.8];
+            axis(gca,'equal');
+            hold on;
+            
+            % Set motion results (always needed to show model animation)
+            this.times    = drv.result.times;
+            this.coord_x  = drv.result.coord_x;
+            this.coord_y  = drv.result.coord_y;
+            this.radius   = drv.result.radius;
+            this.wall_pos = drv.result.wall_position;
+            
+            % Set axes limits
+            if (~isempty(this.bbox))
+                xlim(this.bbox(1:2))
+                ylim(this.bbox(3:4))
+            else
+                this.setBBoxAll(drv);
+            end
+            
+            % Set type and create animation
+            this.setType(drv)
+            this.createAnimation(drv);
+            
+            % Save movie file
+            drv.createOutFolder();
+            file_name = strcat(drv.path_out,this.anim_title);
+            writer = VideoWriter(file_name,'MPEG-4');
+            writer.FrameRate = this.fps;
+            open(writer);
+            writeVideo(writer,this.frames);
+            close(writer)
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function createAnimation(this,drv)
+            if (this.anim_type == this.SCALAR)
+                this.setRange();
+            elseif (this.anim_type == this.VECTOR)
+                this.setArrowSize();
+            end
+            
+            % Get total number of valid movie frames
+            nf = drv.result.idx;
+            if (isnan(this.times(nf)))
+                nf = find(isnan(this.times)) - 1;
+            end
+            
+            % Preallocate movie frames array
+            frams(nf) = struct('cdata',[],'colormap',[]);
+            
+            % Create waitbar
+            wb = waitbar(0.0,{sprintf('Creating animation "%s"',this.anim_title),'0.0%'},...
+                         'Name','Animation Creation',...
+                         'CreateCancelBtn','setappdata(gcbf,''canceling'',1)');
+            setappdata(wb,'canceling',0);
+            
+            % Generate movie frames (one for each results storage time)
+            tim = this.times(1:nf);
+            tit = this.anim_title;
+            for i = 1:nf
+                % Draw frame
+                set(0,'CurrentFigure',this.fig)
+                cla;
+                title(gca,strcat(tit,sprintf(' - Time: %.3f',tim(i))));
+                this.drawFrame(drv,i);
+                frams(i) = getframe(this.fig);
+                
+                % Update waitbar
+                prog = double(i)/double(nf);
+                waitbar(prog,wb,{sprintf('Creating animation "%s"',this.anim_title),...
+                                 sprintf('%.1f%%',100*prog)});
+                if getappdata(wb,'canceling')
+                    break
+                end
+            end
+            delete(wb);
+            
+            % Get generated frames
+            this.frames = frams(1:i);
+            
+            % Compute frame rate (frames / second)
+            this.fps = ceil(nf/drv.time);
+            if (this.fps > 100)
+                this.fps = 100;
+            elseif (this.fps < 1)
+                this.fps = 1;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function showAnimation(this)
+            if(this.play)
+                fprintf('\nShowing animation "%s"...',this.anim_title);
+                this.fig.Visible = 'on';
+                movie(this.fig,this.frames,10,this.fps);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function drawFrame(this,drv,f)
+            % Draw particles
+            this.drawParticles(f);
+            
+            % Draw walls
+            for i = 1:drv.n_walls
+                this.drawWall(drv.walls(i),f);
+            end
+            
+            % Draw bounding box
+            if (drv.has_bbox)
+                if (drv.bbox.isActive(this.times(f)))
+                    this.drawBBox(drv.bbox);
+                end
+            end
+            
+            % Draw sinks
+            for i = 1:length(drv.sink)
+                if (drv.sink(i).isActive(this.times(f)))
+                    this.drawSink(drv.sink(i));
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function drawParticles(this,f)
+            % Loop over particles through the length of radius results
+            % (not drv.n_particles because it is the current number of particles)
+            for i = 1:size(this.radius,1)
+                % Check if particle exists at this frame time
+                % (radius and coords should always be available for existing particles)
+                if (isnan(this.radius(i,f)) || isnan(this.coord_x(i,f)) || isnan(this.coord_y(i,f)))
+                    continue;
+                end
+                
+                % Draw particle with selected result
+                % (check if particle exists by looking at the required result)
+                switch this.anim_type
+                    case this.MOTION
+                        % Allow to pass when result is empty since this is
+                        % the case when drawing initial configuration
+                        % (orientation result is checked inside)
+                        if (~isempty(this.res_part) && isnan(this.res_part(i,f)))
+                            continue;
+                        end
+                        this.drawParticleMotion(i,f);
+                    case this.SCALAR
+                        if (isnan(this.res_part(i,f)))
+                            continue;
+                        end
+                        this.drawParticleScalar(i,f);
+                    case this.VECTOR
+                        if (isnan(this.res_vecx(i,f)) || isnan(this.res_vecy(i,f)))
+                            continue;
+                        end
+                        this.drawParticleVector(i,f);
+                end
+                
+                % Show ID number
+                if (this.pids &&...
+                    ~isnan(this.coord_x(i,f)) && ~isnan(this.coord_y(i,f)))
+                    x = this.coord_x(i,f);
+                    y = this.coord_y(i,f);
+                    text(x,y,int2str(i),'FontSize',this.id_size);
+                end
+            end
+        end
+    end
+    
+    %% Public methods: auxiliary methods
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setType(this,drv)
+            switch this.res_type
+                % Motion
+                case drv.result.MOTION
+                    this.anim_type = this.MOTION;
+                    this.res_part  = drv.result.orientation;
+                
+                % Scalar
+                case drv.result.RADIUS
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.radius;
+                    
+                case drv.result.MASS
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.mass;
+                    
+                case drv.result.COORDINATE_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.coord_x;
+                    
+                case drv.result.COORDINATE_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.coord_y;
+                    
+                case drv.result.ORIENTATION
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.orientation;
+                    
+                case drv.result.FORCE_MOD
+                    this.anim_type = this.SCALAR;
+                    x = drv.result.force_x;
+                    y = drv.result.force_y;
+                    this.res_part = sqrt(x.^2+y.^2);
+                    
+                case drv.result.FORCE_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.force_x;
+                    
+                case drv.result.FORCE_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.force_y;
+                    
+                case drv.result.TORQUE
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.torque;
+                    
+                case drv.result.VELOCITY_MOD
+                    this.anim_type = this.SCALAR;
+                    x = drv.result.velocity_x;
+                    y = drv.result.velocity_y;
+                    this.res_part = sqrt(x.^2+y.^2);
+                    
+                case drv.result.VELOCITY_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.velocity_x;
+                    
+                case drv.result.VELOCITY_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.velocity_y;
+                    
+                case drv.result.VELOCITY_ROT
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.velocity_rot;
+                    
+                case drv.result.ACCELERATION_MOD
+                    this.anim_type = this.SCALAR;
+                    x = drv.result.acceleration_x;
+                    y = drv.result.acceleration_y;
+                    this.res_part = sqrt(x.^2+y.^2);
+                    
+                case drv.result.ACCELERATION_X
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.acceleration_x;
+                    
+                case drv.result.ACCELERATION_Y
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.acceleration_y;
+                    
+                case drv.result.ACCELERATION_ROT
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.acceleration_rot;
+                    
+                case drv.result.TEMPERATURE
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.temperature;
+                    this.res_wall  = drv.result.wall_temperature;
+                    
+                case drv.result.HEAT_RATE
+                    this.anim_type = this.SCALAR;
+                    this.res_part  = drv.result.heat_rate;
+                    
+                % Vector
+                case drv.result.FORCE_VEC
+                    this.anim_type = this.VECTOR;
+                    this.res_vecx  = drv.result.force_x;
+                    this.res_vecy  = drv.result.force_y;
+                    
+                case drv.result.VELOCITY_VEC
+                    this.anim_type = this.VECTOR;
+                    this.res_vecx  = drv.result.velocity_x;
+                    this.res_vecy  = drv.result.velocity_y;
+                    
+                case drv.result.ACCELERATION_VEC
+                    this.anim_type = this.VECTOR;
+                    this.res_vecx  = drv.result.acceleration_x;
+                    this.res_vecy  = drv.result.acceleration_y;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Set the Animation BBox according to current existing particles.
+        function setBBoxCur(~,drv)
+            % Initialize axes limits
+            if (drv.n_particles ~= 0 || drv.n_walls ~= 0)
+                xmin =  inf;
+                ymin =  inf;
+                xmax = -inf;
+                ymax = -inf;
+            else
+                xmin = -1;
+                ymin = -1;
+                xmax =  1;
+                ymax =  1;
+            end
+            
+            % Compute axes limits
+            for i = 1:drv.n_particles
+                [xmin_p,ymin_p,xmax_p,ymax_p] = drv.particles(i).getBBoxLimits();
+                xmin = min(xmin,xmin_p);
+                ymin = min(ymin,ymin_p);
+                xmax = max(xmax,xmax_p);
+                ymax = max(ymax,ymax_p);
+            end
+            for i = 1:drv.n_walls
+                [xmin_w,ymin_w,xmax_w,ymax_w] = drv.walls(i).getBBoxLimits();
+                xmin = min(xmin,xmin_w);
+                ymin = min(ymin,ymin_w);
+                xmax = max(xmax,xmax_w);
+                ymax = max(ymax,ymax_w);
+            end
+            
+            % Create margin
+            dx = xmax-xmin;
+            dy = ymax-ymin;
+            if (dx == 0 && dy == 0)
+                xmin = -1;
+                ymin = -1;
+                xmax =  1;
+                ymax =  1;
+            else
+                if (dx == 0)
+                    dx = dy;
+                end
+                if (dy == 0)
+                    dy = dx;
+                end
+            end
+            xmin = xmin - dx/10;
+            ymin = ymin - dy/10;
+            xmax = xmax + dx/10;
+            ymax = ymax + dy/10;
+            
+            % Set axes limits
+            xlim([xmin,xmax])
+            ylim([ymin,ymax])
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Set the Animation BBox according to coordinates history.
+        function setBBoxAll(~,drv)
+            % Extreme particle centroid coordinates
+            xmin_p = min(min(drv.result.coord_x));
+            xmax_p = max(max(drv.result.coord_x));
+            ymin_p = min(min(drv.result.coord_y));
+            ymax_p = max(max(drv.result.coord_y));
+            
+            % Consider radius size
+            rmax   = max(max(drv.result.radius));
+            xmin_p = xmin_p - rmax;
+            xmax_p = xmax_p + rmax;
+            ymin_p = ymin_p - rmax;
+            ymax_p = ymax_p + rmax;
+            
+            % Compute extreme wall coordinates
+            xmin_w =  inf;
+            xmax_w = -inf;
+            ymin_w =  inf;
+            ymax_w = -inf;
+            
+            for i = 1:drv.n_walls
+                row = 4 * (drv.walls(i).id-1) + 1;
+                if (drv.walls(i).type == drv.walls(i).LINE)
+                    xmin_ww = min(min(drv.result.wall_position([row+0,row+2],:)));
+                    xmax_ww = max(max(drv.result.wall_position([row+0,row+2],:)));
+                    ymin_ww = min(min(drv.result.wall_position([row+1,row+3],:)));
+                    ymax_ww = max(max(drv.result.wall_position([row+1,row+3],:)));
+                elseif (drv.walls(i).type == drv.walls(i).CIRCLE)
+                    xmin_ww = min(drv.result.wall_position(row+0,:)-drv.result.wall_position(row+2,:));
+                    xmax_ww = max(drv.result.wall_position(row+0,:)+drv.result.wall_position(row+2,:));
+                    ymin_ww = min(drv.result.wall_position(row+1,:)-drv.result.wall_position(row+2,:));
+                    ymax_ww = max(drv.result.wall_position(row+1,:)+drv.result.wall_position(row+2,:));
+                end
+                if (xmin_ww < xmin_w)
+                    xmin_w = xmin_ww;
+                end
+                if (xmax_ww > xmax_w)
+                    xmax_w = xmax_ww;
+                end
+                if (ymin_ww < ymin_w)
+                    ymin_w = ymin_ww;
+                end
+                if (ymax_ww > ymax_w)
+                    ymax_w = ymax_ww;
+                end
+            end
+            
+            % Get total min/max coordinates
+            xmin = min(xmin_p,xmin_w);
+            xmax = max(xmax_p,xmax_w);
+            ymin = min(ymin_p,ymin_w);
+            ymax = max(ymax_p,ymax_w);
+            
+            % Create margin
+            dx = xmax-xmin;
+            dy = ymax-ymin;
+            if (dx == 0 && dy == 0)
+                xmin = -1;
+                ymin = -1;
+                xmax =  1;
+                ymax =  1;
+            else
+                if (dx == 0)
+                    dx = dy;
+                end
+                if (dy == 0)
+                    dy = dx;
+                end
+            end
+            xmin = xmin - dx/10;
+            ymin = ymin - dy/10;
+            xmax = xmax + dx/10;
+            ymax = ymax + dy/10;
+            
+            % Set axes limits
+            xlim([xmin,xmax])
+            ylim([ymin,ymax])
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function [min_val,max_val] = scalarValueLimits(this)
+            % Limits of particles results
+            if (~isempty(this.res_part))
+                min_val_p = min(this.res_part(:));
+                max_val_p = max(this.res_part(:));
+            else
+                min_val_p =  inf;
+                max_val_p = -inf;
+            end
+            
+            % Limits of walls results
+            if (~isempty(this.res_wall))
+                min_val_w = min(this.res_wall(:));
+                max_val_w = max(this.res_wall(:));
+            else
+                min_val_w =  inf;
+                max_val_w = -inf;
+            end
+            
+            % Total limits of results
+            min_val = min([min_val_p,min_val_w]);
+            max_val = max([max_val_p,max_val_w]);
+            
+            % Treat inf and NaN values
+            if ((isinf(min_val) && isinf(max_val)) || (isnan(min_val) && isnan(max_val)))
+                min_val = -1;
+                max_val = +1;
+            elseif (isinf(min_val) || isnan(min_val))
+                min_val = max_val - 1;
+            elseif (isinf(max_val) || isnan(max_val))
+                max_val = min_val + 1;
+            end
+            
+            % Treat equal values
+            if (min_val == max_val)
+                min_val = min_val - 1;
+                max_val = max_val + 1;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setRange(this)
+            % Compute result limits
+            [min_val,max_val] = this.scalarValueLimits();
+            
+            % Set result range
+            if (isempty(this.res_range))
+                this.res_range = [min_val,max_val];
+            end
+            
+            % Set colorbar range
+            this.col_range = linspace(this.res_range(1),this.res_range(2),256);
+            colormap jet;
+            caxis([this.res_range(1),this.res_range(2)]);
+            colorbar;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setArrowSize(this)
+            % Maximum vector norm value
+            x = this.res_vecx;
+            y = this.res_vecy;
+            max_vec = max(max(sqrt(x.^2+y.^2)));
+            
+            % Figure size
+            limitx = xlim;
+            limity = ylim;
+            dx = limitx(2)-limitx(1);
+            dy = limity(2)-limity(1);
+            d  = sqrt(dx^2+dy^2);
+            
+            % Multiplication factor
+            if (max_vec ~= 0 && ~isnan(max_vec))
+                this.arrow_fct = 0.1 * d/max_vec;
+            else
+                this.arrow_fct = 0;
+            end
+        end
+    end
+    
+    %% Public methods: plotting methods
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function drawParticleMotion(this,i,j)
+            % Always check valid data for safety
+            if (isnan(this.radius(i,j)) || isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+                return;
+            end
+            
+            % Position
+            x   = this.coord_x(i,j);
+            y   = this.coord_y(i,j);
+            r   = this.radius(i,j);
+            pos = [x-r,y-r,2*r,2*r];
+            
+            % Plot particle (rectangle with rounded sides)
+            c = this.col_pedge;
+            w = this.wid_pedge;
+            s = this.sty_pedge;
+            rectangle('Position',pos,'Curvature',[1 1],'EdgeColor',c,'LineWidth',w,'LineStyle',s,'FaceColor','none');
+            
+            % Plot orientation (default particle result of motion animations)
+            if (~isempty(this.res_part) && ~isnan(this.res_part(i,j)))
+                o = this.res_part(i,j);
+                p = [x,y]+[r*cos(o),r*sin(o)];
+                line([x,p(1)],[y,p(2)],'Color',c,'LineWidth',w,'LineStyle',s);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function drawParticleScalar(this,i,j)
+            % Always check valid data for safety
+            if (isnan(this.radius(i,j)) || isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+                return;
+            end
+            
+            % Position
+            x   = this.coord_x(i,j);
+            y   = this.coord_y(i,j);
+            r   = this.radius(i,j);
+            rr  = this.res_range;
+            cr  = this.col_range;
+            pos = [x-r,y-r,2*r,2*r];
+            
+            % Color according to result
+            if (~isempty(this.res_part) &&...
+                all(this.res_part(i,j) >= rr(1) & this.res_part(i,j) <= rr(2)))
+                clr = interp1(cr,colormap,this.res_part(i,j));
+            else
+                clr = this.col_pfill;
+            end
+            
+            % Plot particle (rectangle with rounded sides)
+            c = this.col_pedge;
+            w = this.wid_pedge;
+            s = this.sty_pedge;
+            rectangle('Position',pos,'Curvature',[1 1],'EdgeColor',c,'LineWidth',w,'LineStyle',s,'FaceColor',clr);
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function drawParticleVector(this,i,j)
+            % Always check valid data for safety
+            if (isnan(this.radius(i,j)) || isnan(this.coord_x(i,j)) || isnan(this.coord_y(i,j)))
+                return;
+            end
+            
+            % Position
+            x   = this.coord_x(i,j);
+            y   = this.coord_y(i,j);
+            r   = this.radius(i,j);
+            pos = [x-r,y-r,2*r,2*r];
+            
+            % Plot particle (rectangle with rounded sides)
+            c = this.col_pedge;
+            w = this.wid_pedge;
+            s = this.sty_pedge;
+            rectangle('Position',pos,'Curvature',[1 1],'EdgeColor',c,'LineWidth',w,'LineStyle',s,'FaceColor','none');
+            
+            % Plot vector arrow
+            if (~isempty(this.res_vecx)    && ~isempty(this.res_vecy) &&...
+                ~isnan(this.res_vecx(i,j)) && ~isnan(this.res_vecy(i,j)))
+                vx = this.arrow_fct * this.res_vecx(i,j);
+                vy = this.arrow_fct * this.res_vecy(i,j);
+                line([x,x+vx],[y,y+vy],'Color',c,'LineWidth',w,'LineStyle',s);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function drawWall(this,wall,j)
+            w  = this.wid_wall;
+            s  = this.sty_wall;
+            rr = this.res_range;
+            cr = this.col_range;
+            
+            % Color according to result
+            if (~isempty(this.res_wall) &&...
+                ~wall.insulated         &&...
+                all(this.res_wall(wall.id,j) >= rr(1) & this.res_wall(wall.id,j) <= rr(2)))
+                c = interp1(cr,colormap,this.res_wall(wall.id,j));
+            else
+                c = this.col_wall;
+            end
+            
+            % Row ID
+            row = 4 * (wall.id-1) + 1;
+            
+            switch wall.type
+                case wall.LINE
+                    x1 = this.wall_pos(row+0,j);
+                    y1 = this.wall_pos(row+1,j);
+                    x2 = this.wall_pos(row+2,j);
+                    y2 = this.wall_pos(row+3,j);
+                    line([x1,x2],[y1,y2],'Color',c,'LineWidth',w,'LineStyle',s);
+                
+                case wall.CIRCLE
+                    x = this.wall_pos(row+0,j);
+                    y = this.wall_pos(row+1,j);
+                    r = this.wall_pos(row+2,j);
+                    this.drawCircle(x,y,r,c,w,s);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function drawBBox(this,bbox)
+            c = this.col_bbox;
+            w = this.wid_bbox;
+            s = this.sty_bbox;
+            
+            switch bbox.type
+                case bbox.RECTANGLE
+                    x1 = bbox.limit_min(1);
+                    y1 = bbox.limit_min(2);
+                    x2 = bbox.limit_max(1);
+                    y2 = bbox.limit_max(2);
+                    if (isinf(x1))
+                        ax = gca;
+                        x1 = ax.XLim(1);
+                    end
+                    if (isinf(y1))
+                        ax = gca;
+                        y1 = ax.YLim(1);
+                    end
+                    if (isinf(x2))
+                        ax = gca;
+                        x2 = ax.XLim(2);
+                    end
+                    if (isinf(y2))
+                        ax = gca;
+                        y2 = ax.YLim(2);
+                    end
+                    pos = [x1,y1,x2-x1,y2-y1];
+                    rectangle('Position',pos,'EdgeColor',c,'LineWidth',w,'LineStyle',s);
+                    
+                case bbox.CIRCLE
+                    if (~isinf(bbox.radius))
+                        r = bbox.radius;
+                    else
+                        r = 0;
+                    end
+                    this.drawCircle(bbox.center(1),bbox.center(2),r,c,w,s);
+                    
+                case bbox.POLYGON
+                    pol = polyshape(bbox.coord_x,bbox.coord_y);
+                    plot(pol,'FaceColor','none','EdgeColor',c,'LineWidth',w,'LineStyle',s);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function drawSink(this,sink)
+            c = this.col_sink;
+            w = this.wid_sink;
+            s = this.sty_sink;
+            
+            switch sink.type
+                case sink.RECTANGLE
+                    x1 = sink.limit_min(1);
+                    y1 = sink.limit_min(2);
+                    x2 = sink.limit_max(1);
+                    y2 = sink.limit_max(2);
+                    if (isinf(x1))
+                        ax = gca;
+                        x1 = ax.XLim(1);
+                    end
+                    if (isinf(y1))
+                        ax = gca;
+                        y1 = ax.YLim(1);
+                    end
+                    if (isinf(x2))
+                        ax = gca;
+                        x2 = ax.XLim(2);
+                    end
+                    if (isinf(y2))
+                        ax = gca;
+                        y2 = ax.YLim(2);
+                    end
+                    pos = [x1,y1,x2-x1,y2-y1];
+                    rectangle('Position',pos,'EdgeColor',c,'LineWidth',w,'LineStyle',s);
+                    
+                case sink.CIRCLE
+                    if (~isinf(sink.radius))
+                        r = sink.radius;
+                    else
+                        r = 0;
+                    end
+                    this.drawCircle(sink.center(1),sink.center(2),r,c,w,s);
+                    
+                case sink.POLYGON
+                    pol = polyshape(sink.coord_x,sink.coord_y);
+                    plot(pol,'FaceColor','none','EdgeColor',c,'LineWidth',w,'LineStyle',s);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function h = drawCircle(~,x,y,r,c,w,s)
+            t = 0:pi/50:2*pi;
+            x_circle = x + r * cos(t);
+            y_circle = y + r * sin(t);
+            h = plot(x_circle,y_circle,'Color',c,'LineWidth',w,'LineStyle',s);
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

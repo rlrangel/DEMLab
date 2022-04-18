@@ -1,0 +1,1456 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Result class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Result.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Result class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties: flags for required results</a></li><li><a href="#4">Public properties: results storage</a></li><li><a href="#5">Constructor method</a></li><li><a href="#6">Public methods</a></li></ul></div><h2 id="1">Description</h2><p>This is a handle class responsible for storing the required results.</p><p>Each result type is stored in a separate array, which is initialized with NaN's (Not a Number).</p><pre class="codeinput"><span class="keyword">classdef</span> Result &lt; handle
+</pre><h2 id="2">Constant values</h2><pre class="codeinput">    properties (Constant = true, Access = public)
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Types of global parameters:</span>
+        TIME = uint8(1);
+        STEP = uint8(2);
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Types of individual particle results:</span>
+
+        <span class="comment">% Properties</span>
+        RADIUS = uint8(3);
+        MASS   = uint8(4);
+
+        <span class="comment">% Position</span>
+        MOTION       = uint8(5);
+        COORDINATE_X = uint8(6);
+        COORDINATE_Y = uint8(7);
+        ORIENTATION  = uint8(8);
+
+        <span class="comment">% Force</span>
+        FORCE_VEC = uint8(9);
+        FORCE_MOD = uint8(10);
+        FORCE_X   = uint8(11);
+        FORCE_Y   = uint8(12);
+        TORQUE    = uint8(13);
+
+        <span class="comment">% Velocity</span>
+        VELOCITY_VEC = uint8(14);
+        VELOCITY_MOD = uint8(15);
+        VELOCITY_X   = uint8(16);
+        VELOCITY_Y   = uint8(17);
+        VELOCITY_ROT = uint8(18);
+
+        <span class="comment">% Acceleration</span>
+        ACCELERATION_VEC = uint8(19);
+        ACCELERATION_MOD = uint8(20);
+        ACCELERATION_X   = uint8(21);
+        ACCELERATION_Y   = uint8(22);
+        ACCELERATION_ROT = uint8(23);
+
+        <span class="comment">% Thermal</span>
+        HEAT_RATE   = uint8(24);
+        TEMPERATURE = uint8(25);
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Types of average particle results:</span>
+        AVG_VELOCITY_MOD     = uint8(26);
+        AVG_VELOCITY_ROT     = uint8(27);
+        AVG_ACCELERATION_MOD = uint8(28);
+        AVG_ACCELERATION_ROT = uint8(29);
+        AVG_TEMPERATURE      = uint8(30);
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Types of extreme particle results:</span>
+        MIN_VELOCITY_MOD     = uint8(31);
+        MAX_VELOCITY_MOD     = uint8(32);
+        MIN_VELOCITY_ROT     = uint8(33);
+        MAX_VELOCITY_ROT     = uint8(34);
+        MIN_ACCELERATION_MOD = uint8(35);
+        MAX_ACCELERATION_MOD = uint8(36);
+        MIN_ACCELERATION_ROT = uint8(37);
+        MAX_ACCELERATION_ROT = uint8(38);
+        MIN_TEMPERATURE      = uint8(39);
+        MAX_TEMPERATURE      = uint8(40);
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Types of total interaction results:</span>
+        TOT_HEAT_RATE_ALL       = uint8(41);
+        TOT_CONDUCTION_DIRECT   = uint8(42);
+        TOT_CONDUCTION_INDIRECT = uint8(43);
+    <span class="keyword">end</span>
+</pre><h2 id="3">Public properties: flags for required results</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Global parameters:</span>
+        has_time = logical(false);
+        has_step = logical(false);
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Individual particle results:</span>
+
+        <span class="comment">% Properties</span>
+        has_radius = logical(false);
+        has_mass   = logical(false);
+
+        <span class="comment">% Position</span>
+        has_coord_x     = logical(false);
+        has_coord_y     = logical(false);
+        has_orientation = logical(false);
+
+        <span class="comment">% Force</span>
+        has_force_x = logical(false);
+        has_force_y = logical(false);
+        has_torque  = logical(false);
+
+        <span class="comment">% Velocity</span>
+        has_velocity_x   = logical(false);
+        has_velocity_y   = logical(false);
+        has_velocity_rot = logical(false);
+
+        <span class="comment">% Acceleration</span>
+        has_acceleration_x   = logical(false);
+        has_acceleration_y   = logical(false);
+        has_acceleration_rot = logical(false);
+
+        <span class="comment">% Thermal</span>
+        has_heat_rate   = logical(false);
+        has_temperature = logical(false);
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Average particle results:</span>
+        has_avg_velocity_mod     = logical(false);
+        has_avg_velocity_rot     = logical(false);
+        has_avg_acceleration_mod = logical(false);
+        has_avg_acceleration_rot = logical(false);
+        has_avg_temperature      = logical(false);
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Extreme particle results:</span>
+        has_min_velocity_mod     = logical(false);
+        has_max_velocity_mod     = logical(false);
+        has_min_velocity_rot     = logical(false);
+        has_max_velocity_rot     = logical(false);
+        has_min_acceleration_mod = logical(false);
+        has_max_acceleration_mod = logical(false);
+        has_min_acceleration_rot = logical(false);
+        has_max_acceleration_rot = logical(false);
+        has_min_temperature      = logical(false);
+        has_max_temperature      = logical(false);
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Total interaction results:</span>
+        has_tot_heat_rate_all       = logical(false);
+        has_tot_conduction_direct   = logical(false);
+        has_tot_conduction_indirect = logical(false);
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Wall results:</span>
+        has_wall_position    = logical(false);
+        has_wall_temperature = logical(false);
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public properties: results storage</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Index for columns (current output step)</span>
+        idx <span class="string">uint32</span> <span class="string">=</span> <span class="string">uint32.empty</span>;
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Global parameters:</span>
+        times <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        steps <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Individual particle results:</span>
+
+        <span class="comment">% Properties</span>
+        radius <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        mass   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">% Position</span>
+        coord_x     <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        coord_y     <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        orientation <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">% Force</span>
+        force_x <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        force_y <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        torque  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">% Velocity</span>
+        velocity_x   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        velocity_y   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        velocity_rot <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">% Acceleration</span>
+        acceleration_x   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        acceleration_y   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        acceleration_rot <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">% Thermal</span>
+        heat_rate   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        temperature <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Average particle results:</span>
+        avg_velocity_mod     <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        avg_velocity_rot     <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        avg_acceleration_mod <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        avg_acceleration_rot <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        avg_temperature      <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Extreme particle results:</span>
+        min_velocity_mod     <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        max_velocity_mod     <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        min_velocity_rot     <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        max_velocity_rot     <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        min_acceleration_mod <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        max_acceleration_mod <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        min_acceleration_rot <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        max_acceleration_rot <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        min_temperature      <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        max_temperature      <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Total interactions results:</span>
+        tot_heat_rate_all       <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        tot_conduction_direct   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        tot_conduction_indirect <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+
+        <span class="comment">%--------------------------------------</span>
+        <span class="comment">% Wall results:</span>
+        wall_position    <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+        wall_temperature <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;
+    <span class="keyword">end</span>
+</pre><h2 id="5">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = Result()
+
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="6">Public methods</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> initialize(this,drv)
+            <span class="comment">% Index for columns</span>
+            this.idx = 1;
+
+            <span class="comment">% Number of columns for all results: number of output steps (+initial conditions)</span>
+            c = drv.nout+1;
+
+            <span class="comment">% Number of rows for individual particle results: total number of particles</span>
+            rp = drv.n_particles;
+
+            <span class="comment">% Number of rows for individual wall results: total number of walls</span>
+            rw = drv.n_walls;
+
+            <span class="comment">% Set results that always need to be stored to show model</span>
+            this.has_time          = true;
+            this.has_coord_x       = true;
+            this.has_coord_y       = true;
+            this.has_radius        = true;
+            this.has_wall_position = true;
+            <span class="keyword">if</span> (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
+                this.has_temperature      = true;
+                this.has_wall_temperature = true;
+            <span class="keyword">end</span>
+
+            <span class="comment">%--------------------------------------</span>
+            <span class="comment">% Global parameters:</span>
+            <span class="keyword">if</span> (this.has_time)
+                this.times = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_step)
+                this.steps = nan(1,c);
+            <span class="keyword">end</span>
+
+            <span class="comment">%--------------------------------------</span>
+            <span class="comment">% Individual particle results:</span>
+
+            <span class="comment">% Properties</span>
+            <span class="keyword">if</span> (this.has_radius)
+                this.radius = nan(rp,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_mass)
+                this.mass = nan(rp,c);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Force</span>
+            <span class="keyword">if</span> (this.has_force_x)
+                this.force_x = nan(rp,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_force_y)
+                this.force_y = nan(rp,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_torque)
+                this.torque = nan(rp,c);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Position</span>
+            <span class="keyword">if</span> (this.has_coord_x)
+                this.coord_x = nan(rp,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_coord_y)
+                this.coord_y = nan(rp,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_orientation)
+                this.orientation = nan(rp,c);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Velocity</span>
+            <span class="keyword">if</span> (this.has_velocity_x)
+                this.velocity_x = nan(rp,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_velocity_y)
+                this.velocity_y = nan(rp,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_velocity_rot)
+                this.velocity_rot = nan(rp,c);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Acceleration</span>
+            <span class="keyword">if</span> (this.has_acceleration_x)
+                this.acceleration_x = nan(rp,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_acceleration_y)
+                this.acceleration_y = nan(rp,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_acceleration_rot)
+                this.acceleration_rot = nan(rp,c);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Thermal</span>
+            <span class="keyword">if</span> (this.has_heat_rate)
+                this.heat_rate = nan(rp,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_temperature)
+                this.temperature = nan(rp,c);
+            <span class="keyword">end</span>
+
+            <span class="comment">%--------------------------------------</span>
+            <span class="comment">% Average particle results:</span>
+            <span class="keyword">if</span> (this.has_avg_velocity_mod)
+                this.avg_velocity_mod = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_avg_velocity_rot)
+                this.avg_velocity_rot = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_avg_acceleration_mod)
+                this.avg_acceleration_mod = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_avg_acceleration_rot)
+                this.avg_acceleration_rot = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_avg_temperature)
+                this.avg_temperature = nan(1,c);
+            <span class="keyword">end</span>
+
+            <span class="comment">%--------------------------------------</span>
+            <span class="comment">% Extreme particle results:</span>
+            <span class="keyword">if</span> (this.has_min_velocity_mod)
+                this.min_velocity_mod = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_max_velocity_mod)
+                this.max_velocity_mod = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_min_velocity_rot)
+                this.min_velocity_rot = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_max_velocity_rot)
+                this.max_velocity_rot = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_min_acceleration_mod)
+                this.min_acceleration_mod = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_max_acceleration_mod)
+                this.max_acceleration_mod = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_min_acceleration_rot)
+                this.min_acceleration_rot = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_max_acceleration_rot)
+                this.max_acceleration_rot = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_min_temperature)
+                this.min_temperature = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_max_temperature)
+                this.max_temperature = nan(1,c);
+            <span class="keyword">end</span>
+
+            <span class="comment">%--------------------------------------</span>
+            <span class="comment">% Total particle results:</span>
+            <span class="keyword">if</span> (this.has_tot_heat_rate_all)
+                this.tot_heat_rate_all = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_tot_conduction_direct)
+                this.tot_conduction_direct = nan(1,c);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_tot_conduction_indirect)
+                this.tot_conduction_indirect = nan(1,c);
+            <span class="keyword">end</span>
+
+            <span class="comment">%--------------------------------------</span>
+            <span class="comment">% Wall results:</span>
+
+            <span class="comment">% Position</span>
+            <span class="keyword">if</span> (this.has_wall_position)
+                <span class="comment">% 4 values for each wall in any column:</span>
+                <span class="comment">% * Line wall:   x1,y1,x2,y2</span>
+                <span class="comment">% * Circle wall: x,y,R,nan</span>
+                this.wall_position = nan(4*rw,c);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Thermal</span>
+            <span class="keyword">if</span> (this.has_wall_temperature)
+                this.wall_temperature = nan(rw,c);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> updateIndex(this)
+            <span class="comment">% Do not allow column index to be greater than the number of</span>
+            <span class="comment">% output steps to avoid erros accessing the results arrays</span>
+            <span class="comment">% (number of output steps = preallocated size of times vector)</span>
+            this.idx = min(this.idx+1,length(this.times));
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeTime(this,drv)
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_time)
+                this.times(c) = drv.time;
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_step)
+                this.steps(c) = drv.step;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="comment">% Fixed properties for all steps</span>
+        <span class="keyword">function</span> storeParticleProp(this,p)
+            <span class="keyword">if</span> (this.has_radius)
+                this.radius(p.id,:) = p.radius;
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_mass)
+                this.mass(p.id,:) = p.mass;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeParticlePosition(this,p)
+            r = p.id;
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_coord_x)
+                this.coord_x(r,c) = p.coord(1);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_coord_y)
+                this.coord_y(r,c) = p.coord(2);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_orientation)
+                this.orientation(r,c) = p.orient;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeParticlePositionAll(this,p)
+            r = p.id;
+            <span class="keyword">if</span> (this.has_coord_x)
+                this.coord_x(r,:) = p.coord(1);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_coord_y)
+                this.coord_y(r,:) = p.coord(2);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_orientation)
+                this.orientation(r,:) = p.orient;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeParticleForce(this,p)
+            r = p.id;
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_force_x)
+                this.force_x(r,c) = p.force(1);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_force_y)
+                this.force_y(r,c) = p.force(2);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_torque)
+                this.torque(r,c) = p.torque;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeParticleVelocity(this,p)
+            r = p.id;
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_velocity_x)
+                this.velocity_x(r,c) = p.veloc_trl(1);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_velocity_y)
+                this.velocity_y(r,c) = p.veloc_trl(2);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_velocity_rot)
+                this.velocity_rot(r,c) = p.veloc_rot;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeParticleAcceleration(this,p)
+            r = p.id;
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_acceleration_x)
+                this.acceleration_x(r,c) = p.accel_trl(1);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_acceleration_y)
+                this.acceleration_y(r,c) = p.accel_trl(2);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_acceleration_rot)
+                this.acceleration_rot(r,c) = p.accel_rot;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeParticleTemperature(this,p)
+            r = p.id;
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_temperature)
+                this.temperature(r,c) = p.temperature;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeParticleHeatRate(this,p)
+            r = p.id;
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_heat_rate)
+                this.heat_rate(r,c) = p.heat_rate;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeAvgVelocity(this,drv)
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_avg_velocity_mod)
+                this.avg_velocity_mod(c) = mean(vecnorm([drv.particles.veloc_trl]));
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_avg_velocity_rot)
+                this.avg_velocity_rot(c) = mean(abs([drv.particles.veloc_rot]));
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeAvgAcceleration(this,drv)
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_avg_acceleration_mod)
+                this.avg_acceleration_mod(c) = mean(vecnorm([drv.particles.accel_trl]));
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_avg_acceleration_rot)
+                this.avg_acceleration_rot(c) = mean(abs([drv.particles.accel_rot]));
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeAvgTemperature(this,drv)
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_avg_temperature)
+                this.avg_temperature(c) = mean([drv.particles.temperature]);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeExtVelocity(this,drv)
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_min_velocity_mod || this.has_max_velocity_mod)
+                vt = vecnorm([drv.particles.veloc_trl]);
+                <span class="keyword">if</span> (this.has_min_velocity_mod)
+                    this.min_velocity_mod(c) = min(vt);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (this.has_max_velocity_mod)
+                    this.max_velocity_mod(c) = max(vt);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_min_velocity_rot || this.has_max_velocity_rot)
+                vr = [drv.particles.veloc_rot];
+                <span class="keyword">if</span> (this.has_min_velocity_rot)
+                    this.min_velocity_rot(c) = min(vr);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (this.has_max_velocity_rot)
+                    this.max_velocity_rot(c) = max(vr);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeExtAcceleration(this,drv)
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_min_acceleration_mod || this.has_max_acceleration_mod)
+                at = vecnorm([drv.particles.accel_trl]);
+                <span class="keyword">if</span> (this.has_min_acceleration_mod)
+                    this.min_acceleration_mod(c) = min(at);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (this.has_max_acceleration_mod)
+                    this.max_acceleration_mod(c) = max(at);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_min_acceleration_rot || this.has_max_acceleration_rot)
+                ar = [drv.particles.accel_rot];
+                <span class="keyword">if</span> (this.has_min_acceleration_rot)
+                    this.min_acceleration_rot(c) = min(ar);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (this.has_max_acceleration_rot)
+                    this.max_acceleration_rot(c) = max(ar);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeExtTemperature(this,drv)
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_min_temperature)
+                this.min_temperature(c) = min([drv.particles.temperature]);
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (this.has_max_temperature)
+                this.max_temperature(c) = max([drv.particles.temperature]);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeTotalHeatRate(this,drv)
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_tot_heat_rate_all || this.has_tot_conduction_direct || this.has_tot_conduction_indirect)
+                cd = [drv.interacts.dconduc];
+                ci = [drv.interacts.iconduc];
+                <span class="keyword">if</span> (isempty(cd) &amp;&amp; isempty(ci))
+                    heat_cd = 0;
+                    heat_ci = 0;
+                <span class="keyword">else</span>
+                    <span class="keyword">if</span> (isempty(cd))
+                        heat_cd = zeros(size([ci.total_hrate]));
+                    <span class="keyword">else</span>
+                        heat_cd = [cd.total_hrate];
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> (isempty(ci))
+                        heat_ci = zeros(size([cd.total_hrate]));
+                    <span class="keyword">else</span>
+                        heat_ci = [ci.total_hrate];
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (this.has_tot_heat_rate_all)
+                    this.tot_heat_rate_all(c) = sum(abs(heat_cd+heat_ci));
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (this.has_tot_conduction_direct)
+                    this.tot_conduction_direct(c) = sum(abs(heat_cd));
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (this.has_tot_conduction_indirect)
+                    this.tot_conduction_indirect(c) = sum(abs(heat_ci));
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeWallPosition(this,w)
+            r = 4 * (w.id-1) + 1;
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_wall_position)
+                <span class="keyword">if</span> (w.type == w.LINE)
+                    this.wall_position(r+0,c) = w.coord_ini(1);
+                    this.wall_position(r+1,c) = w.coord_ini(2);
+                    this.wall_position(r+2,c) = w.coord_end(1);
+                    this.wall_position(r+3,c) = w.coord_end(2);
+                <span class="keyword">elseif</span> (w.type == w.CIRCLE)
+                    this.wall_position(r+0,c) = w.center(1);
+                    this.wall_position(r+1,c) = w.center(2);
+                    this.wall_position(r+2,c) = w.radius;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeWallPositionAll(this,w)
+            r = 4 * (w.id-1) + 1;
+            <span class="keyword">if</span> (this.has_wall_position)
+                <span class="keyword">if</span> (w.type == w.LINE)
+                    this.wall_position(r+0,:) = w.coord_ini(1);
+                    this.wall_position(r+1,:) = w.coord_ini(2);
+                    this.wall_position(r+2,:) = w.coord_end(1);
+                    this.wall_position(r+3,:) = w.coord_end(2);
+                <span class="keyword">elseif</span> (w.type == w.CIRCLE)
+                    this.wall_position(r+0,:) = w.center(1);
+                    this.wall_position(r+1,:) = w.center(2);
+                    this.wall_position(r+2,:) = w.radius;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> storeWallTemperature(this,w)
+            r = w.id;
+            c = this.idx;
+            <span class="keyword">if</span> (this.has_wall_temperature &amp;&amp; ~w.insulated)
+                this.wall_temperature(r,c) = w.temperature;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Result class
+%
+%% Description
+%
+% This is a handle class responsible for storing the required results.
+%
+% Each result type is stored in a separate array, which is initialized with
+% NaN's (Not a Number).
+%
+classdef Result < handle
+    %% Constant values
+    properties (Constant = true, Access = public)
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Types of global parameters:
+        TIME = uint8(1);
+        STEP = uint8(2);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Types of individual particle results:
+        
+        % Properties
+        RADIUS = uint8(3);
+        MASS   = uint8(4);
+        
+        % Position
+        MOTION       = uint8(5);
+        COORDINATE_X = uint8(6);
+        COORDINATE_Y = uint8(7);
+        ORIENTATION  = uint8(8);
+        
+        % Force
+        FORCE_VEC = uint8(9);
+        FORCE_MOD = uint8(10);
+        FORCE_X   = uint8(11);
+        FORCE_Y   = uint8(12);
+        TORQUE    = uint8(13);
+        
+        % Velocity
+        VELOCITY_VEC = uint8(14);
+        VELOCITY_MOD = uint8(15);
+        VELOCITY_X   = uint8(16);
+        VELOCITY_Y   = uint8(17);
+        VELOCITY_ROT = uint8(18);
+        
+        % Acceleration
+        ACCELERATION_VEC = uint8(19);
+        ACCELERATION_MOD = uint8(20);
+        ACCELERATION_X   = uint8(21);
+        ACCELERATION_Y   = uint8(22);
+        ACCELERATION_ROT = uint8(23);
+        
+        % Thermal
+        HEAT_RATE   = uint8(24);
+        TEMPERATURE = uint8(25);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Types of average particle results:
+        AVG_VELOCITY_MOD     = uint8(26);
+        AVG_VELOCITY_ROT     = uint8(27);
+        AVG_ACCELERATION_MOD = uint8(28);
+        AVG_ACCELERATION_ROT = uint8(29);
+        AVG_TEMPERATURE      = uint8(30);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Types of extreme particle results:
+        MIN_VELOCITY_MOD     = uint8(31);
+        MAX_VELOCITY_MOD     = uint8(32);
+        MIN_VELOCITY_ROT     = uint8(33);
+        MAX_VELOCITY_ROT     = uint8(34);
+        MIN_ACCELERATION_MOD = uint8(35);
+        MAX_ACCELERATION_MOD = uint8(36);
+        MIN_ACCELERATION_ROT = uint8(37);
+        MAX_ACCELERATION_ROT = uint8(38);
+        MIN_TEMPERATURE      = uint8(39);
+        MAX_TEMPERATURE      = uint8(40);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Types of total interaction results:
+        TOT_HEAT_RATE_ALL       = uint8(41);
+        TOT_CONDUCTION_DIRECT   = uint8(42);
+        TOT_CONDUCTION_INDIRECT = uint8(43);
+    end
+    
+    %% Public properties: flags for required results
+    properties (SetAccess = public, GetAccess = public)
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Global parameters:
+        has_time = logical(false);
+        has_step = logical(false);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Individual particle results:
+        
+        % Properties
+        has_radius = logical(false);
+        has_mass   = logical(false);
+        
+        % Position
+        has_coord_x     = logical(false);
+        has_coord_y     = logical(false);
+        has_orientation = logical(false);
+        
+        % Force
+        has_force_x = logical(false);
+        has_force_y = logical(false);
+        has_torque  = logical(false);
+        
+        % Velocity
+        has_velocity_x   = logical(false);
+        has_velocity_y   = logical(false);
+        has_velocity_rot = logical(false);
+        
+        % Acceleration
+        has_acceleration_x   = logical(false);
+        has_acceleration_y   = logical(false);
+        has_acceleration_rot = logical(false);
+        
+        % Thermal
+        has_heat_rate   = logical(false);
+        has_temperature = logical(false);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Average particle results:
+        has_avg_velocity_mod     = logical(false);
+        has_avg_velocity_rot     = logical(false);
+        has_avg_acceleration_mod = logical(false);
+        has_avg_acceleration_rot = logical(false);
+        has_avg_temperature      = logical(false);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Extreme particle results:
+        has_min_velocity_mod     = logical(false);
+        has_max_velocity_mod     = logical(false);
+        has_min_velocity_rot     = logical(false);
+        has_max_velocity_rot     = logical(false);
+        has_min_acceleration_mod = logical(false);
+        has_max_acceleration_mod = logical(false);
+        has_min_acceleration_rot = logical(false);
+        has_max_acceleration_rot = logical(false);
+        has_min_temperature      = logical(false);
+        has_max_temperature      = logical(false);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Total interaction results:
+        has_tot_heat_rate_all       = logical(false);
+        has_tot_conduction_direct   = logical(false);
+        has_tot_conduction_indirect = logical(false);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Wall results:
+        has_wall_position    = logical(false);
+        has_wall_temperature = logical(false);
+    end
+    
+    %% Public properties: results storage
+    properties (SetAccess = public, GetAccess = public)
+        % Index for columns (current output step)
+        idx uint32 = uint32.empty;
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Global parameters:
+        times double = double.empty;
+        steps double = double.empty;
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Individual particle results:
+        
+        % Properties
+        radius double = double.empty;
+        mass   double = double.empty;
+        
+        % Position
+        coord_x     double = double.empty;
+        coord_y     double = double.empty;
+        orientation double = double.empty;
+        
+        % Force
+        force_x double = double.empty;
+        force_y double = double.empty;
+        torque  double = double.empty;
+        
+        % Velocity
+        velocity_x   double = double.empty;
+        velocity_y   double = double.empty;
+        velocity_rot double = double.empty;
+        
+        % Acceleration
+        acceleration_x   double = double.empty;
+        acceleration_y   double = double.empty;
+        acceleration_rot double = double.empty;
+        
+        % Thermal
+        heat_rate   double = double.empty;
+        temperature double = double.empty;
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Average particle results:
+        avg_velocity_mod     double = double.empty;
+        avg_velocity_rot     double = double.empty;
+        avg_acceleration_mod double = double.empty;
+        avg_acceleration_rot double = double.empty;
+        avg_temperature      double = double.empty;
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Extreme particle results:
+        min_velocity_mod     double = double.empty;
+        max_velocity_mod     double = double.empty;
+        min_velocity_rot     double = double.empty;
+        max_velocity_rot     double = double.empty;
+        min_acceleration_mod double = double.empty;
+        max_acceleration_mod double = double.empty;
+        min_acceleration_rot double = double.empty;
+        max_acceleration_rot double = double.empty;
+        min_temperature      double = double.empty;
+        max_temperature      double = double.empty;
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Total interactions results:
+        tot_heat_rate_all       double = double.empty;
+        tot_conduction_direct   double = double.empty;
+        tot_conduction_indirect double = double.empty;
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Wall results:
+        wall_position    double = double.empty;
+        wall_temperature double = double.empty;
+    end
+    
+    %% Constructor method
+    methods
+        function this = Result()
+            
+        end
+    end
+    
+    %% Public methods
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function initialize(this,drv)
+            % Index for columns
+            this.idx = 1;
+            
+            % Number of columns for all results: number of output steps (+initial conditions)
+            c = drv.nout+1; 
+            
+            % Number of rows for individual particle results: total number of particles
+            rp = drv.n_particles;
+            
+            % Number of rows for individual wall results: total number of walls
+            rw = drv.n_walls;
+            
+            % Set results that always need to be stored to show model
+            this.has_time          = true;
+            this.has_coord_x       = true;
+            this.has_coord_y       = true;
+            this.has_radius        = true;
+            this.has_wall_position = true;
+            if (drv.type == drv.THERMAL || drv.type == drv.THERMO_MECHANICAL)
+                this.has_temperature      = true;
+                this.has_wall_temperature = true;
+            end
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+            % Global parameters:
+            if (this.has_time)
+                this.times = nan(1,c);
+            end
+            if (this.has_step)
+                this.steps = nan(1,c);
+            end
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+            % Individual particle results:
+            
+            % Properties
+            if (this.has_radius)
+                this.radius = nan(rp,c);
+            end
+            if (this.has_mass)
+                this.mass = nan(rp,c);
+            end
+            
+            % Force
+            if (this.has_force_x)
+                this.force_x = nan(rp,c);
+            end
+            if (this.has_force_y)
+                this.force_y = nan(rp,c);
+            end
+            if (this.has_torque)
+                this.torque = nan(rp,c);
+            end
+            
+            % Position
+            if (this.has_coord_x)
+                this.coord_x = nan(rp,c);
+            end
+            if (this.has_coord_y)
+                this.coord_y = nan(rp,c);
+            end
+            if (this.has_orientation)
+                this.orientation = nan(rp,c);
+            end
+            
+            % Velocity
+            if (this.has_velocity_x)
+                this.velocity_x = nan(rp,c);
+            end
+            if (this.has_velocity_y)
+                this.velocity_y = nan(rp,c);
+            end
+            if (this.has_velocity_rot)
+                this.velocity_rot = nan(rp,c);
+            end
+            
+            % Acceleration
+            if (this.has_acceleration_x)
+                this.acceleration_x = nan(rp,c);
+            end
+            if (this.has_acceleration_y)
+                this.acceleration_y = nan(rp,c);
+            end
+            if (this.has_acceleration_rot)
+                this.acceleration_rot = nan(rp,c);
+            end
+            
+            % Thermal
+            if (this.has_heat_rate)
+                this.heat_rate = nan(rp,c);
+            end
+            if (this.has_temperature)
+                this.temperature = nan(rp,c);
+            end
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+            % Average particle results:
+            if (this.has_avg_velocity_mod)
+                this.avg_velocity_mod = nan(1,c);
+            end
+            if (this.has_avg_velocity_rot)
+                this.avg_velocity_rot = nan(1,c);
+            end
+            if (this.has_avg_acceleration_mod)
+                this.avg_acceleration_mod = nan(1,c);
+            end
+            if (this.has_avg_acceleration_rot)
+                this.avg_acceleration_rot = nan(1,c);
+            end
+            if (this.has_avg_temperature)
+                this.avg_temperature = nan(1,c);
+            end
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+            % Extreme particle results:
+            if (this.has_min_velocity_mod)
+                this.min_velocity_mod = nan(1,c);
+            end
+            if (this.has_max_velocity_mod)
+                this.max_velocity_mod = nan(1,c);
+            end
+            if (this.has_min_velocity_rot)
+                this.min_velocity_rot = nan(1,c);
+            end
+            if (this.has_max_velocity_rot)
+                this.max_velocity_rot = nan(1,c);
+            end
+            if (this.has_min_acceleration_mod)
+                this.min_acceleration_mod = nan(1,c);
+            end
+            if (this.has_max_acceleration_mod)
+                this.max_acceleration_mod = nan(1,c);
+            end
+            if (this.has_min_acceleration_rot)
+                this.min_acceleration_rot = nan(1,c);
+            end
+            if (this.has_max_acceleration_rot)
+                this.max_acceleration_rot = nan(1,c);
+            end
+            if (this.has_min_temperature)
+                this.min_temperature = nan(1,c);
+            end
+            if (this.has_max_temperature)
+                this.max_temperature = nan(1,c);
+            end
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+            % Total particle results:
+            if (this.has_tot_heat_rate_all)
+                this.tot_heat_rate_all = nan(1,c);
+            end
+            if (this.has_tot_conduction_direct)
+                this.tot_conduction_direct = nan(1,c);
+            end
+            if (this.has_tot_conduction_indirect)
+                this.tot_conduction_indirect = nan(1,c);
+            end
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+            % Wall results:
+            
+            % Position
+            if (this.has_wall_position)
+                % 4 values for each wall in any column:
+                % * Line wall:   x1,y1,x2,y2
+                % * Circle wall: x,y,R,nan
+                this.wall_position = nan(4*rw,c);
+            end
+            
+            % Thermal
+            if (this.has_wall_temperature)
+                this.wall_temperature = nan(rw,c);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function updateIndex(this)
+            % Do not allow column index to be greater than the number of
+            % output steps to avoid erros accessing the results arrays
+            % (number of output steps = preallocated size of times vector)
+            this.idx = min(this.idx+1,length(this.times));
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeTime(this,drv)
+            c = this.idx;
+            if (this.has_time)
+                this.times(c) = drv.time;
+            end
+            if (this.has_step)
+                this.steps(c) = drv.step;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        % Fixed properties for all steps
+        function storeParticleProp(this,p)
+            if (this.has_radius)
+                this.radius(p.id,:) = p.radius;
+            end
+            if (this.has_mass)
+                this.mass(p.id,:) = p.mass;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeParticlePosition(this,p)
+            r = p.id;
+            c = this.idx;
+            if (this.has_coord_x)
+                this.coord_x(r,c) = p.coord(1);
+            end
+            if (this.has_coord_y)
+                this.coord_y(r,c) = p.coord(2);
+            end
+            if (this.has_orientation)
+                this.orientation(r,c) = p.orient;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeParticlePositionAll(this,p)
+            r = p.id;
+            if (this.has_coord_x)
+                this.coord_x(r,:) = p.coord(1);
+            end
+            if (this.has_coord_y)
+                this.coord_y(r,:) = p.coord(2);
+            end
+            if (this.has_orientation)
+                this.orientation(r,:) = p.orient;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeParticleForce(this,p)
+            r = p.id;
+            c = this.idx;
+            if (this.has_force_x)
+                this.force_x(r,c) = p.force(1);
+            end
+            if (this.has_force_y)
+                this.force_y(r,c) = p.force(2);
+            end
+            if (this.has_torque)
+                this.torque(r,c) = p.torque;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeParticleVelocity(this,p)
+            r = p.id;
+            c = this.idx;
+            if (this.has_velocity_x)
+                this.velocity_x(r,c) = p.veloc_trl(1);
+            end
+            if (this.has_velocity_y)
+                this.velocity_y(r,c) = p.veloc_trl(2);
+            end
+            if (this.has_velocity_rot)
+                this.velocity_rot(r,c) = p.veloc_rot;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeParticleAcceleration(this,p)
+            r = p.id;
+            c = this.idx;
+            if (this.has_acceleration_x)
+                this.acceleration_x(r,c) = p.accel_trl(1);
+            end
+            if (this.has_acceleration_y)
+                this.acceleration_y(r,c) = p.accel_trl(2);
+            end
+            if (this.has_acceleration_rot)
+                this.acceleration_rot(r,c) = p.accel_rot;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeParticleTemperature(this,p)
+            r = p.id;
+            c = this.idx;
+            if (this.has_temperature)
+                this.temperature(r,c) = p.temperature;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeParticleHeatRate(this,p)
+            r = p.id;
+            c = this.idx;
+            if (this.has_heat_rate)
+                this.heat_rate(r,c) = p.heat_rate;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeAvgVelocity(this,drv)
+            c = this.idx;
+            if (this.has_avg_velocity_mod)
+                this.avg_velocity_mod(c) = mean(vecnorm([drv.particles.veloc_trl]));
+            end
+            if (this.has_avg_velocity_rot)
+                this.avg_velocity_rot(c) = mean(abs([drv.particles.veloc_rot]));
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeAvgAcceleration(this,drv)
+            c = this.idx;
+            if (this.has_avg_acceleration_mod)
+                this.avg_acceleration_mod(c) = mean(vecnorm([drv.particles.accel_trl]));
+            end
+            if (this.has_avg_acceleration_rot)
+                this.avg_acceleration_rot(c) = mean(abs([drv.particles.accel_rot]));
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeAvgTemperature(this,drv)
+            c = this.idx;
+            if (this.has_avg_temperature)
+                this.avg_temperature(c) = mean([drv.particles.temperature]);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeExtVelocity(this,drv)
+            c = this.idx;
+            if (this.has_min_velocity_mod || this.has_max_velocity_mod)
+                vt = vecnorm([drv.particles.veloc_trl]);
+                if (this.has_min_velocity_mod)
+                    this.min_velocity_mod(c) = min(vt);
+                end
+                if (this.has_max_velocity_mod)
+                    this.max_velocity_mod(c) = max(vt);
+                end
+            end
+            if (this.has_min_velocity_rot || this.has_max_velocity_rot)
+                vr = [drv.particles.veloc_rot];
+                if (this.has_min_velocity_rot)
+                    this.min_velocity_rot(c) = min(vr);
+                end
+                if (this.has_max_velocity_rot)
+                    this.max_velocity_rot(c) = max(vr);
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeExtAcceleration(this,drv)
+            c = this.idx;
+            if (this.has_min_acceleration_mod || this.has_max_acceleration_mod)
+                at = vecnorm([drv.particles.accel_trl]);
+                if (this.has_min_acceleration_mod)
+                    this.min_acceleration_mod(c) = min(at);
+                end
+                if (this.has_max_acceleration_mod)
+                    this.max_acceleration_mod(c) = max(at);
+                end
+            end
+            if (this.has_min_acceleration_rot || this.has_max_acceleration_rot)
+                ar = [drv.particles.accel_rot];
+                if (this.has_min_acceleration_rot)
+                    this.min_acceleration_rot(c) = min(ar);
+                end
+                if (this.has_max_acceleration_rot)
+                    this.max_acceleration_rot(c) = max(ar);
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeExtTemperature(this,drv)
+            c = this.idx;
+            if (this.has_min_temperature)
+                this.min_temperature(c) = min([drv.particles.temperature]);
+            end
+            if (this.has_max_temperature)
+                this.max_temperature(c) = max([drv.particles.temperature]);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeTotalHeatRate(this,drv)
+            c = this.idx;
+            if (this.has_tot_heat_rate_all || this.has_tot_conduction_direct || this.has_tot_conduction_indirect)
+                cd = [drv.interacts.dconduc];
+                ci = [drv.interacts.iconduc];
+                if (isempty(cd) && isempty(ci))
+                    heat_cd = 0;
+                    heat_ci = 0;
+                else
+                    if (isempty(cd))
+                        heat_cd = zeros(size([ci.total_hrate]));
+                    else
+                        heat_cd = [cd.total_hrate];
+                    end
+                    if (isempty(ci))
+                        heat_ci = zeros(size([cd.total_hrate]));
+                    else
+                        heat_ci = [ci.total_hrate];
+                    end
+                end
+                if (this.has_tot_heat_rate_all)
+                    this.tot_heat_rate_all(c) = sum(abs(heat_cd+heat_ci));
+                end
+                if (this.has_tot_conduction_direct)
+                    this.tot_conduction_direct(c) = sum(abs(heat_cd));
+                end
+                if (this.has_tot_conduction_indirect)
+                    this.tot_conduction_indirect(c) = sum(abs(heat_ci));
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeWallPosition(this,w)
+            r = 4 * (w.id-1) + 1;
+            c = this.idx;
+            if (this.has_wall_position)
+                if (w.type == w.LINE)
+                    this.wall_position(r+0,c) = w.coord_ini(1);
+                    this.wall_position(r+1,c) = w.coord_ini(2);
+                    this.wall_position(r+2,c) = w.coord_end(1);
+                    this.wall_position(r+3,c) = w.coord_end(2);
+                elseif (w.type == w.CIRCLE)
+                    this.wall_position(r+0,c) = w.center(1);
+                    this.wall_position(r+1,c) = w.center(2);
+                    this.wall_position(r+2,c) = w.radius;
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeWallPositionAll(this,w)
+            r = 4 * (w.id-1) + 1;
+            if (this.has_wall_position)
+                if (w.type == w.LINE)
+                    this.wall_position(r+0,:) = w.coord_ini(1);
+                    this.wall_position(r+1,:) = w.coord_ini(2);
+                    this.wall_position(r+2,:) = w.coord_end(1);
+                    this.wall_position(r+3,:) = w.coord_end(2);
+                elseif (w.type == w.CIRCLE)
+                    this.wall_position(r+0,:) = w.center(1);
+                    this.wall_position(r+1,:) = w.center(2);
+                    this.wall_position(r+2,:) = w.radius;
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function storeWallTemperature(this,w)
+            r = w.id;
+            c = this.idx;
+            if (this.has_wall_temperature && ~w.insulated)
+                this.wall_temperature(r,c) = w.temperature;
+            end
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>
