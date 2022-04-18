@@ -1,0 +1,411 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ConductionIndirect_SurrLayer class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="ConductionIndirect_SurrLayer.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>ConductionIndirect_SurrLayer class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li><li><a href="#5">Public methods: sub-class specifics</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="conductionindirect.html">ConductionIndirect</a> class for the implementation of the <b>Surrounding Layer</b> indirect heat conduction model.</p><p>This model assumes that each particle is surrounded by a fluid layer, of a given thickness, through which heat is transferred  when it intersects the surface of another particle. In this case, heat flow paths are parallel to the to the normal direction between particles.</p><p>For <b>multi-size particles</b>, the rate of heat transfer is given by:</p><p><img src="ConductionIndirect_SurrLayer_eq13044354199139704067.png" alt="$$Q = \Delta T.k_{f} \int_{R_{c}}^{r_{sf}}\frac{2\pi.r.dr}{max\left(S,d-\sqrt{R_{i}^{2}-r^{2}}-\sqrt{R_{j}^{2}-r^{2}}\right)}$$" style="width:340px;height:46px;"></p><p>Where:</p><p><img src="ConductionIndirect_SurrLayer_eq17905594242409244557.png" alt="$$R_{k} = max(R_{i},R_{j})$$" style="width:114px;height:16px;"></p><p><img src="ConductionIndirect_SurrLayer_eq05590250753783275201.png" alt="$$R_{l} = min(R_{i},R_{j})$$" style="width:110px;height:16px;"></p><p><img src="ConductionIndirect_SurrLayer_eq14801838664985260047.png" alt="$$d_{cr} =\sqrt{\left(R_{k}+\delta_{f,k}\right)^{2} - R_{l}^{2}}$$" style="width:161px;height:27px;"></p><p>If <img src="ConductionIndirect_SurrLayer_eq14387645245516002537.png" alt="$d &gt; d_{cr}$" style="width:44px;height:13px;">:</p><p><img src="ConductionIndirect_SurrLayer_eq09776807888979599472.png" alt="$$r_{sf} = \sqrt{\left(R_{k}+\delta_{f,k}\right)^{2} - \left(\frac{\left(R_{k}+\delta_{f,k}\right)^{2}-R_{l}^{2}+d^{2}}{2d}\right)^{2}}$$" style="width:318px;height:54px;"></p><p>If <img src="ConductionIndirect_SurrLayer_eq12963239960824402831.png" alt="$d \leq d_{cr}$" style="width:44px;height:13px;">:</p><p><img src="ConductionIndirect_SurrLayer_eq09463917159591535978.png" alt="$$r_{sf} = R_{l}$$" style="width:51px;height:15px;"></p><p>For <b>mono-size particles</b>, the analytical solution for the integral is:</p><p><img src="ConductionIndirect_SurrLayer_eq13262140136131662502.png" alt="$$Q = \Delta T 2\pi k_{eff}R_{p}\left((a+1)ln\left(\frac{\left|b-a-1\right|}{\left|a-c+1\right|}\right)+b-c\right)$$" style="width:333px;height:36px;"></p><p>Where:</p><p><img src="ConductionIndirect_SurrLayer_eq16550827215801864174.png" alt="$$a = \frac{d-2R_{p}}{R_{p}}$$" style="width:79px;height:34px;"></p><p><img src="ConductionIndirect_SurrLayer_eq12672705326647561809.png" alt="$$b = \sqrt{1-r_{out}^{2}}$$" style="width:88px;height:27px;"></p><p><img src="ConductionIndirect_SurrLayer_eq02029658308462107704.png" alt="$$c = \sqrt{1-r_{in}^{2}}$$" style="width:83px;height:27px;"></p><p><img src="ConductionIndirect_SurrLayer_eq12264806238915185187.png" alt="$$\omega = \left(\frac{R_{p}+\delta_{f}}{R_{p}}\right)^{2}$$" style="width:108px;height:39px;"></p><p>If <img src="ConductionIndirect_SurrLayer_eq04609333027810315951.png" alt="$d &gt; 2R_{p}+S$" style="width:79px;height:15px;">:</p><p><img src="ConductionIndirect_SurrLayer_eq11971865294006160487.png" alt="$$r_{in} = 0$$" style="width:43px;height:13px;"></p><p>If <img src="ConductionIndirect_SurrLayer_eq09703642348698664061.png" alt="$d \leq 2R_{p}+S$" style="width:79px;height:15px;">:</p><p><img src="ConductionIndirect_SurrLayer_eq08736502450781776049.png" alt="$$r_{in} = \sqrt{1-(S/R_{p}-a-1)^{2}}$$" style="width:178px;height:27px;"></p><p>If <img src="ConductionIndirect_SurrLayer_eq06551604652763966266.png" alt="$a &gt; \sqrt{\omega-1}-1$" style="width:98px;height:15px;">:</p><p><img src="ConductionIndirect_SurrLayer_eq05466317072906452735.png" alt="$$r_{out} = \sqrt{\omega-(a+1)^{2}}$$" style="width:134px;height:18px;"></p><p>If <img src="ConductionIndirect_SurrLayer_eq11813377206157907501.png" alt="$a \leq \sqrt{\omega-1}-1$" style="width:98px;height:15px;">:</p><p><img src="ConductionIndirect_SurrLayer_eq03202780924443375433.png" alt="$$r_{out} = 1$$" style="width:48px;height:13px;"></p><p><b>Notation</b>:</p><p><img src="ConductionIndirect_SurrLayer_eq16216824832666807919.png" alt="$\Delta T = T_{j}-T_{i}$" style="width:86px;height:15px;">: Temperature difference between elements <i>i</i> and <i>j</i></p><p><img src="ConductionIndirect_SurrLayer_eq03442895190380135198.png" alt="$R$" style="width:11px;height:11px;">: Radius of particles <i>i</i> and <i>j</i> (or <i>p</i> when mono-size)</p><p><img src="ConductionIndirect_SurrLayer_eq01180102592121431884.png" alt="$R_{c}$" style="width:15px;height:13px;">: Contact radius</p><p><img src="ConductionIndirect_SurrLayer_eq17615571056258974497.png" alt="$d$" style="width:8px;height:11px;">: Distance between the center of the particles</p><p><img src="ConductionIndirect_SurrLayer_eq15636846968047188835.png" alt="$k$" style="width:7px;height:11px;">: Thermal conductivity of particles <i>i</i> and <i>j</i>, and interstitial fluid <i>f</i></p><p><img src="ConductionIndirect_SurrLayer_eq05172239329980124378.png" alt="$k_{eff}$" style="width:24px;height:15px;">: Effective contact conductivity</p><p><img src="ConductionIndirect_SurrLayer_eq14663648698641962978.png" alt="$S$" style="width:9px;height:11px;">: Minimum separation distance of surfaces (input)</p><p><img src="ConductionIndirect_SurrLayer_eq03268306732824729178.png" alt="$\delta_{f}$" style="width:13px;height:15px;">: Thickness of a partilce's surrounding layer (input)</p><p><b>References</b>:</p><div><ul><li><a href="https://www.semanticscholar.org/paper/DEM-SIMULATION-OF-CHAR-COMBUSTION-IN-A-FLUIDIZED-Rong-Horio/10229a5de283b99cc95948faecc7af95a699261b">D. Rong and M. Horio. DEM simulation of char combustion in a fluidized bed, <i>2nd Intl. Conference on CFD in the Minerials and Process Industries</i>, 1999</a> (proposal)</li></ul></div><div><ul><li><a href="https://doi.org/10.33915/etd.4760">J.M.H. Musser. Modeling of heat transfer and reactive chemistry for particles in gas-solid flow utilizing continuum-discrete methodology (CDM), PhD Thesis, 2011</a> (extension to multi-sized particles)</li></ul></div><div><ul><li><a href="https://doi.org/10.1016/j.ijheatmasstransfer.2015.06.004">A.B. Morris, S. Pannala, Z. Ma and C.M. Hrenya. A conductive heat transfer model for particle flows over immersed surfaces, <i>Int. J. Heat Mass Transf.</i>, 89:1277-1289, 2015</a> (analytical solution for mono-sized particles)</li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ConductionIndirect_SurrLayer &lt; ConductionIndirect
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        coeff    <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% heat transfer coefficient</span>
+        layer    <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% surrounding fluid layer thickness (ratio of particle radius)</span>
+        dist_min <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% minimum separation distance of surfaces</span>
+        tol_abs  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% absolute tolerance for numerical integration</span>
+        tol_rel  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% relative tolerance for numerical integration</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = ConductionIndirect_SurrLayer()
+            this = this@ConductionIndirect(ConductionIndirect.SURROUNDING_LAYER);
+            this = this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setDefaultProps(this)
+            this.layer    = 0.4;
+            this.dist_min = 2.75*1e-8;
+            this.tol_abs  = 1e-10;
+            this.tol_rel  = 1e-6;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setFixParams(this,int,drv)
+            this.coeff = this.heatTransCoeff(int,drv);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setCteParams(this,~,~)
+
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = evalHeatRate(this,int,drv)
+            <span class="keyword">if</span> (isempty(this.coeff))
+                h = this.heatTransCoeff(int,drv);
+            <span class="keyword">else</span>
+                h = this.coeff;
+            <span class="keyword">end</span>
+            this.total_hrate = h * (int.elem2.temperature-int.elem1.temperature);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="5">Public methods: sub-class specifics</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> h = heatTransCoeff(this,int,drv)
+            <span class="keyword">if</span> (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                h = this.evalIntegralParticleParticle(int,drv);
+            <span class="keyword">else</span>
+                <span class="comment">% Assumption: walls are always considered as lines</span>
+                h = this.analyticSolutionParticleWall(int,drv);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> h = evalIntegralParticleParticle(this,int,drv)
+            <span class="comment">% Needed properties</span>
+            Rc = int.kinemat.contact_radius;
+            R1 = int.elem1.radius;
+            R2 = int.elem2.radius;
+            Ri = min(R1,R2);
+            Rj = max(R1,R2);
+            Lj = this.layer*Rj;
+            kf = drv.fluid.conduct;
+            d  = int.kinemat.distc;
+            S  = this.dist_min;
+
+            <span class="comment">% Parameters</span>
+            RjLj2 = (Rj+Lj)^2;
+            <span class="keyword">if</span> (d &lt;= sqrt(RjLj2-Ri^2))
+                rsf = Ri;
+            <span class="keyword">else</span>
+                rsf = sqrt(RjLj2-((RjLj2-Ri^2+d^2)/(2*d))^2);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Evaluate integral numerically</span>
+            fun = @(r) 2*pi*r/max(S,d-sqrt(R1^2-r^2)-sqrt(R2^2-r^2));
+            <span class="keyword">try</span>
+                h = kf * integral(fun,Rc,rsf,<span class="string">'ArrayValued'</span>,true,<span class="string">'AbsTol'</span>,this.tol_abs,<span class="string">'RelTol'</span>,this.tol_rel);
+            <span class="keyword">catch</span>
+                h = 0;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> h = analyticSolutionParticleWall(this,int,drv)
+            <span class="comment">% Needed properties</span>
+            Rp = int.elem1.radius;
+            L  = this.layer*Rp;
+            kf = drv.fluid.conduct;
+            d  = int.kinemat.dist;
+            dc = int.kinemat.distc;
+            S  = this.dist_min;
+
+            <span class="comment">% Parameters</span>
+            a = (dc-Rp)/Rp;
+
+            <span class="keyword">if</span> (d &gt; Rp+S)
+                rin = 0;
+            <span class="keyword">else</span>
+                rin = sqrt(1-(S/Rp-a-1)^2);
+            <span class="keyword">end</span>
+
+            <span class="keyword">if</span> (a &gt; sqrt(((Rp+L)/Rp)^2-1)-1)
+                rout = sqrt(((Rp+L)/Rp)^2-(a+1)^2);
+            <span class="keyword">else</span>
+                rout = 1;
+            <span class="keyword">end</span>
+
+            b = sqrt(1-rout^2);
+            c = sqrt(1-rin^2);
+
+            <span class="comment">% Analytic solution of integral</span>
+            h = 2*pi*kf*Rp*((a+1)*log(abs(b-a-1)/abs(a-c+1))+b-c);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% ConductionIndirect_SurrLayer class
+%
+%% Description
+%
+% This is a sub-class of the <conductionindirect.html ConductionIndirect>
+% class for the implementation of the *Surrounding Layer* indirect heat
+% conduction model.
+%
+% This model assumes that each particle is surrounded by a fluid layer, of
+% a given thickness, through which heat is transferred  when it intersects
+% the surface of another particle. In this case, heat flow paths are
+% parallel to the to the normal direction between particles.
+%
+% For *multi-size particles*, the rate of heat transfer is given by:
+%
+% $$Q = \Delta T.k_{f} \int_{R_{c}}^{r_{sf}}\frac{2\pi.r.dr}{max\left(S,d-\sqrt{R_{i}^{2}-r^{2}}-\sqrt{R_{j}^{2}-r^{2}}\right)}$$
+%
+% Where:
+%
+% $$R_{k} = max(R_{i},R_{j})$$
+%
+% $$R_{l} = min(R_{i},R_{j})$$
+%
+% $$d_{cr} =\sqrt{\left(R_{k}+\delta_{f,k}\right)^{2} - R_{l}^{2}}$$
+%
+% If $d > d_{cr}$:
+%
+% $$r_{sf} = \sqrt{\left(R_{k}+\delta_{f,k}\right)^{2} - \left(\frac{\left(R_{k}+\delta_{f,k}\right)^{2}-R_{l}^{2}+d^{2}}{2d}\right)^{2}}$$
+%
+% If $d \leq d_{cr}$:
+%
+% $$r_{sf} = R_{l}$$
+%
+% For *mono-size particles*, the analytical solution for the integral is:
+%
+% $$Q = \Delta T 2\pi k_{eff}R_{p}\left((a+1)ln\left(\frac{\left|b-a-1\right|}{\left|a-c+1\right|}\right)+b-c\right)$$
+%
+% Where:
+%
+% $$a = \frac{d-2R_{p}}{R_{p}}$$
+%
+% $$b = \sqrt{1-r_{out}^{2}}$$
+%
+% $$c = \sqrt{1-r_{in}^{2}}$$
+%
+% $$\omega = \left(\frac{R_{p}+\delta_{f}}{R_{p}}\right)^{2}$$
+%
+% If $d > 2R_{p}+S$:
+%
+% $$r_{in} = 0$$
+%
+% If $d \leq 2R_{p}+S$:
+%
+% $$r_{in} = \sqrt{1-(S/R_{p}-a-1)^{2}}$$
+%
+% If $a > \sqrt{\omega-1}-1$:
+%
+% $$r_{out} = \sqrt{\omega-(a+1)^{2}}$$
+%
+% If $a \leq \sqrt{\omega-1}-1$:
+%
+% $$r_{out} = 1$$
+%
+% *Notation*:
+%
+% $\Delta T = T_{j}-T_{i}$: Temperature difference between elements _i_ and _j_
+%
+% $R$: Radius of particles _i_ and _j_ (or _p_ when mono-size)
+%
+% $R_{c}$: Contact radius
+%
+% $d$: Distance between the center of the particles
+%
+% $k$: Thermal conductivity of particles _i_ and _j_, and interstitial fluid _f_
+%
+% $k_{eff}$: Effective contact conductivity
+%
+% $S$: Minimum separation distance of surfaces (input)
+%
+% $\delta_{f}$: Thickness of a partilce's surrounding layer (input)
+%
+% *References*:
+%
+% * <https://www.semanticscholar.org/paper/DEM-SIMULATION-OF-CHAR-COMBUSTION-IN-A-FLUIDIZED-Rong-Horio/10229a5de283b99cc95948faecc7af95a699261b
+% D. Rong and M. Horio.
+% DEM simulation of char combustion in a fluidized bed, _2nd Intl. Conference on CFD in the Minerials and Process Industries_, 1999>
+% (proposal)
+%
+% * <https://doi.org/10.33915/etd.4760
+% J.M.H. Musser.
+% Modeling of heat transfer and reactive chemistry for particles in gas-solid flow utilizing continuum-discrete methodology (CDM), PhD Thesis, 2011>
+% (extension to multi-sized particles)
+%
+% * <https://doi.org/10.1016/j.ijheatmasstransfer.2015.06.004
+% A.B. Morris, S. Pannala, Z. Ma and C.M. Hrenya.
+% A conductive heat transfer model for particle flows over immersed surfaces, _Int. J. Heat Mass Transf._, 89:1277-1289, 2015>
+% (analytical solution for mono-sized particles)
+%
+classdef ConductionIndirect_SurrLayer < ConductionIndirect
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        coeff    double = double.empty;   % heat transfer coefficient
+        layer    double = double.empty;   % surrounding fluid layer thickness (ratio of particle radius)
+        dist_min double = double.empty;   % minimum separation distance of surfaces
+        tol_abs  double = double.empty;   % absolute tolerance for numerical integration
+        tol_rel  double = double.empty;   % relative tolerance for numerical integration
+    end
+    
+    %% Constructor method
+    methods
+        function this = ConductionIndirect_SurrLayer()
+            this = this@ConductionIndirect(ConductionIndirect.SURROUNDING_LAYER);
+            this = this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setDefaultProps(this)
+            this.layer    = 0.4;
+            this.dist_min = 2.75*1e-8;
+            this.tol_abs  = 1e-10;
+            this.tol_rel  = 1e-6;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setFixParams(this,int,drv)
+            this.coeff = this.heatTransCoeff(int,drv);
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setCteParams(this,~,~)
+            
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = evalHeatRate(this,int,drv)
+            if (isempty(this.coeff))
+                h = this.heatTransCoeff(int,drv);
+            else
+                h = this.coeff;
+            end
+            this.total_hrate = h * (int.elem2.temperature-int.elem1.temperature);
+        end
+    end
+    
+    %% Public methods: sub-class specifics
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function h = heatTransCoeff(this,int,drv)
+            if (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                h = this.evalIntegralParticleParticle(int,drv);
+            else
+                % Assumption: walls are always considered as lines
+                h = this.analyticSolutionParticleWall(int,drv);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function h = evalIntegralParticleParticle(this,int,drv)
+            % Needed properties
+            Rc = int.kinemat.contact_radius;
+            R1 = int.elem1.radius;
+            R2 = int.elem2.radius;
+            Ri = min(R1,R2);
+            Rj = max(R1,R2);
+            Lj = this.layer*Rj;
+            kf = drv.fluid.conduct;
+            d  = int.kinemat.distc;
+            S  = this.dist_min;
+            
+            % Parameters
+            RjLj2 = (Rj+Lj)^2;
+            if (d <= sqrt(RjLj2-Ri^2))
+                rsf = Ri;
+            else
+                rsf = sqrt(RjLj2-((RjLj2-Ri^2+d^2)/(2*d))^2);
+            end
+            
+            % Evaluate integral numerically
+            fun = @(r) 2*pi*r/max(S,d-sqrt(R1^2-r^2)-sqrt(R2^2-r^2));
+            try
+                h = kf * integral(fun,Rc,rsf,'ArrayValued',true,'AbsTol',this.tol_abs,'RelTol',this.tol_rel);
+            catch
+                h = 0;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function h = analyticSolutionParticleWall(this,int,drv)
+            % Needed properties
+            Rp = int.elem1.radius;
+            L  = this.layer*Rp;
+            kf = drv.fluid.conduct;
+            d  = int.kinemat.dist;
+            dc = int.kinemat.distc;
+            S  = this.dist_min;
+            
+            % Parameters
+            a = (dc-Rp)/Rp;
+            
+            if (d > Rp+S)
+                rin = 0;
+            else
+                rin = sqrt(1-(S/Rp-a-1)^2);
+            end
+            
+            if (a > sqrt(((Rp+L)/Rp)^2-1)-1)
+                rout = sqrt(((Rp+L)/Rp)^2-(a+1)^2);
+            else
+                rout = 1;
+            end
+            
+            b = sqrt(1-rout^2);
+            c = sqrt(1-rin^2);
+            
+            % Analytic solution of integral
+            h = 2*pi*kf*Rp*((a+1)*log(abs(b-a-1)/abs(a-c+1))+b-c);
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

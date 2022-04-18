@@ -1,0 +1,581 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ConductionIndirect_VoronoiB class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="ConductionIndirect_VoronoiB.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>ConductionIndirect_VoronoiB class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li><li><a href="#5">Public methods: sub-class specifics</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="conductionindirect.html">ConductionIndirect</a> class for the implementation of the <b>Voronoi Polyhedra B</b> indirect heat conduction model.</p><p>This model assumes that the indirect heat conduction between two neighboring elements is restricted to the region delineated by the double pyramid whose apexes are the particles' centers and base is the Voronoi boundary plane shared by the particles' cells. For simplicity, the double pyramid is treated as a double tapered cone with the same base area <i>A</i>. In 2D, the Voronoi edge shared by the cells of both particles represents the diameter of the cone base.</p><p><img vspace="5" hspace="5" src="../images/tutorials/voronoi.png" alt=""> </p><p>In model B, the following assumptions are made:</p><div><ul><li>Conduction in the outer region of the cone (region B) is included.</li><li>Particles have an isothermal core of radius <i>rc</i> with their representative temperature (input parameter).</li><li>Heat flow paths radiate from the cores' surfaces.</li></ul></div><p>For <b>mono-size particles</b>, the rate of heat transfer is given by:</p><p><img src="ConductionIndirect_VoronoiB_eq15377430659822670951.png" alt="$$Q = \Delta T \frac{\pi}{b}ln\left(\frac{a-b.c_{0}}{a-b.c_{1}}\right)$$" style="width:153px;height:36px;"></p><p>Where:</p><p><img src="ConductionIndirect_VoronoiB_eq00769878898457446937.png" alt="$$a = \frac{1}{2k_{eff}}\left(\frac{1}{r_{c}}-\frac{1}{R_{p}}\right)+\frac{1}{k_{f}R_{p}}$$" style="width:193px;height:36px;"></p><p><img src="ConductionIndirect_VoronoiB_eq11825253119707719281.png" alt="$$b = \frac{2}{k_{f}d}$$" style="width:50px;height:34px;"></p><p><img src="ConductionIndirect_VoronoiB_eq09673943577636595645.png" alt="$$c_{0} = \frac{d}{2\sqrt{r_{ij}^{2}+d^{2}/4}}$$" style="width:118px;height:46px;"></p><p><img src="ConductionIndirect_VoronoiB_eq08010336434264064530.png" alt="$$c_{1} = \frac{d}{2\sqrt{R_{c}^{2}+d^{2}/4}}$$" style="width:119px;height:37px;"></p><p>For <b>multi-size particles</b>, the rate of heat transfer is given by:</p><p>For <img src="ConductionIndirect_VoronoiB_eq15118591133454244373.png" alt="$\Lambda &gt; 0$" style="width:36px;height:12px;">:</p><p><img src="ConductionIndirect_VoronoiB_eq14809254705907664225.png" alt="$Q = \Delta T \pi k_{f}d\left(1-\Delta\gamma^{2}\right)\left(2\sqrt{\left|\Lambda\right|}\right)^{-1}ln\left|(1-Y_{1})/(1+Y_{1})\right|$" style="width:361px;height:30px;"></p><p>For <img src="ConductionIndirect_VoronoiB_eq15518404765335238249.png" alt="$\Lambda < 0$" style="width:36px;height:12px;">:</p><p><img src="ConductionIndirect_VoronoiB_eq09454709930136903123.png" alt="$Q = \Delta T \pi k_{f}d\left(1-\Delta\gamma^{2}\right)\left(2\sqrt{\left|\Lambda\right|}\right)^{-1}tg^{-1}(Y_{2})$" style="width:280px;height:30px;"></p><p>For <img src="ConductionIndirect_VoronoiB_eq01059039996110911170.png" alt="$\Lambda = 0$" style="width:36px;height:11px;">:</p><p><img src="ConductionIndirect_VoronoiB_eq04214189402684141093.png" alt="$Q = \Delta T \pi k_{f}d\left(1-\Delta\gamma^{2}\right)\left(A+B\right)^{-1}\left(1/\delta_{min}-1/\delta_{max}\right)$" style="width:334px;height:20px;"></p><p>Where:</p><p><img src="ConductionIndirect_VoronoiB_eq00850178701220070975.png" alt="$$\Lambda = \left(1+\Delta\gamma A\right)\left(1-\Delta\gamma B\right)$$" style="width:168px;height:15px;"></p><p><img src="ConductionIndirect_VoronoiB_eq03155989377484647078.png" alt="$$\Delta\gamma = \gamma_{j}-\gamma_{i}$$" style="width:82px;height:15px;"></p><p><img src="ConductionIndirect_VoronoiB_eq10747823800283294015.png" alt="$$\gamma_{i} = R_{i}/d$$" style="width:62px;height:15px;"></p><p><img src="ConductionIndirect_VoronoiB_eq17294721855534354579.png" alt="$$\gamma_{j} = R_{j}/d$$" style="width:65px;height:16px;"></p><p><img src="ConductionIndirect_VoronoiB_eq10568057381080303269.png" alt="$$Y_{1} =\frac{X_{max}-X_{min}}{1-X_{max}X_{min}}$$" style="width:126px;height:33px;"></p><p><img src="ConductionIndirect_VoronoiB_eq17904652270794146672.png" alt="$$Y_{2} =\frac{X_{max}-X_{min}}{1+X_{max}X_{min}}$$" style="width:126px;height:33px;"></p><p><img src="ConductionIndirect_VoronoiB_eq06809663190882813480.png" alt="$$X_{max} =\frac{(A+B)\delta_{max}+\Delta\gamma B-1}{\sqrt{\left|\Lambda\right|}}$$" style="width:210px;height:38px;"></p><p><img src="ConductionIndirect_VoronoiB_eq02759577195981013237.png" alt="$$X_{min} =\frac{(A+B)\delta_{min}+\Delta\gamma B-1}{\sqrt{\left|\Lambda\right|}}$$" style="width:207px;height:38px;"></p><p><img src="ConductionIndirect_VoronoiB_eq04801243849714992182.png" alt="$$A = \frac{k_{i}+k_{f}\left(R_{i}/r_{c,i}-1\right)}{k_{i}\gamma_{i}}$$" style="width:157px;height:34px;"></p><p><img src="ConductionIndirect_VoronoiB_eq08006640813013737461.png" alt="$$B = \frac{k_{j}+k_{f}\left(R_{j}/r_{c,j}-1\right)}{k_{j}\gamma_{j}}$$" style="width:162px;height:35px;"></p><p><img src="ConductionIndirect_VoronoiB_eq16026238301578823991.png" alt="$$\delta_{max} = 0.5\left(\sqrt{1+\frac{4A}{\pi d^{2}\left(1-\Delta\gamma^{2}\right)}}-\Delta\gamma\right)$$" style="width:258px;height:46px;"></p><p><img src="ConductionIndirect_VoronoiB_eq12945567474040631095.png" alt="$$\delta_{min} = 0.5\left(\sqrt{1+\frac{4R_{c}^{2}}{d^{2}\left(1-\Delta\gamma^{2}\right)}}-\Delta\gamma\right)$$" style="width:248px;height:46px;"></p><p>In both cases, the heat transfer radius <img src="ConductionIndirect_VoronoiB_eq01011383662710808722.png" alt="$r_{ij}$" style="width:14px;height:11px;"> depends on the shape and size of the Voronoi cells. There are 3 methods to obtain its value:</p><div><ul><li><b>1. Voronoi Diagram</b>:</li></ul></div><p>The Voronoi diagram is built in a given frequency, and the heat transfer radius is related to the volume <i>V</i> and diameter <i>Le</i> of the double tapered cone as:</p><p><img src="ConductionIndirect_VoronoiB_eq07505095204654269937.png" alt="$$r_{ij} = \sqrt{\frac{3V}{\pi d}} = \frac{L_{e}}{2}$$" style="width:110px;height:36px;"></p><div><ul><li><b>2. Local Porosity</b>:</li></ul></div><p>It has been shown that the average size of the Voronoi cells is related to the porosity of the medium <i>e</i>, in such a way that the heat transfer radius can be computed as:</p><p><img src="ConductionIndirect_VoronoiB_eq10106115795051874246.png" alt="$$r_{ij} = 0.56R_{p}\left(1-e\right)^{-1/3}$$" style="width:147px;height:20px;"></p><p>In this method, instead of building the Voronoi diagram, the local porosity around each particle, considering its immediate neighbors, is computed and updated in a given frequency.</p><div><ul><li><b>3. Global Porosity</b>:</li></ul></div><p>In this method, the value of the average global porosity is directly provided and kept constant, or it is automatically computed by assuming that the total volume of the domain is obtained by the applying the <a href="https://www.mathworks.com/help/matlab/ref/alphashape.html">alpha-shape method</a> over all particles.</p><p><b>Notation</b>:</p><p><img src="ConductionIndirect_VoronoiB_eq16216824832666807919.png" alt="$\Delta T = T_{j}-T_{i}$" style="width:86px;height:15px;">: Temperature difference between elements <i>i</i> and <i>j</i></p><p><img src="ConductionIndirect_VoronoiB_eq03442895190380135198.png" alt="$R$" style="width:11px;height:11px;">: Radius of particles <i>i</i> and <i>j</i> (or <i>p</i> when mono-size)</p><p><img src="ConductionIndirect_VoronoiB_eq01180102592121431884.png" alt="$R_{c}$" style="width:15px;height:13px;">: Contact radius</p><p><img src="ConductionIndirect_VoronoiB_eq17615571056258974497.png" alt="$d$" style="width:8px;height:11px;">: Distance between the center of the particles</p><p><img src="ConductionIndirect_VoronoiB_eq15636846968047188835.png" alt="$k$" style="width:7px;height:11px;">: Thermal conductivity of particles <i>i</i> and <i>j</i>, and interstitial fluid <i>f</i></p><p><img src="ConductionIndirect_VoronoiB_eq05172239329980124378.png" alt="$k_{eff}$" style="width:24px;height:15px;">: Effective contact conductivity</p><p><b>References</b>:</p><div><ul><li><a href="https://doi.org/10.1016/S0009-2509(99)00125-6">G.J. Cheng, A.B. Yu and P. Zulli. Evaluation of effective thermal conductivity from the structure of a packed bed, <i>Chem. Eng. Sci.</i>, 54(19):4199-4209, 1999</a> (proposal)</li></ul></div><div><ul><li><a href="https://doi.org/10.1016/j.ijheatmasstransfer.2018.12.005">L. Chen, C. Wang, M. Moscardini, M. Kamlah and S. Liu. A DEM-based heat transfer model for the evaluation of effective thermal conductivity of packed beds filled with stagnant fluid: Thermal contact theory and numerical simulation, <i>Int. J. Heat Mass Transf.</i>, 132:331-346, 2019</a> (extension to multi-sized particles)</li></ul></div><div><ul><li><a href="https://doi.org/10.1103/PhysRevE.65.041302">R.Y. Yang, R.P. Zou and A.B. Yu. Voronoi tessellation of the packing of fine uniform spheres, <i>Phys. Rev. E</i>, 65:041302, 2012</a> (relationship between Voronoi diagram and porosity)</li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ConductionIndirect_VoronoiB &lt; ConductionIndirect
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        method <span class="string">uint8</span>  <span class="string">=</span> <span class="string">uint8.empty</span>;    <span class="comment">% flag for type of method to compute voronoi cells size</span>
+        coeff  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% heat transfer coefficient</span>
+        core   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% radius of isothermal core (ratio of particle radius)</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = ConductionIndirect_VoronoiB()
+            this = this@ConductionIndirect(ConductionIndirect.VORONOI_B);
+            this = this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setDefaultProps(this)
+            this.core = 0.5;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setFixParams(this,int,drv)
+            this.coeff = this.heatTransCoeff(int,drv);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setCteParams(this,~,~)
+
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = evalHeatRate(this,int,drv)
+            <span class="keyword">if</span> (isempty(this.coeff))
+                h = this.heatTransCoeff(int,drv);
+            <span class="keyword">else</span>
+                h = this.coeff;
+            <span class="keyword">end</span>
+            this.total_hrate = h * (int.elem2.temperature-int.elem1.temperature);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="5">Public methods: sub-class specifics</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> h = heatTransCoeff(this,int,drv)
+            <span class="keyword">if</span> (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                <span class="keyword">if</span> (int.elem1.radius == int.elem2.radius)
+                    h = this.evalExpressionMonosize(int,drv);
+                <span class="keyword">else</span>
+                    h = this.evalExpressionMultisize(int,drv);
+                <span class="keyword">end</span>
+            <span class="keyword">else</span>
+                <span class="comment">% Assumption: walls are always considered as lines</span>
+                h = this.evalExpressionWall(int,drv);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> h = evalExpressionWall(this,int,drv)
+            <span class="comment">% Needed properties</span>
+            Rp = int.elem1.radius;
+            Rc = int.kinemat.contact_radius;
+            d  = int.kinemat.distc;
+            kp = int.elem1.material.conduct;
+            kf = drv.fluid.conduct;
+            rc = this.core * Rp;
+
+            <span class="comment">% Parameters</span>
+            rij = this.getConductRadius(int,drv,Rp);
+            <span class="keyword">if</span> (rij &lt;= Rc || isinf(rij))
+                h = 0;
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            a  = (1/rc - 1/Rp)/(2*kp) + 1/(2*kf*Rp);
+            b  = 1/(2*kf*d);
+            c0 = d / sqrt(rij^2 + d^2);
+            c1 = d / sqrt(Rc^2  + d^2);
+
+            <span class="comment">% Heat transfer coeff</span>
+            ln = log((a-b*c0)/(a-b*c1));
+            <span class="keyword">if</span> isreal(ln)
+                h = pi * ln / b;
+            <span class="keyword">else</span>
+                h = pi * real(ln) / b;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> h = evalExpressionMonosize(this,int,drv)
+            <span class="comment">% Needed properties</span>
+            Rp = int.elem1.radius;
+            Rc = int.kinemat.contact_radius;
+            D  = int.kinemat.distc/2;
+            ks = int.eff_conduct;
+            kf = drv.fluid.conduct;
+            rc = this.core * Rp;
+
+            <span class="comment">% Parameters</span>
+            rij = this.getConductRadius(int,drv,Rp);
+            <span class="keyword">if</span> (rij &lt;= Rc || isinf(rij))
+                h = 0;
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            a  = (1/rc - 1/Rp)/(2*ks) + 1/(kf*Rp);
+            b  = 1/(kf*D);
+            c0 = D / sqrt(rij^2 + D^2);
+            c1 = D / sqrt(Rc^2  + D^2);
+
+            <span class="comment">% Heat transfer coeff</span>
+            ln = log((a-b*c0)/(a-b*c1));
+            <span class="keyword">if</span> isreal(ln)
+                h = pi * ln / b;
+            <span class="keyword">else</span>
+                h = pi * real(ln) / b;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> h = evalExpressionMultisize(this,int,drv)
+            <span class="comment">% Needed properties</span>
+            R1 = int.elem1.radius;
+            R2 = int.elem2.radius;
+            Rc = int.kinemat.contact_radius;
+            d  = int.kinemat.distc;
+            k1 = int.elem1.material.conduct;
+            k2 = int.elem2.material.conduct;
+            kf = drv.fluid.conduct;
+            c  = this.core;
+
+            <span class="comment">% Parameters</span>
+            rij = this.getConductRadius(int,drv,(R1+R2)/2); <span class="comment">% Assumption: average radius</span>
+            <span class="keyword">if</span> (rij &lt;= Rc)
+                h = 0;
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+            An = pi * rij^2;
+
+            gamma1 = R1/d;
+            gamma2 = R2/d;
+            dgamma = gamma2 - gamma1;
+
+            A = (k1+kf*(1/c-1))/(k1*gamma1);
+            B = (k2+kf*(1/c-1))/(k2*gamma2);
+
+            lambda = (1+dgamma*A)*(1-dgamma*B);
+
+            delmax = 0.5 * (sqrt((4*An)/(pi*d^2*(1-dgamma^2))+1) - dgamma);
+            delmin = 0.5 * (sqrt((4*Rc^2)/(d^2*(1-dgamma^2))+1) - dgamma);
+
+            Xmax = ((A+B)*delmax + dgamma*B - 1) / sqrt(abs(lambda));
+            Xmin = ((A+B)*delmin + dgamma*B - 1) / sqrt(abs(lambda));
+
+            Y1 = (Xmax-Xmin) / (1-Xmax*Xmin);
+            Y2 = (Xmax-Xmin) / (1+Xmax*Xmin);
+
+            <span class="comment">% Heat transfer coeff</span>
+            <span class="keyword">if</span> (lambda &gt; 0)
+                h = pi * kf * d * (1-dgamma^2) * log(abs((1-Y1)/(1+Y1))) / (2*sqrt(abs(lambda)));
+            <span class="keyword">elseif</span> (lambda &lt; 0)
+                h = pi * kf * d * (1-dgamma^2) * atan(Y2) / (2*sqrt(abs(lambda)));
+            <span class="keyword">else</span>
+                h = pi * kf * d * (1-dgamma^2) * (1/delmin-1/delmax) / (A+B);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> r = getConductRadius(this,int,drv,Rp)
+            <span class="keyword">if</span> (this.method == this.VORONOI_DIAGRAM)
+                r = int.kinemat.vedge/2;
+            <span class="keyword">else</span>
+                <span class="keyword">if</span> (this.method == this.POROSITY_GLOBAL)
+                    por = drv.porosity;
+                <span class="keyword">elseif</span> (this.method == this.POROSITY_LOCAL &amp;&amp; int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                    por = (int.elem1.porosity+int.elem2.porosity)/2; <span class="comment">% Assumption: average porosity</span>
+                <span class="keyword">else</span>
+                    por = int.elem1.porosity; <span class="comment">% Assumption: particle porosity only</span>
+                <span class="keyword">end</span>
+                r = 0.56 * Rp * (1-por)^(-1/3);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% ConductionIndirect_VoronoiB class
+%
+%% Description
+%
+% This is a sub-class of the <conductionindirect.html ConductionIndirect>
+% class for the implementation of the *Voronoi Polyhedra B* indirect heat
+% conduction model.
+%
+% This model assumes that the indirect heat conduction between two
+% neighboring elements is restricted to the region delineated by the
+% double pyramid whose apexes are the particles' centers and base is the
+% Voronoi boundary plane shared by the particles' cells.
+% For simplicity, the double pyramid is treated as a double tapered cone
+% with the same base area _A_.
+% In 2D, the Voronoi edge shared by the cells of both particles represents
+% the diameter of the cone base.
+%
+% <<../images/tutorials/voronoi.png>>
+%
+% In model B, the following assumptions are made:
+%
+% * Conduction in the outer region of the cone (region B) is included.
+% * Particles have an isothermal core of radius _rc_ with their
+% representative temperature (input parameter).
+% * Heat flow paths radiate from the cores' surfaces.
+%
+% For *mono-size particles*, the rate of heat transfer is given by:
+%
+% $$Q = \Delta T \frac{\pi}{b}ln\left(\frac{a-b.c_{0}}{a-b.c_{1}}\right)$$
+%
+% Where:
+%
+% $$a = \frac{1}{2k_{eff}}\left(\frac{1}{r_{c}}-\frac{1}{R_{p}}\right)+\frac{1}{k_{f}R_{p}}$$
+%
+% $$b = \frac{2}{k_{f}d}$$
+%
+% $$c_{0} = \frac{d}{2\sqrt{r_{ij}^{2}+d^{2}/4}}$$
+%
+% $$c_{1} = \frac{d}{2\sqrt{R_{c}^{2}+d^{2}/4}}$$
+%
+% For *multi-size particles*, the rate of heat transfer is given by:
+%
+% For $\Lambda > 0$:
+%
+% $Q = \Delta T \pi k_{f}d\left(1-\Delta\gamma^{2}\right)\left(2\sqrt{\left|\Lambda\right|}\right)^{-1}ln\left|(1-Y_{1})/(1+Y_{1})\right|$
+%
+% For $\Lambda < 0$:
+%
+% $Q = \Delta T \pi k_{f}d\left(1-\Delta\gamma^{2}\right)\left(2\sqrt{\left|\Lambda\right|}\right)^{-1}tg^{-1}(Y_{2})$
+%
+% For $\Lambda = 0$:
+%
+% $Q = \Delta T \pi k_{f}d\left(1-\Delta\gamma^{2}\right)\left(A+B\right)^{-1}\left(1/\delta_{min}-1/\delta_{max}\right)$
+%
+% Where:
+%
+% $$\Lambda = \left(1+\Delta\gamma A\right)\left(1-\Delta\gamma B\right)$$
+%
+% $$\Delta\gamma = \gamma_{j}-\gamma_{i}$$
+%
+% $$\gamma_{i} = R_{i}/d$$
+%
+% $$\gamma_{j} = R_{j}/d$$
+%
+% $$Y_{1} =\frac{X_{max}-X_{min}}{1-X_{max}X_{min}}$$
+%
+% $$Y_{2} =\frac{X_{max}-X_{min}}{1+X_{max}X_{min}}$$
+%
+% $$X_{max} =\frac{(A+B)\delta_{max}+\Delta\gamma B-1}{\sqrt{\left|\Lambda\right|}}$$
+%
+% $$X_{min} =\frac{(A+B)\delta_{min}+\Delta\gamma B-1}{\sqrt{\left|\Lambda\right|}}$$
+%
+% $$A = \frac{k_{i}+k_{f}\left(R_{i}/r_{c,i}-1\right)}{k_{i}\gamma_{i}}$$
+%
+% $$B = \frac{k_{j}+k_{f}\left(R_{j}/r_{c,j}-1\right)}{k_{j}\gamma_{j}}$$
+%
+% $$\delta_{max} = 0.5\left(\sqrt{1+\frac{4A}{\pi d^{2}\left(1-\Delta\gamma^{2}\right)}}-\Delta\gamma\right)$$
+%
+% $$\delta_{min} = 0.5\left(\sqrt{1+\frac{4R_{c}^{2}}{d^{2}\left(1-\Delta\gamma^{2}\right)}}-\Delta\gamma\right)$$
+%
+% In both cases, the heat transfer radius $r_{ij}$ depends on the shape and
+% size of the Voronoi cells. There are 3 methods to obtain its value:
+%
+% * *1. Voronoi Diagram*:
+%
+% The Voronoi diagram is built in a given frequency, and the heat transfer
+% radius is related to the volume _V_ and diameter _Le_ of the double
+% tapered cone as:
+%
+% $$r_{ij} = \sqrt{\frac{3V}{\pi d}} = \frac{L_{e}}{2}$$
+%
+% * *2. Local Porosity*:
+%
+% It has been shown that the average size of the Voronoi cells is related
+% to the porosity of the medium _e_, in such a way that the heat transfer
+% radius can be computed as:
+%
+% $$r_{ij} = 0.56R_{p}\left(1-e\right)^{-1/3}$$
+%
+% In this method, instead of building the Voronoi diagram, the local
+% porosity around each particle, considering its immediate neighbors,
+% is computed and updated in a given frequency.
+%
+% * *3. Global Porosity*:
+%
+% In this method, the value of the average global porosity is directly
+% provided and kept constant, or it is automatically computed by assuming
+% that the total volume of the domain is obtained by the applying the
+% <https://www.mathworks.com/help/matlab/ref/alphashape.html alpha-shape
+% method> over all particles.
+%
+% *Notation*:
+%
+% $\Delta T = T_{j}-T_{i}$: Temperature difference between elements _i_ and _j_
+%
+% $R$: Radius of particles _i_ and _j_ (or _p_ when mono-size)
+%
+% $R_{c}$: Contact radius
+%
+% $d$: Distance between the center of the particles
+%
+% $k$: Thermal conductivity of particles _i_ and _j_, and interstitial fluid _f_
+%
+% $k_{eff}$: Effective contact conductivity
+%
+% *References*:
+%
+% * <https://doi.org/10.1016/S0009-2509(99)00125-6
+% G.J. Cheng, A.B. Yu and P. Zulli.
+% Evaluation of effective thermal conductivity from the structure of a packed bed, _Chem. Eng. Sci._, 54(19):4199-4209, 1999>
+% (proposal)
+%
+% * <https://doi.org/10.1016/j.ijheatmasstransfer.2018.12.005
+% L. Chen, C. Wang, M. Moscardini, M. Kamlah and S. Liu.
+% A DEM-based heat transfer model for the evaluation of effective thermal conductivity of packed beds filled with stagnant fluid: Thermal contact theory and numerical simulation, _Int. J. Heat Mass Transf._, 132:331-346, 2019>
+% (extension to multi-sized particles)
+%
+% * <https://doi.org/10.1103/PhysRevE.65.041302
+% R.Y. Yang, R.P. Zou and A.B. Yu.
+% Voronoi tessellation of the packing of fine uniform spheres, _Phys. Rev. E_, 65:041302, 2012>
+% (relationship between Voronoi diagram and porosity)
+%
+classdef ConductionIndirect_VoronoiB < ConductionIndirect
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        method uint8  = uint8.empty;    % flag for type of method to compute voronoi cells size
+        coeff  double = double.empty;   % heat transfer coefficient
+        core   double = double.empty;   % radius of isothermal core (ratio of particle radius)
+    end
+    
+    %% Constructor method
+    methods
+        function this = ConductionIndirect_VoronoiB()
+            this = this@ConductionIndirect(ConductionIndirect.VORONOI_B);
+            this = this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setDefaultProps(this)
+            this.core = 0.5;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setFixParams(this,int,drv)
+            this.coeff = this.heatTransCoeff(int,drv);
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setCteParams(this,~,~)
+            
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = evalHeatRate(this,int,drv)
+            if (isempty(this.coeff))
+                h = this.heatTransCoeff(int,drv);
+            else
+                h = this.coeff;
+            end
+            this.total_hrate = h * (int.elem2.temperature-int.elem1.temperature);
+        end
+    end
+    
+    %% Public methods: sub-class specifics
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function h = heatTransCoeff(this,int,drv)
+            if (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                if (int.elem1.radius == int.elem2.radius)
+                    h = this.evalExpressionMonosize(int,drv);
+                else
+                    h = this.evalExpressionMultisize(int,drv);
+                end
+            else
+                % Assumption: walls are always considered as lines
+                h = this.evalExpressionWall(int,drv);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function h = evalExpressionWall(this,int,drv)
+            % Needed properties
+            Rp = int.elem1.radius;
+            Rc = int.kinemat.contact_radius;
+            d  = int.kinemat.distc;
+            kp = int.elem1.material.conduct;
+            kf = drv.fluid.conduct;
+            rc = this.core * Rp;
+            
+            % Parameters
+            rij = this.getConductRadius(int,drv,Rp);
+            if (rij <= Rc || isinf(rij))
+                h = 0;
+                return;
+            end
+            
+            a  = (1/rc - 1/Rp)/(2*kp) + 1/(2*kf*Rp);
+            b  = 1/(2*kf*d);
+            c0 = d / sqrt(rij^2 + d^2);
+            c1 = d / sqrt(Rc^2  + d^2);
+            
+            % Heat transfer coeff
+            ln = log((a-b*c0)/(a-b*c1));
+            if isreal(ln)
+                h = pi * ln / b;
+            else
+                h = pi * real(ln) / b;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function h = evalExpressionMonosize(this,int,drv)
+            % Needed properties
+            Rp = int.elem1.radius;
+            Rc = int.kinemat.contact_radius;
+            D  = int.kinemat.distc/2;
+            ks = int.eff_conduct;
+            kf = drv.fluid.conduct;
+            rc = this.core * Rp;
+            
+            % Parameters
+            rij = this.getConductRadius(int,drv,Rp);
+            if (rij <= Rc || isinf(rij))
+                h = 0;
+                return;
+            end
+            
+            a  = (1/rc - 1/Rp)/(2*ks) + 1/(kf*Rp);
+            b  = 1/(kf*D);
+            c0 = D / sqrt(rij^2 + D^2);
+            c1 = D / sqrt(Rc^2  + D^2);
+            
+            % Heat transfer coeff
+            ln = log((a-b*c0)/(a-b*c1));
+            if isreal(ln)
+                h = pi * ln / b;
+            else
+                h = pi * real(ln) / b;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function h = evalExpressionMultisize(this,int,drv)
+            % Needed properties
+            R1 = int.elem1.radius;
+            R2 = int.elem2.radius;
+            Rc = int.kinemat.contact_radius;
+            d  = int.kinemat.distc;
+            k1 = int.elem1.material.conduct;
+            k2 = int.elem2.material.conduct;
+            kf = drv.fluid.conduct;
+            c  = this.core;
+            
+            % Parameters
+            rij = this.getConductRadius(int,drv,(R1+R2)/2); % Assumption: average radius
+            if (rij <= Rc)
+                h = 0;
+                return;
+            end
+            An = pi * rij^2;
+            
+            gamma1 = R1/d;
+            gamma2 = R2/d;
+            dgamma = gamma2 - gamma1;
+            
+            A = (k1+kf*(1/c-1))/(k1*gamma1);
+            B = (k2+kf*(1/c-1))/(k2*gamma2);
+            
+            lambda = (1+dgamma*A)*(1-dgamma*B);
+            
+            delmax = 0.5 * (sqrt((4*An)/(pi*d^2*(1-dgamma^2))+1) - dgamma);
+            delmin = 0.5 * (sqrt((4*Rc^2)/(d^2*(1-dgamma^2))+1) - dgamma);
+            
+            Xmax = ((A+B)*delmax + dgamma*B - 1) / sqrt(abs(lambda));
+            Xmin = ((A+B)*delmin + dgamma*B - 1) / sqrt(abs(lambda));
+            
+            Y1 = (Xmax-Xmin) / (1-Xmax*Xmin);
+            Y2 = (Xmax-Xmin) / (1+Xmax*Xmin);
+            
+            % Heat transfer coeff
+            if (lambda > 0)
+                h = pi * kf * d * (1-dgamma^2) * log(abs((1-Y1)/(1+Y1))) / (2*sqrt(abs(lambda)));
+            elseif (lambda < 0)
+                h = pi * kf * d * (1-dgamma^2) * atan(Y2) / (2*sqrt(abs(lambda)));
+            else
+                h = pi * kf * d * (1-dgamma^2) * (1/delmin-1/delmax) / (A+B);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function r = getConductRadius(this,int,drv,Rp)
+            if (this.method == this.VORONOI_DIAGRAM)
+                r = int.kinemat.vedge/2;
+            else
+                if (this.method == this.POROSITY_GLOBAL)
+                    por = drv.porosity;
+                elseif (this.method == this.POROSITY_LOCAL && int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                    por = (int.elem1.porosity+int.elem2.porosity)/2; % Assumption: average porosity
+                else
+                    por = int.elem1.porosity; % Assumption: particle porosity only
+                end
+                r = 0.56 * Rp * (1-por)^(-1/3);
+            end
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

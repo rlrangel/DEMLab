@@ -1,0 +1,329 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ConductionDirect_Collisional class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="ConductionDirect_Collisional.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>ConductionDirect_Collisional class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="conductiondirect.html">ConductionDirect</a> class for the implementation of the <b>Collisional</b> direct heat conduction model.</p><p>This model is based on FEM simulations of the transient heat conduction between colliding spheres assuming elastic collisions according to Hertz theory.</p><p>It is suited for dynamic models in which particles are moving and colliding against each other and the contacts last for a very short time.</p><p>This collisional contact conduction formula is applied while the current contact time is lower than the expected collision time computed a priori.</p><p>When the contact time surpasses the expected collision time, a static contact conduction model is employed. In this case, the <a href="conductiondirect_bob.html">Batchelor &amp; O'Brien model</a> is used.</p><p>The rate of heat transfer for this collisional model is given by:</p><p><img src="ConductionDirect_Collisional_eq03063044334635340063.png" alt="$$Q = C \frac{\pi \left ( R_{c}^{max} \right )^{2} t_{c}^{-1/2}}{\left ( \rho_{i}c_{p,i}k_{i} \right )^{-1/2} + \left ( \rho_{j}c_{p,j}k_{j} \right )^{-1/2}} \Delta T$$" style="width:246px;height:43px;"></p><p>Where:</p><p><img src="ConductionDirect_Collisional_eq00301024309522924983.png" alt="$$C = \frac{0.435}{C_{1}} \left ( \sqrt{(C_{2})^{2} - 4C_{1}(C_{3}-F_{o})} - C_{2} \right )$$" style="width:270px;height:33px;"></p><p><img src="ConductionDirect_Collisional_eq11073532582083226692.png" alt="$$C_{1} = -2.300 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right )^{2} + 8.9090 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right ) - 4.235$$" style="width:317px;height:39px;"></p><p><img src="ConductionDirect_Collisional_eq18287207203233923358.png" alt="$$C_{2} = +8.169 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right )^{2} - 33.770 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right ) + 24.885$$" style="width:324px;height:39px;"></p><p><img src="ConductionDirect_Collisional_eq12098526143771670982.png" alt="$$C_{3} = -5.758 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right )^{2} + 24.464 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right ) - 20.511$$" style="width:324px;height:39px;"></p><p><img src="ConductionDirect_Collisional_eq09266507351966496065.png" alt="$$R_{c}^{max} = \left ( \frac{15}{16} \frac{m_{eff}R_{eff}^{2}}{E_{eff}} \left ( \dot{\delta}_{n}^{0} \right )^{2} \right )^{1/5}$$" style="width:210px;height:48px;"></p><p><img src="ConductionDirect_Collisional_eq01130901904261440327.png" alt="$$t_{c} = 2.87 \left ( \frac{m_{eff}^{2}}{R_{eff}E_{eff}^{2}\dot{\delta}_{n}^{0}} \right )^{1/5}$$" style="width:171px;height:49px;"></p><p><img src="ConductionDirect_Collisional_eq03721748477126035631.png" alt="$$F_{o} = \frac{k_{i}t_{c}}{\rho_{i}c_{p,i} \left ( R_{c}^{max} \right )^{2}}$$" style="width:119px;height:37px;"></p><p><b>Notation</b>:</p><p><img src="ConductionDirect_Collisional_eq04593411669956321788.png" alt="$R_{c}^{max}$" style="width:31px;height:14px;">: Maximum contact radius during collision</p><p><img src="ConductionDirect_Collisional_eq08657951830978893317.png" alt="$t_{c}$" style="width:10px;height:12px;">: Collision duration</p><p><img src="ConductionDirect_Collisional_eq00478641940729568599.png" alt="$F_{o}$" style="width:14px;height:13px;">: Fourier number</p><p><img src="ConductionDirect_Collisional_eq04101632213741913129.png" alt="$\dot{\delta}_{n}^{0}$" style="width:13px;height:18px;">: Time rate of change of normal overlap at the impact moment</p><p><img src="ConductionDirect_Collisional_eq16216824832666807919.png" alt="$\Delta T = T_{j}-T_{i}$" style="width:86px;height:15px;">: Temperature difference between elements <i>i</i> and <i>j</i></p><p><img src="ConductionDirect_Collisional_eq11905270608999804013.png" alt="$\rho$" style="width:7px;height:10px;">: Density of elements <i>i</i> and <i>j</i></p><p><img src="ConductionDirect_Collisional_eq16018363352389160305.png" alt="$c_{p}$" style="width:11px;height:11px;">: Heat capacity of elements <i>i</i> and <i>j</i></p><p><img src="ConductionDirect_Collisional_eq15636846968047188835.png" alt="$k$" style="width:7px;height:11px;">: Thermal conductivity of elements <i>i</i> and <i>j</i></p><p><img src="ConductionDirect_Collisional_eq02602891172830952942.png" alt="$R_{eff}$" style="width:28px;height:15px;">: Effective contact radius</p><p><img src="ConductionDirect_Collisional_eq02651269392019945628.png" alt="$E_{eff}$" style="width:28px;height:15px;">: Effective Young modulus</p><p><img src="ConductionDirect_Collisional_eq06291617511541824668.png" alt="$m_{eff}$" style="width:30px;height:11px;">: Effective mass</p><p><b>References</b>:</p><div><ul><li><a href="https://doi.org/10.1016/0017-9310(88)90085-3">J. Sun, and M.M. Chen. A theoretical analysis of heat transfer due to particle impact, <i>Int. J. Heat Mass Transfer</i>, 31(5):969-975, 1988</a> (original form)</li></ul></div><div><ul><li><a href="https://doi.org/10.1016/j.cej.2007.08.024">J.H. Zhou, A.B. Yu and M.Horio. Finite element modeling of the transient heat conduction between colliding particles, <i>Chem. Eng. J.</i>, 139(3):510-516, 2008</a> (improvement)</li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ConductionDirect_Collisional &lt; ConductionDirect
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        coeff    <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% heat transfer coefficient</span>
+        col_time <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% expected collision time</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = ConductionDirect_Collisional()
+            this = this@ConductionDirect(ConductionDirect.COLLISIONAL);
+            this = this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setDefaultProps(this)
+
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setFixParams(this,~)
+            this.coeff = 0;
+            this.col_time = inf;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setCteParams(this,int)
+            <span class="keyword">if</span> (~isempty(this.coeff) &amp;&amp; ~isempty(this.col_time))
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Individual properties</span>
+            rho1 = int.elem1.material.density;
+            rho2 = int.elem2.material.density;
+            k1   = int.elem1.material.conduct;
+            k2   = int.elem2.material.conduct;
+            cp1  = int.elem1.material.hcapacity;
+            cp2  = int.elem2.material.hcapacity;
+
+            <span class="comment">% Interaction properties</span>
+            r  = int.eff_radius;
+            m  = int.eff_mass;
+            y  = int.eff_young;
+            v0 = abs(int.kinemat.v0_n);
+
+            <span class="comment">% Simplifications</span>
+            a1 = rho1 * cp1;
+            a2 = rho2 * cp2;
+            b  = a1/a2;
+            b2 = b^2;
+
+            <span class="comment">% Maximum contact radius and total collision time</span>
+            Rc = (15 * m * r^2 * v0^2 / (16 * y))^(1/5);
+            tc = 2.87 * (m^2 / (r * y^2 * v0))^(1/5);
+
+            <span class="comment">% Fourier number</span>
+            <span class="comment">% Assumption: average for particles</span>
+            <span class="keyword">if</span> (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                F1 = k1 * tc / (rho1 * cp1 * Rc^2);
+                F2 = k2 * tc / (rho2 * cp2 * Rc^2);
+                F  = (F1 + F2) / 2;
+            <span class="keyword">else</span>
+                F = k1 * tc / (rho1 * cp1 * Rc^2);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Auxiliary coefficient</span>
+            C1 = -2.300*b2 + 8.9090*b - 4.2350;
+            C2 =  8.169*b2 - 33.770*b + 24.885;
+            C3 = -5.758*b2 + 24.464*b - 20.511;
+            C  =  0.435 * (sqrt(C2^2 - 4*C1*(C3-F)) - C2) / C1;
+
+            <span class="comment">% Set collision time and heat transfer coefficient</span>
+            this.coeff = C * pi * Rc^2 * tc^(-1/2) / ((a1*k1)^(-1/2) + (a2*k2)^(-1/2));
+            this.col_time = tc;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = evalHeatRate(this,int)
+            <span class="comment">% Compute heat rate according to current contact time</span>
+            <span class="keyword">if</span> (int.kinemat.contact_time &lt; this.col_time)
+                <span class="comment">% Collisional conduction: Collisional formula</span>
+                this.total_hrate = this.coeff * (int.elem2.temperature-int.elem1.temperature);
+            <span class="keyword">else</span>
+                <span class="comment">% Static conduction: Batchelor &amp; O'Brien formula</span>
+                this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius * (int.elem2.temperature-int.elem1.temperature);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% ConductionDirect_Collisional class
+%
+%% Description
+%
+% This is a sub-class of the <conductiondirect.html ConductionDirect>
+% class for the implementation of the *Collisional* direct heat conduction
+% model.
+%
+% This model is based on FEM simulations of the transient heat conduction
+% between colliding spheres assuming elastic collisions according to Hertz
+% theory.
+%
+% It is suited for dynamic models in which particles are moving and
+% colliding against each other and the contacts last for a very short time.
+%
+% This collisional contact conduction formula is applied while the current
+% contact time is lower than the expected collision time computed a priori.
+% 
+% When the contact time surpasses the expected collision time, a static
+% contact conduction model is employed. In this case, the
+% <conductiondirect_bob.html Batchelor & O'Brien model> is used.
+%
+% The rate of heat transfer for this collisional model is given by:
+%
+% $$Q = C \frac{\pi \left ( R_{c}^{max} \right )^{2} t_{c}^{-1/2}}{\left ( \rho_{i}c_{p,i}k_{i} \right )^{-1/2} + \left ( \rho_{j}c_{p,j}k_{j} \right )^{-1/2}} \Delta T$$
+%
+% Where:
+%
+% $$C = \frac{0.435}{C_{1}} \left ( \sqrt{(C_{2})^{2} - 4C_{1}(C_{3}-F_{o})} - C_{2} \right )$$
+%
+% $$C_{1} = -2.300 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right )^{2} + 8.9090 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right ) - 4.235$$
+%
+% $$C_{2} = +8.169 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right )^{2} - 33.770 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right ) + 24.885$$
+%
+% $$C_{3} = -5.758 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right )^{2} + 24.464 \left ( \frac{\rho_{i}c_{p,i}}{\rho_{j}c_{p,j}} \right ) - 20.511$$
+%
+% $$R_{c}^{max} = \left ( \frac{15}{16} \frac{m_{eff}R_{eff}^{2}}{E_{eff}} \left ( \dot{\delta}_{n}^{0} \right )^{2} \right )^{1/5}$$
+%
+% $$t_{c} = 2.87 \left ( \frac{m_{eff}^{2}}{R_{eff}E_{eff}^{2}\dot{\delta}_{n}^{0}} \right )^{1/5}$$
+%
+% $$F_{o} = \frac{k_{i}t_{c}}{\rho_{i}c_{p,i} \left ( R_{c}^{max} \right )^{2}}$$
+%
+% *Notation*:
+%
+% $R_{c}^{max}$: Maximum contact radius during collision
+%
+% $t_{c}$: Collision duration
+%
+% $F_{o}$: Fourier number
+%
+% $\dot{\delta}_{n}^{0}$: Time rate of change of normal overlap at the impact moment
+%
+% $\Delta T = T_{j}-T_{i}$: Temperature difference between elements _i_ and _j_
+%
+% $\rho$: Density of elements _i_ and _j_
+%
+% $c_{p}$: Heat capacity of elements _i_ and _j_
+%
+% $k$: Thermal conductivity of elements _i_ and _j_
+%
+% $R_{eff}$: Effective contact radius
+%
+% $E_{eff}$: Effective Young modulus
+%
+% $m_{eff}$: Effective mass
+%
+% *References*:
+%
+% * <https://doi.org/10.1016/0017-9310(88)90085-3
+% J. Sun, and M.M. Chen.
+% A theoretical analysis of heat transfer due to particle impact, _Int. J. Heat Mass Transfer_, 31(5):969-975, 1988>
+% (original form)
+%
+% * <https://doi.org/10.1016/j.cej.2007.08.024
+% J.H. Zhou, A.B. Yu and M.Horio.
+% Finite element modeling of the transient heat conduction between colliding particles, _Chem. Eng. J._, 139(3):510-516, 2008>
+% (improvement)
+%
+classdef ConductionDirect_Collisional < ConductionDirect
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        coeff    double = double.empty;   % heat transfer coefficient
+        col_time double = double.empty;   % expected collision time
+    end
+    
+    %% Constructor method
+    methods
+        function this = ConductionDirect_Collisional()
+            this = this@ConductionDirect(ConductionDirect.COLLISIONAL);
+            this = this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setDefaultProps(this)
+            
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setFixParams(this,~)
+            this.coeff = 0;
+            this.col_time = inf;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setCteParams(this,int)
+            if (~isempty(this.coeff) && ~isempty(this.col_time))
+                return;
+            end
+            
+            % Individual properties
+            rho1 = int.elem1.material.density;
+            rho2 = int.elem2.material.density;
+            k1   = int.elem1.material.conduct;
+            k2   = int.elem2.material.conduct;
+            cp1  = int.elem1.material.hcapacity;
+            cp2  = int.elem2.material.hcapacity;
+            
+            % Interaction properties
+            r  = int.eff_radius;
+            m  = int.eff_mass;
+            y  = int.eff_young;
+            v0 = abs(int.kinemat.v0_n);
+            
+            % Simplifications
+            a1 = rho1 * cp1;
+            a2 = rho2 * cp2;
+            b  = a1/a2;
+            b2 = b^2;
+            
+            % Maximum contact radius and total collision time
+            Rc = (15 * m * r^2 * v0^2 / (16 * y))^(1/5);
+            tc = 2.87 * (m^2 / (r * y^2 * v0))^(1/5);
+            
+            % Fourier number
+            % Assumption: average for particles
+            if (int.kinemat.gen_type == int.kinemat.PARTICLE_PARTICLE)
+                F1 = k1 * tc / (rho1 * cp1 * Rc^2);
+                F2 = k2 * tc / (rho2 * cp2 * Rc^2);
+                F  = (F1 + F2) / 2;
+            else 
+                F = k1 * tc / (rho1 * cp1 * Rc^2);
+            end
+            
+            % Auxiliary coefficient
+            C1 = -2.300*b2 + 8.9090*b - 4.2350;
+            C2 =  8.169*b2 - 33.770*b + 24.885;
+            C3 = -5.758*b2 + 24.464*b - 20.511;
+            C  =  0.435 * (sqrt(C2^2 - 4*C1*(C3-F)) - C2) / C1;
+            
+            % Set collision time and heat transfer coefficient
+            this.coeff = C * pi * Rc^2 * tc^(-1/2) / ((a1*k1)^(-1/2) + (a2*k2)^(-1/2));
+            this.col_time = tc;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = evalHeatRate(this,int)
+            % Compute heat rate according to current contact time
+            if (int.kinemat.contact_time < this.col_time)
+                % Collisional conduction: Collisional formula
+                this.total_hrate = this.coeff * (int.elem2.temperature-int.elem1.temperature);
+            else
+                % Static conduction: Batchelor & O'Brien formula
+                this.total_hrate = 4 * int.eff_conduct * int.kinemat.contact_radius * (int.elem2.temperature-int.elem1.temperature);
+            end
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

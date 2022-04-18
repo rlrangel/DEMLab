@@ -15,7 +15,7 @@
 % In 2D, the Voronoi edge shared by the cells of both particles represents
 % the diameter of the cone base.
 %
-% <<voronoi.png>>
+% <<../images/tutorials/voronoi.png>>
 %
 % In model A, the following assumptions are made:
 %
@@ -105,7 +105,7 @@
 % Evaluation of effective thermal conductivity from the structure of a packed bed, _Chem. Eng. Sci._, 54(19):4199-4209, 1999>
 % (proposal)
 %
-% * <https://doi.org/10.1016/S0009-2509(99)00125-6
+% * <https://doi.org/10.1016/j.ces.2016.01.041
 % J. Gan, Z. Zhou and A. Yu.
 % Particle scale study of heat transfer in packed and fluidized beds of ellipsoidal particles, _Chem. Eng. Sci._, 144:201-215, 2016>
 % (extension to multi-sized particles)

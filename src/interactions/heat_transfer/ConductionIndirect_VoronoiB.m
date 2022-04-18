@@ -15,7 +15,7 @@
 % In 2D, the Voronoi edge shared by the cells of both particles represents
 % the diameter of the cone base.
 %
-% <<voronoi.png>>
+% <<../images/tutorials/voronoi.png>>
 %
 % In model B, the following assumptions are made:
 %

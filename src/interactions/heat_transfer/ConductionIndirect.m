@@ -21,7 +21,7 @@
 % * <conductionindirect_voronoib.html ConductionIndirect_VoronoiB>
 % * <conductionindirect_surrlayer.html ConductionIndirect_SurrLayer>
 %
-% <<indirect_conduction.png>>
+% <<../images/tutorials/indirect_conduction.png>>
 %
 classdef ConductionIndirect < matlab.mixin.Heterogeneous
     %% Constant values

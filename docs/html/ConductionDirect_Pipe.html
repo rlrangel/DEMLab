@@ -1,0 +1,187 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ConductionDirect_Pipe class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="ConductionDirect_Pipe.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>ConductionDirect_Pipe class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constructor method</a></li><li><a href="#3">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="conductiondirect.html">ConductionDirect</a> class for the implementation of the <b>Thermal Pipe</b> direct heat conduction model.</p><p>This model assumes that heat is exchanged through a ficticious "thermal pipe" connecting both elements, and the discrete Fourier law governs the rate of heat transfer:</p><p><img src="ConductionDirect_Pipe_eq00027096219751687959.png" alt="$$Q = \frac{k.A}{d}\Delta T$$" style="width:81px;height:31px;"></p><p>Where:</p><p><img src="ConductionDirect_Pipe_eq04956145453559963059.png" alt="$$k = \left ( R_{i}+R_{j} \right ) \left ( \frac{R_{i}}{k_{i}} + \frac{R_{j}}{k_{j}} \right )^{-1}$$" style="width:182px;height:39px;"></p><p><img src="ConductionDirect_Pipe_eq05686246411115017388.png" alt="$$A = \pi \left ( R_{c} \right )^{2}$$" style="width:74px;height:18px;"></p><p><b>Notation</b>:</p><p><img src="ConductionDirect_Pipe_eq15636846968047188835.png" alt="$k$" style="width:7px;height:11px;">: Thermal conductivity of particles <i>i</i> and <i>j</i></p><p><img src="ConductionDirect_Pipe_eq03442895190380135198.png" alt="$R$" style="width:11px;height:11px;">: Radius of particles <i>i</i> and <i>j</i></p><p><img src="ConductionDirect_Pipe_eq01180102592121431884.png" alt="$R_{c}$" style="width:15px;height:13px;">: Contact radius</p><p><img src="ConductionDirect_Pipe_eq17615571056258974497.png" alt="$d$" style="width:8px;height:11px;">: Distance between the center of the particles</p><p><img src="ConductionDirect_Pipe_eq16216824832666807919.png" alt="$\Delta T = T_{j}-T_{i}$" style="width:86px;height:15px;">: Temperature difference between elements <i>i</i> and <i>j</i></p><p><b>References</b>:</p><div><ul><li><a href="https://doi.org/10.1007/s40430-020-02465-5">O.D. Quintana-Ruiz and E.M.B. Campello. A coupled thermo?mechanical model for the simulation of discrete particle systems, <i>J. Braz. Soc. Mech. Sci. Eng.</i>, 42:387, 2020</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ConductionDirect_Pipe &lt; ConductionDirect
+</pre><h2 id="2">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = ConductionDirect_Pipe()
+            this = this@ConductionDirect(ConductionDirect.PIPE);
+            this = this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setDefaultProps(this)
+
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setFixParams(this,~)
+
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setCteParams(this,~)
+
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = evalHeatRate(this,int)
+            <span class="comment">% Assumption: pipe cross-section area is a circle for spherical</span>
+            <span class="comment">% particles and a rectangle for cylindrical particles</span>
+            <span class="keyword">switch</span> int.elem1.type
+                <span class="keyword">case</span> int.elem1.SPHERE
+                    A = pi * int.kinemat.contact_radius^2;
+                <span class="keyword">case</span> int.elem1.CYLINDER
+                    A = 2 * int.kinemat.contact_radius * int.elem1.len;
+            <span class="keyword">end</span>
+            this.total_hrate = A * int.avg_conduct * (int.elem2.temperature-int.elem1.temperature) / int.kinemat.distc;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% ConductionDirect_Pipe class
+%
+%% Description
+%
+% This is a sub-class of the <conductiondirect.html ConductionDirect>
+% class for the implementation of the *Thermal Pipe* direct heat
+% conduction model.
+%
+% This model assumes that heat is exchanged through a ficticious "thermal
+% pipe" connecting both elements, and the discrete Fourier law governs the
+% rate of heat transfer:
+%
+% $$Q = \frac{k.A}{d}\Delta T$$
+%
+% Where:
+%
+% $$k = \left ( R_{i}+R_{j} \right ) \left ( \frac{R_{i}}{k_{i}} + \frac{R_{j}}{k_{j}} \right )^{-1}$$
+%
+% $$A = \pi \left ( R_{c} \right )^{2}$$
+%
+% *Notation*:
+%
+% $k$: Thermal conductivity of particles _i_ and _j_
+%
+% $R$: Radius of particles _i_ and _j_
+%
+% $R_{c}$: Contact radius
+%
+% $d$: Distance between the center of the particles
+%
+% $\Delta T = T_{j}-T_{i}$: Temperature difference between elements _i_ and _j_
+%
+% *References*:
+%
+% * <https://doi.org/10.1007/s40430-020-02465-5
+% O.D. Quintana-Ruiz and E.M.B. Campello.
+% A coupled thermo?mechanical model for the simulation of discrete particle systems, _J. Braz. Soc. Mech. Sci. Eng._, 42:387, 2020>
+%
+classdef ConductionDirect_Pipe < ConductionDirect
+    %% Constructor method
+    methods
+        function this = ConductionDirect_Pipe()
+            this = this@ConductionDirect(ConductionDirect.PIPE);
+            this = this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setDefaultProps(this)
+            
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setFixParams(this,~)
+            
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setCteParams(this,~)
+            
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = evalHeatRate(this,int)
+            % Assumption: pipe cross-section area is a circle for spherical
+            % particles and a rectangle for cylindrical particles
+            switch int.elem1.type
+                case int.elem1.SPHERE
+                    A = pi * int.kinemat.contact_radius^2;
+                case int.elem1.CYLINDER
+                    A = 2 * int.kinemat.contact_radius * int.elem1.len;
+            end
+            this.total_hrate = A * int.avg_conduct * (int.elem2.temperature-int.elem1.temperature) / int.kinemat.distc;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>
