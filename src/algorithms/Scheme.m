@@ -38,7 +38,7 @@ classdef Scheme < handle & matlab.mixin.Heterogeneous
     %% Default sub-class definition
     methods (Static, Access = protected)
         function defaultObject = getDefaultScalarElement
-            defaultObject = Search_EulerForward;
+            defaultObject = Scheme_EulerForward;
         end
     end
     

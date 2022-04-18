@@ -2,8 +2,8 @@
 %
 %% Description
 %
-% This is a handle heterogeneous super-class for the definition of
-% interactions search algorithms.
+% This is a handle heterogeneous super-class for the definition of search
+% algorithms.
 %
 % A search algorithm is invoked frequently during the simulation to
 % identify the neighbours of each particle.
