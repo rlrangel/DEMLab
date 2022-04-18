@@ -1,6 +1,6 @@
 %% DEMLab - Discrete Element Method Laboratory
 %
-% <<logo_demlab.png>>
+% <<../images/logos/logo_demlab.png>>
 %
 % This program uses the Discrete Element Method (DEM) to simulate
 % particulate systems.
@@ -77,7 +77,7 @@
 % International Center for Numerical Methods in Engineering
 % (<https://www.cimne.com/ CIMNE>)
 %
-% <<logo_cimne.png>>
+% <<../images/logos/logo_cimne.png>>
 %
 %% History
 %
@@ -86,7 +86,7 @@
 % Developed under the context of the
 % <https://www.surrey.ac.uk/mathegram MATHEGRAM project>.
 %
-% <<logo_mathegram.png>>
+% <<../images/logos/logo_mathegram.png>>
 %
 %% Initialization
 clc; clearvars; close all;
