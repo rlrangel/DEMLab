@@ -8,6 +8,14 @@
 [upc_website]: https://camins.upc.edu/
 [mit_license_link]: https://choosealicense.com/licenses/mit/
 
+[lesm_file_link]: https://gitlab.com/rafaelrangel/lesm/-/blob/master/src/lesm.m
+[src_folder_link]: https://gitlab.com/rafaelrangel/lesm/-/tree/master/src
+[examples_folder_link]: https://gitlab.com/rafaelrangel/lesm/-/tree/master/examples
+[tests_file_link]: https://gitlab.com/rafaelrangel/lesm/-/blob/master/tests/run_tests.m
+[tests_folder_link]: https://gitlab.com/rafaelrangel/lesm/-/tree/master/tests
+[results_file_link]: https://gitlab.com/rafaelrangel/lesm/-/blob/master/tests/update_results.m
+[matlab_website]: https://www.mathworks.com/
+
 # DEMLab - Discrete Element Method Laboratory
 
 <p align=center><img height="100.0%" width="100.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logo_demlab.png"></p>
