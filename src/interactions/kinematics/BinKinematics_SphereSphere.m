@@ -7,7 +7,7 @@
 % particle-particle interactions of type
 % <particle_sphere.html Particle Sphere>.
 %
-% <<kinematics_circles.png>>
+% <<../images/tutorials/kinematics_circles.png>>
 %
 classdef BinKinematics_SphereSphere < BinKinematics
     %% Constructor method

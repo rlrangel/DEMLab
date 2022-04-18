@@ -6,9 +6,14 @@
 % the implementation of the *Cylinder-Wall Circle* binary kinematics for
 % particle-wall interactions of types
 % <particle_cylinder.html Particle Cylinder> and
-% <wall_circ.html Wall Circle>.
+% <wall_circle.html Wall Circle>.
 %
 classdef BinKinematics_CylinderWcirc < BinKinematics
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        inside logical = logical.empty;   % flag for particle inside the circular wall
+    end
+    
     %% Constructor method
     methods
         function this = BinKinematics_CylinderWcirc()

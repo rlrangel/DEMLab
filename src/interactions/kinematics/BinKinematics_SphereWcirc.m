@@ -6,7 +6,7 @@
 % the implementation of the *Sphere-Wall Circle* binary kinematics for
 % particle-wall interactions of types
 % <particle_sphere.html Particle Sphere> and
-% <wall_circ.html Wall Circle>.
+% <wall_circle.html Wall Circle>.
 %
 classdef BinKinematics_SphereWcirc < BinKinematics
     %% Public properties

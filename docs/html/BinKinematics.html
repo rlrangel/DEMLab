@@ -1,0 +1,337 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>BinKinematics (Binary Kinematics) class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="BinKinematics.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>BinKinematics (Binary Kinematics) class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Default sub-class definition</a></li><li><a href="#6">Abstract methods: implemented in derived sub-classes</a></li><li><a href="#7">Public methods</a></li></ul></div><h2 id="1">Description</h2><p>This is a value heterogeneous super-class for the definition of the kinematics for binary interactions between elements.</p><p>It deals with the calculation of distances, relative positions and velocities, and contact geometry.</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="binkinematics_spheresphere.html">BinKinematics_SphereSphere</a> (default)</li><li><a href="binkinematics_spherewlin.html">BinKinematics_SphereWlin</a></li><li><a href="binkinematics_spherewcirc.html">BinKinematics_SphereWcirc</a></li><li><a href="binkinematics_cylindercylinder.html">BinKinematics_CylinderCylinder</a></li><li><a href="binkinematics_cylinderwlin.html">BinKinematics_CylinderWlin</a></li><li><a href="binkinematics_cylinderwcirc.html">BinKinematics_CylinderWcirc</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> BinKinematics &lt; matlab.mixin.Heterogeneous &amp; matlab.mixin.Copyable
+</pre><h2 id="2">Constant values</h2><pre class="codeinput">    properties (Constant = true, Access = public)
+        <span class="comment">% General types of binary kinematics</span>
+        PARTICLE_PARTICLE = uint8(1);
+        PARTICLE_WALL     = uint8(2);
+
+        <span class="comment">% Specific types of binary kinematics between same particles</span>
+        SPHERE_SPHERE     = uint8(1);
+        CYLINDER_CYLINDER = uint8(2);
+
+        <span class="comment">% Specific types of binary kinematics between particles and walls</span>
+        SPHERE_WALL_LINE     = uint8(3);
+        SPHERE_WALL_CIRCLE   = uint8(4);
+        CYLINDER_WALL_LINE   = uint8(5);
+        CYLINDER_WALL_CIRCLE = uint8(6);
+    <span class="keyword">end</span>
+</pre><h2 id="3">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Identification</span>
+        gen_type <span class="string">uint8</span> <span class="string">=</span> <span class="string">uint8.empty</span>;   <span class="comment">% flag for general type of binary kinematics</span>
+        spc_type <span class="string">uint8</span> <span class="string">=</span> <span class="string">uint8.empty</span>;   <span class="comment">% flag for specific type of binary kinematics</span>
+
+        <span class="comment">% Relative position</span>
+        dir   <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% direction vector between centroids</span>
+        dist  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% distance between centroids</span>
+        distc <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% corrected distance between centroids (consistent with adjusted contact radius)</span>
+        separ <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% separation between surfaces</span>
+
+        <span class="comment">% Relative velocities</span>
+        vel_trl <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% relative translational velocity at contact point</span>
+        vel_rot <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% relative velocity at contact point due to rotation only</span>
+        vel_ang <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% relative angular velocity</span>
+
+        <span class="comment">% Normal overlap parameters</span>
+        dir_n  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% unit direction vector</span>
+        ovlp_n <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% overlap</span>
+        vel_n  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% overlap rate of change</span>
+
+        <span class="comment">% Tangent overlap parameters</span>
+        dir_t  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% unit direction vector</span>
+        ovlp_t <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% overlap</span>
+        vel_t  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% overlap rate of change</span>
+
+        <span class="comment">% Contact parameters</span>
+        is_contact     <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for contact interaction</span>
+        v0_n           <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% initial (impact) normal velocity</span>
+        contact_start  <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% starting time</span>
+        contact_time   <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% duration since starting time</span>
+        contact_radius <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% contact radius</span>
+
+        <span class="comment">% Others</span>
+        vedge <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% edge of neighboring cells of voronoi diagram</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = BinKinematics(gen_type,spc_type)
+            <span class="keyword">if</span> (nargin &gt; 0)
+                this.gen_type = gen_type;
+                this.spc_type = spc_type;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="5">Default sub-class definition</h2><pre class="codeinput">    methods (Static, Access = protected)
+        <span class="keyword">function</span> defaultObject = getDefaultScalarElement
+            defaultObject = BinKinematics_SphereSphere;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="6">Abstract methods: implemented in derived sub-classes</h2><pre class="codeinput">    methods (Abstract)
+        <span class="comment">%------------------------------------------------------------------</span>
+        setEffParams(this,interact);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        this = setRelPos(this,element1,element2);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        this = setOverlaps(this,interact,time_step);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        this = setContactArea(this,interact);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        this = setVoronoiEdge(this,drv,interact);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        addContactForceNormalToParticles(this,interact);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        addContactForceTangentToParticles(this,interact);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        addContactTorqueTangentToParticles(this,interact);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        addRollResistTorqueToParticles(this,interact);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        addDirectConductionToParticles(this,interact);
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        addIndirectConductionToParticles(this,interact);
+    <span class="keyword">end</span>
+</pre><h2 id="7">Public methods</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setInitContactParams(this,time)
+            this.is_contact    = true;
+            this.contact_start = time;
+            this.v0_n          = this.vel_n;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setInitNoncontactParams(this)
+            this.is_contact     = false;
+            this.ovlp_n         = 0;
+            this.ovlp_t         = 0;
+            this.contact_time   = 0;
+            this.contact_radius = 0;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% BinKinematics (Binary Kinematics) class
+%
+%% Description
+%
+% This is a value heterogeneous super-class for the definition of the
+% kinematics for binary interactions between elements.
+%
+% It deals with the calculation of distances, relative positions and
+% velocities, and contact geometry.
+%
+% This super-class defines abstract methods that must be implemented in
+% the derived *sub-classes*:
+%
+% * <binkinematics_spheresphere.html BinKinematics_SphereSphere> (default)
+% * <binkinematics_spherewlin.html BinKinematics_SphereWlin>
+% * <binkinematics_spherewcirc.html BinKinematics_SphereWcirc>
+% * <binkinematics_cylindercylinder.html BinKinematics_CylinderCylinder>
+% * <binkinematics_cylinderwlin.html BinKinematics_CylinderWlin>
+% * <binkinematics_cylinderwcirc.html BinKinematics_CylinderWcirc>
+%
+classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
+    %% Constant values
+    properties (Constant = true, Access = public)
+        % General types of binary kinematics
+        PARTICLE_PARTICLE = uint8(1);
+        PARTICLE_WALL     = uint8(2);
+        
+        % Specific types of binary kinematics between same particles
+        SPHERE_SPHERE     = uint8(1);
+        CYLINDER_CYLINDER = uint8(2);
+        
+        % Specific types of binary kinematics between particles and walls
+        SPHERE_WALL_LINE     = uint8(3);
+        SPHERE_WALL_CIRCLE   = uint8(4);
+        CYLINDER_WALL_LINE   = uint8(5);
+        CYLINDER_WALL_CIRCLE = uint8(6);
+    end
+    
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Identification
+        gen_type uint8 = uint8.empty;   % flag for general type of binary kinematics
+        spc_type uint8 = uint8.empty;   % flag for specific type of binary kinematics
+        
+        % Relative position
+        dir   double = double.empty;   % direction vector between centroids
+        dist  double = double.empty;   % distance between centroids
+        distc double = double.empty;   % corrected distance between centroids (consistent with adjusted contact radius)
+        separ double = double.empty;   % separation between surfaces
+        
+        % Relative velocities
+        vel_trl double = double.empty;   % relative translational velocity at contact point
+        vel_rot double = double.empty;   % relative velocity at contact point due to rotation only
+        vel_ang double = double.empty;   % relative angular velocity
+        
+        % Normal overlap parameters
+        dir_n  double = double.empty;   % unit direction vector
+        ovlp_n double = double.empty;   % overlap
+        vel_n  double = double.empty;   % overlap rate of change
+        
+        % Tangent overlap parameters
+        dir_t  double = double.empty;   % unit direction vector
+        ovlp_t double = double.empty;   % overlap
+        vel_t  double = double.empty;   % overlap rate of change
+        
+        % Contact parameters
+        is_contact     logical = logical.empty;   % flag for contact interaction
+        v0_n           double  = double.empty;    % initial (impact) normal velocity
+        contact_start  double  = double.empty;    % starting time
+        contact_time   double  = double.empty;    % duration since starting time
+        contact_radius double  = double.empty;    % contact radius
+        
+        % Others
+        vedge double = double.empty;   % edge of neighboring cells of voronoi diagram
+    end
+    
+    %% Constructor method
+    methods
+        function this = BinKinematics(gen_type,spc_type)
+            if (nargin > 0)
+                this.gen_type = gen_type;
+                this.spc_type = spc_type;
+            end
+        end
+    end
+    
+    %% Default sub-class definition
+    methods (Static, Access = protected)
+        function defaultObject = getDefaultScalarElement
+            defaultObject = BinKinematics_SphereSphere;
+        end
+    end
+    
+    %% Abstract methods: implemented in derived sub-classes
+    methods (Abstract)
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        setEffParams(this,interact);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        this = setRelPos(this,element1,element2);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        this = setOverlaps(this,interact,time_step);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        this = setContactArea(this,interact);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        this = setVoronoiEdge(this,drv,interact);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        addContactForceNormalToParticles(this,interact);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        addContactForceTangentToParticles(this,interact);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        addContactTorqueTangentToParticles(this,interact);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        addRollResistTorqueToParticles(this,interact);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        addDirectConductionToParticles(this,interact);
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        addIndirectConductionToParticles(this,interact);
+    end
+    
+    %% Public methods
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setInitContactParams(this,time)
+            this.is_contact    = true;
+            this.contact_start = time;
+            this.v0_n          = this.vel_n;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setInitNoncontactParams(this)
+            this.is_contact     = false;
+            this.ovlp_n         = 0;
+            this.ovlp_t         = 0;
+            this.contact_time   = 0;
+            this.contact_radius = 0;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

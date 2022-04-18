@@ -7,7 +7,7 @@
 % particle-particle interactions of type
 % <particle_cylinder.html Particle Cylinder>.
 %
-% <<kinematics_circles.png>>
+% <<../images/tutorials/kinematics_circles.png>>
 %
 classdef BinKinematics_CylinderCylinder < BinKinematics
     %% Constructor method

@@ -1,0 +1,485 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>BinKinematics_SphereWlin class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="BinKinematics_SphereWlin.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>BinKinematics_SphereWlin class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constructor method</a></li><li><a href="#3">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="binkinematics.html">BinKinematics</a> class for the implementation of the <b>Sphere-Wall Line</b> binary kinematics for particle-wall interactions of types <a href="particle_sphere.html">Particle Sphere</a> and <a href="wall_line.html">Wall Line</a>.</p><pre class="codeinput"><span class="keyword">classdef</span> BinKinematics_SphereWlin &lt; BinKinematics
+</pre><h2 id="2">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = BinKinematics_SphereWlin()
+            this = this@BinKinematics(BinKinematics.PARTICLE_WALL,BinKinematics.SPHERE_WALL_LINE);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> setEffParams(~,int)
+            p  = int.elem1;  w  = int.elem2;
+            mp = p.material; mw = w.material;
+
+            <span class="comment">% Assumption: effective radius and mass consider particle only</span>
+            int.eff_radius = p.radius;
+            int.eff_mass   = p.mass;
+
+            <span class="comment">% Wall with no material</span>
+            <span class="comment">% Assumption: effective and average properties are the particle values</span>
+            <span class="keyword">if</span> (isempty(mw))
+                <span class="keyword">if</span> (~isempty(mp.young) &amp;&amp; ~isempty(mp.poisson))
+                    int.eff_young = mp.young / (1 - mp.poisson^2);
+                    <span class="keyword">if</span> (~isempty(mp.young0))
+                        int.eff_young0 = mp.young0 / (1 - mp.poisson^2);
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~isempty(mp.shear) &amp;&amp; ~isempty(mp.poisson))
+                    int.eff_shear = mp.shear / (2 - mp.poisson^2);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~isempty(mp.poisson))
+                    int.avg_poisson = mp.poisson;
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~isempty(mp.conduct))
+                    int.eff_conduct = mp.conduct/2;
+                    int.avg_conduct = mp.conduct;
+                <span class="keyword">end</span>
+
+            <span class="comment">% Wall with material</span>
+            <span class="keyword">else</span>
+                <span class="keyword">if</span> (~isempty(mp.young) &amp;&amp; ~isempty(mp.poisson) &amp;&amp; ~isempty(mw.young) &amp;&amp; ~isempty(mw.poisson))
+                    int.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
+                    <span class="keyword">if</span> (~isempty(mp.young0) &amp;&amp; ~isempty(mw.young0))
+                        int.eff_young0 = 1 / ((1-mp.poisson^2)/mp.young0 + (1-mw.poisson^2)/mw.young0);
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~isempty(mp.shear) &amp;&amp; ~isempty(mp.poisson) &amp;&amp; ~isempty(mw.shear) &amp;&amp; ~isempty(mw.poisson))
+                    int.eff_shear = 1 / ((2-mp.poisson^2)/mp.shear + (2-mw.poisson^2)/mw.shear);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~isempty(mp.poisson) &amp;&amp; ~isempty(mw.poisson))
+                    int.avg_poisson = (mp.poisson + mw.poisson) / 2;
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~isempty(mp.conduct) &amp;&amp; ~isempty(mw.conduct))
+                    int.eff_conduct = mp.conduct * mw.conduct / (mp.conduct + mw.conduct);
+                    int.avg_conduct = mp.conduct; <span class="comment">% assumption: average conductivity considers particle only</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setRelPos(this,p,w)
+            <span class="comment">% Needed properties</span>
+            P = p.coord;
+            A = w.coord_ini;
+            B = w.coord_end;
+            M = B - A;
+
+            <span class="comment">% Running parameter at the orthogonal intersection</span>
+            t = dot(M,P-A)/w.len^2;
+
+            <span class="comment">% Normal direction from particle to wall</span>
+            <span class="keyword">if</span> (t &lt;= 0)
+                this.dir = A-P;
+            <span class="keyword">elseif</span> (t &gt;= 1)
+                this.dir = B-P;
+            <span class="keyword">else</span>
+                this.dir = (A + t * M) - P;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Distance between particle surface and line segment</span>
+            this.dist  = norm(this.dir);
+            this.distc = this.dist;
+            this.separ = this.dist - p.radius;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setOverlaps(this,int,dt)
+            p = int.elem1; w = int.elem2;
+
+            <span class="comment">% Normal overlap and unit vector</span>
+            <span class="comment">% Assumption: the ends of the wall are treated as a flat surface</span>
+            this.ovlp_n = -this.separ;
+            this.dir_n  =  this.dir / norm(this.dir);
+
+            <span class="comment">% Positions of contact point</span>
+            <span class="comment">% Assumption: discount the full overlap from particle</span>
+            cp = (p.radius - this.ovlp_n) * this.dir_n;
+            cw = (p.coord+cp) - (w.coord_ini+w.coord_end)/2;
+
+            <span class="comment">% Particle velocity at contact point (3D due to cross-product)</span>
+            wp  = cross([0;0;p.veloc_rot],[cp(1);cp(2);0]);
+            vcp = p.veloc_trl + wp(1:2);
+
+            <span class="comment">% Wall velocity at contact point (3D due to cross-product)</span>
+            ww  = cross([0;0;w.veloc_rot],[cw(1);cw(2);0]);
+            vcw = w.veloc_trl + ww(1:2);
+
+            <span class="comment">% Relative velocities</span>
+            <span class="comment">% Assumption: rotation and angular velocities consider the particle only</span>
+            this.vel_trl = vcp - vcw;
+            this.vel_rot = wp(1:2);       <span class="comment">% particle only</span>
+            this.vel_ang = p.veloc_rot;   <span class="comment">% particle only</span>
+
+            <span class="comment">% Normal overlap rate of change</span>
+            this.vel_n = dot(this.vel_trl,this.dir_n);
+
+            <span class="comment">% Tangential relative velocity</span>
+            vt = this.vel_trl - this.vel_n * this.dir_n;
+
+            <span class="comment">% Tangential unit vector</span>
+            <span class="keyword">if</span> (any(vt))
+                this.dir_t = vt / norm(vt);
+            <span class="keyword">else</span>
+                this.dir_t = [0;0];
+            <span class="keyword">end</span>
+
+            <span class="comment">% Tangential overlap rate of change</span>
+            this.vel_t = dot(this.vel_trl,this.dir_t);
+
+            <span class="comment">% Tangential overlap</span>
+            <span class="keyword">if</span> (isempty(this.ovlp_t))
+                this.ovlp_t = this.vel_t * dt;
+            <span class="keyword">else</span>
+                this.ovlp_t = this.ovlp_t + this.vel_t * dt;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setContactArea(this,int)
+            <span class="comment">% Needed properties</span>
+            r = int.elem1.radius;
+            d = this.dist;
+
+            <span class="comment">% Contact radius</span>
+            this.contact_radius = sqrt(r^2-d^2);
+
+            <span class="comment">% Contact correction</span>
+            <span class="keyword">if</span> (~isempty(int.corarea))
+                <span class="comment">% Adjusted radius</span>
+                int.corarea.fixRadius(int);
+
+                <span class="comment">% Adjusted distance consistent with adjusted radius</span>
+                this.distc = sqrt(r^2-this.contact_radius^2);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setVoronoiEdge(this,~,int)
+            <span class="comment">% Assumption: same as the particle diameter</span>
+            this.vedge = 2*int.elem1.radius;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addContactForceNormalToParticles(~,int)
+            int.elem1.force = int.elem1.force + int.cforcen.total_force;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addContactForceTangentToParticles(~,int)
+            int.elem1.force = int.elem1.force + int.cforcet.total_force;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addContactTorqueTangentToParticles(this,int)
+            <span class="comment">% Lever arm</span>
+            <span class="comment">% Assumption: half of the overlap</span>
+            l = (int.elem1.radius-this.ovlp_n/2) * this.dir_n;
+
+            <span class="comment">% Torque from tangential contact force (3D due to cross-product)</span>
+            f = int.cforcet.total_force;
+            torque = cross([l(1);l(2);0],[f(1);f(2);0]);
+
+            <span class="comment">% Add torque from tangential contact force to particle</span>
+            int.elem1.torque = int.elem1.torque + torque(3);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addRollResistTorqueToParticles(~,int)
+            int.elem1.torque = int.elem1.torque + int.rollres.torque;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addDirectConductionToParticles(~,int)
+            int.elem1.heat_rate = int.elem1.heat_rate + int.dconduc.total_hrate;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> addIndirectConductionToParticles(~,int)
+            int.elem1.heat_rate = int.elem1.heat_rate + int.iconduc.total_hrate;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% BinKinematics_SphereWlin class
+%
+%% Description
+%
+% This is a sub-class of the <binkinematics.html BinKinematics> class for
+% the implementation of the *Sphere-Wall Line* binary kinematics for
+% particle-wall interactions of types
+% <particle_sphere.html Particle Sphere> and
+% <wall_line.html Wall Line>.
+%
+classdef BinKinematics_SphereWlin < BinKinematics
+    %% Constructor method
+    methods
+        function this = BinKinematics_SphereWlin()
+            this = this@BinKinematics(BinKinematics.PARTICLE_WALL,BinKinematics.SPHERE_WALL_LINE);
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function setEffParams(~,int)
+            p  = int.elem1;  w  = int.elem2;
+            mp = p.material; mw = w.material;
+            
+            % Assumption: effective radius and mass consider particle only
+            int.eff_radius = p.radius;
+            int.eff_mass   = p.mass;
+            
+            % Wall with no material
+            % Assumption: effective and average properties are the particle values
+            if (isempty(mw))
+                if (~isempty(mp.young) && ~isempty(mp.poisson))
+                    int.eff_young = mp.young / (1 - mp.poisson^2);
+                    if (~isempty(mp.young0))
+                        int.eff_young0 = mp.young0 / (1 - mp.poisson^2);
+                    end
+                end
+                if (~isempty(mp.shear) && ~isempty(mp.poisson))
+                    int.eff_shear = mp.shear / (2 - mp.poisson^2);
+                end
+                if (~isempty(mp.poisson))
+                    int.avg_poisson = mp.poisson;
+                end
+                if (~isempty(mp.conduct))
+                    int.eff_conduct = mp.conduct/2;
+                    int.avg_conduct = mp.conduct;
+                end
+                
+            % Wall with material
+            else
+                if (~isempty(mp.young) && ~isempty(mp.poisson) && ~isempty(mw.young) && ~isempty(mw.poisson))
+                    int.eff_young = 1 / ((1-mp.poisson^2)/mp.young + (1-mw.poisson^2)/mw.young);
+                    if (~isempty(mp.young0) && ~isempty(mw.young0))
+                        int.eff_young0 = 1 / ((1-mp.poisson^2)/mp.young0 + (1-mw.poisson^2)/mw.young0);
+                    end
+                end
+                if (~isempty(mp.shear) && ~isempty(mp.poisson) && ~isempty(mw.shear) && ~isempty(mw.poisson))
+                    int.eff_shear = 1 / ((2-mp.poisson^2)/mp.shear + (2-mw.poisson^2)/mw.shear);
+                end
+                if (~isempty(mp.poisson) && ~isempty(mw.poisson))
+                    int.avg_poisson = (mp.poisson + mw.poisson) / 2;
+                end
+                if (~isempty(mp.conduct) && ~isempty(mw.conduct))
+                    int.eff_conduct = mp.conduct * mw.conduct / (mp.conduct + mw.conduct);
+                    int.avg_conduct = mp.conduct; % assumption: average conductivity considers particle only
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setRelPos(this,p,w)
+            % Needed properties
+            P = p.coord;
+            A = w.coord_ini;
+            B = w.coord_end;
+            M = B - A;
+            
+            % Running parameter at the orthogonal intersection
+            t = dot(M,P-A)/w.len^2;
+            
+            % Normal direction from particle to wall
+            if (t <= 0)
+                this.dir = A-P;
+            elseif (t >= 1)
+                this.dir = B-P;
+            else
+                this.dir = (A + t * M) - P;
+            end
+
+            % Distance between particle surface and line segment
+            this.dist  = norm(this.dir);
+            this.distc = this.dist;
+            this.separ = this.dist - p.radius;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setOverlaps(this,int,dt)
+            p = int.elem1; w = int.elem2;
+            
+            % Normal overlap and unit vector
+            % Assumption: the ends of the wall are treated as a flat surface
+            this.ovlp_n = -this.separ;
+            this.dir_n  =  this.dir / norm(this.dir);
+            
+            % Positions of contact point
+            % Assumption: discount the full overlap from particle
+            cp = (p.radius - this.ovlp_n) * this.dir_n;
+            cw = (p.coord+cp) - (w.coord_ini+w.coord_end)/2;
+            
+            % Particle velocity at contact point (3D due to cross-product)
+            wp  = cross([0;0;p.veloc_rot],[cp(1);cp(2);0]);
+            vcp = p.veloc_trl + wp(1:2);
+            
+            % Wall velocity at contact point (3D due to cross-product)
+            ww  = cross([0;0;w.veloc_rot],[cw(1);cw(2);0]);
+            vcw = w.veloc_trl + ww(1:2);
+            
+            % Relative velocities
+            % Assumption: rotation and angular velocities consider the particle only
+            this.vel_trl = vcp - vcw;
+            this.vel_rot = wp(1:2);       % particle only
+            this.vel_ang = p.veloc_rot;   % particle only
+            
+            % Normal overlap rate of change
+            this.vel_n = dot(this.vel_trl,this.dir_n);
+            
+            % Tangential relative velocity
+            vt = this.vel_trl - this.vel_n * this.dir_n;
+            
+            % Tangential unit vector
+            if (any(vt))
+                this.dir_t = vt / norm(vt);
+            else
+                this.dir_t = [0;0];
+            end
+            
+            % Tangential overlap rate of change
+            this.vel_t = dot(this.vel_trl,this.dir_t);
+            
+            % Tangential overlap
+            if (isempty(this.ovlp_t))
+                this.ovlp_t = this.vel_t * dt;
+            else
+                this.ovlp_t = this.ovlp_t + this.vel_t * dt;
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setContactArea(this,int)
+            % Needed properties
+            r = int.elem1.radius;
+            d = this.dist;
+            
+            % Contact radius
+            this.contact_radius = sqrt(r^2-d^2);
+            
+            % Contact correction
+            if (~isempty(int.corarea))
+                % Adjusted radius
+                int.corarea.fixRadius(int);
+                
+                % Adjusted distance consistent with adjusted radius
+                this.distc = sqrt(r^2-this.contact_radius^2);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setVoronoiEdge(this,~,int)
+            % Assumption: same as the particle diameter
+            this.vedge = 2*int.elem1.radius;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addContactForceNormalToParticles(~,int)
+            int.elem1.force = int.elem1.force + int.cforcen.total_force;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addContactForceTangentToParticles(~,int)
+            int.elem1.force = int.elem1.force + int.cforcet.total_force;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addContactTorqueTangentToParticles(this,int)
+            % Lever arm
+            % Assumption: half of the overlap
+            l = (int.elem1.radius-this.ovlp_n/2) * this.dir_n;
+            
+            % Torque from tangential contact force (3D due to cross-product)
+            f = int.cforcet.total_force;
+            torque = cross([l(1);l(2);0],[f(1);f(2);0]);
+            
+            % Add torque from tangential contact force to particle
+            int.elem1.torque = int.elem1.torque + torque(3);
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addRollResistTorqueToParticles(~,int)
+            int.elem1.torque = int.elem1.torque + int.rollres.torque;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addDirectConductionToParticles(~,int)
+            int.elem1.heat_rate = int.elem1.heat_rate + int.dconduc.total_hrate;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function addIndirectConductionToParticles(~,int)
+            int.elem1.heat_rate = int.elem1.heat_rate + int.iconduc.total_hrate;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>
