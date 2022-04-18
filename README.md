@@ -20,7 +20,7 @@ DEMLab is a program for performing numerical simulations of particle systems usi
 
 New implementations can be made by anyone in separate branches.
 
-The merge of new developments into the master branch is subjected to the author's approval upon a merge request.
+The merge of new developments into the master branch is subjected to the author's approval upon a **merge request**.
 
 ## Authorship
 
