@@ -13,6 +13,7 @@
 % the derived *sub-classes*:
 %
 % * <nusselt_sphere_ranzmarshall.html Nusselt_Sphere_RanzMarshall>
+% * <nusselt_sphere_whitaker.html Nusselt_Sphere_Whitaker>
 %
 classdef Nusselt < handle
     %% Constant values
