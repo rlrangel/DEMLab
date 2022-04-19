@@ -98,10 +98,10 @@ Polytechnic University of Catalonia ([UPC BarcelonaTech][upc_website])
 The initial version (1.0) of the program was developed under the context of the [MATHEGRAM project][mathegram_website],
 a Marie Sklodowska-Curie Innovative Training Network of the European Union’s Horizon 2020 Programme H2020 under REA grant agreement No. 813202.
 
-<p align=center><img height="100.0%" width="75.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_mathegram.png"></p>
-
-![](https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_mathegram.png){ width="600" height="600" style="display: block; margin: 0 auto" }
-
+<p float="left">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_mathegram.png" width="600"/>
+</p>
 
 ## License
 
