@@ -1,0 +1,194 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ContactForceT_Spring class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="ContactForceT_Spring.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>ContactForceT_Spring class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="contactforcet.html">ContactForceT</a> class for the implementation of the <b>Simple Spring</b> tangent contact force model.</p><p>This model assumes that the tangent contact force has only an elastic component <img src="ContactForceT_Spring_eq06058729214609891401.png" alt="$F_{t}^{e}$" style="width:16px;height:14px;">, provided by a linear spring.</p><p><img src="ContactForceT_Spring_eq09014383034704446111.png" alt="$$\left \{ F_{t} \right \} = -F_{t}^{e} \{-\hat{t}\}$$" style="width:106px;height:18px;"></p><p><img src="ContactForceT_Spring_eq07737106025351550430.png" alt="$$F_{t}^{e} = K_{t} \delta_{t}$$" style="width:63px;height:15px;"></p><p>The tangent stiffness coefficient <img src="ContactForceT_Spring_eq12186984377305326259.png" alt="$K_{t}$" style="width:16px;height:13px;"> can be computed as a function of the normal stiffness coefficient <img src="ContactForceT_Spring_eq01324158102978469580.png" alt="$K_{n}$" style="width:18px;height:13px;"> and the effective Poisson ratio <img src="ContactForceT_Spring_eq12508299283340161401.png" alt="$\nu_{eff}$" style="width:24px;height:11px;">:</p><p><img src="ContactForceT_Spring_eq00322000344675749432.png" alt="$$K_{t} = \frac{1-\nu_{eff}}{1-\frac{\nu_{eff}}{2}}K_{n}$$" style="width:109px;height:35px;"></p><p><b>Notation</b>:</p><p><img src="ContactForceT_Spring_eq15071274376249526572.png" alt="$\hat{t}$" style="width:6px;height:14px;">: Tangent direction between elements</p><p><img src="ContactForceT_Spring_eq17362946853508842186.png" alt="$\delta_{t}$" style="width:10px;height:14px;">: Tangent overlap</p><p><b>References</b>:</p><div><ul><li><a href="https://doi.org/10.1115/1.4009973">R.D. Mindlin. Compliance of elastic bodies in contact, <i>J. Appl. Mech.</i>, 16(3):259-268, 1949</a> (stiffness coefficient formula)</li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ContactForceT_Spring &lt; ContactForceT
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Formulation options</span>
+        auto_stiff <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for computing stiffness coefficient automatically</span>
+
+        <span class="comment">% Contact parameters</span>
+        stiff <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% stiffness coefficient</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = ContactForceT_Spring()
+            this = this@ContactForceT(ContactForceT.SPRING);
+            this = this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setDefaultProps(this)
+            this.auto_stiff = true;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setCteParams(this,int)
+            <span class="keyword">if</span> (this.auto_stiff)
+                <span class="keyword">if</span> (~isempty(int.cforcen))
+                    <span class="comment">% Assumption: average poisson ratio</span>
+                    this.stiff = (1-int.avg_poisson)/(1-int.avg_poisson/2) * int.cforcen.stiff;
+                <span class="keyword">else</span>
+                    this.stiff = 0;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = evalForce(this,int)
+            <span class="comment">% Force modulus (elastic contribution only)</span>
+            f = this.stiff * int.kinemat.ovlp_t;
+
+            <span class="comment">% Total tangential force vector (against deformation and motion)</span>
+            this.total_force = -f * int.kinemat.dir_t;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% ContactForceT_Spring class
+%
+%% Description
+%
+% This is a sub-class of the <contactforcet.html ContactForceT> class for
+% the implementation of the *Simple Spring* tangent contact force model.
+%
+% This model assumes that the tangent contact force has only an elastic
+% component $F_{t}^{e}$, provided by a linear spring.
+%
+% $$\left \{ F_{t} \right \} = -F_{t}^{e} \{-\hat{t}\}$$
+%
+% $$F_{t}^{e} = K_{t} \delta_{t}$$
+%
+% The tangent stiffness coefficient $K_{t}$ can be computed as a function
+% of the normal stiffness coefficient $K_{n}$ and the effective Poisson
+% ratio $\nu_{eff}$:
+%
+% $$K_{t} = \frac{1-\nu_{eff}}{1-\frac{\nu_{eff}}{2}}K_{n}$$
+%
+% *Notation*:
+%
+% $\hat{t}$: Tangent direction between elements
+%
+% $\delta_{t}$: Tangent overlap
+%
+% *References*:
+%
+% * <https://doi.org/10.1115/1.4009973
+% R.D. Mindlin.
+% Compliance of elastic bodies in contact, _J. Appl. Mech._, 16(3):259-268, 1949>
+% (stiffness coefficient formula)
+%
+classdef ContactForceT_Spring < ContactForceT
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Formulation options
+        auto_stiff logical = logical.empty;   % flag for computing stiffness coefficient automatically
+        
+        % Contact parameters
+        stiff double = double.empty;   % stiffness coefficient
+    end
+    
+    %% Constructor method
+    methods
+        function this = ContactForceT_Spring()
+            this = this@ContactForceT(ContactForceT.SPRING);
+            this = this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setDefaultProps(this)
+            this.auto_stiff = true;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setCteParams(this,int)
+            if (this.auto_stiff)
+                if (~isempty(int.cforcen))
+                    % Assumption: average poisson ratio
+                    this.stiff = (1-int.avg_poisson)/(1-int.avg_poisson/2) * int.cforcen.stiff;
+                else
+                    this.stiff = 0;
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = evalForce(this,int)
+            % Force modulus (elastic contribution only)
+            f = this.stiff * int.kinemat.ovlp_t;
+            
+            % Total tangential force vector (against deformation and motion)
+            this.total_force = -f * int.kinemat.dir_t;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

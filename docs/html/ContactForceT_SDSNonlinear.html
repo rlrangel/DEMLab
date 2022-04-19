@@ -1,0 +1,324 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ContactForceT_SDSNonlinear class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="ContactForceT_SDSNonlinear.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>ContactForceT_SDSNonlinear class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="contactforcet.html">ContactForceT</a> class for the implementation of the <b>Nonlinear Spring-Dashpot-Slider</b> tangent contact force model.</p><p>This model assumes that the tangent contact force has an elastic component <img src="ContactForceT_SDSNonlinear_eq06058729214609891401.png" alt="$F_{t}^{e}$" style="width:16px;height:14px;">, provided by a spring, a viscous component <img src="ContactForceT_SDSNonlinear_eq07746795294095245318.png" alt="$F_{t}^{v}$" style="width:17px;height:14px;">, provided by a dashpot, and a friction component <img src="ContactForceT_SDSNonlinear_eq17203162418412726701.png" alt="$F_{t}^{f}$" style="width:18px;height:18px;">, provided by a slider, which limits the total force according to Coulomb law.</p><p><img src="ContactForceT_SDSNonlinear_eq11066758373262977584.png" alt="$$\left \{ F_{t} \right \} = min\left ( \left | F_{t}^{e}+F_{t}^{v} \right |,F_{t}^{f} \right ) \{-\hat{t}\}$$" style="width:215px;height:27px;"></p><p><img src="ContactForceT_SDSNonlinear_eq05896664501375633276.png" alt="$$F_{t}^{f} = \mu \left | F_{n} \right |$$" style="width:72px;height:18px;"></p><p>The friction coefficient <img src="ContactForceT_SDSNonlinear_eq05371638286043275527.png" alt="$\mu$" style="width:9px;height:10px;"> must be provided.</p><p>The elastic and viscous components can be camputed by different formulations:</p><div><ul><li><b>DD (Di Renzo &amp; Di Maio)</b>:</li></ul></div><p><img src="ContactForceT_SDSNonlinear_eq16394386306907874254.png" alt="$$F_{t}^{e} = \frac{16}{3} G_{eff} \sqrt{R_{eff} \delta_{n}} \delta_{t}$$" style="width:151px;height:30px;"></p><p><img src="ContactForceT_SDSNonlinear_eq12571156203963802530.png" alt="$$F_{t}^{v} = 0$$" style="width:44px;height:15px;"></p><div><ul><li><b>LTH (Langston, Tuzun, Heyes)</b>:</li></ul></div><p><img src="ContactForceT_SDSNonlinear_eq08417374448695106125.png" alt="$$F_{t}^{e} = \mu \left | F_{n} \right | \left ( 1 - \left ( 1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}) \right )^{3/2} \right )$$" style="width:286px;height:45px;"></p><p><img src="ContactForceT_SDSNonlinear_eq18160688011716005527.png" alt="$$F_{t}^{v} = \eta_{t} \left ( \frac{6m_{eff} \mu \left | F_{n} \right |}{\delta_{t}^{max}} \sqrt{1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}} \right )^{1/2} \dot{\delta_{t}}$$" style="width:318px;height:50px;"></p><p>The tangent damping coefficient <img src="ContactForceT_SDSNonlinear_eq08890146897505954901.png" alt="$\eta_{t}$" style="width:11px;height:10px;"> must be provided.</p><div><ul><li><b>ZZY (Zheng, Zhu, Yu)</b>:</li></ul></div><p><img src="ContactForceT_SDSNonlinear_eq08417374448695106125.png" alt="$$F_{t}^{e} = \mu \left | F_{n} \right | \left ( 1 - \left ( 1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}) \right )^{3/2} \right )$$" style="width:286px;height:45px;"></p><p><img src="ContactForceT_SDSNonlinear_eq03797794184146709493.png" alt="$$F_{t}^{v} = \frac{\eta_{t}}{2G_{eff}\delta_{t}^{max}} \left ( 1 - \frac{0.4\eta_{t} \left | \dot{\delta_{t}} \right | }{2G_{eff}\delta_{t}^{max}} \right ) \left ( 1.5\mu \left | F_{n} \right | \sqrt{1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}} \right ) \dot{\delta_{t}}$$" style="width:460px;height:56px;"></p><p>The tangent damping coefficient <img src="ContactForceT_SDSNonlinear_eq08890146897505954901.png" alt="$\eta_{t}$" style="width:11px;height:10px;"> must be provided.</p><div><ul><li><b>TTI (Tsuji, Tanaka, Ishida)</b>:</li></ul></div><p><img src="ContactForceT_SDSNonlinear_eq10413272896873965038.png" alt="$$F_{t}^{e} = \frac{\sqrt{2R_{eff}}E_{eff}}{(2-\nu_{eff})(1+\nu_{eff})} \sqrt{\delta_{n}} \delta_{t}$$" style="width:202px;height:38px;"></p><p><img src="ContactForceT_SDSNonlinear_eq11577098027173515894.png" alt="$$F_{t}^{v} = \eta_{n} \dot{\delta_{t}}$$" style="width:62px;height:18px;"></p><p>The tangent damping coefficient <img src="ContactForceT_SDSNonlinear_eq08890146897505954901.png" alt="$\eta_{t}$" style="width:11px;height:10px;"> must be provided.</p><p><b>Notation</b>:</p><p><img src="ContactForceT_SDSNonlinear_eq15071274376249526572.png" alt="$\hat{t}$" style="width:6px;height:14px;">: Tangent direction between elements</p><p><img src="ContactForceT_SDSNonlinear_eq09065624731070659725.png" alt="$\delta_{n}$" style="width:13px;height:14px;">: Normal overlap</p><p><img src="ContactForceT_SDSNonlinear_eq17362946853508842186.png" alt="$\delta_{t}$" style="width:10px;height:14px;">: Tangent overlap</p><p><img src="ContactForceT_SDSNonlinear_eq15885802080304408504.png" alt="$\dot{\delta_{t}}$" style="width:10px;height:17px;">: Time rate of change of tangent overlap</p><p><img src="ContactForceT_SDSNonlinear_eq10194436451559719258.png" alt="$F_{n}$" style="width:15px;height:13px;">: Normal contact force vector</p><p><img src="ContactForceT_SDSNonlinear_eq06291617511541824668.png" alt="$m_{eff}$" style="width:30px;height:11px;">: Effective mass</p><p><img src="ContactForceT_SDSNonlinear_eq02602891172830952942.png" alt="$R_{eff}$" style="width:28px;height:15px;">: Effective contact radius</p><p><img src="ContactForceT_SDSNonlinear_eq02651269392019945628.png" alt="$E_{eff}$" style="width:28px;height:15px;">: Effective Young modulus</p><p><img src="ContactForceT_SDSNonlinear_eq08162108853239370816.png" alt="$G_{eff}$" style="width:28px;height:15px;">: Effective shear modulus</p><p><img src="ContactForceT_SDSNonlinear_eq12508299283340161401.png" alt="$\nu_{eff}$" style="width:24px;height:11px;">: Effective Poisson ratio</p><p><img src="ContactForceT_SDSNonlinear_eq09897345071637068022.png" alt="$\delta_{t}^{max} = \mu \delta_{n} \frac{2-\nu_{eff}}{2(1-\nu_{eff})}$" style="width:116px;height:23px;">: Tangent overlap when sliding starts</p><p><b>References</b>:</p><div><ul><li><a href="https://doi.org/10.1016/j.ces.2004.10.004">A. Di Renzo and F.P. Di Maio. An improved integral non?linear model for the contact of particles in distinct element simulations, <i>Chem. Eng. Sci.</i>, 60(5):1303-1312, 2005</a> (DD model)</li></ul></div><div><ul><li><a href="https://doi.org/10.1016/0009-2509(94)85095-X">P.A. Langston, U. Tuzun and D.M.Heyes. Continuous potential discrete particle simulations of stress and velocity fields in hoppers: transition from fluid to granular flow, <i>Chem. Eng. Sci.</i>, 49(8):1259-1275, 1994</a> (LTH model)</li></ul></div><div><ul><li><a href="https://doi.org/10.1016/j.powtec.2012.04.032">Q.J. Zheng, H.P. Zhub and A.B. Yu. Finite element analysis of the contact forces between a viscoelastic sphere and rigid plane, <i>Powder Technol.</i>, 226:130-142, 2012</a> (ZZY model)</li></ul></div><div><ul><li><a href="https://doi.org/10.1016/0032-5910(92)88030-L">Y. Tsuji, T. Tanaka and T. Ishida. Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, <i>Powder Technol.</i>, 71(3):239-250, 1992</a> (TTI model)</li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ContactForceT_SDSNonlinear &lt; ContactForceT
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        <span class="comment">% Formulation options</span>
+        formula <span class="string">uint8</span> <span class="string">=</span> <span class="string">uint8.empty</span>;   <span class="comment">% flag for type of nonlinear formulation</span>
+
+        <span class="comment">% Contact parameters</span>
+        stiff <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% stiffness coefficient</span>
+        damp  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% damping coefficient</span>
+        fric  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% friction coefficient</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+        <span class="keyword">function</span> this = ContactForceT_SDSNonlinear()
+            this = this@ContactForceT(ContactForceT.SDS_NONLINEAR);
+            this = this.setDefaultProps();
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setDefaultProps(this)
+
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = setCteParams(this,int)
+            <span class="keyword">if</span> (this.formula == this.TTI &amp;&amp; isempty(this.damp))
+                <span class="keyword">if</span> (~isempty(int.cforcen))
+                    this.damp = int.cforcen.damp;
+                <span class="keyword">else</span>
+                    this.damp = 0;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> this = evalForce(this,int)
+            <span class="comment">% Force modulus (friction contribution)</span>
+            <span class="keyword">if</span> (~isempty(int.cforcen))
+                ff = this.fric * norm(int.cforcen.total_force);
+            <span class="keyword">else</span>
+                ff = 0;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Force modulus (viscoelastic contribution)</span>
+            <span class="keyword">switch</span> this.formula
+                <span class="keyword">case</span> this.DD
+                    this.stiff = 16 * int.eff_shear * sqrt(int.eff_radius * int.kinemat.ovlp_n) / 3;
+                    f = this.stiff * int.kinemat.ovlp_t;
+                <span class="keyword">case</span> this.LTH
+                    max_ovlp = this.fric * int.kinemat.ovlp_n * (2 - int.avg_poisson) / (2 - 2 * int.avg_poisson);
+                    a  = 1 - min(abs(int.kinemat.ovlp_t),max_ovlp) / max_ovlp;
+                    fe = ff * (1 - a^(3/2));
+                    fv = this.damp * sqrt(6 * int.eff_mass * ff * sqrt(a) / max_ovlp) * int.kinemat.vel_t;
+                    f  = fe + fv;
+                <span class="keyword">case</span> this.ZZY
+                    max_ovlp = this.fric * int.kinemat.ovlp_n * (2 - int.avg_poisson) / (2 - 2 * int.avg_poisson);
+                    a  = 1 - min(abs(int.kinemat.ovlp_t),max_ovlp) / max_ovlp;
+                    fe = ff * (1 - a^(3/2));
+                    fv = this.damp / (2 * int.eff_shear * max_ovlp) * (1 - 0.4 * this.damp * abs(int.kinemat.vel_t) / (2 * int.eff_shear * max_ovlp)) * (1.5 * ff * sqrt(a)) * int.kinemat.vel_t;
+                    f  = fe + fv;
+                <span class="keyword">case</span> this.TTI
+                    this.stiff = sqrt(2 * int.eff_radius) * int.eff_young * sqrt(int.kinemat.ovlp_n) / ((2 - int.avg_poisson) * (1 + int.avg_poisson));
+                    fe = this.stiff * int.kinemat.ovlp_t;
+                    fv = this.damp  * int.kinemat.vel_t;
+                    f  = fe + fv;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Limit viscoelastic force by Coulomb law</span>
+            f = min(abs(f),abs(ff));
+
+            <span class="comment">% Total tangential force vector (against deformation and motion)</span>
+            this.total_force = -f * int.kinemat.dir_t;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% ContactForceT_SDSNonlinear class
+%
+%% Description
+%
+% This is a sub-class of the <contactforcet.html ContactForceT> class for
+% the implementation of the *Nonlinear Spring-Dashpot-Slider* tangent
+% contact force model.
+%
+% This model assumes that the tangent contact force has an elastic component
+% $F_{t}^{e}$, provided by a spring, a viscous component $F_{t}^{v}$,
+% provided by a dashpot, and a friction component $F_{t}^{f}$, provided by
+% a slider, which limits the total force according to Coulomb law. 
+%
+% $$\left \{ F_{t} \right \} = min\left ( \left | F_{t}^{e}+F_{t}^{v} \right |,F_{t}^{f} \right ) \{-\hat{t}\}$$
+%
+% $$F_{t}^{f} = \mu \left | F_{n} \right |$$
+%
+% The friction coefficient $\mu$ must be provided.
+%
+% The elastic and viscous components can be camputed by different
+% formulations:
+%
+% * *DD (Di Renzo & Di Maio)*:
+%
+% $$F_{t}^{e} = \frac{16}{3} G_{eff} \sqrt{R_{eff} \delta_{n}} \delta_{t}$$
+%
+% $$F_{t}^{v} = 0$$
+%
+% * *LTH (Langston, Tuzun, Heyes)*:
+%
+% $$F_{t}^{e} = \mu \left | F_{n} \right | \left ( 1 - \left ( 1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}) \right )^{3/2} \right )$$
+%
+% $$F_{t}^{v} = \eta_{t} \left ( \frac{6m_{eff} \mu \left | F_{n} \right |}{\delta_{t}^{max}} \sqrt{1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}} \right )^{1/2} \dot{\delta_{t}}$$
+%
+% The tangent damping coefficient $\eta_{t}$ must be provided.
+%
+% * *ZZY (Zheng, Zhu, Yu)*:
+%
+% $$F_{t}^{e} = \mu \left | F_{n} \right | \left ( 1 - \left ( 1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}) \right )^{3/2} \right )$$
+%
+% $$F_{t}^{v} = \frac{\eta_{t}}{2G_{eff}\delta_{t}^{max}} \left ( 1 - \frac{0.4\eta_{t} \left | \dot{\delta_{t}} \right | }{2G_{eff}\delta_{t}^{max}} \right ) \left ( 1.5\mu \left | F_{n} \right | \sqrt{1 - \frac{min(\left | \delta_{t} \right |,\delta_{t}^{max})}{\delta_{t}^{max}}} \right ) \dot{\delta_{t}}$$
+%
+% The tangent damping coefficient $\eta_{t}$ must be provided.
+%
+% * *TTI (Tsuji, Tanaka, Ishida)*:
+%
+% $$F_{t}^{e} = \frac{\sqrt{2R_{eff}}E_{eff}}{(2-\nu_{eff})(1+\nu_{eff})} \sqrt{\delta_{n}} \delta_{t}$$
+%
+% $$F_{t}^{v} = \eta_{n} \dot{\delta_{t}}$$
+%
+% The tangent damping coefficient $\eta_{t}$ must be provided.
+%
+% *Notation*:
+%
+% $\hat{t}$: Tangent direction between elements
+%
+% $\delta_{n}$: Normal overlap
+%
+% $\delta_{t}$: Tangent overlap
+%
+% $\dot{\delta_{t}}$: Time rate of change of tangent overlap
+%
+% $F_{n}$: Normal contact force vector
+%
+% $m_{eff}$: Effective mass
+%
+% $R_{eff}$: Effective contact radius
+%
+% $E_{eff}$: Effective Young modulus
+%
+% $G_{eff}$: Effective shear modulus
+%
+% $\nu_{eff}$: Effective Poisson ratio
+%
+% $\delta_{t}^{max} = \mu \delta_{n} \frac{2-\nu_{eff}}{2(1-\nu_{eff})}$:
+% Tangent overlap when sliding starts
+%
+% *References*:
+%
+% * <https://doi.org/10.1016/j.ces.2004.10.004
+% A. Di Renzo and F.P. Di Maio.
+% An improved integral non?linear model for the contact of particles in distinct element simulations, _Chem. Eng. Sci._, 60(5):1303-1312, 2005>
+% (DD model)
+%
+% * <https://doi.org/10.1016/0009-2509(94)85095-X
+% P.A. Langston, U. Tuzun and D.M.Heyes.
+% Continuous potential discrete particle simulations of stress and velocity fields in hoppers: transition from fluid to granular flow, _Chem. Eng. Sci._, 49(8):1259-1275, 1994>
+% (LTH model)
+%
+% * <https://doi.org/10.1016/j.powtec.2012.04.032
+% Q.J. Zheng, H.P. Zhub and A.B. Yu.
+% Finite element analysis of the contact forces between a viscoelastic sphere and rigid plane, _Powder Technol._, 226:130-142, 2012>
+% (ZZY model)
+%
+% * <https://doi.org/10.1016/0032-5910(92)88030-L
+% Y. Tsuji, T. Tanaka and T. Ishida.
+% Lagrangian numerical simulation of plug flow of cohesionless particles in a horizontal pipe, _Powder Technol._, 71(3):239-250, 1992>
+% (TTI model)
+%
+classdef ContactForceT_SDSNonlinear < ContactForceT
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        % Formulation options
+        formula uint8 = uint8.empty;   % flag for type of nonlinear formulation
+        
+        % Contact parameters
+        stiff double = double.empty;   % stiffness coefficient
+        damp  double = double.empty;   % damping coefficient
+        fric  double = double.empty;   % friction coefficient
+    end
+    
+    %% Constructor method
+    methods
+        function this = ContactForceT_SDSNonlinear()
+            this = this@ContactForceT(ContactForceT.SDS_NONLINEAR);
+            this = this.setDefaultProps();
+        end
+    end
+    
+    %% Public methods: implementation of super-class declarations
+    methods
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setDefaultProps(this)
+            
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = setCteParams(this,int)
+            if (this.formula == this.TTI && isempty(this.damp))
+                if (~isempty(int.cforcen))
+                    this.damp = int.cforcen.damp;
+                else
+                    this.damp = 0;
+                end
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function this = evalForce(this,int)
+            % Force modulus (friction contribution)
+            if (~isempty(int.cforcen))
+                ff = this.fric * norm(int.cforcen.total_force);
+            else
+                ff = 0;
+            end
+            
+            % Force modulus (viscoelastic contribution)
+            switch this.formula
+                case this.DD
+                    this.stiff = 16 * int.eff_shear * sqrt(int.eff_radius * int.kinemat.ovlp_n) / 3;
+                    f = this.stiff * int.kinemat.ovlp_t;
+                case this.LTH
+                    max_ovlp = this.fric * int.kinemat.ovlp_n * (2 - int.avg_poisson) / (2 - 2 * int.avg_poisson);
+                    a  = 1 - min(abs(int.kinemat.ovlp_t),max_ovlp) / max_ovlp;
+                    fe = ff * (1 - a^(3/2));
+                    fv = this.damp * sqrt(6 * int.eff_mass * ff * sqrt(a) / max_ovlp) * int.kinemat.vel_t;
+                    f  = fe + fv;
+                case this.ZZY
+                    max_ovlp = this.fric * int.kinemat.ovlp_n * (2 - int.avg_poisson) / (2 - 2 * int.avg_poisson);
+                    a  = 1 - min(abs(int.kinemat.ovlp_t),max_ovlp) / max_ovlp;
+                    fe = ff * (1 - a^(3/2));
+                    fv = this.damp / (2 * int.eff_shear * max_ovlp) * (1 - 0.4 * this.damp * abs(int.kinemat.vel_t) / (2 * int.eff_shear * max_ovlp)) * (1.5 * ff * sqrt(a)) * int.kinemat.vel_t;
+                    f  = fe + fv;
+                case this.TTI
+                    this.stiff = sqrt(2 * int.eff_radius) * int.eff_young * sqrt(int.kinemat.ovlp_n) / ((2 - int.avg_poisson) * (1 + int.avg_poisson));
+                    fe = this.stiff * int.kinemat.ovlp_t;
+                    fv = this.damp  * int.kinemat.vel_t;
+                    f  = fe + fv;
+            end
+            
+            % Limit viscoelastic force by Coulomb law
+            f = min(abs(f),abs(ff));
+            
+            % Total tangential force vector (against deformation and motion)
+            this.total_force = -f * int.kinemat.dir_t;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>
