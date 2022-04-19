@@ -15,7 +15,7 @@
 
 <p align=center><img height="100.0%" width="100.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_demlab.png"></p>
 
-[![Release][release_image]][releases_link] [![License][license_image]][license_link] [![FileExchange][file_exchange_image]][file_exchange_link] [![Zenodo][zenodo_image]][zenodo_link]
+[![Release][release_image]][releases_link] [![License][license_image]][license_link] [![FileExchange][file_exchange_image]][file_exchange_link] [![DOI][zenodo_image]][zenodo_link]
 
 DEMLab is a program for performing numerical simulations of particle systems using the Discrete Element Method (DEM).
 
@@ -24,10 +24,10 @@ DEMLab is a program for performing numerical simulations of particle systems usi
 - [Implementation Aspects](#implementation-aspects)
 - [Instructions](#instructions)
     - [Input Files](#input-files)
-	- [Examples](#examples)
 	- [Running Simulations](#running-simulations)
 	- [Testing](#testing)
-	- [Documentation](#documentation)
+- [Examples](#examples)
+- [Documentation](#documentation)
 - [How to Contribute](#how-to-contribute)
 - [How to Cite](#how-to-cite)
 - [Authorship](#authorship)
@@ -50,10 +50,6 @@ Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum
 
 Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
 
-### Examples
-
-Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
-
 ### Running Simulations
 
 Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam.
@@ -62,7 +58,11 @@ Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum
 
 Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
 
-### Documentation
+## Examples
+
+Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
+
+## Documentation
 
 Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
 
@@ -96,7 +96,7 @@ Polytechnic University of Catalonia ([UPC BarcelonaTech][upc_website])
 The initial version (1.0) of the program was developed under the context of the [MATHEGRAM project][mathegram_website],
 a Marie Sklodowska-Curie Innovative Training Network of the European Union’s Horizon 2020 Programme H2020 under REA grant agreement No. 813202.
 
-<p align=center><img height="100.0%" width="100.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_mathegram.png"></p>
+<p align=center><img height="100.0%" width="75.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_mathegram.png"></p>
 
 ## License
 
