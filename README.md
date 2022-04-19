@@ -100,7 +100,7 @@ a Marie Sklodowska-Curie Innovative Training Network of the European Union’s H
 
 <p align=center><img height="100.0%" width="75.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_mathegram.png"></p>
 
-![](https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_mathegram.png){ width="800" height="600" style="display: block; margin: 0 auto" }
+![](https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_mathegram.png){ width="600" height="600" style="display: block; margin: 0 auto" }
 
 
 ## License
