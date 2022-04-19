@@ -19,9 +19,9 @@
 DEMLab is a program for performing numerical simulations of particle systems using the Discrete Element Method (DEM).
 
 ## Table of Contents
-- [How to Contribute](#How-to-Contribute)
-- [Authorship](#Authorship)
-- [License](#License)
+- [How to Contribute](#how-to-contribute)
+- [Authorship](#authorship)
+- [License](#license)
 
 ## How to Contribute
 
