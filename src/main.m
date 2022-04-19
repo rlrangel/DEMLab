@@ -70,24 +70,6 @@
 % * <Sink.html Sink>
 % * <Wall.html Wall>
 %
-%% Authors
-%
-% * Rafael Rangel (rrangel@cimne.upc.edu)
-%
-% International Center for Numerical Methods in Engineering
-% (<https://www.cimne.com/ CIMNE>)
-%
-% <<../images/logos/logo_cimne.png>>
-%
-%% History
-%
-% * Version 1.0 - September, 2021
-%
-% Developed under the context of the
-% <https://www.surrey.ac.uk/mathegram MATHEGRAM project>.
-%
-% <<../images/logos/logo_mathegram.png>>
-%
 %% Initialization
 clc; clearvars; close all;
 files = "";
