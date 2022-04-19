@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <material.html Material> class for the
+% This is a sub-class of the <Material.html Material> class for the
 % implementation of *Solid* materials.
 %
 % Solid materials must be assigned to all particles and can be assigned to

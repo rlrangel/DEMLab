@@ -12,8 +12,8 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <particle_sphere.html Particle_Sphere> (default)
-% * <particle_cylinder.html Particle_Cylinder>
+% * <Particle_Sphere.html Particle_Sphere> (default)
+% * <Particle_Cylinder.html Particle_Cylinder>
 %
 classdef Particle < handle & matlab.mixin.Heterogeneous
     %% Constant values

@@ -11,12 +11,12 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <binkinematics_spheresphere.html BinKinematics_SphereSphere> (default)
-% * <binkinematics_spherewlin.html BinKinematics_SphereWlin>
-% * <binkinematics_spherewcirc.html BinKinematics_SphereWcirc>
-% * <binkinematics_cylindercylinder.html BinKinematics_CylinderCylinder>
-% * <binkinematics_cylinderwlin.html BinKinematics_CylinderWlin>
-% * <binkinematics_cylinderwcirc.html BinKinematics_CylinderWcirc>
+% * <BinKinematics_SphereSphere.html BinKinematics_SphereSphere> (default)
+% * <BinKinematics_SphereWlin.html BinKinematics_SphereWlin>
+% * <BinKinematics_SphereWcirc.html BinKinematics_SphereWcirc>
+% * <BinKinematics_CylinderCylinder.html BinKinematics_CylinderCylinder>
+% * <BinKinematics_CylinderWlin.html BinKinematics_CylinderWlin>
+% * <BinKinematics_CylinderWcirc.html BinKinematics_CylinderWcirc>
 %
 classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
     %% Constant values

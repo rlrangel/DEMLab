@@ -13,9 +13,9 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <areacorrect_zyz.html AreaCorrect_ZYZ> (default)
-% * <areacorrect_lmlb.html AreaCorrect_LMLB>
-% * <areacorrect_mpmh.html AreaCorrect_MPMH>
+% * <AreaCorrect_ZYZ.html AreaCorrect_ZYZ> (default)
+% * <AreaCorrect_LMLB.html AreaCorrect_LMLB>
+% * <AreaCorrect_MPMH.html AreaCorrect_MPMH>
 %
 classdef AreaCorrect < matlab.mixin.Heterogeneous
     %% Constant values

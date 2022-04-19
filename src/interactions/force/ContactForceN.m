@@ -8,9 +8,9 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <contactforcen_viscoelasticlinear.html ContactForceN_ViscoElasticLinear> (default)
-% * <contactforcen_viscoelasticnonlinear.html ContactForceN_ViscoElasticNonlinear>
-% * <contactforcen_elastoplasticlinear.html ContactForceN_ElastoPlasticLinear>
+% * <ContactForceN_ViscoElasticLinear.html ContactForceN_ViscoElasticLinear> (default)
+% * <ContactForceN_ViscoElasticNonlinear.html ContactForceN_ViscoElasticNonlinear>
+% * <ContactForceN_ElastoPlasticLinear.html ContactForceN_ElastoPlasticLinear>
 %
 classdef ContactForceN < matlab.mixin.Heterogeneous
     %% Constant values

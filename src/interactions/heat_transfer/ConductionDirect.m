@@ -11,9 +11,9 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <conductiondirect_bob.html ConductionDirect_BOB> (default)
-% * <conductiondirect_pipe.html ConductionDirect_Pipe>
-% * <conductiondirect_collisional.html ConductionDirect_Collisional>
+% * <ConductionDirect_BOB.html ConductionDirect_BOB> (default)
+% * <ConductionDirect_Pipe.html ConductionDirect_Pipe>
+% * <ConductionDirect_Collisional.html ConductionDirect_Collisional>
 %
 classdef ConductionDirect < matlab.mixin.Heterogeneous
     %% Constant values

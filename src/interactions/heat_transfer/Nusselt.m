@@ -12,8 +12,8 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <nusselt_sphere_ranzmarshall.html Nusselt_Sphere_RanzMarshall>
-% * <nusselt_sphere_whitaker.html Nusselt_Sphere_Whitaker>
+% * <Nusselt_Sphere_RanzMarshall.html Nusselt_Sphere_RanzMarshall>
+% * <Nusselt_Sphere_Whitaker.html Nusselt_Sphere_Whitaker>
 %
 classdef Nusselt < handle
     %% Constant values

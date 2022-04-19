@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <conductionindirect.html ConductionIndirect>
+% This is a sub-class of the <ConductionIndirect.html ConductionIndirect>
 % class for the implementation of the *Voronoi Polyhedra B* indirect heat
 % conduction model.
 %

@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <nusselt.html Nusselt>
+% This is a sub-class of the <Nusselt.html Nusselt>
 % class for the implementation of the *Hanz & Marshall* correlation for
 % computing the Nusselt number for a flow past a sphere.
 %

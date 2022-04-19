@@ -8,13 +8,13 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <contactforcet_spring.html ContactForceT_Spring> (default)
-% * <contactforcet_dashpot.html ContactForceT_Dashpot>
-% * <contactforcet_slider.html ContactForceT_Slider>
-% * <contactforcet_springslider.html ContactForceT_SpringSlider>
-% * <contactforcet_dashpotslider.html ContactForceT_DashpotSlider>
-% * <contactforcet_sdslinear.html ContactForceT_SDSLinear>
-% * <contactforcet_sdsnonlinear.html ContactForceT_SDSNonlinear>
+% * <ContactForceT_Spring.html ContactForceT_Spring> (default)
+% * <ContactForceT_Dashpot.html ContactForceT_Dashpot>
+% * <ContactForceT_Slider.html ContactForceT_Slider>
+% * <ContactForceT_SpringSlider.html ContactForceT_SpringSlider>
+% * <ContactForceT_DashpotSlider.html ContactForceT_DashpotSlider>
+% * <ContactForceT_SDSLinear.html ContactForceT_SDSLinear>
+% * <ContactForceT_SDSNonlinear.html ContactForceT_SDSNonlinear>
 %
 classdef ContactForceT < matlab.mixin.Heterogeneous
     %% Constant values

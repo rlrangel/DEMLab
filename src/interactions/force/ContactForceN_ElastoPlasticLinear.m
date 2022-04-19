@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <contactforcen.html ContactForceN> class for
+% This is a sub-class of the <ContactForceN.html ContactForceN> class for
 % the implementation of the *Linear Elasto-Plastic* normal contact force
 % model.
 %

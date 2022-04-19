@@ -20,8 +20,8 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <wall_line.html Wall_Line> (default)
-% * <wall_circle.html Wall_Circle>
+% * <Wall_Line.html Wall_Line> (default)
+% * <Wall_Circle.html Wall_Circle>
 %
 classdef Wall < handle & matlab.mixin.Heterogeneous
     %% Constant values

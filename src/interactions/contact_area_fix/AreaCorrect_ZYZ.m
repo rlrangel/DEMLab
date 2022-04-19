@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <areacorrect.html AreaCorrect> class for the
+% This is a sub-class of the <AreaCorrect.html AreaCorrect> class for the
 % implementation of the *Zhou, Yu, Zulli* contact area correction model.
 %
 % This model computes the reduced radius of the contact area by applying

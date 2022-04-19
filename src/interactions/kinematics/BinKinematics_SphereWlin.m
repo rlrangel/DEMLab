@@ -2,11 +2,11 @@
 %
 %% Description
 %
-% This is a sub-class of the <binkinematics.html BinKinematics> class for
+% This is a sub-class of the <BinKinematics.html BinKinematics> class for
 % the implementation of the *Sphere-Wall Line* binary kinematics for
 % particle-wall interactions of types
-% <particle_sphere.html Particle Sphere> and
-% <wall_line.html Wall Line>.
+% <Particle_Sphere.html Particle Sphere> and
+% <Wall_Line.html Wall Line>.
 %
 classdef BinKinematics_SphereWlin < BinKinematics
     %% Constructor method

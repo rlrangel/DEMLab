@@ -2,10 +2,10 @@
 %
 %% Description
 %
-% This is a sub-class of the <binkinematics.html BinKinematics> class for
+% This is a sub-class of the <BinKinematics.html BinKinematics> class for
 % the implementation of the *Cylinder-Cylinder* binary kinematics for
 % particle-particle interactions of type
-% <particle_cylinder.html Particle Cylinder>.
+% <Particle_Cylinder.html Particle Cylinder>.
 %
 % <<../images/tutorials/kinematics_circles.png>>
 %

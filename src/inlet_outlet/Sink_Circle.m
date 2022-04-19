@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <sink.html Sink> class for the implementation
+% This is a sub-class of the <Sink.html Sink> class for the implementation
 % of *Circle* sinks.
 %
 classdef Sink_Circle < Sink

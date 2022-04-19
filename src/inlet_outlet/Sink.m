@@ -11,9 +11,9 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <sink_rectangle.html Sink_Rectangle> (default)
-% * <sink_circle.html Sink_Circle>
-% * <sink_polygon.html Sink_Polygon>
+% * <Sink_Rectangle.html Sink_Rectangle> (default)
+% * <Sink_Circle.html Sink_Circle>
+% * <Sink_Polygon.html Sink_Polygon>
 %
 classdef Sink < handle & matlab.mixin.Heterogeneous
     %% Constant values

@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <conductiondirect.html ConductionDirect>
+% This is a sub-class of the <ConductionDirect.html ConductionDirect>
 % class for the implementation of the *Thermal Pipe* direct heat
 % conduction model.
 %

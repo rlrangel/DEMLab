@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <condition.html Condition> class for the
+% This is a sub-class of the <Condition.html Condition> class for the
 % implementation of *Oscillatory* conditions.
 %
 % In a given time _t_, an oscillatory condition value _y_ is obtained as:

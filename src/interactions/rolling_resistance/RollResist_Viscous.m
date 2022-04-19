@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <rollresist.html RollResist> class for the
+% This is a sub-class of the <RollResist.html RollResist> class for the
 % implementation of the *Viscous* rolling resistance torque model.
 %
 % This model assumes that the resistance torque dependends on the relative

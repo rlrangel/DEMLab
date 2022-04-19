@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <rollresist.html RollResist> class for the
+% This is a sub-class of the <RollResist.html RollResist> class for the
 % implementation of the *Constant* rolling resistance torque model.
 %
 % This model assumes that a constant resistance torque (not dependent on

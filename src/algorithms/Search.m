@@ -15,8 +15,8 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <search_simpleloop.html Search_SimpleLoop> (default)
-% * <search_verletlist.html Search_VerletList>
+% * <Search_SimpleLoop.html Search_SimpleLoop> (default)
+% * <Search_VerletList.html Search_VerletList>
 %
 classdef Search < handle & matlab.mixin.Heterogeneous
     %% Constant values

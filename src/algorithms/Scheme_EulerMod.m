@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <scheme.html Scheme> class for the
+% This is a sub-class of the <Scheme.html Scheme> class for the
 % implementation of the time integration scheme *Modified Euler*.
 %
 % * *Translational motion*:

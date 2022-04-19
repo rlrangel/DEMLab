@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <areacorrect.html AreaCorrect> class for the
+% This is a sub-class of the <AreaCorrect.html AreaCorrect> class for the
 % implementation of the *Morris, Pannala, Ma, Hrenya* contact area
 % correction model.
 %

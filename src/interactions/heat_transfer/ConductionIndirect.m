@@ -10,16 +10,16 @@
 %
 % In the figure below, _Qpfp_ is the indirect condution (_pfp_ stands for
 % particle-fluid-particle) and _Qcpp_ is the 
-% <conductiondirect.html direct conduction> (_cpp_ stands for contact
+% <ConductionDirect.html direct conduction> (_cpp_ stands for contact
 % particle-particle). The total heat conduction between elements is the sum
 % of both contributions.
 %
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <conductionindirect_voronoia.html ConductionIndirect_VoronoiA> (default)
-% * <conductionindirect_voronoib.html ConductionIndirect_VoronoiB>
-% * <conductionindirect_surrlayer.html ConductionIndirect_SurrLayer>
+% * <ConductionIndirect_VoronoiA.html ConductionIndirect_VoronoiA> (default)
+% * <ConductionIndirect_VoronoiB.html ConductionIndirect_VoronoiB>
+% * <ConductionIndirect_SurrLayer.html ConductionIndirect_SurrLayer>
 %
 % <<../images/tutorials/indirect_conduction.png>>
 %

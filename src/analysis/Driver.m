@@ -11,9 +11,9 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <driver_mechanical.html Driver_Mechanical>
-% * <driver_thermal.html Driver_Thermal>
-% * <driver_thermomechanical.html Driver_ThermoMechanical>
+% * <Driver_Mechanical.html Driver_Mechanical>
+% * <Driver_Thermal.html Driver_Thermal>
+% * <Driver_ThermoMechanical.html Driver_ThermoMechanical>
 %
 classdef Driver < handle
     %% Constant values

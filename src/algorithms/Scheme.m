@@ -8,9 +8,9 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <scheme_eulerforward.html Scheme_EulerForward> (default)
-% * <scheme_eulermod.html Scheme_EulerMod>
-% * <scheme_taylor2.html Scheme_Taylor2>
+% * <Scheme_EulerForward.html Scheme_EulerForward> (default)
+% * <Scheme_EulerMod.html Scheme_EulerMod>
+% * <Scheme_Taylor2.html Scheme_Taylor2>
 %
 classdef Scheme < handle & matlab.mixin.Heterogeneous
     %% Constant values

@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <search.html Search> class for the
+% This is a sub-class of the <Search.html Search> class for the
 % implementation of the search algorithm *Verlet List*.
 %
 % This algorithm performs an outer loop over all particles and searches for
@@ -17,7 +17,7 @@
 % The reference element of each interaction (element 1) is the particle
 % with smaller ID number.
 %
-% For each interaction found, a binary <interact.html Interaction> object
+% For each interaction found, a binary <Interaction.html Interaction> object
 % is created to manage the mechanical and / or thermal interaction between
 % both elements.
 %

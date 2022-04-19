@@ -12,9 +12,9 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <bbox_rectangle.html BBox_Rectangle> (default)
-% * <bbox_circle.html BBox_Circle>
-% * <bbox_polygon.html BBox_Polygon>
+% * <BBox_Rectangle.html BBox_Rectangle> (default)
+% * <BBox_Circle.html BBox_Circle>
+% * <BBox_Polygon.html BBox_Polygon>
 %
 classdef BBox < handle & matlab.mixin.Heterogeneous
     %% Constant values

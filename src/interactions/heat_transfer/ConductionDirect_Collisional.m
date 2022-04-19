@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <conductiondirect.html ConductionDirect>
+% This is a sub-class of the <ConductionDirect.html ConductionDirect>
 % class for the implementation of the *Collisional* direct heat conduction
 % model.
 %
@@ -18,7 +18,7 @@
 % 
 % When the contact time surpasses the expected collision time, a static
 % contact conduction model is employed. In this case, the
-% <conductiondirect_bob.html Batchelor & O'Brien model> is used.
+% <ConductionDirect_BOB.html Batchelor & O'Brien model> is used.
 %
 % The rate of heat transfer for this collisional model is given by:
 %

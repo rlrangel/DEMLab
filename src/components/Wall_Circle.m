@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <wall.html Wall> class for the
+% This is a sub-class of the <Wall.html Wall> class for the
 % implementation of *Circle* rigid walls.
 %
 classdef Wall_Circle < Wall

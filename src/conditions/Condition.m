@@ -11,10 +11,10 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <condition_constant.html Condition_Constant> (default)
-% * <condition_linear.html Condition_Linear>
-% * <condition_oscillatory.html Condition_Oscillatory>
-% * <condition_table.html Condition_Table>
+% * <Condition_Constant.html Condition_Constant> (default)
+% * <Condition_Linear.html Condition_Linear>
+% * <Condition_Oscillatory.html Condition_Oscillatory>
+% * <Condition_Table.html Condition_Table>
 %
 classdef Condition < handle & matlab.mixin.Heterogeneous
     %% Constant values

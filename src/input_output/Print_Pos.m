@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <print.html Print> class for the
+% This is a sub-class of the <Print.html Print> class for the
 % implementation of printing methods for the *.pos* output format.
 %
 % This output format is used in the regression tests.

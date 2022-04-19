@@ -8,8 +8,8 @@
 % This super-class defines generic properties for all material types,
 % while specific properties are defined in the derived *sub-classes*:
 %
-% * <material_solid.html Material_Solid> (default)
-% * <material_fluid.html Material_Fluid>
+% * <Material_Solid.html Material_Solid> (default)
+% * <Material_Fluid.html Material_Fluid>
 %
 classdef Material < handle & matlab.mixin.Heterogeneous
     %% Constant values

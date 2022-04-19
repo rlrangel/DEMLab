@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <particle.html Particle> class for the
+% This is a sub-class of the <Particle.html Particle> class for the
 % implementation of *Cylinder* particles.
 %
 % A cylinder particle behaves as a disk in a 2D model, but its properties are

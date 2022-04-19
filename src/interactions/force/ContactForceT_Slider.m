@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <contactforcet.html ContactForceT> class for
+% This is a sub-class of the <ContactForceT.html ContactForceT> class for
 % the implementation of the *Simple Slider* tangent contact force model.
 %
 % This model assumes that the tangent contact force has only a friction

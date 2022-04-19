@@ -8,7 +8,7 @@
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <print_pos.html Print_Pos> (default)
+% * <Print_Pos.html Print_Pos> (default)
 %
 classdef Print < handle & matlab.mixin.Heterogeneous
     %% Constant values

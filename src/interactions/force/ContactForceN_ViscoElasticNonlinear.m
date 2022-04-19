@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <contactforcen.html ContactForceN> class for
+% This is a sub-class of the <ContactForceN.html ContactForceN> class for
 % the implementation of the *Nonlinear Visco-Elastic* normal contact force
 % model.
 %

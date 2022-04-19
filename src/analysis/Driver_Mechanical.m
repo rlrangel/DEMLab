@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <driver.html Driver> class for the
+% This is a sub-class of the <Driver.html Driver> class for the
 % implementation of the *Mechanical* analysis driver.
 %
 % In this type of analysis only the mechanical behavior of particles is

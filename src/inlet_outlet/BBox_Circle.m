@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <bbox.html BBox> class for the implementation
+% This is a sub-class of the <BBox.html BBox> class for the implementation
 % of *Circle* bounding boxes.
 %
 classdef BBox_Circle < BBox

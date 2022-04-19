@@ -2,7 +2,7 @@
 %
 %% Description
 %
-% This is a sub-class of the <material.html Material> class for the
+% This is a sub-class of the <Material.html Material> class for the
 % implementation of *Fluid* materials.
 %
 % A single fluid material can be assigned to the model in order to set the
