@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Condition_Table class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Condition_Table.m"><style type="text/css">
+      --><title>Condition_Table class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="Condition_Table.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Condition_Table class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="condition.html">Condition</a> class for the implementation of <b>Table</b> conditions.</p><p>Different methods can be used for interpolating the table values:</p><div><ul><li>Linear</li><li>Makima</li><li>Pchip</li><li>Spline</li></ul></div><p>For more information on these methods, check their description <a href="https://www.mathworks.com/help/matlab/ref/interp1.html#btwp6lt-1-method">here</a></p><pre class="codeinput"><span class="keyword">classdef</span> Condition_Table &lt; Condition
+  </style></head><body><div class="content"><h1>Condition_Table class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="Condition.html">Condition</a> class for the implementation of <b>Table</b> conditions.</p><p>Different methods can be used for interpolating the table values:</p><div><ul><li>Linear</li><li>Makima</li><li>Pchip</li><li>Spline</li></ul></div><p>For more information on these methods, check their description <a href="https://www.mathworks.com/help/matlab/ref/interp1.html#btwp6lt-1-method">here</a></p><pre class="codeinput"><span class="keyword">classdef</span> Condition_Table &lt; Condition
 </pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
         val_x  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% independente variable (time) values</span>
         val_y  <span class="string">double</span> <span class="string">=</span> <span class="string">double.empty</span>;   <span class="comment">% condition values</span>
@@ -106,7 +106,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 %
 %% Description
 %
-% This is a sub-class of the <condition.html Condition> class for the
+% This is a sub-class of the <Condition.html Condition> class for the
 % implementation of *Table* conditions.
 %
 % Different methods can be used for interpolating the table values:

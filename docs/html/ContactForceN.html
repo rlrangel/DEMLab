@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>ContactForceN (Normal Contact Force) class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Default sub-class definition</a></li><li><a href="#6">Abstract methods: implemented in derived sub-classes</a></li></ul></div><h2 id="1">Description</h2><p>This is a value heterogeneous super-class for the definition of models for the normal contact force between elements.</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="contactforcen_viscoelasticlinear.html">ContactForceN_ViscoElasticLinear</a> (default)</li><li><a href="contactforcen_viscoelasticnonlinear.html">ContactForceN_ViscoElasticNonlinear</a></li><li><a href="contactforcen_elastoplasticlinear.html">ContactForceN_ElastoPlasticLinear</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ContactForceN &lt; matlab.mixin.Heterogeneous
+  </style></head><body><div class="content"><h1>ContactForceN (Normal Contact Force) class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Default sub-class definition</a></li><li><a href="#6">Abstract methods: implemented in derived sub-classes</a></li></ul></div><h2 id="1">Description</h2><p>This is a value heterogeneous super-class for the definition of models for the normal contact force between elements.</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="ContactForceN_ViscoElasticLinear.html">ContactForceN_ViscoElasticLinear</a> (default)</li><li><a href="ContactForceN_ViscoElasticNonlinear.html">ContactForceN_ViscoElasticNonlinear</a></li><li><a href="ContactForceN_ElastoPlasticLinear.html">ContactForceN_ElastoPlasticLinear</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ContactForceN &lt; matlab.mixin.Heterogeneous
 </pre><h2 id="2">Constant values</h2><pre class="codeinput">    properties (Constant = true, Access = public)
         <span class="comment">% Types of model</span>
         VISCOELASTIC_LINEAR    = uint8(1);
@@ -137,9 +137,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <contactforcen_viscoelasticlinear.html ContactForceN_ViscoElasticLinear> (default)
-% * <contactforcen_viscoelasticnonlinear.html ContactForceN_ViscoElasticNonlinear>
-% * <contactforcen_elastoplasticlinear.html ContactForceN_ElastoPlasticLinear>
+% * <ContactForceN_ViscoElasticLinear.html ContactForceN_ViscoElasticLinear> (default)
+% * <ContactForceN_ViscoElasticNonlinear.html ContactForceN_ViscoElasticNonlinear>
+% * <ContactForceN_ElastoPlasticLinear.html ContactForceN_ElastoPlasticLinear>
 %
 classdef ContactForceN < matlab.mixin.Heterogeneous
     %% Constant values

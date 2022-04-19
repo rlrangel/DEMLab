@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>ContactForceT (Tangent Contact Force) class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Default sub-class definition</a></li><li><a href="#6">Abstract methods: implemented in derived sub-classes</a></li></ul></div><h2 id="1">Description</h2><p>This is a value heterogeneous super-class for the definition of models for the tangent contact force between elements.</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="contactforcet_spring.html">ContactForceT_Spring</a> (default)</li><li><a href="contactforcet_dashpot.html">ContactForceT_Dashpot</a></li><li><a href="contactforcet_slider.html">ContactForceT_Slider</a></li><li><a href="contactforcet_springslider.html">ContactForceT_SpringSlider</a></li><li><a href="contactforcet_dashpotslider.html">ContactForceT_DashpotSlider</a></li><li><a href="contactforcet_sdslinear.html">ContactForceT_SDSLinear</a></li><li><a href="contactforcet_sdsnonlinear.html">ContactForceT_SDSNonlinear</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ContactForceT &lt; matlab.mixin.Heterogeneous
+  </style></head><body><div class="content"><h1>ContactForceT (Tangent Contact Force) class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Default sub-class definition</a></li><li><a href="#6">Abstract methods: implemented in derived sub-classes</a></li></ul></div><h2 id="1">Description</h2><p>This is a value heterogeneous super-class for the definition of models for the tangent contact force between elements.</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="ContactForceT_Spring.html">ContactForceT_Spring</a> (default)</li><li><a href="ContactForceT_Dashpot.html">ContactForceT_Dashpot</a></li><li><a href="ContactForceT_Slider.html">ContactForceT_Slider</a></li><li><a href="ContactForceT_SpringSlider.html">ContactForceT_SpringSlider</a></li><li><a href="ContactForceT_DashpotSlider.html">ContactForceT_DashpotSlider</a></li><li><a href="ContactForceT_SDSLinear.html">ContactForceT_SDSLinear</a></li><li><a href="ContactForceT_SDSNonlinear.html">ContactForceT_SDSNonlinear</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> ContactForceT &lt; matlab.mixin.Heterogeneous
 </pre><h2 id="2">Constant values</h2><pre class="codeinput">    properties (Constant = true, Access = public)
         <span class="comment">% Types of model</span>
         SLIDER         = uint8(1);
@@ -128,13 +128,13 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <contactforcet_spring.html ContactForceT_Spring> (default)
-% * <contactforcet_dashpot.html ContactForceT_Dashpot>
-% * <contactforcet_slider.html ContactForceT_Slider>
-% * <contactforcet_springslider.html ContactForceT_SpringSlider>
-% * <contactforcet_dashpotslider.html ContactForceT_DashpotSlider>
-% * <contactforcet_sdslinear.html ContactForceT_SDSLinear>
-% * <contactforcet_sdsnonlinear.html ContactForceT_SDSNonlinear>
+% * <ContactForceT_Spring.html ContactForceT_Spring> (default)
+% * <ContactForceT_Dashpot.html ContactForceT_Dashpot>
+% * <ContactForceT_Slider.html ContactForceT_Slider>
+% * <ContactForceT_SpringSlider.html ContactForceT_SpringSlider>
+% * <ContactForceT_DashpotSlider.html ContactForceT_DashpotSlider>
+% * <ContactForceT_SDSLinear.html ContactForceT_SDSLinear>
+% * <ContactForceT_SDSNonlinear.html ContactForceT_SDSNonlinear>
 %
 classdef ContactForceT < matlab.mixin.Heterogeneous
     %% Constant values

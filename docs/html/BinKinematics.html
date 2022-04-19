@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>BinKinematics (Binary Kinematics) class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="BinKinematics.m"><style type="text/css">
+      --><title>BinKinematics (Binary Kinematics) class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="BinKinematics.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>BinKinematics (Binary Kinematics) class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Default sub-class definition</a></li><li><a href="#6">Abstract methods: implemented in derived sub-classes</a></li><li><a href="#7">Public methods</a></li></ul></div><h2 id="1">Description</h2><p>This is a value heterogeneous super-class for the definition of the kinematics for binary interactions between elements.</p><p>It deals with the calculation of distances, relative positions and velocities, and contact geometry.</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="binkinematics_spheresphere.html">BinKinematics_SphereSphere</a> (default)</li><li><a href="binkinematics_spherewlin.html">BinKinematics_SphereWlin</a></li><li><a href="binkinematics_spherewcirc.html">BinKinematics_SphereWcirc</a></li><li><a href="binkinematics_cylindercylinder.html">BinKinematics_CylinderCylinder</a></li><li><a href="binkinematics_cylinderwlin.html">BinKinematics_CylinderWlin</a></li><li><a href="binkinematics_cylinderwcirc.html">BinKinematics_CylinderWcirc</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> BinKinematics &lt; matlab.mixin.Heterogeneous &amp; matlab.mixin.Copyable
+  </style></head><body><div class="content"><h1>BinKinematics (Binary Kinematics) class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Default sub-class definition</a></li><li><a href="#6">Abstract methods: implemented in derived sub-classes</a></li><li><a href="#7">Public methods</a></li></ul></div><h2 id="1">Description</h2><p>This is a value heterogeneous super-class for the definition of the kinematics for binary interactions between elements.</p><p>It deals with the calculation of distances, relative positions and velocities, and contact geometry.</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="BinKinematics_SphereSphere.html">BinKinematics_SphereSphere</a> (default)</li><li><a href="BinKinematics_SphereWlin.html">BinKinematics_SphereWlin</a></li><li><a href="BinKinematics_SphereWcirc.html">BinKinematics_SphereWcirc</a></li><li><a href="BinKinematics_CylinderCylinder.html">BinKinematics_CylinderCylinder</a></li><li><a href="BinKinematics_CylinderWlin.html">BinKinematics_CylinderWlin</a></li><li><a href="BinKinematics_CylinderWcirc.html">BinKinematics_CylinderWcirc</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> BinKinematics &lt; matlab.mixin.Heterogeneous &amp; matlab.mixin.Copyable
 </pre><h2 id="2">Constant values</h2><pre class="codeinput">    properties (Constant = true, Access = public)
         <span class="comment">% General types of binary kinematics</span>
         PARTICLE_PARTICLE = uint8(1);
@@ -198,12 +198,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <binkinematics_spheresphere.html BinKinematics_SphereSphere> (default)
-% * <binkinematics_spherewlin.html BinKinematics_SphereWlin>
-% * <binkinematics_spherewcirc.html BinKinematics_SphereWcirc>
-% * <binkinematics_cylindercylinder.html BinKinematics_CylinderCylinder>
-% * <binkinematics_cylinderwlin.html BinKinematics_CylinderWlin>
-% * <binkinematics_cylinderwcirc.html BinKinematics_CylinderWcirc>
+% * <BinKinematics_SphereSphere.html BinKinematics_SphereSphere> (default)
+% * <BinKinematics_SphereWlin.html BinKinematics_SphereWlin>
+% * <BinKinematics_SphereWcirc.html BinKinematics_SphereWcirc>
+% * <BinKinematics_CylinderCylinder.html BinKinematics_CylinderCylinder>
+% * <BinKinematics_CylinderWlin.html BinKinematics_CylinderWlin>
+% * <BinKinematics_CylinderWcirc.html BinKinematics_CylinderWcirc>
 %
 classdef BinKinematics < matlab.mixin.Heterogeneous & matlab.mixin.Copyable
     %% Constant values

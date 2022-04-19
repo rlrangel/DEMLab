@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>AreaCorrect (Area Correction) class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="AreaCorrect.m"><style type="text/css">
+      --><title>AreaCorrect (Area Correction) class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="AreaCorrect.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>AreaCorrect (Area Correction) class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Default sub-class definition</a></li><li><a href="#6">Abstract methods: implemented in derived sub-classes</a></li></ul></div><h2 id="1">Description</h2><p>This is a value heterogeneous super-class for the definition of models for the correction of the contact area, or radius, between elements.</p><p>The correction of the contact area is necessary when a low value of the Young modulus, compared to the real one, is used for particles. The modified Young modulus leads to a larger contact area, which have some side effects, such as the increase of direct heat conduction.</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="areacorrect_zyz.html">AreaCorrect_ZYZ</a> (default)</li><li><a href="areacorrect_lmlb.html">AreaCorrect_LMLB</a></li><li><a href="areacorrect_mpmh.html">AreaCorrect_MPMH</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> AreaCorrect &lt; matlab.mixin.Heterogeneous
+  </style></head><body><div class="content"><h1>AreaCorrect (Area Correction) class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constant values</a></li><li><a href="#3">Public properties</a></li><li><a href="#4">Constructor method</a></li><li><a href="#5">Default sub-class definition</a></li><li><a href="#6">Abstract methods: implemented in derived sub-classes</a></li></ul></div><h2 id="1">Description</h2><p>This is a value heterogeneous super-class for the definition of models for the correction of the contact area, or radius, between elements.</p><p>The correction of the contact area is necessary when a low value of the Young modulus, compared to the real one, is used for particles. The modified Young modulus leads to a larger contact area, which have some side effects, such as the increase of direct heat conduction.</p><p>This super-class defines abstract methods that must be implemented in the derived <b>sub-classes</b>:</p><div><ul><li><a href="AreaCorrect_ZYZ.html">AreaCorrect_ZYZ</a> (default)</li><li><a href="AreaCorrect_LMLB.html">AreaCorrect_LMLB</a></li><li><a href="AreaCorrect_MPMH.html">AreaCorrect_MPMH</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> AreaCorrect &lt; matlab.mixin.Heterogeneous
 </pre><h2 id="2">Constant values</h2><pre class="codeinput">    properties (Constant = true, Access = public)
         <span class="comment">% Types of model</span>
         ZYZ  = uint8(1);
@@ -111,9 +111,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 % This super-class defines abstract methods that must be implemented in
 % the derived *sub-classes*:
 %
-% * <areacorrect_zyz.html AreaCorrect_ZYZ> (default)
-% * <areacorrect_lmlb.html AreaCorrect_LMLB>
-% * <areacorrect_mpmh.html AreaCorrect_MPMH>
+% * <AreaCorrect_ZYZ.html AreaCorrect_ZYZ> (default)
+% * <AreaCorrect_LMLB.html AreaCorrect_LMLB>
+% * <AreaCorrect_MPMH.html AreaCorrect_MPMH>
 %
 classdef AreaCorrect < matlab.mixin.Heterogeneous
     %% Constant values

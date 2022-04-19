@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Search_VerletList class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Search_VerletList.m"><style type="text/css">
+      --><title>Search_VerletList class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="Search_VerletList.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Search_VerletList class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li><li><a href="#5">Public methods: sub-class specifics</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="search.html">Search</a> class for the implementation of the search algorithm <b>Verlet List</b>.</p><p>This algorithm performs an outer loop over all particles and searches for their interactions through an inner loop over the particles that are contained in their Verlet lists, and all walls.</p><p>The Verlet list of a particle contains other particles that are whithin a threshold distance, called Verlet distance, and have a higher ID number. This list is updated in a given frequency, which is smaller (less often) than the search frequency.</p><p>The reference element of each interaction (element 1) is the particle with smaller ID number.</p><p>For each interaction found, a binary <a href="interact.html">Interaction</a> object is created to manage the mechanical and / or thermal interaction between both elements.</p><pre class="codeinput"><span class="keyword">classdef</span> Search_VerletList &lt; Search
+  </style></head><body><div class="content"><h1>Search_VerletList class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li><li><a href="#5">Public methods: sub-class specifics</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="Search.html">Search</a> class for the implementation of the search algorithm <b>Verlet List</b>.</p><p>This algorithm performs an outer loop over all particles and searches for their interactions through an inner loop over the particles that are contained in their Verlet lists, and all walls.</p><p>The Verlet list of a particle contains other particles that are whithin a threshold distance, called Verlet distance, and have a higher ID number. This list is updated in a given frequency, which is smaller (less often) than the search frequency.</p><p>The reference element of each interaction (element 1) is the particle with smaller ID number.</p><p>For each interaction found, a binary <a href="Interaction.html">Interaction</a> object is created to manage the mechanical and / or thermal interaction between both elements.</p><pre class="codeinput"><span class="keyword">classdef</span> Search_VerletList &lt; Search
 </pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
         <span class="comment">% Verlet properties</span>
         verlet_dist <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% threshold surface separation distance to include particles in the verlet list</span>
@@ -497,7 +497,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 %
 %% Description
 %
-% This is a sub-class of the <search.html Search> class for the
+% This is a sub-class of the <Search.html Search> class for the
 % implementation of the search algorithm *Verlet List*.
 %
 % This algorithm performs an outer loop over all particles and searches for
@@ -512,7 +512,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 % The reference element of each interaction (element 1) is the particle
 % with smaller ID number.
 %
-% For each interaction found, a binary <interact.html Interaction> object
+% For each interaction found, a binary <Interaction.html Interaction> object
 % is created to manage the mechanical and / or thermal interaction between
 % both elements.
 %

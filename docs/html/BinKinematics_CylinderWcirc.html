@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>BinKinematics_CylinderWcirc class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="BinKinematics_CylinderWcirc.m"><style type="text/css">
+      --><title>BinKinematics_CylinderWcirc class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="BinKinematics_CylinderWcirc.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>BinKinematics_CylinderWcirc class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="binkinematics.html">BinKinematics</a> class for the implementation of the <b>Cylinder-Wall Circle</b> binary kinematics for particle-wall interactions of types <a href="particle_cylinder.html">Particle Cylinder</a> and <a href="wall_circle.html">Wall Circle</a>.</p><pre class="codeinput"><span class="keyword">classdef</span> BinKinematics_CylinderWcirc &lt; BinKinematics
+  </style></head><body><div class="content"><h1>BinKinematics_CylinderWcirc class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="BinKinematics.html">BinKinematics</a> class for the implementation of the <b>Cylinder-Wall Circle</b> binary kinematics for particle-wall interactions of types <a href="Particle_Cylinder.html">Particle Cylinder</a> and <a href="Wall_Circle.html">Wall Circle</a>.</p><pre class="codeinput"><span class="keyword">classdef</span> BinKinematics_CylinderWcirc &lt; BinKinematics
 </pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
         inside <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for particle inside the circular wall</span>
     <span class="keyword">end</span>
@@ -279,11 +279,11 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 %
 %% Description
 %
-% This is a sub-class of the <binkinematics.html BinKinematics> class for
+% This is a sub-class of the <BinKinematics.html BinKinematics> class for
 % the implementation of the *Cylinder-Wall Circle* binary kinematics for
 % particle-wall interactions of types
-% <particle_cylinder.html Particle Cylinder> and
-% <wall_circle.html Wall Circle>.
+% <Particle_Cylinder.html Particle Cylinder> and
+% <Wall_Circle.html Wall Circle>.
 %
 classdef BinKinematics_CylinderWcirc < BinKinematics
     %% Public properties

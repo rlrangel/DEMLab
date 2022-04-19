@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Nusselt_Sphere_RanzMarshall class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="Nusselt_Sphere_RanzMarshall.m"><style type="text/css">
+      --><title>Nusselt_Sphere_RanzMarshall class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="Nusselt_Sphere_RanzMarshall.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Nusselt_Sphere_RanzMarshall class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constructor method</a></li><li><a href="#3">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="nusselt.html">Nusselt</a> class for the implementation of the <b>Hanz &amp; Marshall</b> correlation for computing the Nusselt number for a flow past a sphere.</p><p><img src="Nusselt_Sphere_RanzMarshall_eq01285069151180741194.png" alt="$$Nu = 2 + 0.6Re^{1/2}Pr^{1/3}$$" style="width:153px;height:16px;"></p><p><b>Notation</b>:</p><p><img src="Nusselt_Sphere_RanzMarshall_eq10535162093792279112.png" alt="$Re$" style="width:18px;height:11px;">: Reynolds number</p><p><img src="Nusselt_Sphere_RanzMarshall_eq04639556861331517677.png" alt="$Pr$" style="width:18px;height:11px;">: Prandtl number</p><p><b>References</b>:</p><div><ul><li>W.E. Ranz and W.R. Marshall. Evaporation from Drops, <i>Chem Eng Prog</i>, 48:141-146, 1952. (proposal)</li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> Nusselt_Sphere_RanzMarshall &lt; Nusselt
+  </style></head><body><div class="content"><h1>Nusselt_Sphere_RanzMarshall class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constructor method</a></li><li><a href="#3">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="Nusselt.html">Nusselt</a> class for the implementation of the <b>Hanz &amp; Marshall</b> correlation for computing the Nusselt number for a flow past a sphere.</p><p><img src="Nusselt_Sphere_RanzMarshall_eq01285069151180741194.png" alt="$$Nu = 2 + 0.6Re^{1/2}Pr^{1/3}$$" style="width:153px;height:16px;"></p><p><b>Notation</b>:</p><p><img src="Nusselt_Sphere_RanzMarshall_eq10535162093792279112.png" alt="$Re$" style="width:18px;height:11px;">: Reynolds number</p><p><img src="Nusselt_Sphere_RanzMarshall_eq04639556861331517677.png" alt="$Pr$" style="width:18px;height:11px;">: Prandtl number</p><p><b>References</b>:</p><div><ul><li>W.E. Ranz and W.R. Marshall. Evaporation from Drops, <i>Chem Eng Prog</i>, 48:141-146, 1952. (proposal)</li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> Nusselt_Sphere_RanzMarshall &lt; Nusselt
 </pre><h2 id="2">Constructor method</h2><pre class="codeinput">    methods
         <span class="keyword">function</span> this = Nusselt_Sphere_RanzMarshall()
             this = this@Nusselt(Nusselt.SPHERE_RANZ_MARSHALL);
@@ -92,7 +92,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 %
 %% Description
 %
-% This is a sub-class of the <nusselt.html Nusselt>
+% This is a sub-class of the <Nusselt.html Nusselt>
 % class for the implementation of the *Hanz & Marshall* correlation for
 % computing the Nusselt number for a flow past a sphere.
 %
