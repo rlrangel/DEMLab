@@ -6,6 +6,7 @@
 [file_exchange_link]:  https://www.mathworks.com/matlabcentral/fileexchange/69801-lesm-linear-elements-structure-model
 [zenodo_image]:        https://zenodo.org/badge/DOI/10.5281/zenodo.3234644.svg
 [zenodo_link]:         https://doi.org/10.5281/zenodo.3234644
+[matlab_website]:      https://www.mathworks.com/
 [cimne_website]:       https://www.cimne.com/
 [upc_website]:         https://camins.upc.edu/
 [mathegram_website]:   https://www.surrey.ac.uk/mathegram
@@ -38,11 +39,41 @@ Its purpose is to offer a modular environment for readily implementing and testi
 
 ## Main Features
 
-Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam.
+
+
+
+The DEM is a numerical method...
+soft-sphere approach
+particles keep their shape
+interaction models
+a particles method for modeling the bulk behavior of granular materials and many geomaterials such as coal, ores, soil, rocks, aggregates, pellets, tablets and powders.
+The DEM is a numerical method that has been applied to simulate and analyze flow behavior in a wide range of disciplines including mechanical and process engineering, pharmaceutical, materials science, agricultural engineering and more. 
+
+**Analysis Types**
+
+- Mechanical (motion of particles)
+- Thermal (temperature of particles)
+- Thermo-mechanical (motion and temperature of particles)
+
+**Problem Types**
+
+Two-dimensional (2D) problems.
+
+**Element Types**
+
+- Spherical particle
+- Cylindrical particle
+
+**Outputs**
+
+- Graphs
+- Animations
 
 ## Implementation Aspects
 
-Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
+Written in the [MATLAB][matlab_website] programming language.
+OOP.
+Kratos applications.
 
 ## Instructions
 
@@ -95,7 +126,7 @@ Polytechnic University of Catalonia ([UPC BarcelonaTech][upc_website])
 
 ## Acknowledgement
 
-The initial version (1.0) of the program was developed under the context of the [MATHEGRAM project][mathegram_website],
+The program was initially developed under the context of the [MATHEGRAM project][mathegram_website],
 a Marie Sklodowska-Curie Innovative Training Network of the European Union’s Horizon 2020 Programme H2020 under REA grant agreement No. 813202.
 
 <p float="left">
@@ -105,5 +136,6 @@ a Marie Sklodowska-Curie Innovative Training Network of the European Union’s H
 
 ## License
 
-DEMLab is licensed under the [MIT license][mit_license_link], which allows the program to be freely used by anyone for modification, private use, commercial use, and distribution, only requiring preservation of copyright and license notices.
+DEMLab is licensed under the [MIT license][mit_license_link],
+which allows the program to be freely used by anyone for modification, private use, commercial use, and distribution, only requiring preservation of copyright and license notices.
 No liability and warranty are provided.
