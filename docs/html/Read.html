@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Read class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="Read.m"><style type="text/css">
+      --><title>Read class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-20"><meta name="DC.source" content="Read.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Read class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constructor method</a></li><li><a href="#3">Public methods: main functions</a></li><li><a href="#4">Public methods: project parameters file</a></li><li><a href="#5">Public methods: model parts file</a></li><li><a href="#6">Public methods: interactions models</a></li><li><a href="#7">Public methods: checks</a></li><li><a href="#8">Static methods: auxiliary</a></li></ul></div><h2 id="1">Description</h2><p>This is a handle class responsible for reading the paremeters and model parts files, building the simulation objects, and checking the input data.</p><p>Two files are read for running a simulation:</p><div><ul><li><i>json</i> file with the <b>project parameters</b></li></ul></div><div><ul><li><i>txt</i> file with the <b>model parts</b></li></ul></div><p>In addition, it identifies if there exists a storage file with the same name of the problem name. If so, the simulation is restarted from the stored results.</p><pre class="codeinput"><span class="keyword">classdef</span> Read &lt; handle
+  </style></head><body><div class="content"><h1>Read class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constructor method</a></li><li><a href="#3">Public methods: main functions</a></li><li><a href="#4">Public methods: project parameters file</a></li><li><a href="#5">Public methods: model parts file</a></li><li><a href="#6">Public methods: interactions models</a></li><li><a href="#7">Public methods: checks</a></li><li><a href="#8">Static methods: auxiliary</a></li></ul></div><h2 id="1">Description</h2><p>This is a handle class responsible for reading the paremeters and model parts files, building the simulation objects, and checking the input data.</p><p>Two files are read for running a simulation:</p><div><ul><li><i>json</i> file with the <b>project parameters</b></li></ul></div><div><ul><li><i>txt</i> file with the <b>model parts</b></li></ul></div><p>In addition, it identifies if there exists a storage file with the same name of the simulation name. If so, the simulation is restarted from the stored results.</p><pre class="codeinput"><span class="keyword">classdef</span> Read &lt; handle
 </pre><h2 id="2">Constructor method</h2><pre class="codeinput">    methods
         <span class="keyword">function</span> this = Read()
 
@@ -93,7 +93,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
                 status = 0; <span class="keyword">return</span>;
             <span class="keyword">end</span>
 
-            <span class="comment">% Get problem name</span>
+            <span class="comment">% Get simulation name</span>
             [status,name] = this.getName(json);
 
             <span class="comment">% Look for storage file to continue analysis from previous stage</span>
@@ -232,7 +232,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
                 drv = Driver_ThermoMechanical();
             <span class="keyword">end</span>
 
-            <span class="comment">% Set problem name and paths</span>
+            <span class="comment">% Set simulation name and paths</span>
             drv.name     = name;
             drv.path_in  = path;
             drv.path_out = strcat(path,name,<span class="string">'_out\'</span>);
@@ -5503,7 +5503,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="keyword">function</span> status = checkDriver(this,drv)
             status = 1;
             <span class="keyword">if</span> (isempty(drv.name))
-                this.missingDataError(<span class="string">'No problem name was provided.'</span>);
+                this.missingDataError(<span class="string">'No simulation name was provided.'</span>);
                 status = 0; <span class="keyword">return</span>;
             <span class="keyword">end</span>
             <span class="keyword">if</span> (isempty(drv.search))
@@ -5885,8 +5885,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 % * _txt_ file with the *model parts*
 %
 % In addition, it identifies if there exists a storage file with the same
-% name of the problem name. If so, the simulation is restarted from the
-% stored results.
+% name of the simulation name.
+% If so, the simulation is restarted from the stored results.
 %
 classdef Read < handle
     %% Constructor method
@@ -5918,7 +5918,7 @@ classdef Read < handle
                 status = 0; return;
             end
             
-            % Get problem name
+            % Get simulation name
             [status,name] = this.getName(json);
             
             % Look for storage file to continue analysis from previous stage
@@ -6059,7 +6059,7 @@ classdef Read < handle
                 drv = Driver_ThermoMechanical();
             end
             
-            % Set problem name and paths
+            % Set simulation name and paths
             drv.name     = name;
             drv.path_in  = path;
             drv.path_out = strcat(path,name,'_out\');
@@ -11336,7 +11336,7 @@ classdef Read < handle
         function status = checkDriver(this,drv)
             status = 1;
             if (isempty(drv.name))
-                this.missingDataError('No problem name was provided.');
+                this.missingDataError('No simulation name was provided.');
                 status = 0; return;
             end
             if (isempty(drv.search))

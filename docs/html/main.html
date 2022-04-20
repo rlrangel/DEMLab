@@ -66,9 +66,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>DEMLab - Discrete Element Method Laboratory</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Instructions</a></li><li><a href="#2">OOP classes</a></li><li><a href="#3">Initialization</a></li></ul></div><h2 id="1">Instructions</h2><p>This is the main script file of the DEMLab program.</p><p>To <b>run a simulation</b>, execute this script and select an appropriate parameters file with the <i>.json</i> extension.</p><p>To <b>load results</b> from a previously run simulation, execute this script and select an appropriate storage file with the <i>.mat</i> extension.</p><p>Multiple files can be selected to run simulations sequentially, as long as they are located in the same folder.</p><p>A sub-folder with the problem name plus the suffix "_out" is created to receive the output files with the simulation results.</p><h2 id="2">OOP classes</h2><p>This program adopts an Object Oriented Programming (OOP) paradigm. The following OOP super-classes are implemented:</p><p><b>Analysis</b>:</p><div><ul><li><a href="Master.html">Master</a></li><li><a href="Driver.html">Driver</a></li></ul></div><p><b>Algorithms</b>:</p><div><ul><li><a href="Scheme.html">Scheme</a></li><li><a href="Search.html">Search</a></li></ul></div><p><b>Components</b>:</p><div><ul><li><a href="Particle.html">Particle</a></li><li><a href="Wall.html">Wall</a></li><li><a href="Material.html">Material</a></li><li><a href="ModelPart.html">ModelPart</a></li></ul></div><p><b>Interaction Models</b>:</p><div><ul><li><a href="Interact.html">Interact</a></li><li><a href="BinKinematics.html">BinKinematics</a></li><li><a href="ContactForceN.html">ContactForceN</a></li><li><a href="ContactForceT.html">ContactForceT</a></li><li><a href="RollResist.html">RollResist</a></li><li><a href="ConductionDirect.html">ConductionDirect</a></li><li><a href="ConductionIndirect.html">ConductionIndirect</a></li><li><a href="Nusselt.html">Nusselt</a></li><li><a href="AreaCorrect.html">AreaCorrect</a></li></ul></div><p><b>Conditions</b>:</p><div><ul><li><a href="Condition.html">Condition</a></li></ul></div><p><b>Inlet/Outlet</b>:</p><div><ul><li><a href="BBox.html">BBox</a></li><li><a href="Sink.html">Sink</a></li></ul></div><p><b>Input/Output</b>:</p><div><ul><li><a href="Read.html">Read</a></li><li><a href="Print.html">Print</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Animation.html">Animation</a></li><li><a href="Result.html">Result</a></li></ul></div><h2 id="3">Initialization</h2><pre class="codeinput">clc; clearvars; close <span class="string">all</span>;
+  </style></head><body><div class="content"><h1>DEMLab - Discrete Element Method Laboratory</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Instructions</a></li><li><a href="#2">OOP classes</a></li><li><a href="#3">Initialization</a></li></ul></div><h2 id="1">Instructions</h2><p>This is the main script file of the DEMLab program.</p><p><b>Running Simulations</b>:</p><p>To run a simulation, execute this script and select an appropriate parameters file with the <i>.json</i> extension.</p><p>Multiple parameter files can be selected to run simulations sequentially, as long as they are located in the same folder.</p><p>Sub-folders with the simulation name plus the suffix "_out" are created to receive the output files with the results of each simulation.</p><p><b>Loading Results</b>:</p><p>To load and show results from a previously run simulation, execute this script and select an appropriate storage file with the <i>.mat</i> extension.</p><p>Multiple storage files can be selected to load and show results sequentially, as long as they are located in the same folder.</p><p>Furthermore, if a storage file named after the simulation name is located in the same folder of the parameters file, the simulation is restarted from the stored results.</p><h2 id="2">OOP classes</h2><p>This program adopts an Object Oriented Programming (OOP) paradigm. The following OOP super-classes are implemented:</p><p><b>Analysis</b>:</p><div><ul><li><a href="Master.html">Master</a></li><li><a href="Driver.html">Driver</a></li></ul></div><p><b>Algorithms</b>:</p><div><ul><li><a href="Scheme.html">Scheme</a></li><li><a href="Search.html">Search</a></li></ul></div><p><b>Components</b>:</p><div><ul><li><a href="Particle.html">Particle</a></li><li><a href="Wall.html">Wall</a></li><li><a href="Material.html">Material</a></li><li><a href="ModelPart.html">ModelPart</a></li></ul></div><p><b>Interaction Models</b>:</p><div><ul><li><a href="Interact.html">Interact</a></li><li><a href="BinKinematics.html">BinKinematics</a></li><li><a href="ContactForceN.html">ContactForceN</a></li><li><a href="ContactForceT.html">ContactForceT</a></li><li><a href="RollResist.html">RollResist</a></li><li><a href="ConductionDirect.html">ConductionDirect</a></li><li><a href="ConductionIndirect.html">ConductionIndirect</a></li><li><a href="Nusselt.html">Nusselt</a></li><li><a href="AreaCorrect.html">AreaCorrect</a></li></ul></div><p><b>Conditions</b>:</p><div><ul><li><a href="Condition.html">Condition</a></li></ul></div><p><b>Inlet/Outlet</b>:</p><div><ul><li><a href="BBox.html">BBox</a></li><li><a href="Sink.html">Sink</a></li></ul></div><p><b>Input/Output</b>:</p><div><ul><li><a href="Read.html">Read</a></li><li><a href="Print.html">Print</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Animation.html">Animation</a></li><li><a href="Result.html">Result</a></li></ul></div><h2 id="3">Initialization</h2><pre class="codeinput">clc; clearvars; close <span class="string">all</span>;
 addpath(genpath(pwd));
-Master().execute();
+Master().runSimulations(1);
 </pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% DEMLab - Discrete Element Method Laboratory
@@ -77,17 +77,28 @@ Master().execute();
 %
 % This is the main script file of the DEMLab program.
 %
-% To *run a simulation*, execute this script and select an appropriate
+% *Running Simulations*:
+%
+% To run a simulation, execute this script and select an appropriate
 % parameters file with the _.json_ extension.
 %
-% To *load results* from a previously run simulation, execute this
-% script and select an appropriate storage file with the _.mat_ extension.
-%
-% Multiple files can be selected to run simulations sequentially,
+% Multiple parameter files can be selected to run simulations sequentially,
 % as long as they are located in the same folder.
 %
-% A sub-folder with the problem name plus the suffix "_out" is created to
-% receive the output files with the simulation results.
+% Sub-folders with the simulation name plus the suffix "_out" are created
+% to receive the output files with the results of each simulation.
+%
+% *Loading Results*:
+%
+% To load and show results from a previously run simulation, execute this
+% script and select an appropriate storage file with the _.mat_ extension.
+%
+% Multiple storage files can be selected to load and show results
+% sequentially, as long as they are located in the same folder.
+%
+% Furthermore, if a storage file named after the simulation name is located
+% in the same folder of the parameters file, the simulation is restarted
+% from the stored results.
 %
 %% OOP classes
 %
@@ -143,6 +154,6 @@ Master().execute();
 %% Initialization
 clc; clearvars; close all;
 addpath(genpath(pwd));
-Master().execute();
+Master().runSimulations(1);
 ##### SOURCE END #####
 --></body></html>

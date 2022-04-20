@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Master class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="Master.m"><style type="text/css">
+      --><title>Master class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-20"><meta name="DC.source" content="Master.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,208 +66,70 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Master class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Constructor method</a></li><li><a href="#3">Public methods: main function</a></li><li><a href="#4">Public methods: auxiliary functions</a></li></ul></div><h2 id="1">Description</h2><p>This is the main class for running simulations in DEMLab.</p><p>It is responsible for managing the high-level tasks and call the appropriate methods to perform each stage of a simulation, from the reading of input files to the showing of results.</p><pre class="codeinput"><span class="keyword">classdef</span> Master
-</pre><h2 id="2">Constructor method</h2><pre class="codeinput">    methods
+  </style></head><body><div class="content"><h1>Master class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: main functions</a></li><li><a href="#5">Public methods: auxiliary functions</a></li></ul></div><h2 id="1">Description</h2><p>This is the main class for running simulations and tests in DEMLab.</p><p>It is responsible for managing the high-level tasks and call the appropriate methods to perform each stage of a simulation, from the reading of input files to the showing of results.</p><pre class="codeinput"><span class="keyword">classdef</span> Master &lt; handle
+</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+        echo     <span class="string">uint8</span>   <span class="string">=</span> <span class="string">uint8.empty</span>;     <span class="comment">% echo level (amount of information to be printed in command window)</span>
+        tol      <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% tolerance for testing against reference results</span>
+        path_in  <span class="string">string</span>  <span class="string">=</span> <span class="string">string.empty</span>;    <span class="comment">% path to input files folder</span>
+        files    <span class="string">string</span>  <span class="string">=</span> <span class="string">string.empty</span>;    <span class="comment">% full name of input files (with path)</span>
+        cur_file <span class="string">string</span>  <span class="string">=</span> <span class="string">string.empty</span>;    <span class="comment">% name of current file being run</span>
+        is_last  <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for last input file to run</span>
+    <span class="keyword">end</span>
+</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
         <span class="keyword">function</span> this = Master()
-
+            this.setDefaultProps();
         <span class="keyword">end</span>
     <span class="keyword">end</span>
-</pre><h2 id="3">Public methods: main function</h2><pre class="codeinput">    methods
+</pre><h2 id="4">Public methods: main functions</h2><pre class="codeinput">    methods
         <span class="comment">%------------------------------------------------------------------</span>
-        <span class="keyword">function</span> execute(this,file_fullnames,echo,test)
-            <span class="comment">% Check input arguments</span>
-            <span class="keyword">if</span> (nargin &lt; 2)
-                fprintf(<span class="string">'No file selected.\n'</span>);
-                fprintf(<span class="string">'\nExiting program...\n'</span>);
-                <span class="keyword">return</span>;
-            <span class="keyword">elseif</span> (nargin &lt; 3)
-                echo = 1;
-                test = false;
-            <span class="keyword">elseif</span> (nargin &lt; 4)
-                test = false;
+        <span class="keyword">function</span> setDefaultProps(this)
+            this.echo = 1;
+            this.tol  = 1e-12;
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> runSimulations(this,echo)
+            <span class="keyword">if</span> (nargin &gt; 1)
+                this.echo = echo;
             <span class="keyword">end</span>
 
             <span class="comment">% Print header</span>
             this.printHeader();
 
             <span class="comment">% Get input files</span>
-            <span class="keyword">if</span> (isempty(file_fullnames) || (length(file_fullnames) == 1 &amp;&amp; file_fullnames == <span class="string">""</span>))
-                <span class="comment">% Open selection dialog</span>
-                filter  = {<span class="string">'*.json'</span>,<span class="string">'Parameters File (*.json)'</span>;<span class="string">'*.mat'</span>,<span class="string">'Storage File (*.mat)'</span>};
-                title   = <span class="string">'DEMLab - Input file'</span>;
-                default = <span class="string">'ProjectParameters.json'</span>;
-                [file_names,path_in] = uigetfile(filter,title,default,<span class="string">'MultiSelect'</span>,<span class="string">'on'</span>);
-                <span class="keyword">if</span> (isequal(file_names,0))
-                    fprintf(<span class="string">'No file selected.\n'</span>);
-                    fprintf(<span class="string">'\nExiting program...\n'</span>);
-                    <span class="keyword">return</span>;
-                <span class="keyword">end</span>
-                file_fullnames = fullfile(path_in,file_names);
-
-                <span class="comment">% Convert to string array</span>
-                file_fullnames = string(file_fullnames);
-                path_in        = string(path_in);
-            <span class="keyword">else</span>
-                <span class="comment">% Convert to string array</span>
-                file_fullnames = string(file_fullnames);
-
-                <span class="comment">% Eliminate empty strings</span>
-                file_fullnames = file_fullnames(file_fullnames~=<span class="string">""</span>);
-
-                <span class="comment">% Check for non empty files</span>
-                <span class="keyword">if</span> (isempty(file_fullnames))
-                    fprintf(<span class="string">'No file selected.\n'</span>);
-                    fprintf(<span class="string">'\nExiting program...\n'</span>);
-                    <span class="keyword">return</span>;
-                <span class="keyword">end</span>
-
-                <span class="comment">% Get path of input files</span>
-                path_in = strcat(fileparts(file_fullnames(1)),<span class="string">'\'</span>);
+            <span class="keyword">if</span> (~this.getInputFiles())
+                <span class="keyword">return</span>;
             <span class="keyword">end</span>
 
             <span class="comment">% Display input files</span>
-            n_files = length(file_fullnames);
-            <span class="keyword">if</span> (n_files &gt; 1 &amp;&amp; echo &gt; 0)
-                fprintf(<span class="string">'%d input files selected:\n'</span>,n_files);
-                <span class="keyword">for</span> i = 1:n_files
-                    fprintf(<span class="string">'%s\n'</span>,file_fullnames(i));
-                <span class="keyword">end</span>
-                fprintf(<span class="string">'\n------------------------------------------------------------------\n\n'</span>);
-            <span class="keyword">end</span>
+            this.displayInputFiles();
 
             <span class="comment">% Run each input file</span>
-            <span class="keyword">for</span> i = 1:n_files
-                is_last = (i == n_files);
-
-                <span class="comment">% Check extension</span>
-                cur_file = file_fullnames(i);
-                [~,~,ext] = fileparts(cur_file);
+            <span class="keyword">for</span> i = 1:length(this.files)
+                this.is_last = (i == length(this.files));
 
                 <span class="comment">% Clear driver</span>
                 clearvars <span class="string">drv</span>;
 
-                <span class="comment">% Run according to input file type</span>
+                <span class="comment">% Get current file name and extension</span>
+                this.cur_file = this.files(i);
+                [~,~,ext] = fileparts(this.cur_file);
+
+                <span class="comment">% Run according to file extension</span>
                 <span class="keyword">if</span> (strcmp(ext,<span class="string">'.json'</span>))
-                    <span class="comment">% Open parameters file</span>
-                    fprintf(<span class="string">'Parameters file:\n%s\n'</span>,cur_file);
-                    fid = fopen(cur_file,<span class="string">'rt'</span>);
-                    <span class="keyword">if</span> (fid &lt; 0)
-                        fprintf(2,<span class="string">'\nError opening parameters file.\n'</span>);
-                        this.printExit(is_last);
+                    [status,drv] = this.runAnalysis();
+                    <span class="keyword">if</span> (~status)
                         <span class="keyword">continue</span>;
                     <span class="keyword">end</span>
-
-                    <span class="comment">% Read parameters file</span>
-                    <span class="keyword">if</span> (echo &gt; 0)
-                        fprintf(<span class="string">'\nReading parameters file...\n'</span>);
-                    <span class="keyword">end</span>
-                    read = Read();
-                    [status,drv,storage] = read.execute(path_in,fid);
-
-                    <span class="comment">% Pre analysis tasks</span>
-                    <span class="keyword">if</span> (status == 0)
-                        this.printExit(is_last);
-                        <span class="keyword">continue</span>;
-
-                    <span class="keyword">elseif</span> (status == 1) <span class="comment">% start analysis from the beggining</span>
-                        <span class="comment">% Check input data</span>
-                        <span class="keyword">if</span> (echo &gt; 0)
-                            fprintf(<span class="string">'\nChecking consistency of input data...\n'</span>);
-                        <span class="keyword">end</span>
-                        status = read.check(drv);
-                        <span class="keyword">if</span> (~status)
-                            this.printExit(is_last);
-                            <span class="keyword">continue</span>;
-                        <span class="keyword">end</span>
-
-                        <span class="comment">% Pre-process</span>
-                        <span class="keyword">if</span> (echo &gt; 0)
-                            fprintf(<span class="string">'\nPre-processing...\n'</span>);
-                        <span class="keyword">end</span>
-                        <span class="keyword">if</span> (~drv.preProcess())
-                            this.printExit(is_last);
-                            <span class="keyword">continue</span>;
-                        <span class="keyword">end</span>
-
-                        <span class="comment">% Print simulation information</span>
-                        <span class="keyword">if</span> (echo &gt; 0)
-                            this.printSimulationInfo(drv);
-                            fprintf(<span class="string">'\nStarting analysis:\n'</span>);
-                            fprintf(<span class="string">'%s\n'</span>,datestr(now));
-                        <span class="keyword">end</span>
-
-                    <span class="keyword">elseif</span> (status == 2) <span class="comment">% continue analysis from previous state</span>
-                        f = dir(storage);
-                        fprintf(<span class="string">'\nStorage file found (%.3f Mb):\n%s\n'</span>,f.bytes/10e5,storage);
-
-                        <span class="comment">% Load storage file</span>
-                        <span class="keyword">try</span>
-                            warning <span class="string">off</span> <span class="string">MATLAB:load:variableNotFound</span>
-                            load(storage,<span class="string">'drv'</span>);
-                            warning <span class="string">on</span> <span class="string">MATLAB:load:variableNotFound</span>
-                        <span class="keyword">catch</span>
-                            fprintf(2,<span class="string">'\nError loading storage file.\n'</span>);
-                            this.printExit(is_last);
-                            <span class="keyword">continue</span>;
-                        <span class="keyword">end</span>
-                        <span class="keyword">if</span> (~exist(<span class="string">'drv'</span>,<span class="string">'var'</span>) || isempty(drv))
-                            fprintf(2,<span class="string">'\nInvalid stored data.\n'</span>);
-                            this.printExit(is_last);
-                            <span class="keyword">continue</span>;
-                        <span class="keyword">end</span>
-
-                        <span class="comment">% Update starting elapsed time</span>
-                        drv.start_time = drv.total_time;
-
-                        <span class="comment">% Print simulation information</span>
-                        <span class="keyword">if</span> (echo &gt; 0)
-                            this.printSimulationInfo(drv);
-                            fprintf(<span class="string">'\nStarting analysis from previous results:\n'</span>);
-                            fprintf(<span class="string">'%s\n'</span>,datestr(now));
-                        <span class="keyword">end</span>
-                    <span class="keyword">end</span>
-
-                    <span class="comment">% Show starting configuration</span>
-                    <span class="keyword">if</span> (echo &gt; 0)
-                        Animation().curConfig(drv,<span class="string">'Starting'</span>);
-                    <span class="keyword">end</span>
-
-                    <span class="comment">% Execute analysis</span>
-                    tic;
-                    drv.process();
-
-                    <span class="comment">% Print finished status</span>
-                    <span class="keyword">if</span> (echo &gt; 0)
-                        this.printFinishedStatus(drv,status);
-                    <span class="keyword">end</span>
-
                 <span class="keyword">elseif</span> (strcmp(ext,<span class="string">'.mat'</span>))
-                    f = dir(cur_file);
-                    fprintf(<span class="string">'Storage file (%.3f Mb):\n%s\n'</span>,f.bytes/10e5,cur_file);
-
-                    <span class="comment">% Load storage file</span>
-                    <span class="keyword">try</span>
-                        warning <span class="string">off</span> <span class="string">MATLAB:load:variableNotFound</span>
-                        load(cur_file,<span class="string">'drv'</span>);
-                        warning <span class="string">on</span> <span class="string">MATLAB:load:variableNotFound</span>
-                    <span class="keyword">catch</span>
-                        fprintf(2,<span class="string">'\nError loading storage file.\n'</span>);
-                        this.printExit(is_last);
+                    [status,drv] = this.loadResults();
+                    <span class="keyword">if</span> (~status)
                         <span class="keyword">continue</span>;
-                    <span class="keyword">end</span>
-                    <span class="keyword">if</span> (~exist(<span class="string">'drv'</span>,<span class="string">'var'</span>) || isempty(drv))
-                        fprintf(2,<span class="string">'\nInvalid stored data.\n'</span>);
-                        this.printExit(is_last);
-                        <span class="keyword">continue</span>;
-                    <span class="keyword">end</span>
-
-                    <span class="comment">% Show current configuration</span>
-                    <span class="keyword">if</span> (echo &gt; 0)
-                        Animation().curConfig(drv,<span class="string">''</span>);
                     <span class="keyword">end</span>
                 <span class="keyword">else</span>
+                    fprintf(<span class="string">'Input file:\n%s\n'</span>,this.cur_file);
                     fprintf(2,<span class="string">'\nInvalid input file extension.\n'</span>);
-                    this.printExit(is_last);
+                    this.printExit();
                     <span class="keyword">continue</span>;
                 <span class="keyword">end</span>
 
@@ -275,18 +137,133 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
                 drv.posProcess();
 
                 <span class="comment">% Finish current analysis</span>
-                <span class="keyword">if</span> (test)
-                    this.compareTest(drv);
-                <span class="keyword">else</span>
-                    fprintf(<span class="string">'\nFinished!\n'</span>);
-                <span class="keyword">end</span>
-                <span class="keyword">if</span> (~is_last)
+                fprintf(<span class="string">'\nFinished!\n'</span>);
+                <span class="keyword">if</span> (~this.is_last)
                     fprintf(<span class="string">'\n------------------------------------------------------------------\n\n'</span>);
                 <span class="keyword">end</span>
             <span class="keyword">end</span>
         <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> [status,drv] = runAnalysis(this)
+            <span class="comment">% Open parameters file</span>
+            fprintf(<span class="string">'Parameters file:\n%s\n'</span>,this.cur_file);
+            fid = fopen(this.cur_file,<span class="string">'rt'</span>);
+            <span class="keyword">if</span> (fid &lt; 0)
+                fprintf(2,<span class="string">'\nError opening parameters file.\n'</span>);
+                this.printExit();
+                status = 0;
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Read parameters file</span>
+            <span class="keyword">if</span> (this.echo &gt; 0)
+                fprintf(<span class="string">'\nReading parameters file...\n'</span>);
+            <span class="keyword">end</span>
+            read = Read();
+            [status,drv,storage_file] = read.execute(this.path_in,fid);
+
+            <span class="comment">% Pre analysis tasks</span>
+            <span class="keyword">if</span> (status == 0)
+                this.printExit();
+                <span class="keyword">return</span>;
+
+            <span class="keyword">elseif</span> (status == 1) <span class="comment">% start analysis from the beggining</span>
+                <span class="comment">% Check input data</span>
+                <span class="keyword">if</span> (this.echo &gt; 0)
+                    fprintf(<span class="string">'\nChecking consistency of input data...\n'</span>);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~read.check(drv))
+                    this.printExit();
+                    status = 0;
+                    <span class="keyword">return</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Pre-process</span>
+                <span class="keyword">if</span> (this.echo &gt; 0)
+                    fprintf(<span class="string">'\nPre-processing...\n'</span>);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> (~drv.preProcess())
+                    this.printExit();
+                    status = 0;
+                    <span class="keyword">return</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Print simulation information</span>
+                <span class="keyword">if</span> (this.echo &gt; 0)
+                    this.printSimulationInfo(drv);
+                    fprintf(<span class="string">'\nStarting analysis:\n'</span>);
+                    fprintf(<span class="string">'%s\n'</span>,datestr(now));
+                <span class="keyword">end</span>
+
+            <span class="keyword">elseif</span> (status == 2) <span class="comment">% continue analysis from previous state</span>
+                f = dir(storage_file);
+                fprintf(<span class="string">'\nStorage file found (%.3f Mb):\n%s\n'</span>,f.bytes/10e5,storage_file);
+
+                <span class="comment">% Load storage file</span>
+                [loaded,drv] = this.loadStorageFile(storage_file);
+                <span class="keyword">if</span> (~loaded)
+                    status = 0;
+                    <span class="keyword">return</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Set output folder to current folder</span>
+                drv.path_out = this.path_in;
+
+                <span class="comment">% Update starting elapsed time</span>
+                drv.start_time = drv.total_time;
+
+                <span class="comment">% Print simulation information</span>
+                <span class="keyword">if</span> (this.echo &gt; 0)
+                    this.printSimulationInfo(drv);
+                    fprintf(<span class="string">'\nStarting analysis from previous results:\n'</span>);
+                    fprintf(<span class="string">'%s\n'</span>,datestr(now));
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Show starting configuration</span>
+            <span class="keyword">if</span> (this.echo &gt; 0)
+                Animation().curConfig(drv,<span class="string">'Starting'</span>);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Execute analysis</span>
+            tic;
+            drv.process();
+
+            <span class="comment">% Print finished status</span>
+            <span class="keyword">if</span> (this.echo &gt; 0)
+                this.printFinishedStatus(drv,status);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> [status,drv] = loadResults(this)
+            status = 1;
+            f = dir(this.cur_file);
+            fprintf(<span class="string">'Storage file (%.3f Mb):\n%s\n'</span>,f.bytes/10e5,this.cur_file);
+
+            <span class="comment">% Load storage file</span>
+            [loaded,drv] = this.loadStorageFile(this.cur_file);
+            <span class="keyword">if</span> (~loaded)
+                status = 0;
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Set output folder to current folder</span>
+            drv.path_out = this.path_in;
+
+            <span class="comment">% Show current configuration</span>
+            <span class="keyword">if</span> (this.echo &gt; 0)
+                Animation().curConfig(drv,<span class="string">''</span>);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> runTests(this,echo,tol)
+            this.compareTest(drv);
+        <span class="keyword">end</span>
     <span class="keyword">end</span>
-</pre><h2 id="4">Public methods: auxiliary functions</h2><pre class="codeinput">    methods
+</pre><h2 id="5">Public methods: auxiliary functions</h2><pre class="codeinput">    methods
         <span class="comment">%------------------------------------------------------------------</span>
         <span class="keyword">function</span> printHeader(~)
             fprintf(<span class="string">'==================================================================\n'</span>);
@@ -295,6 +272,38 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
             fprintf(<span class="string">' International Center for Numerical Methods in Engineering (CIMNE)\n'</span>);
             fprintf(<span class="string">'      Polytechnic University of Catalonia (UPC BarcelonaTech)     \n'</span>);
             fprintf(<span class="string">'==================================================================\n\n'</span>);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> status = getInputFiles(this)
+            status  = 1;
+
+            <span class="comment">% Get files from dialog</span>
+            filter  = {<span class="string">'*.json'</span>,<span class="string">'Parameters File (*.json)'</span>;<span class="string">'*.mat'</span>,<span class="string">'Storage File (*.mat)'</span>};
+            title   = <span class="string">'DEMLab - Input file'</span>;
+            default = <span class="string">'ProjectParameters.json'</span>;
+            [file_names,path] = uigetfile(filter,title,default,<span class="string">'MultiSelect'</span>,<span class="string">'on'</span>);
+            <span class="keyword">if</span> (isequal(file_names,0))
+                fprintf(<span class="string">'No file selected.\n'</span>);
+                fprintf(<span class="string">'\nExiting program...\n'</span>);
+                status = 0;
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+            file_fullnames = fullfile(path,file_names);
+
+            <span class="comment">% Convert to string array</span>
+            this.files   = string(file_fullnames);
+            this.path_in = string(path);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> displayInputFiles(this)
+            n_files = length(this.files);
+            fprintf(<span class="string">'%d input files selected:\n'</span>,n_files);
+            <span class="keyword">for</span> i = 1:n_files
+                fprintf(<span class="string">'%s\n'</span>,this.files(i));
+            <span class="keyword">end</span>
+            fprintf(<span class="string">'\n------------------------------------------------------------------\n\n'</span>);
         <span class="keyword">end</span>
 
         <span class="comment">%------------------------------------------------------------------</span>
@@ -381,12 +390,33 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="keyword">end</span>
 
         <span class="comment">%------------------------------------------------------------------</span>
-        <span class="keyword">function</span> printExit(~,is_last)
-            <span class="keyword">if</span> (is_last)
+        <span class="keyword">function</span> printExit(this)
+            <span class="keyword">if</span> (this.is_last)
                 fprintf(<span class="string">'\nExiting program...\n'</span>);
             <span class="keyword">else</span>
                 fprintf(<span class="string">'\nAborted!\n'</span>);
                 fprintf(<span class="string">'\n------------------------------------------------------------------\n\n'</span>);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> [status,drv] = loadStorageFile(this,storage_file)
+            status = 1;
+            <span class="keyword">try</span>
+                warning <span class="string">off</span> <span class="string">MATLAB:load:variableNotFound</span>
+                load(storage_file,<span class="string">'drv'</span>);
+                warning <span class="string">on</span> <span class="string">MATLAB:load:variableNotFound</span>
+            <span class="keyword">catch</span>
+                fprintf(2,<span class="string">'\nError loading storage file.\n'</span>);
+                this.printExit();
+                status = 0;
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (~exist(<span class="string">'drv'</span>,<span class="string">'var'</span>) || isempty(drv))
+                fprintf(2,<span class="string">'\nInvalid stored data.\n'</span>);
+                this.printExit();
+                status = 0;
+                <span class="keyword">return</span>;
             <span class="keyword">end</span>
         <span class="keyword">end</span>
 
@@ -457,217 +487,81 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 %
 %% Description
 %
-% This is the main class for running simulations in DEMLab.
+% This is the main class for running simulations and tests in DEMLab.
 %
 % It is responsible for managing the high-level tasks and call the
 % appropriate methods to perform each stage of a simulation, from the
 % reading of input files to the showing of results.
 %
-classdef Master
+classdef Master < handle
+    %% Public properties
+    properties (SetAccess = public, GetAccess = public)
+        echo     uint8   = uint8.empty;     % echo level (amount of information to be printed in command window)
+        tol      double  = double.empty;    % tolerance for testing against reference results
+        path_in  string  = string.empty;    % path to input files folder
+        files    string  = string.empty;    % full name of input files (with path)
+        cur_file string  = string.empty;    % name of current file being run
+        is_last  logical = logical.empty;   % flag for last input file to run
+    end
+    
     %% Constructor method
     methods
         function this = Master()
-            
+            this.setDefaultProps();
         end
     end
     
-    %% Public methods: main function
+    %% Public methods: main functions
     methods
         %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
-        function execute(this,file_fullnames,echo,test)
-            % Check input arguments
-            if (nargin < 2)
-                fprintf('No file selected.\n');
-                fprintf('\nExiting program...\n');
-                return;
-            elseif (nargin < 3)
-                echo = 1;
-                test = false;
-            elseif (nargin < 4)
-                test = false;
+        function setDefaultProps(this)
+            this.echo = 1;
+            this.tol  = 1e-12;
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function runSimulations(this,echo)
+            if (nargin > 1)
+                this.echo = echo;
             end
             
             % Print header
             this.printHeader();
             
             % Get input files
-            if (isempty(file_fullnames) || (length(file_fullnames) == 1 && file_fullnames == ""))
-                % Open selection dialog
-                filter  = {'*.json','Parameters File (*.json)';'*.mat','Storage File (*.mat)'};
-                title   = 'DEMLab - Input file';
-                default = 'ProjectParameters.json';
-                [file_names,path_in] = uigetfile(filter,title,default,'MultiSelect','on');
-                if (isequal(file_names,0))
-                    fprintf('No file selected.\n');
-                    fprintf('\nExiting program...\n');
-                    return;
-                end
-                file_fullnames = fullfile(path_in,file_names);
-                
-                % Convert to string array
-                file_fullnames = string(file_fullnames);
-                path_in        = string(path_in);
-            else
-                % Convert to string array
-                file_fullnames = string(file_fullnames);
-                
-                % Eliminate empty strings
-                file_fullnames = file_fullnames(file_fullnames~="");
-                
-                % Check for non empty files
-                if (isempty(file_fullnames))
-                    fprintf('No file selected.\n');
-                    fprintf('\nExiting program...\n');
-                    return;
-                end
-                
-                % Get path of input files
-                path_in = strcat(fileparts(file_fullnames(1)),'\');
+            if (~this.getInputFiles())
+                return;
             end
             
             % Display input files
-            n_files = length(file_fullnames);
-            if (n_files > 1 && echo > 0)
-                fprintf('%d input files selected:\n',n_files);
-                for i = 1:n_files
-                    fprintf('%s\n',file_fullnames(i));
-                end
-                fprintf('\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
-            end
+            this.displayInputFiles();
             
             % Run each input file
-            for i = 1:n_files
-                is_last = (i == n_files);
-                
-                % Check extension
-                cur_file = file_fullnames(i);
-                [~,~,ext] = fileparts(cur_file);
+            for i = 1:length(this.files)
+                this.is_last = (i == length(this.files));
                 
                 % Clear driver
                 clearvars drv;
                 
-                % Run according to input file type
+                % Get current file name and extension
+                this.cur_file = this.files(i);
+                [~,~,ext] = fileparts(this.cur_file);
+                
+                % Run according to file extension
                 if (strcmp(ext,'.json'))
-                    % Open parameters file
-                    fprintf('Parameters file:\n%s\n',cur_file);
-                    fid = fopen(cur_file,'rt');
-                    if (fid < 0)
-                        fprintf(2,'\nError opening parameters file.\n');
-                        this.printExit(is_last);
+                    [status,drv] = this.runAnalysis();
+                    if (~status)
                         continue;
                     end
-                    
-                    % Read parameters file
-                    if (echo > 0)
-                        fprintf('\nReading parameters file...\n');
-                    end
-                    read = Read();
-                    [status,drv,storage] = read.execute(path_in,fid);
-                    
-                    % Pre analysis tasks
-                    if (status == 0)
-                        this.printExit(is_last);
-                        continue;
-                        
-                    elseif (status == 1) % start analysis from the beggining
-                        % Check input data
-                        if (echo > 0)
-                            fprintf('\nChecking consistency of input data...\n');
-                        end
-                        status = read.check(drv);
-                        if (~status)
-                            this.printExit(is_last);
-                            continue;
-                        end
-                        
-                        % Pre-process
-                        if (echo > 0)
-                            fprintf('\nPre-processing...\n');
-                        end
-                        if (~drv.preProcess())
-                            this.printExit(is_last);
-                            continue;
-                        end
-                        
-                        % Print simulation information
-                        if (echo > 0)
-                            this.printSimulationInfo(drv);
-                            fprintf('\nStarting analysis:\n');
-                            fprintf('%s\n',datestr(now));
-                        end
-                        
-                    elseif (status == 2) % continue analysis from previous state
-                        f = dir(storage);
-                        fprintf('\nStorage file found (%.3f Mb):\n%s\n',f.bytes/10e5,storage);
-                        
-                        % Load storage file
-                        try
-                            warning off MATLAB:load:variableNotFound
-                            load(storage,'drv');
-                            warning on MATLAB:load:variableNotFound
-                        catch
-                            fprintf(2,'\nError loading storage file.\n');
-                            this.printExit(is_last);
-                            continue;
-                        end
-                        if (~exist('drv','var') || isempty(drv))
-                            fprintf(2,'\nInvalid stored data.\n');
-                            this.printExit(is_last);
-                            continue;
-                        end
-                        
-                        % Update starting elapsed time
-                        drv.start_time = drv.total_time;
-
-                        % Print simulation information
-                        if (echo > 0)
-                            this.printSimulationInfo(drv);
-                            fprintf('\nStarting analysis from previous results:\n');
-                            fprintf('%s\n',datestr(now));
-                        end
-                    end
-                    
-                    % Show starting configuration
-                    if (echo > 0)
-                        Animation().curConfig(drv,'Starting');
-                    end
-                    
-                    % Execute analysis
-                    tic;
-                    drv.process();
-                    
-                    % Print finished status
-                    if (echo > 0)
-                        this.printFinishedStatus(drv,status);
-                    end
-                    
                 elseif (strcmp(ext,'.mat'))
-                    f = dir(cur_file);
-                    fprintf('Storage file (%.3f Mb):\n%s\n',f.bytes/10e5,cur_file);
-                    
-                    % Load storage file
-                    try
-                        warning off MATLAB:load:variableNotFound
-                        load(cur_file,'drv');
-                        warning on MATLAB:load:variableNotFound
-                    catch
-                        fprintf(2,'\nError loading storage file.\n');
-                        this.printExit(is_last);
+                    [status,drv] = this.loadResults();
+                    if (~status)
                         continue;
-                    end
-                    if (~exist('drv','var') || isempty(drv))
-                        fprintf(2,'\nInvalid stored data.\n');
-                        this.printExit(is_last);
-                        continue;
-                    end
-                    
-                    % Show current configuration
-                    if (echo > 0)
-                        Animation().curConfig(drv,'');
                     end
                 else
+                    fprintf('Input file:\n%s\n',this.cur_file);
                     fprintf(2,'\nInvalid input file extension.\n');
-                    this.printExit(is_last);
+                    this.printExit();
                     continue;
                 end
                 
@@ -675,15 +569,130 @@ classdef Master
                 drv.posProcess();
                 
                 % Finish current analysis
-                if (test)
-                    this.compareTest(drv);
-                else
-                    fprintf('\nFinished!\n');
-                end
-                if (~is_last)
+                fprintf('\nFinished!\n');
+                if (~this.is_last)
                     fprintf('\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
                 end
             end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function [status,drv] = runAnalysis(this)
+            % Open parameters file
+            fprintf('Parameters file:\n%s\n',this.cur_file);
+            fid = fopen(this.cur_file,'rt');
+            if (fid < 0)
+                fprintf(2,'\nError opening parameters file.\n');
+                this.printExit();
+                status = 0;
+                return;
+            end
+            
+            % Read parameters file
+            if (this.echo > 0)
+                fprintf('\nReading parameters file...\n');
+            end
+            read = Read();
+            [status,drv,storage_file] = read.execute(this.path_in,fid);
+            
+            % Pre analysis tasks
+            if (status == 0)
+                this.printExit();
+                return;
+                
+            elseif (status == 1) % start analysis from the beggining
+                % Check input data
+                if (this.echo > 0)
+                    fprintf('\nChecking consistency of input data...\n');
+                end
+                if (~read.check(drv))
+                    this.printExit();
+                    status = 0;
+                    return;
+                end
+                
+                % Pre-process
+                if (this.echo > 0)
+                    fprintf('\nPre-processing...\n');
+                end
+                if (~drv.preProcess())
+                    this.printExit();
+                    status = 0;
+                    return;
+                end
+                
+                % Print simulation information
+                if (this.echo > 0)
+                    this.printSimulationInfo(drv);
+                    fprintf('\nStarting analysis:\n');
+                    fprintf('%s\n',datestr(now));
+                end
+                
+            elseif (status == 2) % continue analysis from previous state
+                f = dir(storage_file);
+                fprintf('\nStorage file found (%.3f Mb):\n%s\n',f.bytes/10e5,storage_file);
+                
+                % Load storage file
+                [loaded,drv] = this.loadStorageFile(storage_file);
+                if (~loaded)
+                    status = 0;
+                    return;
+                end
+                
+                % Set output folder to current folder
+                drv.path_out = this.path_in;
+                
+                % Update starting elapsed time
+                drv.start_time = drv.total_time;
+                
+                % Print simulation information
+                if (this.echo > 0)
+                    this.printSimulationInfo(drv);
+                    fprintf('\nStarting analysis from previous results:\n');
+                    fprintf('%s\n',datestr(now));
+                end
+            end
+            
+            % Show starting configuration
+            if (this.echo > 0)
+                Animation().curConfig(drv,'Starting');
+            end
+            
+            % Execute analysis
+            tic;
+            drv.process();
+            
+            % Print finished status
+            if (this.echo > 0)
+                this.printFinishedStatus(drv,status);
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function [status,drv] = loadResults(this)
+            status = 1;
+            f = dir(this.cur_file);
+            fprintf('Storage file (%.3f Mb):\n%s\n',f.bytes/10e5,this.cur_file);
+            
+            % Load storage file
+            [loaded,drv] = this.loadStorageFile(this.cur_file);
+            if (~loaded)
+                status = 0;
+                return;
+            end
+            
+            % Set output folder to current folder
+            drv.path_out = this.path_in;
+            
+            % Show current configuration
+            if (this.echo > 0)
+                Animation().curConfig(drv,'');
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function runTests(this,echo,tol)
+            this.compareTest(drv);
         end
     end
     
@@ -697,6 +706,38 @@ classdef Master
             fprintf(' International Center for Numerical Methods in Engineering (CIMNE)\n');
             fprintf('      Polytechnic University of Catalonia (UPC BarcelonaTech)     \n');
             fprintf('==================================================================\n\n');
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function status = getInputFiles(this)
+            status  = 1;
+            
+            % Get files from dialog
+            filter  = {'*.json','Parameters File (*.json)';'*.mat','Storage File (*.mat)'};
+            title   = 'DEMLab - Input file';
+            default = 'ProjectParameters.json';
+            [file_names,path] = uigetfile(filter,title,default,'MultiSelect','on');
+            if (isequal(file_names,0))
+                fprintf('No file selected.\n');
+                fprintf('\nExiting program...\n');
+                status = 0;
+                return;
+            end
+            file_fullnames = fullfile(path,file_names);
+            
+            % Convert to string array
+            this.files   = string(file_fullnames);
+            this.path_in = string(path);
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function displayInputFiles(this)
+            n_files = length(this.files);
+            fprintf('%d input files selected:\n',n_files);
+            for i = 1:n_files
+                fprintf('%s\n',this.files(i));
+            end
+            fprintf('\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
         end
         
         %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
@@ -783,12 +824,33 @@ classdef Master
         end
         
         %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
-        function printExit(~,is_last)
-            if (is_last)
+        function printExit(this)
+            if (this.is_last)
                 fprintf('\nExiting program...\n');
             else
                 fprintf('\nAborted!\n');
                 fprintf('\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
+            end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function [status,drv] = loadStorageFile(this,storage_file)
+            status = 1;
+            try
+                warning off MATLAB:load:variableNotFound
+                load(storage_file,'drv');
+                warning on MATLAB:load:variableNotFound
+            catch
+                fprintf(2,'\nError loading storage file.\n');
+                this.printExit();
+                status = 0;
+                return;
+            end
+            if (~exist('drv','var') || isempty(drv))
+                fprintf(2,'\nInvalid stored data.\n');
+                this.printExit();
+                status = 0;
+                return;
             end
         end
         

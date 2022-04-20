@@ -13,8 +13,8 @@
 % * _txt_ file with the *model parts*
 %
 % In addition, it identifies if there exists a storage file with the same
-% name of the problem name. If so, the simulation is restarted from the
-% stored results.
+% name of the simulation name.
+% If so, the simulation is restarted from the stored results.
 %
 classdef Read < handle
     %% Constructor method
@@ -46,7 +46,7 @@ classdef Read < handle
                 status = 0; return;
             end
             
-            % Get problem name
+            % Get simulation name
             [status,name] = this.getName(json);
             
             % Look for storage file to continue analysis from previous stage
@@ -187,7 +187,7 @@ classdef Read < handle
                 drv = Driver_ThermoMechanical();
             end
             
-            % Set problem name and paths
+            % Set simulation name and paths
             drv.name     = name;
             drv.path_in  = path;
             drv.path_out = strcat(path,name,'_out\');
@@ -5464,7 +5464,7 @@ classdef Read < handle
         function status = checkDriver(this,drv)
             status = 1;
             if (isempty(drv.name))
-                this.missingDataError('No problem name was provided.');
+                this.missingDataError('No simulation name was provided.');
                 status = 0; return;
             end
             if (isempty(drv.search))

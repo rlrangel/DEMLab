@@ -30,6 +30,7 @@ The program is designed to be a modular and extensible tool to allow testing of 
 - [Instructions](#instructions)
     - [Input Files](#input-files)
 	- [Running Simulations](#running-simulations)
+	- [Loading Results](#loading-results)
 	- [Testing](#testing)
 - [Examples](#examples)
 - [Documentation](#documentation)
@@ -88,6 +89,10 @@ Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum
 Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
 
 ### Running Simulations
+
+Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam.
+
+### Loading Results
 
 Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam.
 

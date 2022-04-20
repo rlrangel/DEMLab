@@ -27,7 +27,7 @@ classdef Driver < handle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         % Problem data
-        name    string = string.empty;   % problem name
+        name    string = string.empty;   % simulation name
         type    uint8  = uint8.empty;    % flag for type of analysis
         path_in string = string.empty;   % path to input files folder
         

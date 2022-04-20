@@ -4,17 +4,28 @@
 %
 % This is the main script file of the DEMLab program.
 %
-% To *run a simulation*, execute this script and select an appropriate
+% *Running Simulations*:
+%
+% To run a simulation, execute this script and select an appropriate
 % parameters file with the _.json_ extension.
 %
-% To *load results* from a previously run simulation, execute this
-% script and select an appropriate storage file with the _.mat_ extension.
-%
-% Multiple files can be selected to run simulations sequentially,
+% Multiple parameter files can be selected to run simulations sequentially,
 % as long as they are located in the same folder.
 %
-% A sub-folder with the problem name plus the suffix "_out" is created to
-% receive the output files with the simulation results.
+% Sub-folders with the simulation name plus the suffix "_out" are created
+% to receive the output files with the results of each simulation.
+%
+% *Loading Results*:
+%
+% To load and show results from a previously run simulation, execute this
+% script and select an appropriate storage file with the _.mat_ extension.
+%
+% Multiple storage files can be selected to load and show results
+% sequentially, as long as they are located in the same folder.
+%
+% Furthermore, if a storage file named after the simulation name is located
+% in the same folder of the parameters file, the simulation is restarted
+% from the stored results.
 %
 %% OOP classes
 %
@@ -70,4 +81,4 @@
 %% Initialization
 clc; clearvars; close all;
 addpath(genpath(pwd));
-Master().execute();
+Master().runSimulations(1);
