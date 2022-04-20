@@ -90,15 +90,22 @@ Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum
 
 ### Running Simulations
 
-Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam.
+To run a simulation, execute this script and select an appropriate parameters file with the _.json_ extension.
+Multiple parameter files can be selected to run simulations sequentially, as long as they are located in the same folder.
+Sub-folders with the simulation name plus the suffix "_out" are created to receive the output files with the results of each simulation.
 
 ### Loading Results
 
-Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam.
+To load and show results from a previously run simulation, execute this script and select an appropriate storage file with the _.mat_ extension.
+Multiple storage files can be selected to load and show results sequentially, as long as they are located in the same folder.
+Furthermore, if a storage file named after the simulation name is located in the same folder of the parameters file, the simulation is restarted from the stored results.
 
 ### Testing
 
-Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
+This script file runs the selected test models and checks if the obtained results agree with the reference results.
+
+This script file generates / updates the reference result files of the selected test models.
+ATTENTION: This action will overwrite existing reference results.
 
 ## Examples
 
@@ -106,7 +113,8 @@ Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum
 
 ## Documentation
 
-Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
+This program adopts an Object Oriented Programming (OOP) paradigm.
+The following OOP super-classes are implemented:
 
 ## How to Contribute
 
