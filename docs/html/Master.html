@@ -69,7 +69,6 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
   </style></head><body><div class="content"><h1>Master class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: main functions</a></li><li><a href="#5">Public methods: auxiliary functions</a></li></ul></div><h2 id="1">Description</h2><p>This is the main class for running simulations and tests in DEMLab.</p><p>It is responsible for managing the high-level tasks and call the appropriate methods to perform each stage of a simulation, from the reading of input files to the showing of results.</p><pre class="codeinput"><span class="keyword">classdef</span> Master &lt; handle
 </pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
         echo     <span class="string">uint8</span>   <span class="string">=</span> <span class="string">uint8.empty</span>;     <span class="comment">% echo level (amount of information to be printed in command window)</span>
-        tol      <span class="string">double</span>  <span class="string">=</span> <span class="string">double.empty</span>;    <span class="comment">% tolerance for testing against reference results</span>
         path_in  <span class="string">string</span>  <span class="string">=</span> <span class="string">string.empty</span>;    <span class="comment">% path to input files folder</span>
         files    <span class="string">string</span>  <span class="string">=</span> <span class="string">string.empty</span>;    <span class="comment">% full name of input files (with path)</span>
         cur_file <span class="string">string</span>  <span class="string">=</span> <span class="string">string.empty</span>;    <span class="comment">% name of current file being run</span>
@@ -84,7 +83,6 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="comment">%------------------------------------------------------------------</span>
         <span class="keyword">function</span> setDefaultProps(this)
             this.echo = 1;
-            this.tol  = 1e-12;
         <span class="keyword">end</span>
 
         <span class="comment">%------------------------------------------------------------------</span>
@@ -142,6 +140,69 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
                     fprintf(<span class="string">'\n------------------------------------------------------------------\n\n'</span>);
                 <span class="keyword">end</span>
             <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> runTests(this,mode)
+            this.echo = 0;
+
+            <span class="comment">% Print header</span>
+            this.printHeader();
+
+            <span class="comment">% Check input</span>
+            <span class="keyword">if</span> (mode ~= 1 &amp;&amp; mode ~= 2)
+                fprintf(<span class="string">'Invalid testing mode!\n'</span>);
+                fprintf(<span class="string">'\nExiting program...\n'</span>);
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Get input files</span>
+            <span class="keyword">if</span> (~this.getInputFiles())
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Display input files</span>
+            this.displayInputFiles();
+
+            <span class="comment">% Run each input file</span>
+            <span class="keyword">for</span> i = 1:length(this.files)
+                this.is_last = (i == length(this.files));
+
+                <span class="comment">% Clear driver</span>
+                clearvars <span class="string">drv</span>;
+
+                <span class="comment">% Get current file name and extension</span>
+                this.cur_file = this.files(i);
+                [~,~,ext] = fileparts(this.cur_file);
+                <span class="keyword">if</span> (~strcmp(ext,<span class="string">'.json'</span>))
+                    fprintf(<span class="string">'Input file:\n%s\n'</span>,this.cur_file);
+                    fprintf(2,<span class="string">'\nInvalid input file extension.\n'</span>);
+                    this.printExit();
+                    <span class="keyword">continue</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Run simulation</span>
+                [status,drv] = this.runAnalysis();
+                <span class="keyword">if</span> (~status)
+                    <span class="keyword">continue</span>;
+                <span class="keyword">end</span>
+
+                <span class="comment">% Pos-process</span>
+                drv.posProcess();
+
+                <span class="comment">% Perform action according to testing mode</span>
+                <span class="keyword">if</span> (mode == 1) <span class="comment">% compare results file with reference</span>
+                    this.compareTest(drv);
+                <span class="keyword">elseif</span> (mode == 2) <span class="comment">% generate/update reference results</span>
+                   this.renameRefResultFile(drv);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Finish current analysis</span>
+                <span class="keyword">if</span> (~this.is_last)
+                    fprintf(<span class="string">'\n------------------------------------------------------------------\n\n'</span>);
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            fprintf(<span class="string">'\nFinished!\n'</span>);
         <span class="keyword">end</span>
 
         <span class="comment">%------------------------------------------------------------------</span>
@@ -256,11 +317,6 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
             <span class="keyword">if</span> (this.echo &gt; 0)
                 Animation().curConfig(drv,<span class="string">''</span>);
             <span class="keyword">end</span>
-        <span class="keyword">end</span>
-
-        <span class="comment">%------------------------------------------------------------------</span>
-        <span class="keyword">function</span> runTests(this,echo,tol)
-            this.compareTest(drv);
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 </pre><h2 id="5">Public methods: auxiliary functions</h2><pre class="codeinput">    methods
@@ -421,33 +477,72 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="keyword">end</span>
 
         <span class="comment">%------------------------------------------------------------------</span>
-        <span class="keyword">function</span> compareTest(~,drv)
-            name_1 = strcat(drv.path_out,<span class="string">"reference_results.pos"</span>);
-            name_2 = strcat(drv.path_out,drv.name,<span class="string">".pos"</span>);
-
-            <span class="keyword">if</span> (exist(name_1,<span class="string">'file'</span>) ~= 2)
+        <span class="keyword">function</span> compareTest(this,drv)
+            <span class="comment">% Check if reference and current results files exist</span>
+            name_ref = strcat(drv.path_in,drv.name,<span class="string">"_ref.pos"</span>);
+            name_cur = strcat(drv.path_out,drv.name,<span class="string">".pos"</span>);
+            <span class="keyword">if</span> (exist(name_ref,<span class="string">'file'</span>) ~= 2)
                 fprintf(2,<span class="string">'\nMissing reference results file!\n'</span>);
-                <span class="keyword">if</span> (exist(name_2,<span class="string">'file'</span>) == 2)
-                    warning <span class="string">off</span> <span class="string">MATLAB:DELETE:FileNotFound</span>
-                    delete(sprintf(<span class="string">'%s'</span>,name_2));
-                    warning <span class="string">on</span> <span class="string">MATLAB:DELETE:FileNotFound</span>
-                <span class="keyword">end</span>
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); <span class="comment">%#ok&lt;NASGU&gt;</span>
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> (exist(name_cur,<span class="string">'file'</span>) ~= 2)
+                fprintf(2,<span class="string">'\nCurrent results file was not generated correctly!\n'</span>);
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); <span class="comment">%#ok&lt;NASGU&gt;</span>
                 <span class="keyword">return</span>;
             <span class="keyword">end</span>
 
-            file_1 = javaObject(<span class="string">'java.io.File'</span>,name_1);
-            file_2 = javaObject(<span class="string">'java.io.File'</span>,name_2);
-
-            is_equal = javaMethod(<span class="string">'contentEquals'</span>,<span class="string">'org.apache.commons.io.FileUtils'</span>,file_1,file_2);
-
+            <span class="comment">% Compare contents of files</span>
+            file_ref = javaObject(<span class="string">'java.io.File'</span>,name_ref);
+            file_cur = javaObject(<span class="string">'java.io.File'</span>,name_cur);
+            is_equal = javaMethod(<span class="string">'contentEquals'</span>,<span class="string">'org.apache.commons.io.FileUtils'</span>,file_ref,file_cur);
             <span class="keyword">if</span> (is_equal)
                 fprintf(1,<span class="string">'\nTest passed!\n'</span>);
             <span class="keyword">else</span>
                 fprintf(2,<span class="string">'\nResults are different!\n'</span>);
             <span class="keyword">end</span>
-            <span class="keyword">if</span> (exist(name_2,<span class="string">'file'</span>) == 2)
+
+            <span class="comment">% Delete current results file and folder (if empty)</span>
+            this.deleteFile(name_cur);
+            status = rmdir(drv.path_out); <span class="comment">%#ok&lt;NASGU&gt;</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> renameRefResultFile(this,drv)
+            <span class="comment">% Check if current results file exist</span>
+            name_cur = strcat(drv.path_out,drv.name,<span class="string">".pos"</span>);
+            <span class="keyword">if</span> (exist(name_cur,<span class="string">'file'</span>) ~= 2)
+                fprintf(2,<span class="string">'\nCurrent results file was not generated correctly!\n'</span>);
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); <span class="comment">%#ok&lt;NASGU&gt;</span>
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Move current results file out of output folder</span>
+            <span class="keyword">if</span> (~movefile(name_cur,drv.path_in))
+                fprintf(2,<span class="string">'\nCurrent results file was not generated correctly!\n'</span>);
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); <span class="comment">%#ok&lt;NASGU&gt;</span>
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Delete output folder (if empty)</span>
+            status = rmdir(drv.path_out); <span class="comment">%#ok&lt;NASGU&gt;</span>
+
+            <span class="comment">% Rename current results file to reference results file</span>
+            name_cur = strcat(drv.path_in,drv.name,<span class="string">".pos"</span>);
+            name_ref = strcat(drv.path_in,drv.name,<span class="string">"_ref.pos"</span>);
+            movefile(name_cur,name_ref);
+            fprintf(1,<span class="string">'\nReference results generated!\n'</span>);
+        <span class="keyword">end</span>
+
+        <span class="comment">%------------------------------------------------------------------</span>
+        <span class="keyword">function</span> deleteFile(~,file_name)
+            <span class="keyword">if</span> (exist(file_name,<span class="string">'file'</span>) == 2)
                 warning <span class="string">off</span> <span class="string">MATLAB:DELETE:FileNotFound</span>
-                delete(sprintf(<span class="string">'%s'</span>,name_2));
+                delete(sprintf(<span class="string">'%s'</span>,file_name));
                 warning <span class="string">on</span> <span class="string">MATLAB:DELETE:FileNotFound</span>
             <span class="keyword">end</span>
         <span class="keyword">end</span>
@@ -497,7 +592,6 @@ classdef Master < handle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         echo     uint8   = uint8.empty;     % echo level (amount of information to be printed in command window)
-        tol      double  = double.empty;    % tolerance for testing against reference results
         path_in  string  = string.empty;    % path to input files folder
         files    string  = string.empty;    % full name of input files (with path)
         cur_file string  = string.empty;    % name of current file being run
@@ -516,7 +610,6 @@ classdef Master < handle
         %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
         function setDefaultProps(this)
             this.echo = 1;
-            this.tol  = 1e-12;
         end
         
         %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
@@ -574,6 +667,69 @@ classdef Master < handle
                     fprintf('\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
                 end
             end
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function runTests(this,mode)
+            this.echo = 0;
+            
+            % Print header
+            this.printHeader();
+            
+            % Check input
+            if (mode ~= 1 && mode ~= 2)
+                fprintf('Invalid testing mode!\n');
+                fprintf('\nExiting program...\n');
+                return;
+            end
+            
+            % Get input files
+            if (~this.getInputFiles())
+                return;
+            end
+            
+            % Display input files
+            this.displayInputFiles();
+            
+            % Run each input file
+            for i = 1:length(this.files)
+                this.is_last = (i == length(this.files));
+                
+                % Clear driver
+                clearvars drv;
+                
+                % Get current file name and extension
+                this.cur_file = this.files(i);
+                [~,~,ext] = fileparts(this.cur_file);
+                if (~strcmp(ext,'.json'))
+                    fprintf('Input file:\n%s\n',this.cur_file);
+                    fprintf(2,'\nInvalid input file extension.\n');
+                    this.printExit();
+                    continue;
+                end
+                
+                % Run simulation
+                [status,drv] = this.runAnalysis();
+                if (~status)
+                    continue;
+                end
+                
+                % Pos-process
+                drv.posProcess();
+                
+                % Perform action according to testing mode
+                if (mode == 1) % compare results file with reference
+                    this.compareTest(drv);
+                elseif (mode == 2) % generate/update reference results
+                   this.renameRefResultFile(drv); 
+                end
+                
+                % Finish current analysis
+                if (~this.is_last)
+                    fprintf('\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n\n');
+                end
+            end
+            fprintf('\nFinished!\n');
         end
         
         %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
@@ -688,11 +844,6 @@ classdef Master < handle
             if (this.echo > 0)
                 Animation().curConfig(drv,'');
             end
-        end
-        
-        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
-        function runTests(this,echo,tol)
-            this.compareTest(drv);
         end
     end
     
@@ -855,33 +1006,72 @@ classdef Master < handle
         end
         
         %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
-        function compareTest(~,drv)
-            name_1 = strcat(drv.path_out,"reference_results.pos");
-            name_2 = strcat(drv.path_out,drv.name,".pos");
-            
-            if (exist(name_1,'file') ~= 2)
+        function compareTest(this,drv)
+            % Check if reference and current results files exist
+            name_ref = strcat(drv.path_in,drv.name,"_ref.pos");
+            name_cur = strcat(drv.path_out,drv.name,".pos");
+            if (exist(name_ref,'file') ~= 2)
                 fprintf(2,'\nMissing reference results file!\n');
-                if (exist(name_2,'file') == 2)
-                    warning off MATLAB:DELETE:FileNotFound
-                    delete(sprintf('%s',name_2));
-                    warning on MATLAB:DELETE:FileNotFound
-                end
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); %#ok<NASGU>
+                return;
+            end
+            if (exist(name_cur,'file') ~= 2)
+                fprintf(2,'\nCurrent results file was not generated correctly!\n');
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); %#ok<NASGU>
                 return;
             end
             
-            file_1 = javaObject('java.io.File',name_1);
-            file_2 = javaObject('java.io.File',name_2);
-            
-            is_equal = javaMethod('contentEquals','org.apache.commons.io.FileUtils',file_1,file_2);
-            
+            % Compare contents of files
+            file_ref = javaObject('java.io.File',name_ref);
+            file_cur = javaObject('java.io.File',name_cur);
+            is_equal = javaMethod('contentEquals','org.apache.commons.io.FileUtils',file_ref,file_cur);
             if (is_equal)
                 fprintf(1,'\nTest passed!\n');
             else
                 fprintf(2,'\nResults are different!\n');
             end
-            if (exist(name_2,'file') == 2)
+            
+            % Delete current results file and folder (if empty)
+            this.deleteFile(name_cur);
+            status = rmdir(drv.path_out); %#ok<NASGU>
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function renameRefResultFile(this,drv)
+            % Check if current results file exist
+            name_cur = strcat(drv.path_out,drv.name,".pos");
+            if (exist(name_cur,'file') ~= 2)
+                fprintf(2,'\nCurrent results file was not generated correctly!\n');
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); %#ok<NASGU>
+                return;
+            end
+            
+            % Move current results file out of output folder
+            if (~movefile(name_cur,drv.path_in))
+                fprintf(2,'\nCurrent results file was not generated correctly!\n');
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); %#ok<NASGU>
+                return;
+            end
+            
+            % Delete output folder (if empty)
+            status = rmdir(drv.path_out); %#ok<NASGU>
+            
+            % Rename current results file to reference results file
+            name_cur = strcat(drv.path_in,drv.name,".pos");
+            name_ref = strcat(drv.path_in,drv.name,"_ref.pos");
+            movefile(name_cur,name_ref);
+            fprintf(1,'\nReference results generated!\n');
+        end
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+        function deleteFile(~,file_name)
+            if (exist(file_name,'file') == 2)
                 warning off MATLAB:DELETE:FileNotFound
-                delete(sprintf('%s',name_2));
+                delete(sprintf('%s',file_name));
                 warning on MATLAB:DELETE:FileNotFound
             end
         end

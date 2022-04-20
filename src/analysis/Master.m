@@ -12,7 +12,6 @@ classdef Master < handle
     %% Public properties
     properties (SetAccess = public, GetAccess = public)
         echo     uint8   = uint8.empty;     % echo level (amount of information to be printed in command window)
-        tol      double  = double.empty;    % tolerance for testing against reference results
         path_in  string  = string.empty;    % path to input files folder
         files    string  = string.empty;    % full name of input files (with path)
         cur_file string  = string.empty;    % name of current file being run
@@ -31,7 +30,6 @@ classdef Master < handle
         %------------------------------------------------------------------
         function setDefaultProps(this)
             this.echo = 1;
-            this.tol  = 1e-12;
         end
         
         %------------------------------------------------------------------
@@ -89,6 +87,69 @@ classdef Master < handle
                     fprintf('\n------------------------------------------------------------------\n\n');
                 end
             end
+        end
+        
+        %------------------------------------------------------------------
+        function runTests(this,mode)
+            this.echo = 0;
+            
+            % Print header
+            this.printHeader();
+            
+            % Check input
+            if (mode ~= 1 && mode ~= 2)
+                fprintf('Invalid testing mode!\n');
+                fprintf('\nExiting program...\n');
+                return;
+            end
+            
+            % Get input files
+            if (~this.getInputFiles())
+                return;
+            end
+            
+            % Display input files
+            this.displayInputFiles();
+            
+            % Run each input file
+            for i = 1:length(this.files)
+                this.is_last = (i == length(this.files));
+                
+                % Clear driver
+                clearvars drv;
+                
+                % Get current file name and extension
+                this.cur_file = this.files(i);
+                [~,~,ext] = fileparts(this.cur_file);
+                if (~strcmp(ext,'.json'))
+                    fprintf('Input file:\n%s\n',this.cur_file);
+                    fprintf(2,'\nInvalid input file extension.\n');
+                    this.printExit();
+                    continue;
+                end
+                
+                % Run simulation
+                [status,drv] = this.runAnalysis();
+                if (~status)
+                    continue;
+                end
+                
+                % Pos-process
+                drv.posProcess();
+                
+                % Perform action according to testing mode
+                if (mode == 1) % compare results file with reference
+                    this.compareTest(drv);
+                elseif (mode == 2) % generate/update reference results
+                   this.renameRefResultFile(drv); 
+                end
+                
+                % Finish current analysis
+                if (~this.is_last)
+                    fprintf('\n------------------------------------------------------------------\n\n');
+                end
+            end
+            fprintf('\nFinished!\n');
         end
         
         %------------------------------------------------------------------
@@ -203,11 +264,6 @@ classdef Master < handle
             if (this.echo > 0)
                 Animation().curConfig(drv,'');
             end
-        end
-        
-        %------------------------------------------------------------------
-        function runTests(this,echo,tol)
-            this.compareTest(drv);
         end
     end
     
@@ -370,33 +426,72 @@ classdef Master < handle
         end
         
         %------------------------------------------------------------------
-        function compareTest(~,drv)
-            name_1 = strcat(drv.path_out,"reference_results.pos");
-            name_2 = strcat(drv.path_out,drv.name,".pos");
-            
-            if (exist(name_1,'file') ~= 2)
+        function compareTest(this,drv)
+            % Check if reference and current results files exist
+            name_ref = strcat(drv.path_in,drv.name,"_ref.pos");
+            name_cur = strcat(drv.path_out,drv.name,".pos");
+            if (exist(name_ref,'file') ~= 2)
                 fprintf(2,'\nMissing reference results file!\n');
-                if (exist(name_2,'file') == 2)
-                    warning off MATLAB:DELETE:FileNotFound
-                    delete(sprintf('%s',name_2));
-                    warning on MATLAB:DELETE:FileNotFound
-                end
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); %#ok<NASGU>
+                return;
+            end
+            if (exist(name_cur,'file') ~= 2)
+                fprintf(2,'\nCurrent results file was not generated correctly!\n');
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); %#ok<NASGU>
                 return;
             end
             
-            file_1 = javaObject('java.io.File',name_1);
-            file_2 = javaObject('java.io.File',name_2);
-            
-            is_equal = javaMethod('contentEquals','org.apache.commons.io.FileUtils',file_1,file_2);
-            
+            % Compare contents of files
+            file_ref = javaObject('java.io.File',name_ref);
+            file_cur = javaObject('java.io.File',name_cur);
+            is_equal = javaMethod('contentEquals','org.apache.commons.io.FileUtils',file_ref,file_cur);
             if (is_equal)
                 fprintf(1,'\nTest passed!\n');
             else
                 fprintf(2,'\nResults are different!\n');
             end
-            if (exist(name_2,'file') == 2)
+            
+            % Delete current results file and folder (if empty)
+            this.deleteFile(name_cur);
+            status = rmdir(drv.path_out); %#ok<NASGU>
+        end
+        
+        %------------------------------------------------------------------
+        function renameRefResultFile(this,drv)
+            % Check if current results file exist
+            name_cur = strcat(drv.path_out,drv.name,".pos");
+            if (exist(name_cur,'file') ~= 2)
+                fprintf(2,'\nCurrent results file was not generated correctly!\n');
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); %#ok<NASGU>
+                return;
+            end
+            
+            % Move current results file out of output folder
+            if (~movefile(name_cur,drv.path_in))
+                fprintf(2,'\nCurrent results file was not generated correctly!\n');
+                this.deleteFile(name_cur);
+                status = rmdir(drv.path_out); %#ok<NASGU>
+                return;
+            end
+            
+            % Delete output folder (if empty)
+            status = rmdir(drv.path_out); %#ok<NASGU>
+            
+            % Rename current results file to reference results file
+            name_cur = strcat(drv.path_in,drv.name,".pos");
+            name_ref = strcat(drv.path_in,drv.name,"_ref.pos");
+            movefile(name_cur,name_ref);
+            fprintf(1,'\nReference results generated!\n');
+        end
+        
+        %------------------------------------------------------------------
+        function deleteFile(~,file_name)
+            if (exist(file_name,'file') == 2)
                 warning off MATLAB:DELETE:FileNotFound
-                delete(sprintf('%s',name_2));
+                delete(sprintf('%s',file_name));
                 warning on MATLAB:DELETE:FileNotFound
             end
         end
