@@ -77,7 +77,7 @@
 	"Output": {
 		"progress_print" : 0.1,
 		"number_output"  : 200,
-		"save_workspace" : true
+		"save_workspace" : false
 	},
 	"Animation": {
 		"title"        : "Temperature",
