@@ -19,8 +19,10 @@
 [![Release][release_image]][releases_link] [![License][license_image]][license_link] [![FileExchange][file_exchange_image]][file_exchange_link] [![DOI][zenodo_image]][zenodo_link]
 
 DEMLab is a program for performing numerical simulations of particle systems using the Discrete Element Method (DEM).
+This program uses the Discrete Element Method (DEM) to simulate particulate systems.
 
 Its purpose is to offer a modular environment for readily implementing and testing DEM models in small to medium-scale problems.
+The program is designed to be a modular and extensible tool to allow testing of different models and formulations.
 
 ## Table of Contents
 - [Main Features](#main-features)
@@ -39,15 +41,16 @@ Its purpose is to offer a modular environment for readily implementing and testi
 
 ## Main Features
 
-
-
-
 The DEM is a numerical method...
 soft-sphere approach
 particles keep their shape
 interaction models
 a particles method for modeling the bulk behavior of granular materials and many geomaterials such as coal, ores, soil, rocks, aggregates, pellets, tablets and powders.
 The DEM is a numerical method that has been applied to simulate and analyze flow behavior in a wide range of disciplines including mechanical and process engineering, pharmaceutical, materials science, agricultural engineering and more. 
+
+Mechanical, thermal and themomechanical simulations can be performed.
+
+Only two-dimensional (2D) models are handled.
 
 **Analysis Types**
 
@@ -73,6 +76,7 @@ Two-dimensional (2D) problems.
 
 Written in the [MATLAB][matlab_website] programming language.
 OOP.
+Code efficiency is not a priority and, therefore, only small-scale problems should be simulated.
 Kratos applications.
 
 ## Instructions
