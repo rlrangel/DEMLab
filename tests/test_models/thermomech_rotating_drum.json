@@ -100,7 +100,7 @@
 		}
 	},
 	"Output": {
-		"progress_print" : 1.0,
+		"progress_print" : 1000,
 		"number_output"  : 5,
 		"save_workspace" : false
 	},
