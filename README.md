@@ -10,6 +10,9 @@
 [demapp_link]:         https://github.com/KratosMultiphysics/Kratos/tree/master/applications/DEMApplication
 [thermal_demapp_link]: https://github.com/KratosMultiphysics/Kratos/tree/master/applications/ThermalDEMApplication
 [kratos_link]:         https://github.com/KratosMultiphysics/Kratos
+[wiki_link]:           https://gitlab.com/rafaelrangel/demlab/-/wikis/home
+[parameters_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ProjectParameters_template.json
+[modelparts_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ModelParts_template.txt
 [cimne_website]:       https://www.cimne.com/
 [upc_website]:         https://camins.upc.edu/
 [mathegram_website]:   https://www.surrey.ac.uk/mathegram
@@ -86,11 +89,34 @@ of the [Kratos Multiphysics][kratos_link] framework.
 
 ## Instructions
 
-Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
-
 ### Input Files
 
-Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
+There are three types of files that may be used as input for the program:
+
+* **Project Parameters (_.json_)**: 
+
+This json file is necessary for running a simulation and must always be accompanied by a _Model_Parts_ file.
+
+It contains all the parameters and options for the analysis and outputs, as well as the conditions applied to the model.
+
+A tutorial on each input field of this file can be found on the [Wiki page][wiki_link].
+Moreover, a [template][parameters_link] of this file, with all the possible input options, is available.
+
+* **Model Parts (_.txt_)**: 
+
+This text file is necessary for running a simulation and must always be accompanied by a _Project_Parameters_ file.
+
+It contains all the elements of the model with their initial coordinates, and their groupings into model parts.
+
+A tutorial on this file can be found on the [Wiki page][wiki_link].
+Moreover, a [template][modelparts_link] of this file, with all the possible input options, is available.
+
+* **Results Storage (_.mat_)**: 
+
+This binary file stores the results of a simulation.
+It is generated only if requested in the output options of the _Project_Parameters_ file.
+
+It can be loaded to show the results of previously run simulations, or used to restart a simulation from a saved stage.
 
 ### Running Simulations
 
@@ -104,6 +130,8 @@ The analysis can be launched by running the file [*lesm.m*][lesm_file_link] loca
 To load and show results from a previously run simulation, execute this script and select an appropriate storage file with the _.mat_ extension.
 Multiple storage files can be selected to load and show results sequentially, as long as they are located in the same folder.
 Furthermore, if a storage file named after the simulation name is located in the same folder of the parameters file, the simulation is restarted from the stored results.
+In addition, it identifies if there exists a storage file with the same name of the simulation name.
+If so, the simulation is restarted from the stored results.
 
 ### Testing
 
