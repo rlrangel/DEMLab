@@ -19,10 +19,8 @@
 [![Release][release_image]][releases_link] [![License][license_image]][license_link] [![FileExchange][file_exchange_image]][file_exchange_link] [![DOI][zenodo_image]][zenodo_link]
 
 DEMLab is a program for performing numerical simulations of particle systems using the Discrete Element Method (DEM).
-This program uses the Discrete Element Method (DEM) to simulate particulate systems.
 
-Its purpose is to offer a modular environment for readily implementing and testing DEM models in small to medium-scale problems.
-The program is designed to be a modular and extensible tool to allow testing of different models and formulations.
+Its purpose is to offer a modular and extensible environment that allows immediate implementation and testing of several DEM models and formulations in small to medium-scale problems.
 
 ## Table of Contents
 - [Main Features](#main-features)
@@ -42,43 +40,42 @@ The program is designed to be a modular and extensible tool to allow testing of 
 
 ## Main Features
 
-The DEM is a numerical method...
-soft-sphere approach
-particles keep their shape
-interaction models
-a particles method for modeling the bulk behavior of granular materials and many geomaterials such as coal, ores, soil, rocks, aggregates, pellets, tablets and powders.
-The DEM is a numerical method that has been applied to simulate and analyze flow behavior in a wide range of disciplines including mechanical and process engineering, pharmaceutical, materials science, agricultural engineering and more. 
+This program deals with the classical **soft-sphere approach** of the DEM.
+The main characteristics of this method are:
 
-Mechanical, thermal and themomechanical simulations can be performed.
+- It is assumed that the contact between the particles occurs through a small overlap between them.
+- Each contact is evaluated through several time steps in an explicit integration scheme.
+- Contact models relate the amount of overlap between neighboring particles to the forces between them.
+- Other physical interactions (e.g. thermal) may also be related to the overlap between particles.
+- The shape of the particles is kept unchanged during or after contacts. 
 
-Only two-dimensional (2D) models are handled.
+The program allows for multiphysics simulations with the following **analysis types**:
 
-**Analysis Types**
+- Mechanical (solves the kinetics and kinematics of particles).
+- Thermal (solves the temperature and heat flux of stationary particles).
+- Thermo-mechanical (solves both mechanical and thermal analysis together).
 
-- Mechanical (motion of particles)
-- Thermal (temperature of particles)
-- Thermo-mechanical (motion and temperature of particles)
+Only two-dimensional (2D) models are handled by the program, with the following **element types**:
 
-**Problem Types**
+- Spherical particle (assuming that all spheres move on the same plane).
+- Cylindrical particle (assuming an out-of-plane length).
 
-Two-dimensional (2D) problems.
+Almost all variables involved in the simulation process can be exported in one of the **result types**:
 
-**Element Types**
-
-- Spherical particle
-- Cylindrical particle
-
-**Outputs**
-
-- Graphs
-- Animations
+- Text file.
+- Graphs (plots and tables).
+- Animations (scalar and vector results).
 
 ## Implementation Aspects
 
-Written in the [MATLAB][matlab_website] programming language.
-OOP.
-Code efficiency is not a priority and, therefore, only small-scale problems should be simulated.
-Kratos applications.
+DEMLab is fully written in the [MATLAB][matlab_website] programming language,
+and adopts the Object Oriented Programming (OOP) paradigm to offer modularity.
+
+The source code can run in any operating system where MATLAB can be installed
+(the program is tested for version 2019b of MATLAB).
+
+Because it is developed with a high-level interpreted programming language using serial processing,
+code efficiency is not a priority and therefore only small to medium-scale problems should be simulated.
 
 ## Instructions
 
@@ -113,7 +110,6 @@ Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum
 
 ## Documentation
 
-This program adopts an Object Oriented Programming (OOP) paradigm.
 The following OOP super-classes are implemented:
 
 ## How to Contribute
