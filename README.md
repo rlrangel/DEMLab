@@ -7,6 +7,9 @@
 [zenodo_image]:        https://zenodo.org/badge/DOI/10.5281/zenodo.3234644.svg
 [zenodo_link]:         https://doi.org/10.5281/zenodo.3234644
 [matlab_website]:      https://www.mathworks.com/
+[demapp_link]:         https://github.com/KratosMultiphysics/Kratos/tree/master/applications/DEMApplication
+[thermal_demapp_link]: https://github.com/KratosMultiphysics/Kratos/tree/master/applications/ThermalDEMApplication
+[kratos_link]:         https://github.com/KratosMultiphysics/Kratos
 [cimne_website]:       https://www.cimne.com/
 [upc_website]:         https://camins.upc.edu/
 [mathegram_website]:   https://www.surrey.ac.uk/mathegram
@@ -60,7 +63,7 @@ Only two-dimensional (2D) models are handled by the program, with the following 
 - Spherical particle (assuming that all spheres move on the same plane).
 - Cylindrical particle (assuming an out-of-plane length).
 
-Almost all variables involved in the simulation process can be exported in one of the **result types**:
+Almost all variables involved in the simulation process can be exported in one of the following **result types**:
 
 - Text file.
 - Graphs (plots and tables).
@@ -69,13 +72,16 @@ Almost all variables involved in the simulation process can be exported in one o
 ## Implementation Aspects
 
 DEMLab is fully written in the [MATLAB][matlab_website] programming language,
-and adopts the Object Oriented Programming (OOP) paradigm to offer modularity.
+and adopts the Object Oriented Programming (OOP) paradigm to offer modularity and extensibility.
 
 The source code can run in any operating system where MATLAB can be installed
 (the program is tested for version 2019b of MATLAB).
 
 Because it is developed with a high-level interpreted programming language using serial processing,
 code efficiency is not a priority and therefore only small to medium-scale problems should be simulated.
+
+For large-scale problems, it is recommended to check the [DEM Application][demapp_link] and the [Thermal DEM Application][thermal_demapp_link]
+of the [Kratos Multiphysics][kratos_link] framework.
 
 ## Instructions
 
