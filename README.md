@@ -52,7 +52,7 @@ The main characteristics of this method are:
 - Other physical interactions (e.g. thermal) may also be related to the overlap between particles.
 - The shape of the particles is kept unchanged during or after contacts. 
 
-The program allows for multiphysics simulations with the following **analysis types**:
+The program allows multiphysics simulations, counting on several interaction models in the following **analysis types**:
 
 - Mechanical (solves the kinetics and kinematics of particles).
 - Thermal (solves the temperature and heat flux of stationary particles).
@@ -62,6 +62,7 @@ Only two-dimensional (2D) models are handled by the program, with the following 
 
 - Spherical particle (assuming that all spheres move on the same plane).
 - Cylindrical particle (assuming an out-of-plane length).
+- Rigid walls (straight and circular).
 
 Almost all variables involved in the simulation process can be exported in one of the following **result types**:
 
@@ -96,6 +97,7 @@ Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum
 To run a simulation, execute this script and select an appropriate parameters file with the _.json_ extension.
 Multiple parameter files can be selected to run simulations sequentially, as long as they are located in the same folder.
 Sub-folders with the simulation name plus the suffix "_out" are created to receive the output files with the results of each simulation.
+The analysis can be launched by running the file [*lesm.m*][lesm_file_link] located inside the folder [*src*][src_folder_link].
 
 ### Loading Results
 
@@ -105,6 +107,9 @@ Furthermore, if a storage file named after the simulation name is located in the
 
 ### Testing
 
+Tests are also available to check if the program is working properly by running the file [*run_tests.m*][tests_file_link] located inside the folder [*tests*][tests_folder_link].
+The reference results used by these tests can be updated by running the file [*update_results.m*][results_file_link] located in the same folder.
+
 This script file runs the selected test models and checks if the obtained results agree with the reference results.
 
 This script file generates / updates the reference result files of the selected test models.
@@ -112,7 +117,7 @@ ATTENTION: This action will overwrite existing reference results.
 
 ## Examples
 
-Lorem ipsum dolor sit amet. Ad totam nihil in officia mollitia a quibusdam rerum qui error consequatur. Cum sint quaerat ut voluptatum libero sit fugiat distinctio ea dolor facilis ea aliquid velit At velit dolore? Vel sunt dolorem non ipsum amet in eaque accusamus ut aliquam odit ut tempore reiciendis est recusandae aliquam..
+Sample models are available inside the folder [*examples*][examples_folder_link].
 
 ## Documentation
 
