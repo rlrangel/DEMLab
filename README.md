@@ -95,7 +95,7 @@ There are three types of files that may be used as input for the program:
 
 * **Project Parameters (_.json_)**: 
 
-This json file is necessary for running a simulation and must always be accompanied by a _Model_Parts_ file.
+This json file is necessary for running a simulation and must always be accompanied by a _Model_ _Parts_ file.
 
 It contains all the parameters and options for the analysis and outputs, as well as the conditions applied to the model.
 
@@ -104,7 +104,7 @@ Moreover, a [template][parameters_link] of this file, with all the possible inpu
 
 * **Model Parts (_.txt_)**: 
 
-This text file is necessary for running a simulation and must always be accompanied by a _Project_Parameters_ file.
+This text file is necessary for running a simulation and must always be accompanied by a _Project_ _Parameters_ file.
 
 It contains all the elements of the model with their initial coordinates, and their groupings into model parts.
 
