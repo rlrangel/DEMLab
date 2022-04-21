@@ -114,7 +114,7 @@ Moreover, a [template][modelparts_link] of this file, with all the possible inpu
 * **Results Storage (_.mat_)**: 
 
 This binary file stores the results of a simulation.
-It is generated only if requested in the output options of the _Project_Parameters_ file.
+It is generated only if requested in the output options of the _Project_ _Parameters_ file.
 
 It can be loaded to show the results of previously run simulations, or used to restart a simulation from a saved stage.
 
