@@ -165,7 +165,10 @@ Sample models are available inside the folder [*examples*][examples_link].
 They are separated into different sub-folders according to their analysis type,
 and each example has its _Project_ _Parameters_ and _Model_ _Parts_ files, as well as some results in the output sub-folders.
 
-<p align=center><img height="100.0%" width="45.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_01.png"></p>
+<p align=center>
+<img height="100.0%" width="30.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_01.png">
+<img height="100.0%" width="30.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_02.png">
+</p>
 
 ## Documentation
 
