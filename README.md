@@ -166,15 +166,17 @@ They are separated into different sub-folders according to their analysis type,
 and each example has its _Project_ _Parameters_ and _Model_ _Parts_ files, as well as some results in the output sub-folders.
 
 <p align=center>
-<img height="100.0%" width="30.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_01.png">
-<img height="100.0%" width="35.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_02.png">
+<img height="100.0%" width="31.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_01.png">
+&nbsp;&nbsp;
+<img height="100.0%" width="34.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_02.png">
+&nbsp;&nbsp;
 <img height="100.0%" width="25.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_03.png">
 </p>
 
 <p align=center>
 <img height="100.0%" width="30.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_04.png">
-<img height="100.0%" width="30.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_05.png">
-<img height="100.0%" width="30.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_06.png">
+<img height="100.0%" width="33.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_05.png">
+<img height="100.0%" width="33.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_06.png">
 </p>
 
 ## Documentation
