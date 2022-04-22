@@ -13,6 +13,8 @@
 [wiki_link]:           https://gitlab.com/rafaelrangel/demlab/-/wikis/home
 [parameters_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ProjectParameters_template.json
 [modelparts_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ModelParts_template.txt
+[main_file_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/src/main.m
+[src_folder_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/src
 [cimne_website]:       https://www.cimne.com/
 [upc_website]:         https://camins.upc.edu/
 [mathegram_website]:   https://www.surrey.ac.uk/mathegram
@@ -105,6 +107,7 @@ Moreover, a [template][parameters_link] of this file, with all the possible inpu
 * **Model Parts (_.txt_)**: 
 
 This text file is necessary for running a simulation and must always be accompanied by a _Project_ _Parameters_ file.
+Its name must be indicated in the _Project_ _Parameters_ file.
 
 It contains all the elements of the model with their initial coordinates, and their groupings into model parts.
 
@@ -120,10 +123,13 @@ It can be loaded to show the results of previously run simulations, or used to r
 
 ### Running Simulations
 
-To run a simulation, execute this script and select an appropriate parameters file with the _.json_ extension.
-Multiple parameter files can be selected to run simulations sequentially, as long as they are located in the same folder.
-Sub-folders with the simulation name plus the suffix "_out" are created to receive the output files with the results of each simulation.
-The analysis can be launched by running the file [*lesm.m*][lesm_file_link] located inside the folder [*src*][src_folder_link].
+To run a simulation, launch MATLAB and execute the script file [*main.m*][main_file_link] located inside the folder [*src*][src_folder_link].
+A dialog box will pop up to select an appropriate _Project_ _Parameters_ file.
+Multiple _Project_ _Parameters_ files can be selected to run simulations sequentially, as long as they are located in the same folder.
+
+If the models and parameters are read correctly, the simulations are started and their progress are printed in the MATLAB command window.
+
+Sub-folders with the simulations names plus the suffix _"_out"_ are created to receive the output files with the results of each simulation.
 
 ### Loading Results
 
