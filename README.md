@@ -170,6 +170,12 @@ and each example has its _Project_ _Parameters_ and _Model_ _Parts_ files, as we
 <img height="100.0%" width="30.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_02.png">
 </p>
 
+<p align=center>
+<img height="100.0%" width="30.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_04.png">
+<img height="100.0%" width="30.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_05.png">
+<img height="100.0%" width="30.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_06.png">
+</p>
+
 ## Documentation
 
 The following OOP super-classes are implemented:
