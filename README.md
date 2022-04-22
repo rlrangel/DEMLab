@@ -167,7 +167,6 @@ and each example has its _Project_ _Parameters_ and _Model_ _Parts_ files, as we
 
 <p align=center>
 <img width="45.0%" src="https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/images/examples/example_01.png">
-<img width="45.0%" src="https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/images/examples/example_02.png">
 </p>
 
 ## Documentation
