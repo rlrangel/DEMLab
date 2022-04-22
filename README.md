@@ -15,6 +15,11 @@
 [modelparts_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ModelParts_template.txt
 [main_file_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/src/main.m
 [src_folder_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/src
+[run_tests_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/run_tests.m
+[upd_tests_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/update_results.m
+[tests_folder_link]:   https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests
+[test_models_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests/test_models
+[examples_link]:       https://gitlab.com/rafaelrangel/demlab/-/tree/master/examples
 [cimne_website]:       https://www.cimne.com/
 [upc_website]:         https://camins.upc.edu/
 [mathegram_website]:   https://www.surrey.ac.uk/mathegram
@@ -125,33 +130,45 @@ It can be loaded to show the results of previously run simulations, or used to r
 
 To run a simulation, launch MATLAB and execute the script file [*main.m*][main_file_link] located inside the folder [*src*][src_folder_link].
 A dialog box will pop up to select an appropriate _Project_ _Parameters_ file.
-Multiple _Project_ _Parameters_ files can be selected to run simulations sequentially, as long as they are located in the same folder.
+Multiple _Project_ _Parameters_ files can be selected to run simulations sequentially, as long as they are located in the same directory.
 
 If the models and parameters are read correctly, the simulations are started and their progress are printed in the MATLAB command window.
 
-Sub-folders with the simulations names plus the suffix _"out"_ are created to receive the output files with the results of each simulation.
+Sub-folders with the names of the simulations, plus the suffix _"out"_, are created to receive the output files with the results of each simulation.
 
 ### Loading Results
 
-To load and show results from a previously run simulation, execute this script and select an appropriate storage file with the _.mat_ extension.
-Multiple storage files can be selected to load and show results sequentially, as long as they are located in the same folder.
-Furthermore, if a storage file named after the simulation name is located in the same folder of the parameters file, the simulation is restarted from the stored results.
-In addition, it identifies if there exists a storage file with the same name of the simulation name.
-If so, the simulation is restarted from the stored results.
+To load and show the results from previously run simulations, launch MATLAB and execute the script file [*main.m*][main_file_link] located inside the folder [*src*][src_folder_link].
+A dialog box will pop up to select an appropriate _Results_ _Storage_ file.
+Multiple _Results_ _Storage_ files can be selected to load and show results sequentially, as long as they are located in the same directory.
+
+To restart a simulation from the stored results, place its _Results_ _Storage_ file in the same directory of the _Project_ _Parameters_ file and run the simulation.
+The name of the _Results_ _Storage_ must be the same of the simulation name, indicated in the _Project_ _Parameters_ file.
 
 ### Testing
 
-Tests are also available to check if the program is working properly by running the file [*run_tests.m*][tests_file_link] located inside the folder [*tests*][tests_folder_link].
-The reference results used by these tests can be updated by running the file [*update_results.m*][results_file_link] located in the same folder.
+Recursive tests are available to verify that the program is working correctly and that the current results are matching with the reference results.
+The reference results are stored in files with a _.pos_ extension.
 
-This script file runs the selected test models and checks if the obtained results agree with the reference results.
+To run the tests, launch MATLAB and execute the script file [*run_tests.m*][run_tests_link] located inside the folder [*tests*][tests_folder_link].
+A dialog box will pop up to select the _Project_ _Parameters_ files of the tests to be run, located inside the sub-folder [*test_models*][test_models_link].
+The result of each test is then printed in the MATLAB command window.
 
-This script file generates / updates the reference result files of the selected test models.
-ATTENTION: This action will overwrite existing reference results.
+To generate or update the reference results, execute the script file [*update_results.m*][upd_tests_link] located inside the folder [*tests*][tests_folder_link]
+and select the _Project_ _Parameters_ files of the tests to be updated, located inside the sub-folder [*test_models*][test_models_link].
+It will run the selected tests and overwrite existing reference results.
 
 ## Examples
 
-Sample models are available inside the folder [*examples*][examples_folder_link].
+Sample models are available inside the folder [*examples*][examples_link].
+
+They are separated into different sub-folders according to their analysis type,
+and each example has its _Project_ _Parameters_ and _Model_ _Parts_ files, as well as some results in the output sub-folders.
+
+<p align=center>
+<img width="45.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_01.png">
+<img width="45.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_02.png">
+</p>
 
 ## Documentation
 
