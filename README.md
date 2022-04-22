@@ -129,7 +129,7 @@ Multiple _Project_ _Parameters_ files can be selected to run simulations sequent
 
 If the models and parameters are read correctly, the simulations are started and their progress are printed in the MATLAB command window.
 
-Sub-folders with the simulations names plus the suffix _"_out"_ are created to receive the output files with the results of each simulation.
+Sub-folders with the simulations names plus the suffix _"out"_ are created to receive the output files with the results of each simulation.
 
 ### Loading Results
 
