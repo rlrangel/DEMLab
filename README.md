@@ -40,7 +40,9 @@
 
 DEMLab is a program for performing numerical simulations of particle systems using the Discrete Element Method (DEM).
 
-Its purpose is to offer a modular and extensible environment that allows immediate implementation and testing of several DEM models and formulations in small to medium-scale problems.
+Its purpose is to offer a modular and extensible environment that allows immediate implementation and testing of several DEM models and formulations
+in small to medium-scale problems.
+It targets researchers, who can use it as a numerical laboratory, and students who want to learn the DEM.
 
 ## Table of Contents
 - [Main Features](#main-features)
