@@ -29,6 +29,7 @@
 [force_models_link]:   https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_ContactForceModels.pdf
 [heat_models_link]:    https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_HeatTransferModels.pdf
 [help_folder_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/help
+[uml_link]:            https://www.uml.org/
 [html_folder_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/html
 
 # DEMLab - Discrete Element Method Laboratory
@@ -190,7 +191,7 @@ and each example has its _Project_ _Parameters_ and _Model_ _Parts_ files, as we
 Presentations on theoretical aspects of the DEM, showing the [contact force models][force_models_link] and the [heat transfer models][heat_models_link] implemented in the program,
 are available inside the folder [*help*][help_folder_link].
 
-The code of all OOP classes of the program is documented in HTML files, located inside the folder [*html*][html_folder_link].
+The OOP classes of the program are documented in [UML diagrams][uml_link] and their codes in HTML files, located inside the folder [*html*][html_folder_link].
 These files can be browsed on the [Wiki page][wiki_html_link].
 
 Tutorials explaining all the options of the program that can be added to the input files (_Project_ _Parameters_ and _Model_ _Parts_)
