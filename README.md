@@ -1,36 +1,37 @@
-[release_image]:       https://img.shields.io/badge/release-1.0-green.svg?style=flat
-[releases_link]:       https://gitlab.com/rafaelrangel/demlab/-/releases
-[license_image]:       https://img.shields.io/badge/license-MIT-green.svg?style=flat
-[license_link]:        https://gitlab.com/rafaelrangel/demlab/-/blob/master/LICENSE
-[file_exchange_image]: https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg
-[file_exchange_link]:  https://www.mathworks.com/matlabcentral/fileexchange/69801-lesm-linear-elements-structure-model
-[zenodo_image]:        https://zenodo.org/badge/DOI/10.5281/zenodo.3234644.svg
-[zenodo_link]:         https://doi.org/10.5281/zenodo.3234644
-[matlab_website]:      https://www.mathworks.com/
-[demapp_link]:         https://github.com/KratosMultiphysics/Kratos/tree/master/applications/DEMApplication
-[thermal_demapp_link]: https://github.com/KratosMultiphysics/Kratos/tree/master/applications/ThermalDEMApplication
-[kratos_link]:         https://github.com/KratosMultiphysics/Kratos
-[json_link]:           https://www.json.org/
-[wiki_link]:           https://gitlab.com/rafaelrangel/demlab/-/wikis/home
-[wiki_html_link]:      https://gitlab.com/rafaelrangel/demlab/-/wikis/classes-documentation
-[parameters_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ProjectParameters_template.json
-[modelparts_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ModelParts_template.txt
-[main_file_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/src/main.m
-[src_folder_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/src
-[run_tests_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/run_tests.m
-[upd_tests_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/update_results.m
-[tests_folder_link]:   https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests
-[test_models_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests/test_models
-[examples_link]:       https://gitlab.com/rafaelrangel/demlab/-/tree/master/examples
-[cimne_website]:       https://www.cimne.com/
-[upc_website]:         https://camins.upc.edu/
-[mathegram_website]:   https://www.surrey.ac.uk/mathegram
-[mit_license_link]:    https://choosealicense.com/licenses/mit/
-[force_models_link]:   https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_ContactForceModels.pdf
-[heat_models_link]:    https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_HeatTransferModels.pdf
-[help_folder_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/help
-[uml_link]:            https://www.uml.org/
-[html_folder_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/html
+[release_image]:        https://img.shields.io/badge/release-1.0-green.svg?style=flat
+[releases_link]:        https://gitlab.com/rafaelrangel/demlab/-/releases
+[license_image]:        https://img.shields.io/badge/license-MIT-green.svg?style=flat
+[license_link]:         https://gitlab.com/rafaelrangel/demlab/-/blob/master/LICENSE
+[file_exchange_image]:  https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg
+[file_exchange_link]:   https://www.mathworks.com/matlabcentral/fileexchange/69801-lesm-linear-elements-structure-model
+[zenodo_image]:         https://zenodo.org/badge/DOI/10.5281/zenodo.3234644.svg
+[zenodo_link]:          https://doi.org/10.5281/zenodo.3234644
+[matlab_website]:       https://www.mathworks.com/
+[demapp_link]:          https://github.com/KratosMultiphysics/Kratos/tree/master/applications/DEMApplication
+[thermal_demapp_link]:  https://github.com/KratosMultiphysics/Kratos/tree/master/applications/ThermalDEMApplication
+[kratos_link]:          https://github.com/KratosMultiphysics/Kratos
+[json_link]:            https://www.json.org/
+[wiki_parameters_link]: https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file
+[wiki_link]:            https://gitlab.com/rafaelrangel/demlab/-/wikis/home
+[wiki_html_link]:       https://gitlab.com/rafaelrangel/demlab/-/wikis/classes-documentation
+[parameters_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ProjectParameters_template.json
+[modelparts_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ModelParts_template.txt
+[main_file_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/src/main.m
+[src_folder_link]:      https://gitlab.com/rafaelrangel/demlab/-/tree/master/src
+[run_tests_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/run_tests.m
+[upd_tests_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/update_results.m
+[tests_folder_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests
+[test_models_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests/test_models
+[examples_link]:        https://gitlab.com/rafaelrangel/demlab/-/tree/master/examples
+[cimne_website]:        https://www.cimne.com/
+[upc_website]:          https://camins.upc.edu/
+[mathegram_website]:    https://www.surrey.ac.uk/mathegram
+[mit_license_link]:     https://choosealicense.com/licenses/mit/
+[force_models_link]:    https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_ContactForceModels.pdf
+[heat_models_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_HeatTransferModels.pdf
+[help_folder_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/help
+[uml_link]:             https://www.uml.org/
+[html_folder_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/html
 
 # DEMLab - Discrete Element Method Laboratory
 
@@ -69,7 +70,7 @@ The main characteristics of this method are:
 - Each contact is evaluated through several time steps in an explicit integration scheme.
 - Contact models relate the amount of overlap between neighboring particles to the forces between them.
 - Other physical interactions (e.g. thermal) may also be related to the overlap between particles.
-- The shape of the particles is kept unchanged during or after contacts. 
+- The shape of the particles is kept unchanged during and after contacts. 
 
 The program allows multiphysics simulations, counting on several interaction models in the following **analysis types**:
 
@@ -115,7 +116,7 @@ This [JSON][json_link] file is necessary for running a simulation and must alway
 
 It contains all the parameters and options for the analysis and outputs, as well as the conditions applied to the model.
 
-A tutorial on each input field of this file can be found on the [Wiki page][wiki_link].
+A tutorial explaining each input field of this file can be found on the [Wiki page][wiki_parameters_link].
 Moreover, a [template][parameters_link] of this file, with all the possible input options, is available.
 
 * **Model Parts (_.txt_)**: 
