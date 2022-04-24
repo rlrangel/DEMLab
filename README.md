@@ -10,7 +10,7 @@
 [demapp_link]:         https://github.com/KratosMultiphysics/Kratos/tree/master/applications/DEMApplication
 [thermal_demapp_link]: https://github.com/KratosMultiphysics/Kratos/tree/master/applications/ThermalDEMApplication
 [kratos_link]:         https://github.com/KratosMultiphysics/Kratos
-[json_link]:           https://www.json.org/json-en.html
+[json_link]:           https://www.json.org/
 [wiki_link]:           https://gitlab.com/rafaelrangel/demlab/-/wikis/home
 [wiki_html_link]:      https://gitlab.com/rafaelrangel/demlab/-/wikis/classes-documentation
 [parameters_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ProjectParameters_template.json
@@ -111,7 +111,7 @@ There are three types of files that may be used as input for the program:
 
 * **Project Parameters (_.json_)**: 
 
-This [json][json_link] file is necessary for running a simulation and must always be accompanied by a _Model_ _Parts_ file.
+This [JSON][json_link] file is necessary for running a simulation and must always be accompanied by a _Model_ _Parts_ file.
 
 It contains all the parameters and options for the analysis and outputs, as well as the conditions applied to the model.
 
