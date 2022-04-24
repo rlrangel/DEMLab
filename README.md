@@ -12,6 +12,7 @@
 [kratos_link]:          https://github.com/KratosMultiphysics/Kratos
 [json_link]:            https://www.json.org/
 [wiki_parameters_link]: https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file
+[wiki_mparts_link]:     https://gitlab.com/rafaelrangel/demlab/-/wikis/model-parts-file
 [wiki_link]:            https://gitlab.com/rafaelrangel/demlab/-/wikis/home
 [wiki_html_link]:       https://gitlab.com/rafaelrangel/demlab/-/wikis/classes-documentation
 [parameters_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ProjectParameters_template.json
@@ -116,7 +117,7 @@ This [JSON][json_link] file is necessary for running a simulation and must alway
 
 It contains all the parameters and options for the analysis and outputs, as well as the conditions applied to the model.
 
-A tutorial explaining each input field of this file can be found on the [Wiki page][wiki_parameters_link].
+A tutorial explaining each input field of this file can be found on its [Wiki page][wiki_parameters_link].
 Moreover, a [template][parameters_link] of this file, with all the possible input options, is available.
 
 * **Model Parts (_.txt_)**: 
@@ -124,9 +125,9 @@ Moreover, a [template][parameters_link] of this file, with all the possible inpu
 This text file is necessary for running a simulation and must always be accompanied by a _Project_ _Parameters_ file.
 Its name must be indicated in the _Project_ _Parameters_ file.
 
-It contains all the elements of the model with their initial coordinates, and their groupings into model parts.
+It contains all the elements of the model (particles and walls) with their initial coordinates and geometry, as well as their grouping into model parts.
 
-A tutorial on this file can be found on the [Wiki page][wiki_link].
+A tutorial on this file can be found on its [Wiki page][wiki_mparts_link].
 Moreover, a [template][modelparts_link] of this file, with all the possible input options, is available.
 
 * **Results Storage (_.mat_)**: 
@@ -142,9 +143,9 @@ To run a simulation, launch MATLAB and execute the script file [*main.m*][main_f
 A dialog box will pop up to select an appropriate _Project_ _Parameters_ file.
 Multiple _Project_ _Parameters_ files can be selected to run simulations sequentially, as long as they are located in the same directory.
 
-If the models and parameters are read correctly, the simulations are started and their progress are printed in the MATLAB command window.
+If the models and parameters are read correctly, the simulations are started and their progresses are printed in the MATLAB command window.
 
-Sub-folders with the names of the simulations, plus the suffix _"out"_, are created to receive the output files with the results of each simulation.
+Sub-folders with the names of the simulations, plus the suffix _"out"_, are created to receive the output files with the requested results of each simulation.
 
 ### Loading Results
 
@@ -153,7 +154,7 @@ A dialog box will pop up to select an appropriate _Results_ _Storage_ file.
 Multiple _Results_ _Storage_ files can be selected to load and show results sequentially, as long as they are located in the same directory.
 
 To restart a simulation from the stored results, place its _Results_ _Storage_ file in the same directory of the _Project_ _Parameters_ file and run the simulation.
-The name of the _Results_ _Storage_ must be the same of the simulation name, indicated in the _Project_ _Parameters_ file.
+The name of the _Results_ _Storage_ must be the same of the simulation name indicated in the _Project_ _Parameters_ file.
 
 ### Testing
 
@@ -195,7 +196,7 @@ Presentations on theoretical aspects of the DEM, showing the [contact force mode
 are available inside the folder [*help*][help_folder_link].
 
 The OOP classes of the program are documented in [UML diagrams][uml_link] and their codes in HTML files, located inside the folder [*html*][html_folder_link].
-These files can be browsed on the [Wiki page][wiki_html_link].
+These files can be browsed on their [Wiki page][wiki_html_link].
 
 Tutorials explaining all the options of the program that can be added to the input files (_Project_ _Parameters_ and _Model_ _Parts_)
 can also be found on the [Wiki page][wiki_link].
