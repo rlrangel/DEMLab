@@ -59,34 +59,34 @@
 		"translational_velocity": [
 		{
 			"value"       : [0.0,0.0],
-			"model_parts" : ["mp_name"],
-			"particles"   : [0,0,0]
+			"particles"   : [0,0,0],
+			"model_parts" : ["mp_name_1","mp_name_2"]
 		},{
 			"value"       : [0.0,0.0],
-			"model_parts" : ["PARTICLES"],
-			"particles"   : [0,0,0]
+			"particles"   : [0,0,0],
+			"model_parts" : ["PARTICLES"]
 		}
 		],
 		"rotational_velocity": [
 		{
 			"value"       : 0.0,
-			"model_parts" : ["mp_name"],
-			"particles"   : [0,0,0]
+			"particles"   : [0,0,0],
+			"model_parts" : ["mp_name_1","mp_name_2"]
 		},{
 			"value"       : 0.0,
-			"model_parts" : ["PARTICLES"],
-			"particles"   : [0,0,0]
+			"particles"   : [0,0,0],
+			"model_parts" : ["PARTICLES"]
 		}
 		],
 		"temperature": [
 		{
 			"value"       : 0.0,
-			"model_parts" : ["mp_name"],
-			"particles"   : [0,0,0]
+			"particles"   : [0,0,0],
+			"model_parts" : ["mp_name_1","mp_name_2"]
 		},{
 			"value"       : 0.0,
-			"model_parts" : ["PARTICLES"],
-			"particles"   : [0,0,0]
+			"particles"   : [0,0,0],
+			"model_parts" : ["PARTICLES"]
 		}
 		]
 	},
