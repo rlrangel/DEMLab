@@ -56,21 +56,39 @@
 		"fluid_temperature"   : 0.0
 	},
 	"InitialCondition": {
-		"translational_velocity": {
-			"model_parts" : ["mp_name","PARTICLES"],
-			"particles"   : [0,0,0],
-			"value"       : [0.0,0.0]
-		},
-		"rotational_velocity": {
-			"model_parts" : ["mp_name","PARTICLES"],
-			"particles"   : [0,0,0],
-			"value"       : 0.0
-		},
-		"temperature": {
-			"model_parts" : ["mp_name","PARTICLES"],
-			"particles"   : [0,0,0],
-			"value"       : 0.0
+		"translational_velocity": [
+		{
+			"value"       : [0.0,0.0],
+			"model_parts" : ["mp_name"],
+			"particles"   : [0,0,0]
+		},{
+			"value"       : [0.0,0.0],
+			"model_parts" : ["PARTICLES"],
+			"particles"   : [0,0,0]
 		}
+		],
+		"rotational_velocity": [
+		{
+			"value"       : 0.0,
+			"model_parts" : ["mp_name"],
+			"particles"   : [0,0,0]
+		},{
+			"value"       : 0.0,
+			"model_parts" : ["PARTICLES"],
+			"particles"   : [0,0,0]
+		}
+		],
+		"temperature": [
+		{
+			"value"       : 0.0,
+			"model_parts" : ["mp_name"],
+			"particles"   : [0,0,0]
+		},{
+			"value"       : 0.0,
+			"model_parts" : ["PARTICLES"],
+			"particles"   : [0,0,0]
+		}
+		]
 	},
 	"PrescribedCondition": {
 		"force": [
