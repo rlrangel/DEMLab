@@ -341,16 +341,16 @@
 	{
 		"name"                 : "material_1",
 		"type"                 : "solid",
-		"model_parts"          : ["PARTICLES","WALLS"],
-		"particles"            : [0,0,0],
-		"walls"                : [0,0,0],
 		"density"              : 0.0,
 		"young_modulus"        : 0.0,
 		"young_modulus_real"   : 0.0,
 		"shear_modulus"        : 0.0,
 		"poisson_ratio"        : 0.0,
 		"thermal_conductivity" : 0.0,
-		"heat_capacity"        : 0.0
+		"heat_capacity"        : 0.0,
+		"particles"            : [0,0,0],
+		"walls"                : [0,0,0],
+		"model_parts"          : ["mp_name","PARTICLES","WALLS"]
 	},{
 		"name"                 : "material_2",
 		"type"                 : "fluid",
