@@ -25,24 +25,24 @@
 		"velocity_translation": [
 		{
 			"type"        : "constant",
-			"model_parts" : ["stick"],
 			"value"       : [3.00,0.00],
-			"interval"    : [0.00,0.07]
+			"interval"    : [0.00,0.07],
+			"model_parts" : ["stick"]
 		},{
 			"type"        : "constant",
-			"model_parts" : ["stick"],
 			"value"       : [-1.00,0.00],
-			"interval"    : [0.10,1.00]
+			"interval"    : [0.10,1.00],
+			"model_parts" : ["stick"]
 		}
 		]
 	},
 	"Material": {
 		"name"          : "solid_material",
 		"type"          : "solid",
-		"model_parts"   : ["PARTICLES","WALLS"],
 		"density"       : 2e3,
 		"young_modulus" : 3e6,
-		"poisson_ratio" : 0.3
+		"poisson_ratio" : 0.3,
+		"model_parts"   : ["PARTICLES","WALLS"]
 	},
 	"InteractionModel": {
 		"contact_force_normal": {

@@ -20,26 +20,26 @@
 	},
 	"InitialCondition": {
 		"temperature": {
-			"model_parts" : ["PARTICLES"],
-			"value"       : 300.0
+			"value"       : 300.0,
+			"model_parts" : ["PARTICLES"]
 		}
 	},
 	"FixedCondition": {
 		"temperature": {
 			"type"        : "constant",
-			"model_parts" : ["WALLS"],
-			"value"       : 400.0
+			"value"       : 400.0,
+			"model_parts" : ["WALLS"]
 		}
 	},
 	"Material": {
 		"name"                 : "solid_material",
 		"type"                 : "solid",
-		"model_parts"          : ["PARTICLES","WALLS"],
 		"density"              : 10,
 		"young_modulus"        : 1000000,
 		"poisson_ratio"        : 0.3,
 		"thermal_conductivity" : 1000,
-		"heat_capacity"        : 10
+		"heat_capacity"        : 10,
+		"model_parts"          : ["PARTICLES","WALLS"]
 	},
 	"InteractionModel": {
 		"contact_force_normal": {

@@ -38,12 +38,12 @@
 	"Material": {
 		"name"                 : "solid_material",
 		"type"                 : "solid",
-		"model_parts"          : ["PARTICLES"],
 		"density"              : 10,
 		"young_modulus"        : 1000000,
 		"poisson_ratio"        : 0.3,
 		"thermal_conductivity" : 1000,
-		"heat_capacity"        : 5
+		"heat_capacity"        : 5,
+		"model_parts"          : ["PARTICLES"]
 	},
 	"InteractionModel": {
 		"contact_force_normal": {

@@ -22,41 +22,41 @@
 	},
 	"InitialCondition": {
 		"temperature": {
-			"model_parts" : ["PARTICLES"],
-			"value"       : 300.0
+			"value"       : 300.0,
+			"model_parts" : ["PARTICLES"]
 		}
 	},
 	"FixedCondition": {
 		"velocity_rotation": {
 			"type"  : "constant",
-			"walls" : [1],
-			"value" : 0.5
+			"value" : 0.5,
+			"walls" : [1]
 		},
 		"temperature": {
 			"type"  : "constant",
-			"walls" : [1],
-			"value" : 400.0
+			"value" : 400.0,
+			"walls" : [1]
 		}
 	},
 	"Material": [
 	{
 		"name"                 : "particle_material",
 		"type"                 : "solid",
-		"model_parts"          : ["PARTICLES"],
 		"density"              : 2000,
 		"young_modulus"        : 5000000,
 		"poisson_ratio"        : 0.3,
 		"thermal_conductivity" : 1000,
-		"heat_capacity"        : 10
+		"heat_capacity"        : 10,
+		"model_parts"          : ["PARTICLES"]
 	},{
 		"name"                 : "wall_material",
 		"type"                 : "solid",
-		"model_parts"          : ["WALLS"],
 		"density"              : 10,
 		"young_modulus"        : 1000000,
 		"poisson_ratio"        : 0.3,
 		"thermal_conductivity" : 500,
-		"heat_capacity"        : 10
+		"heat_capacity"        : 10,
+		"model_parts"          : ["WALLS"]
 	}
 	],
 	"InteractionModel": {

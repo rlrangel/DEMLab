@@ -16,32 +16,32 @@
 	"InitialCondition": {
 		"temperature": [
 		{
-			"particles" : [3],
-			"value"     : 250.0
+			"value"     : 250.0,
+			"particles" : [3]
 		},{
-			"particles" : [1,2],
-			"value"     : 300.0
+			"value"     : 300.0,
+			"particles" : [1,2]
 		},{
-			"particles" : [4,5],
-			"value"     : 350.0
+			"value"     : 350.0,
+			"particles" : [4,5]
 		}
 		]
 	},
 	"FixedCondition": {
 		"temperature": {
 			"type"        : "constant",
-			"model_parts" : ["WALLS"],
-			"value"       : 400.0
+			"value"       : 400.0,
+			"model_parts" : ["WALLS"]
 		}
 	},
 	"Material": [
 	{
 		"name"                 : "solid_material",
 		"type"                 : "solid",
-		"model_parts"          : ["PARTICLES","WALLS"],
 		"density"              : 100.0,
 		"thermal_conductivity" : 2000.0,
-		"heat_capacity"        : 300.0
+		"heat_capacity"        : 300.0,
+		"model_parts"          : ["PARTICLES","WALLS"]
 	},{
 		"name"                 : "fluid_material",
 		"type"                 : "fluid",

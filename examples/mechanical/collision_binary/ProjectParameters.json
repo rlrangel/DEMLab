@@ -28,10 +28,10 @@
 	"Material": {
 		"name"          : "solid_material",
 		"type"          : "solid",
-		"model_parts"   : ["PARTICLES"],
 		"density"       : 1e3,
 		"young_modulus" : 1e7,
-		"poisson_ratio" : 0.3
+		"poisson_ratio" : 0.3,
+		"model_parts"   : ["PARTICLES"]
 	},
 	"InteractionModel": {
 		"contact_force_normal": {
