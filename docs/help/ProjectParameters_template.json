@@ -360,11 +360,17 @@
 		"heat_capacity"        : 0.0
 	}
 	],
-	"ConvectionModel": {
+	"ConvectionModel": [
+	{
 		"nusselt_correlation" : "sphere_hanz_marshall"/"sphere_whitaker",
-		"model_parts"         : ["PARTICLES"],
-		"particles"           : [0,0,0]
-	},
+		"particles"           : [0,0,0],
+		"model_parts"         : ["mp_name_1","mp_name_2"]
+	},{
+		"nusselt_correlation" : "sphere_hanz_marshall"/"sphere_whitaker",
+		"particles"           : [0,0,0],
+		"model_parts"         : ["PARTICLES"]
+	}
+	],
 	"InteractionModel": {
 		"contact_force_normal": {
 			"model"                      : "viscoelastic_linear"/"viscoelastic_nonlinear"/"elastoplastic_linear",
