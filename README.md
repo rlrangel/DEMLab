@@ -17,6 +17,7 @@
 [wiki_html_link]:       https://gitlab.com/rafaelrangel/demlab/-/wikis/classes-documentation
 [parameters_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ProjectParameters_template.json
 [modelparts_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ModelParts_template.txt
+[output_link]:          https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file#output
 [main_file_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/src/main.m
 [src_folder_link]:      https://gitlab.com/rafaelrangel/demlab/-/tree/master/src
 [run_tests_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/run_tests.m
@@ -133,7 +134,7 @@ Moreover, a [template][modelparts_link] of this file, with all the possible inpu
 * **Results Storage (_.mat_)**: 
 
 This binary file stores the results of a simulation.
-It is generated only if requested in the output options of the _Project_ _Parameters_ file.
+It is generated only if requested in the Input Group ["Output"][output_link] of the _Project_ _Parameters_ file.
 
 It can be loaded to show the results of previously run simulations, or used to restart a simulation from a saved stage.
 
