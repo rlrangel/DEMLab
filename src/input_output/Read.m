@@ -3887,10 +3887,10 @@ classdef Read < handle
             results_therm   = "temperature";
             
             % Set results to be printed
-            RES = json.Print.printed_results;
             if (~isfield(json.Print,'printed_results'))
                 return;
             end
+            RES = json.Print.printed_results;
             
             for i = 1:length(RES)
                 res = string(RES(i));
