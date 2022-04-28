@@ -421,15 +421,15 @@
 		"number_output"  : 0,
 		"save_workspace" : true/false,
 		"saved_results"  : ["time","step","radius","mass","coord_x","coord_y","orientation","wall_position",
-		                    "force_x","force_y","torque",
-							"velocity_x","velocity_y","velocity_rot",
-							"acceleration_x","acceleration_y","acceleration_rot",
-							"velocity_mod_avg",velocity_rot_avg",
-							"acceleration_mod_avg","acceleration_rot_avg",
-							"velocity_mod_min","velocity_mod_max","velocity_rot_min","velocity_rot_max",
-							"acceleration_mod_min","acceleration_mod_max","acceleration_rot_min","acceleration_rot_max",
-							"temperature","temperature_avg","temperature_min","temperature_max","wall_temperature",
-							"heat_rate","heat_rate_total","conduction_direct_total","conduction_indirect_total"]
+                            "force_x","force_y","torque",
+                            "velocity_x","velocity_y","velocity_rot",
+                            "acceleration_x","acceleration_y","acceleration_rot",
+                            "velocity_mod_avg","velocity_rot_avg",
+                            "acceleration_mod_avg","acceleration_rot_avg",
+                            "velocity_mod_min","velocity_mod_max","velocity_rot_min","velocity_rot_max",
+                            "acceleration_mod_min","acceleration_mod_max","acceleration_rot_min","acceleration_rot_max",
+                            "temperature","temperature_avg","temperature_min","temperature_max","wall_temperature",
+                            "heat_rate","heat_rate_total","conduction_direct_total","conduction_indirect_total"]
 	},
 	"Animation": [
 	{
