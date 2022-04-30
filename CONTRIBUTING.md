@@ -5,7 +5,9 @@ Anyone is invited to contribute to the project in one of the ways described belo
 Please note that this project is released with a [Code of Conduct][code_conduct_link].
 By participating in this project you agree to abide by its terms.
 
-**Propose a change/new feature or report a bug:**
+## Proposals
+
+It includes proposing a change/new feature or report a bug.
 
 Open an [issue][issue_link] through the GitLab interface.
 
@@ -13,7 +15,9 @@ Describe the proposal/bug clearly, preferably including reproducible examples, i
 
 Alternatively, you can contact the [authors][authors_link] by email.
 
-**Implement a new feature, change an existing one, or fix a bug:**
+## Implementations
+
+It includes implementing a new feature, change an existing one, or fix a bug.
 
 To modify the source code or files, create a [new branch][new_branch_link] from the master branch, and work on that branch to make the modifications.
 
