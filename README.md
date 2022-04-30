@@ -6,6 +6,8 @@
 [file_exchange_link]:   https://www.mathworks.com/matlabcentral/fileexchange/69801-lesm-linear-elements-structure-model
 [zenodo_image]:         https://zenodo.org/badge/DOI/10.5281/zenodo.3234644.svg
 [zenodo_link]:          https://doi.org/10.5281/zenodo.3234644
+[downloads_image]:      https://badgen.net/npm/dt/express
+[downloads_link]:       https://npmjs.com/package/express
 [matlab_website]:       https://www.mathworks.com/
 [demapp_link]:          https://github.com/KratosMultiphysics/Kratos/tree/master/applications/DEMApplication
 [thermal_demapp_link]:  https://github.com/KratosMultiphysics/Kratos/tree/master/applications/ThermalDEMApplication
@@ -39,7 +41,7 @@
 
 <p align=center><img height="100.0%" width="100.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_demlab.png"></p>
 
-[![Release][release_image]][releases_link] [![License][license_image]][license_link] [![FileExchange][file_exchange_image]][file_exchange_link] [![DOI][zenodo_image]][zenodo_link]
+[![Release][release_image]][releases_link] [![License][license_image]][license_link] [![FileExchange][file_exchange_image]][file_exchange_link] [![DOI][zenodo_image]][zenodo_link] [![Npm package total downloads][downloads_image]][downloads_link]
 
 DEMLab is a program for performing numerical simulations of particle systems using the Discrete Element Method (DEM).
 
