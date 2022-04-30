@@ -22,6 +22,11 @@
 [tests_folder_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests
 [test_models_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests/test_models
 [examples_link]:        https://gitlab.com/rafaelrangel/demlab/-/tree/master/examples
+[code_conduct_link]:    https://gitlab.com/rafaelrangel/demlab/-/blob/master/CODE_OF_CONDUCT.md
+[issue_link]:           https://gitlab.com/rafaelrangel/demlab/-/issues/new
+[authors_link]:         https://gitlab.com/rafaelrangel/demlab#authorship
+[new_branch_link]:      https://gitlab.com/rafaelrangel/demlab/-/branches/new
+[merge_request_link]:   https://gitlab.com/rafaelrangel/demlab/-/merge_requests/new
 [cimne_website]:        https://www.cimne.com/
 [upc_website]:          https://camins.upc.edu/
 [mathegram_website]:    https://www.surrey.ac.uk/mathegram
@@ -205,9 +210,27 @@ can also be found on the [Wiki page][wiki_link].
 
 ## How to Contribute
 
-New implementations can be made by anyone in separate branches.
+Anyone is invited to contribute to the project in one of the ways described below.
 
-The merge of new developments into the master branch is subjected to the author's approval upon a **merge request**.
+Please note that this project is released with a [Code of Conduct][code_conduct_link].
+By participating in this project you agree to abide by its terms.
+
+* Propose a change/new feature or report a bug:
+
+Open an [issue][issue_link] through the GitLab interface.
+
+Describe the proposal/bug clearly, preferably including reproducible examples, illustrations, or outputs.
+
+Alternatively, you can contact the [authors][authors_link] by email.
+
+* Implement a new feature, change an existing one, or fix a bug:
+
+Create a [new branch][new_branch_link] from the master branch, and use it to make the modifications.
+
+After the changes are complete, make a [merge request][merge_request_link] clearly describing the modifications and their purposes.
+
+The merge of new branches into the master branch is subjected to the authors' approval.
+You can also contact the [authors][authors_link] by email to discuss the modifications in advance.
 
 ## Authorship
 
