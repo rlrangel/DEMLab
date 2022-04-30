@@ -17,6 +17,7 @@
 [wiki_html_link]:       https://gitlab.com/rafaelrangel/demlab/-/wikis/classes-documentation
 [parameters_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ProjectParameters_template.json
 [modelparts_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ModelParts_template.txt
+[problem_data_link]:    https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file#problemdata
 [output_link]:          https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file#output
 [main_file_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/src/main.m
 [src_folder_link]:      https://gitlab.com/rafaelrangel/demlab/-/tree/master/src
@@ -125,7 +126,7 @@ Moreover, a [template][modelparts_link] of this file, with all the possible inpu
 * **Project Parameters (_.json_)**: 
 
 This [JSON][json_link] file is necessary for running a simulation and must always be accompanied by a _Model_ _Parts_ file.
-The name of the _Model_ _Parts_ file must be indicated in this file.
+The name of the _Model_ _Parts_ file must be indicated in the Input Group ["ProblemData"][problem_data_link] of this file.
 
 It contains all the parameters and options for the analysis and outputs, as well as the conditions applied to the model.
 
