@@ -112,15 +112,6 @@ of the [Kratos Multiphysics][kratos_link] framework.
 
 There are three types of files that may be used as input for the program:
 
-* **Project Parameters (_.json_)**: 
-
-This [JSON][json_link] file is necessary for running a simulation and must always be accompanied by a _Model_ _Parts_ file.
-
-It contains all the parameters and options for the analysis and outputs, as well as the conditions applied to the model.
-
-A tutorial explaining each input field of this file can be found on its [Wiki page][wiki_parameters_link].
-Moreover, a [template][parameters_link] of this file, with all the possible input options, is available.
-
 * **Model Parts (_.txt_)**: 
 
 This text file is necessary for running a simulation and must always be accompanied by a _Project_ _Parameters_ file.
@@ -130,6 +121,16 @@ It contains all the elements of the model (particles and walls) with their initi
 
 A tutorial on this file can be found on its [Wiki page][wiki_mparts_link].
 Moreover, a [template][modelparts_link] of this file, with all the possible input options, is available.
+
+* **Project Parameters (_.json_)**: 
+
+This [JSON][json_link] file is necessary for running a simulation and must always be accompanied by a _Model_ _Parts_ file.
+The name of the _Model_ _Parts_ file must be indicated in this file.
+
+It contains all the parameters and options for the analysis and outputs, as well as the conditions applied to the model.
+
+A tutorial explaining each input field of this file can be found on its [Wiki page][wiki_parameters_link].
+Moreover, a [template][parameters_link] of this file, with all the possible input options, is available.
 
 * **Results Storage (_.mat_)**: 
 
