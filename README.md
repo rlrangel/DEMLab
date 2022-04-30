@@ -143,6 +143,7 @@ It can be loaded to show the results of previously run simulations, or used to r
 ### Running Simulations
 
 To run a simulation, launch MATLAB and execute the script file [*main.m*][main_file_link] located inside the folder [*src*][src_folder_link].
+
 A dialog box will pop up to select an appropriate _Project_ _Parameters_ file.
 Multiple _Project_ _Parameters_ files can be selected to run simulations sequentially, as long as they are located in the same directory.
 
