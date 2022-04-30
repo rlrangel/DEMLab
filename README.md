@@ -1,43 +1,3 @@
-[release_image]:        https://img.shields.io/badge/release-1.0-green.svg?style=flat
-[releases_link]:        https://gitlab.com/rafaelrangel/demlab/-/releases
-[license_image]:        https://img.shields.io/badge/license-MIT-green.svg?style=flat
-[license_link]:         https://gitlab.com/rafaelrangel/demlab/-/blob/master/LICENSE
-[code_conduct_image]:   https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
-[code_conduct_link]:    https://gitlab.com/rafaelrangel/demlab/-/blob/master/CODE_OF_CONDUCT.md
-[matlab_website]:       https://www.mathworks.com/
-[demapp_link]:          https://github.com/KratosMultiphysics/Kratos/tree/master/applications/DEMApplication
-[thermal_demapp_link]:  https://github.com/KratosMultiphysics/Kratos/tree/master/applications/ThermalDEMApplication
-[kratos_link]:          https://github.com/KratosMultiphysics/Kratos
-[json_link]:            https://www.json.org/
-[wiki_parameters_link]: https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file
-[wiki_mparts_link]:     https://gitlab.com/rafaelrangel/demlab/-/wikis/model-parts-file
-[wiki_link]:            https://gitlab.com/rafaelrangel/demlab/-/wikis/home
-[wiki_html_link]:       https://gitlab.com/rafaelrangel/demlab/-/wikis/classes-documentation
-[parameters_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ProjectParameters_template.json
-[modelparts_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ModelParts_template.txt
-[problem_data_link]:    https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file#problemdata
-[output_link]:          https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file#output
-[main_file_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/src/main.m
-[src_folder_link]:      https://gitlab.com/rafaelrangel/demlab/-/tree/master/src
-[run_tests_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/run_tests.m
-[upd_tests_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/update_results.m
-[tests_folder_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests
-[test_models_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests/test_models
-[examples_link]:        https://gitlab.com/rafaelrangel/demlab/-/tree/master/examples
-[issue_link]:           https://gitlab.com/rafaelrangel/demlab/-/issues/new
-[authors_link]:         https://gitlab.com/rafaelrangel/demlab#authorship
-[new_branch_link]:      https://gitlab.com/rafaelrangel/demlab/-/branches/new
-[merge_request_link]:   https://gitlab.com/rafaelrangel/demlab/-/merge_requests/new
-[cimne_website]:        https://www.cimne.com/
-[upc_website]:          https://camins.upc.edu/
-[mathegram_website]:    https://www.surrey.ac.uk/mathegram
-[mit_license_link]:     https://choosealicense.com/licenses/mit/
-[force_models_link]:    https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_ContactForceModels.pdf
-[heat_models_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_HeatTransferModels.pdf
-[help_folder_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/help
-[uml_link]:             https://www.uml.org/
-[html_folder_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/html
-
 # DEMLab - Discrete Element Method Laboratory
 
 <p align=center><img height="100.0%" width="100.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_demlab.png"></p>
@@ -263,3 +223,43 @@ a Marie Sklodowska-Curie Innovative Training Network of the European Union’s H
 DEMLab is licensed under the [MIT license][mit_license_link],
 which allows the program to be freely used by anyone for modification, private use, commercial use, and distribution, only requiring preservation of copyright and license notices.
 No liability and warranty are provided.
+
+[release_image]:        https://img.shields.io/badge/release-1.0-green.svg?style=flat
+[releases_link]:        https://gitlab.com/rafaelrangel/demlab/-/releases
+[license_image]:        https://img.shields.io/badge/license-MIT-green.svg?style=flat
+[license_link]:         https://gitlab.com/rafaelrangel/demlab/-/blob/master/LICENSE
+[code_conduct_image]:   https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
+[code_conduct_link]:    https://gitlab.com/rafaelrangel/demlab/-/blob/master/CODE_OF_CONDUCT.md
+[matlab_website]:       https://www.mathworks.com/
+[demapp_link]:          https://github.com/KratosMultiphysics/Kratos/tree/master/applications/DEMApplication
+[thermal_demapp_link]:  https://github.com/KratosMultiphysics/Kratos/tree/master/applications/ThermalDEMApplication
+[kratos_link]:          https://github.com/KratosMultiphysics/Kratos
+[json_link]:            https://www.json.org/
+[wiki_parameters_link]: https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file
+[wiki_mparts_link]:     https://gitlab.com/rafaelrangel/demlab/-/wikis/model-parts-file
+[wiki_link]:            https://gitlab.com/rafaelrangel/demlab/-/wikis/home
+[wiki_html_link]:       https://gitlab.com/rafaelrangel/demlab/-/wikis/classes-documentation
+[parameters_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ProjectParameters_template.json
+[modelparts_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ModelParts_template.txt
+[problem_data_link]:    https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file#problemdata
+[output_link]:          https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file#output
+[main_file_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/src/main.m
+[src_folder_link]:      https://gitlab.com/rafaelrangel/demlab/-/tree/master/src
+[run_tests_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/run_tests.m
+[upd_tests_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/update_results.m
+[tests_folder_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests
+[test_models_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests/test_models
+[examples_link]:        https://gitlab.com/rafaelrangel/demlab/-/tree/master/examples
+[issue_link]:           https://gitlab.com/rafaelrangel/demlab/-/issues/new
+[authors_link]:         https://gitlab.com/rafaelrangel/demlab#authorship
+[new_branch_link]:      https://gitlab.com/rafaelrangel/demlab/-/branches/new
+[merge_request_link]:   https://gitlab.com/rafaelrangel/demlab/-/merge_requests/new
+[cimne_website]:        https://www.cimne.com/
+[upc_website]:          https://camins.upc.edu/
+[mathegram_website]:    https://www.surrey.ac.uk/mathegram
+[mit_license_link]:     https://choosealicense.com/licenses/mit/
+[force_models_link]:    https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_ContactForceModels.pdf
+[heat_models_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_HeatTransferModels.pdf
+[help_folder_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/help
+[uml_link]:             https://www.uml.org/
+[html_folder_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/html
