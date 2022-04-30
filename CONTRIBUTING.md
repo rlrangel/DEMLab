@@ -21,7 +21,7 @@ It includes implementing a new feature, change an existing one, or fix a bug.
 
 To modify the source code or files, create a [new branch][new_branch_link] from the master branch, and work on that branch to make the modifications.
 
-Please check that all [tests](#testing) are passing after finishing the modifications to the source code.
+Please check that all [tests][tests_link] are passing after finishing the modifications to the source code.
 In addition, it is recommended to create new models for testing the implemented features.
 
 Always try to keep the code organized.
@@ -40,4 +40,5 @@ You can also contact the [authors][authors_link] by email to discuss the modific
 [issue_link]:         https://gitlab.com/rafaelrangel/demlab/-/issues/new
 [authors_link]:       https://gitlab.com/rafaelrangel/demlab#authorship
 [new_branch_link]:    https://gitlab.com/rafaelrangel/demlab/-/branches/new
+[tests_link]:         https://gitlab.com/rafaelrangel/demlab#testing
 [merge_request_link]: https://gitlab.com/rafaelrangel/demlab/-/merge_requests/new
