@@ -2,10 +2,6 @@
 [releases_link]:        https://gitlab.com/rafaelrangel/demlab/-/releases
 [license_image]:        https://img.shields.io/badge/license-MIT-green.svg?style=flat
 [license_link]:         https://gitlab.com/rafaelrangel/demlab/-/blob/master/LICENSE
-[file_exchange_image]:  https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg
-[file_exchange_link]:   https://www.mathworks.com/matlabcentral/fileexchange/69801-lesm-linear-elements-structure-model
-[zenodo_image]:         https://zenodo.org/badge/DOI/10.5281/zenodo.3234644.svg
-[zenodo_link]:          https://doi.org/10.5281/zenodo.3234644
 [matlab_website]:       https://www.mathworks.com/
 [demapp_link]:          https://github.com/KratosMultiphysics/Kratos/tree/master/applications/DEMApplication
 [thermal_demapp_link]:  https://github.com/KratosMultiphysics/Kratos/tree/master/applications/ThermalDEMApplication
@@ -40,7 +36,7 @@
 
 <p align=center><img height="100.0%" width="100.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_demlab.png"></p>
 
-[![Release][release_image]][releases_link] [![License][license_image]][license_link] [![FileExchange][file_exchange_image]][file_exchange_link] [![DOI][zenodo_image]][zenodo_link]
+[![Release][release_image]][releases_link] [![License][license_image]][license_link]
 
 DEMLab is a program for performing numerical simulations of particle systems using the Discrete Element Method (DEM).
 
@@ -154,11 +150,12 @@ Sub-folders with the names of the simulations, plus the suffix _"out"_, are crea
 ### Loading Results
 
 To load and show the results from previously run simulations, launch MATLAB and execute the script file [*main.m*][main_file_link] located inside the folder [*src*][src_folder_link].
+
 A dialog box will pop up to select an appropriate _Results_ _Storage_ file.
 Multiple _Results_ _Storage_ files can be selected to load and show results sequentially, as long as they are located in the same directory.
 
 To restart a simulation from the stored results, place its _Results_ _Storage_ file in the same directory of the _Project_ _Parameters_ file and run the simulation.
-The name of the _Results_ _Storage_ must be the same of the simulation name indicated in the _Project_ _Parameters_ file.
+The name of the _Results_ _Storage_ file must be the same of the simulation name indicated in the _Project_ _Parameters_ file.
 
 ### Testing
 
@@ -166,6 +163,7 @@ Recursive tests are available to verify that the program is working correctly an
 The reference results are stored in files with a _.pos_ extension.
 
 To run the tests, launch MATLAB and execute the script file [*run_tests.m*][run_tests_link] located inside the folder [*tests*][tests_folder_link].
+
 A dialog box will pop up to select the _Project_ _Parameters_ files of the tests to be run, located inside the sub-folder [*test_models*][test_models_link].
 The result of each test is then printed in the MATLAB command window.
 
@@ -202,7 +200,7 @@ are available inside the folder [*help*][help_folder_link].
 The OOP classes of the program are documented in [UML diagrams][uml_link] and their codes in HTML files, located inside the folder [*html*][html_folder_link].
 These files can be browsed on their [Wiki page][wiki_html_link].
 
-Tutorials explaining all the options of the program that can be added to the input files (_Project_ _Parameters_ and _Model_ _Parts_)
+Tutorials explaining all the options of the program that can be added to the input files (_Model_ _Parts_ and _Project_ _Parameters_)
 can also be found on the [Wiki page][wiki_link].
 
 ## How to Contribute
@@ -210,10 +208,6 @@ can also be found on the [Wiki page][wiki_link].
 New implementations can be made by anyone in separate branches.
 
 The merge of new developments into the master branch is subjected to the author's approval upon a **merge request**.
-
-## How to Cite
-
-Alejandro Cornejo Velázquez. (2022). KratosMultiphysics/Kratos: (v9.1.2). Zenodo. https://doi.org/10.5281/zenodo.6395887
 
 ## Authorship
 
