@@ -2,6 +2,8 @@
 [releases_link]:        https://gitlab.com/rafaelrangel/demlab/-/releases
 [license_image]:        https://img.shields.io/badge/license-MIT-green.svg?style=flat
 [license_link]:         https://gitlab.com/rafaelrangel/demlab/-/blob/master/LICENSE
+[code_conduct_image]:   https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
+[code_conduct_link]:    https://gitlab.com/rafaelrangel/demlab/-/blob/master/CODE_OF_CONDUCT.md
 [matlab_website]:       https://www.mathworks.com/
 [demapp_link]:          https://github.com/KratosMultiphysics/Kratos/tree/master/applications/DEMApplication
 [thermal_demapp_link]:  https://github.com/KratosMultiphysics/Kratos/tree/master/applications/ThermalDEMApplication
@@ -22,7 +24,6 @@
 [tests_folder_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests
 [test_models_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests/test_models
 [examples_link]:        https://gitlab.com/rafaelrangel/demlab/-/tree/master/examples
-[code_conduct_link]:    https://gitlab.com/rafaelrangel/demlab/-/blob/master/CODE_OF_CONDUCT.md
 [issue_link]:           https://gitlab.com/rafaelrangel/demlab/-/issues/new
 [authors_link]:         https://gitlab.com/rafaelrangel/demlab#authorship
 [new_branch_link]:      https://gitlab.com/rafaelrangel/demlab/-/branches/new
@@ -41,7 +42,7 @@
 
 <p align=center><img height="100.0%" width="100.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_demlab.png"></p>
 
-[![Release][release_image]][releases_link] [![License][license_image]][license_link]
+[![Release][release_image]][releases_link] [![License][license_image]][license_link] [![Contributor Covenant][code_conduct_image]][code_conduct_link]
 
 DEMLab is a program for performing numerical simulations of particle systems using the Discrete Element Method (DEM).
 
