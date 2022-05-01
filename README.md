@@ -173,7 +173,7 @@ Please check the [contribution guidelines][contribute_link].
 
 ## How to Cite
 
-Rafael L. Rangel. (2022). DEMLab: Discrete Element Method Laboratory (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.6509866
+Rangel, R. L. (2022). DEMLab: Discrete Element Method Laboratory (1.0.0). Zenodo. https://doi.org/10.5281/zenodo.6509866
 
 ## Authorship
 
