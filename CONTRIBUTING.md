@@ -1,6 +1,6 @@
 # Contributing to DEMLab
 
-Anyone is invited to contribute to the project in one of the ways described below.
+Anyone is welcome to contribute to the project in one of the ways described below.
 
 Please note that this project is released with a [Code of Conduct][code_conduct_link].
 By participating in this project you agree to abide by its terms.
