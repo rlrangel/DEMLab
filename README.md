@@ -171,6 +171,10 @@ can also be found on the [Wiki page][wiki_link].
 
 Please check the [contribution guidelines][contribute_link].
 
+## How to Cite
+
+Rafael L. Rangel. (2022). DEMLab: Discrete Element Method Laboratory (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.6509866
+
 ## Authorship
 
 - **Rafael Rangel** (<rrangel@cimne.upc.edu>)
