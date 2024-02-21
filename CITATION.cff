@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+title: "DEMLab: Discrete Element Method Laboratory"
+type: software
+authors:
+  - family-names: Rangel
+    given-names: Rafael L.
+version: 1.0.1
+date-released: "2024-02-22"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.6509865
+license: MIT
+repository-code: "https://github.com/rlrangel/DEMLab"

@@ -1,8 +1,8 @@
-# DEMLab - Discrete Element Method Laboratory
+# DEMLab: Discrete Element Method Laboratory
 
 <p align=center><img height="75.0%" width="75.0%" src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/logos/logo_demlab.png"></p>
 
-[![Release][release-image]][release] [![License][license-image]][license] [![Contributing][contributing-image]][contributing] [![Zenodo][zenodo-image]][zenodo] [![FileExchange][fileexchange-image]][fileexchange]
+[![Release][release-image]][release] [![License][license-image]][license] [![Contributing][contributing-image]][contributing] [![Doi][doi-image]][doi] [![FileExchange][fileexchange-image]][fileexchange]
 
 [release-image]: https://img.shields.io/badge/release-1.0.1-green.svg?style=flat
 [release]: https://github.com/rlrangel/DEMLab/releases
@@ -13,8 +13,8 @@
 [contributing-image]: https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
 [contributing]: https://github.com/rlrangel/DEMLab/blob/master/CONTRIBUTING.md
 
-[zenodo-image]: https://zenodo.org/badge/DOI/10.5281/zenodo.6509865.svg
-[zenodo]: https://doi.org/10.5281/zenodo.6509865
+[doi-image]: https://zenodo.org/badge/DOI/10.5281/zenodo.6509865.svg
+[doi]: https://zenodo.org/doi/10.5281/zenodo.6509865
 
 [fileexchange-image]: https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg
 [fileexchange]: https://www.mathworks.com/matlabcentral/fileexchange/110965-demlab
@@ -190,7 +190,7 @@ Please check the [contribution guidelines][contribute_link].
 
 ## How to Cite
 
-Rangel, R. L. (2022). DEMLab: Discrete Element Method Laboratory (1.0.0). Zenodo. https://doi.org/10.5281/zenodo.6509866
+Please cite this software using the metadata from [this file][citation_link].
 
 ## Authorship
 
@@ -244,6 +244,7 @@ No liability and warranty are provided.
 [test_models_link]:     https://github.com/rlrangel/DEMLab/tree/master/tests/test_models
 [examples_link]:        https://github.com/rlrangel/DEMLab/tree/master/examples
 [contribute_link]:      https://github.com/rlrangel/DEMLab/blob/master/CONTRIBUTING.md
+[citation_link]:        https://github.com/rlrangel/DEMLab/blob/master/CITATION.cff
 [cimne_website]:        https://www.cimne.com/
 [upc_website]:          https://camins.upc.edu/
 [mathegram_website]:    https://www.surrey.ac.uk/mathegram
