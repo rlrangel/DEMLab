@@ -204,7 +204,7 @@ Polytechnic University of Catalonia ([UPC BarcelonaTech][upc_website])
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <img src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/logos/logo_cimne.png" width="350"/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/logos/logo_upc.png" width="350"/> 
+<img src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/logos/logo_upc_new.png" width="350"/> 
 </p>
 
 ## Acknowledgement
