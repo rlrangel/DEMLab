@@ -190,7 +190,9 @@ Please check the [contribution guidelines][contribute_link].
 
 ## How to Cite
 
-Please cite this software using the metadata from [this file][citation_link].
+To cite this repository, you can use the metadata from [this file][citation_link].
+
+Alternatively, you can cite it through [Zenodo][zenodo_link].
 
 ## Authorship
 
@@ -245,6 +247,7 @@ No liability and warranty are provided.
 [examples_link]:        https://github.com/rlrangel/DEMLab/tree/master/examples
 [contribute_link]:      https://github.com/rlrangel/DEMLab/blob/master/CONTRIBUTING.md
 [citation_link]:        https://github.com/rlrangel/DEMLab/blob/master/CITATION.cff
+[zenodo_link]:          https://zenodo.org/doi/10.5281/zenodo.6509865
 [cimne_website]:        https://www.cimne.com/
 [upc_website]:          https://camins.upc.edu/
 [mathegram_website]:    https://www.surrey.ac.uk/mathegram
