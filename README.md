@@ -2,23 +2,20 @@
 
 <p align=center><img height="75.0%" width="75.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_demlab.png"></p>
 
-[![Release][release-image]][release]
+[![Release][release-image]][release] [![License][license-image]][license] [![Contributing][contributing-image]][contributing] [![Zenodo][zenodo-image]][zenodo] [![FileExchange][fileexchange-image]][fileexchange]
+
 [release-image]: https://img.shields.io/badge/release-1.0.0-green.svg?style=flat
 [release]: https://github.com/rlrangel/DEMLab/releases
 
-[![License][license-image]][license]
 [license-image]: https://img.shields.io/badge/license-MIT-green.svg?style=flat
 [license]: https://github.com/rlrangel/DEMLab/blob/master/LICENSE
 
-[![Contributing][contributing-image]][contributing]
 [contributing-image]: https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
 [contributing]: https://github.com/rlrangel/DEMLab/blob/master/CONTRIBUTING.md
 
-[![Zenodo][zenodo-image]][zenodo]
 [zenodo-image]: https://zenodo.org/badge/DOI/10.5281/zenodo.6509866.svg
 [zenodo]: https://doi.org/10.5281/zenodo.6509866
 
-[![FileExchange][fileexchange-image]][fileexchange]
 [fileexchange-image]: https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg
 [fileexchange]: https://www.mathworks.com/matlabcentral/fileexchange/110965-demlab
 
