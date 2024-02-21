@@ -1,9 +1,8 @@
 ---
 name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+about: Report a bug, problem, issue or a missing feature
+labels: bug
+assignees: rlrangel
 
 ---
 
@@ -18,21 +17,17 @@ Steps to reproduce the behavior:
 4. See error
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+A description of what you expected to happen.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**Environment (please complete the following information):**
+Please specify your operating system, MATLAB version, branch name, or any other environment information that you consider relevant.
+E.g.:
+- OS: Windows 10
+- MATLAB 2022b
+- Branch: master
 
 **Additional context**
 Add any other context about the problem here.
