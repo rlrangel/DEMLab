@@ -9,7 +9,7 @@ By participating in this project you agree to abide by its terms.
 
 It includes proposing a change/new feature or report a bug.
 
-Open an [issue][issue_link] through the GitLab interface.
+Open an [issue][issue_link] through the GitHub interface.
 
 Describe the proposal/bug clearly, preferably including reproducible examples, illustrations, or outputs.
 
