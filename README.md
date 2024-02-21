@@ -13,8 +13,8 @@
 [contributing-image]: https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
 [contributing]: https://github.com/rlrangel/DEMLab/blob/master/CONTRIBUTING.md
 
-[zenodo-image]: https://zenodo.org/badge/DOI/10.5281/zenodo.6509866.svg
-[zenodo]: https://doi.org/10.5281/zenodo.6509866
+[zenodo-image]: https://zenodo.org/badge/DOI/10.5281/zenodo.6509865.svg
+[zenodo]: https://doi.org/10.5281/zenodo.6509865
 
 [fileexchange-image]: https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg
 [fileexchange]: https://www.mathworks.com/matlabcentral/fileexchange/110965-demlab
