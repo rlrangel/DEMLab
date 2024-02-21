@@ -36,9 +36,9 @@ The merge of new branches into the master branch is subjected to the authors' ap
 
 You can also contact the [authors][authors_link] by email to discuss the modifications in advance.
 
-[code_conduct_link]:  https://gitlab.com/rafaelrangel/demlab/-/blob/master/CODE_OF_CONDUCT.md
-[issue_link]:         https://gitlab.com/rafaelrangel/demlab/-/issues/new
-[authors_link]:       https://gitlab.com/rafaelrangel/demlab#authorship
-[new_branch_link]:    https://gitlab.com/rafaelrangel/demlab/-/branches/new
-[tests_link]:         https://gitlab.com/rafaelrangel/demlab#testing
-[merge_request_link]: https://gitlab.com/rafaelrangel/demlab/-/merge_requests/new
+[code_conduct_link]:  https://github.com/rlrangel/DEMLab/blob/master/CODE_OF_CONDUCT.md
+[issue_link]:         https://github.com/rlrangel/DEMLab/issues
+[authors_link]:       https://github.com/rlrangel/DEMLab#authorship
+[new_branch_link]:    https://github.com/rlrangel/DEMLab/branches
+[tests_link]:         https://github.com/rlrangel/DEMLab#testing
+[merge_request_link]: https://github.com/rlrangel/DEMLab/pulls
