@@ -1,6 +1,6 @@
 # DEMLab - Discrete Element Method Laboratory
 
-<p align=center><img height="75.0%" width="75.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_demlab.png"></p>
+<p align=center><img height="75.0%" width="75.0%" src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/logos/logo_demlab.png"></p>
 
 [![Release][release-image]][release] [![License][license-image]][license] [![Contributing][contributing-image]][contributing] [![Zenodo][zenodo-image]][zenodo] [![FileExchange][fileexchange-image]][fileexchange]
 
@@ -160,17 +160,17 @@ They are separated into different sub-folders according to their analysis type,
 and each example has its _Project_ _Parameters_ and _Model_ _Parts_ files, as well as some results in the output sub-folders.
 
 <p align=center>
-<img height="100.0%" width="31.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_01.png">
+<img height="100.0%" width="31.0%" src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/examples/example_01.png">
 &nbsp;&nbsp;
-<img height="100.0%" width="34.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_02.png">
+<img height="100.0%" width="34.0%" src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/examples/example_02.png">
 &nbsp;&nbsp;
-<img height="100.0%" width="25.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_03.png">
+<img height="100.0%" width="25.0%" src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/examples/example_03.png">
 </p>
 
 <p align=center>
-<img height="100.0%" width="30.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_04.png">
-<img height="100.0%" width="33.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_05.png">
-<img height="100.0%" width="33.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/examples/example_06.png">
+<img height="100.0%" width="30.0%" src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/examples/example_04.png">
+<img height="100.0%" width="33.0%" src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/examples/example_05.png">
+<img height="100.0%" width="33.0%" src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/examples/example_06.png">
 </p>
 
 ## Documentation
@@ -202,9 +202,9 @@ Polytechnic University of Catalonia ([UPC BarcelonaTech][upc_website])
 
 <p float="left">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_cimne.png" width="350"/>
+<img src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/logos/logo_cimne.png" width="350"/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_upc.png" width="350"/> 
+<img src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/logos/logo_upc.png" width="350"/> 
 </p>
 
 ## Acknowledgement
@@ -214,7 +214,7 @@ a Marie Sklodowska-Curie Innovative Training Network of the European Union’s H
 
 <p float="left">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_mathegram.png" width="600"/>
+<img src="https://github.com/rlrangel/DEMLab/blob/master/docs/images/logos/logo_mathegram.png" width="600"/>
 </p>
 
 ## License
@@ -228,28 +228,28 @@ No liability and warranty are provided.
 [thermal_demapp_link]:  https://github.com/KratosMultiphysics/Kratos/tree/master/applications/ThermalDEMApplication
 [kratos_link]:          https://github.com/KratosMultiphysics/Kratos
 [json_link]:            https://www.json.org/
-[wiki_parameters_link]: https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file
-[wiki_mparts_link]:     https://gitlab.com/rafaelrangel/demlab/-/wikis/model-parts-file
-[wiki_link]:            https://gitlab.com/rafaelrangel/demlab/-/wikis/home
-[wiki_html_link]:       https://gitlab.com/rafaelrangel/demlab/-/wikis/classes-documentation
-[parameters_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ProjectParameters_template.json
-[modelparts_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/ModelParts_template.txt
-[problem_data_link]:    https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file#problemdata
-[output_link]:          https://gitlab.com/rafaelrangel/demlab/-/wikis/project-parameters-file#output
-[main_file_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/src/main.m
-[src_folder_link]:      https://gitlab.com/rafaelrangel/demlab/-/tree/master/src
-[run_tests_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/run_tests.m
-[upd_tests_link]:       https://gitlab.com/rafaelrangel/demlab/-/blob/master/tests/update_results.m
-[tests_folder_link]:    https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests
-[test_models_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/tests/test_models
-[examples_link]:        https://gitlab.com/rafaelrangel/demlab/-/tree/master/examples
-[contribute_link]:      https://gitlab.com/rafaelrangel/demlab/-/blob/master/CONTRIBUTING.md
+[wiki_parameters_link]: https://github.com/rlrangel/DEMLab/wiki/Project-Parameters-File
+[wiki_mparts_link]:     https://github.com/rlrangel/DEMLab/wiki/Model-Parts-File
+[wiki_link]:            https://github.com/rlrangel/DEMLab/wiki
+[wiki_html_link]:       https://github.com/rlrangel/DEMLab/wiki/Classes-Documentation
+[parameters_link]:      https://github.com/rlrangel/DEMLab/blob/master/docs/help/ProjectParameters_template.json
+[modelparts_link]:      https://github.com/rlrangel/DEMLab/blob/master/docs/help/ModelParts_template.txt
+[problem_data_link]:    https://github.com/rlrangel/DEMLab/wiki/Project-Parameters-File#problemdata
+[output_link]:          https://github.com/rlrangel/DEMLab/wiki/Project-Parameters-File#output
+[main_file_link]:       https://github.com/rlrangel/DEMLab/blob/master/src/main.m
+[src_folder_link]:      https://github.com/rlrangel/DEMLab/tree/master/src
+[run_tests_link]:       https://github.com/rlrangel/DEMLab/blob/master/tests/run_tests.m
+[upd_tests_link]:       https://github.com/rlrangel/DEMLab/blob/master/tests/update_results.m
+[tests_folder_link]:    https://github.com/rlrangel/DEMLab/tree/master/tests
+[test_models_link]:     https://github.com/rlrangel/DEMLab/tree/master/tests/test_models
+[examples_link]:        https://github.com/rlrangel/DEMLab/tree/master/examples
+[contribute_link]:      https://github.com/rlrangel/DEMLab/blob/master/CONTRIBUTING.md
 [cimne_website]:        https://www.cimne.com/
 [upc_website]:          https://camins.upc.edu/
 [mathegram_website]:    https://www.surrey.ac.uk/mathegram
 [mit_license_link]:     https://choosealicense.com/licenses/mit/
-[force_models_link]:    https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_ContactForceModels.pdf
-[heat_models_link]:     https://gitlab.com/rafaelrangel/demlab/-/blob/master/docs/help/DEM_HeatTransferModels.pdf
-[help_folder_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/help
+[force_models_link]:    https://github.com/rlrangel/DEMLab/blob/master/docs/help/DEM_ContactForceModels.pdf
+[heat_models_link]:     https://github.com/rlrangel/DEMLab/blob/master/docs/help/DEM_HeatTransferModels.pdf
+[help_folder_link]:     https://github.com/rlrangel/DEMLab/tree/master/docs/help
 [uml_link]:             https://www.uml.org/
-[html_folder_link]:     https://gitlab.com/rafaelrangel/demlab/-/tree/master/docs/html
+[html_folder_link]:     https://github.com/rlrangel/DEMLab/tree/master/docs/html
