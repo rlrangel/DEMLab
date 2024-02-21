@@ -29,16 +29,16 @@ It includes choosing clear and representative names for functions and variables,
 paying attention to alignments and spacing,
 and avoiding leaving unused code blocks as comments.
 
-After the implementations are complete, make a [merge request][merge_request_link].
+After the implementations are complete, make a [pull request][pull_request_link].
 You should clearly describe the modifications and their purposes in order to facilitate understanding by others.
 
 The merge of new branches into the master branch is subjected to the authors' approval.
 
 You can also contact the [authors][authors_link] by email to discuss the modifications in advance.
 
-[code_conduct_link]:  https://github.com/rlrangel/DEMLab/blob/master/CODE_OF_CONDUCT.md
-[issue_link]:         https://github.com/rlrangel/DEMLab/issues
-[authors_link]:       https://github.com/rlrangel/DEMLab#authorship
-[new_branch_link]:    https://github.com/rlrangel/DEMLab/branches
-[tests_link]:         https://github.com/rlrangel/DEMLab#testing
-[merge_request_link]: https://github.com/rlrangel/DEMLab/pulls
+[code_conduct_link]: https://github.com/rlrangel/DEMLab/blob/master/CODE_OF_CONDUCT.md
+[issue_link]:        https://github.com/rlrangel/DEMLab/issues
+[authors_link]:      https://github.com/rlrangel/DEMLab#authorship
+[new_branch_link]:   https://github.com/rlrangel/DEMLab/branches
+[tests_link]:        https://github.com/rlrangel/DEMLab#testing
+[pull_request_link]: https://github.com/rlrangel/DEMLab/pulls
