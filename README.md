@@ -1,6 +1,26 @@
 # DEMLab - Discrete Element Method Laboratory
 
-<p align=center><img height="100.0%" width="100.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_demlab.png"></p>
+<p align=center><img height="75.0%" width="75.0%" src="https://gitlab.com/rafaelrangel/demlab/-/raw/master/docs/images/logos/logo_demlab.png"></p>
+
+[![Release][release-image]][release]
+[release-image]: https://img.shields.io/badge/release-1.0.0-green.svg?style=flat
+[release]: https://github.com/rlrangel/DEMLab/releases
+
+[![License][license-image]][license]
+[license-image]: https://img.shields.io/badge/license-MIT-green.svg?style=flat
+[license]: https://github.com/rlrangel/DEMLab/blob/master/LICENSE
+
+[![Contributing][contributing-image]][contributing]
+[contributing-image]: https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
+[contributing]: https://github.com/rlrangel/DEMLab/blob/master/CONTRIBUTING.md
+
+[![Zenodo][zenodo-image]][zenodo]
+[zenodo-image]: https://zenodo.org/badge/DOI/10.5281/zenodo.6509866.svg
+[zenodo]: https://doi.org/10.5281/zenodo.6509866
+
+[![FileExchange][fileexchange-image]][fileexchange]
+[fileexchange-image]: https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg
+[fileexchange]: https://www.mathworks.com/matlabcentral/fileexchange/110965-demlab
 
 DEMLab is a MATLAB program for performing numerical simulations of particle systems using the Discrete Element Method (DEM).
 
