@@ -4,7 +4,7 @@
 
 [![Release][release-image]][release] [![License][license-image]][license] [![Contributing][contributing-image]][contributing] [![Zenodo][zenodo-image]][zenodo] [![FileExchange][fileexchange-image]][fileexchange]
 
-[release-image]: https://img.shields.io/badge/release-1.0.0-green.svg?style=flat
+[release-image]: https://img.shields.io/badge/release-1.0.1-green.svg?style=flat
 [release]: https://github.com/rlrangel/DEMLab/releases
 
 [license-image]: https://img.shields.io/badge/license-MIT-green.svg?style=flat
