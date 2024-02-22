@@ -13,8 +13,8 @@
 [contributing-image]: https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
 [contributing]: https://github.com/rlrangel/DEMLab/blob/master/CONTRIBUTING.md
 
-[doi-image]: https://zenodo.org/badge/DOI/10.5281/zenodo.6509865.svg
-[doi]: https://zenodo.org/doi/10.5281/zenodo.6509865
+[doi-image]: https://zenodo.org/badge/DOI/10.5281/zenodo.10689851.svg
+[doi]: https://zenodo.org/doi/10.5281/zenodo.10689851
 
 [fileexchange-image]: https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg
 [fileexchange]: https://www.mathworks.com/matlabcentral/fileexchange/110965-demlab
@@ -247,7 +247,7 @@ No liability and warranty are provided.
 [examples_link]:        https://github.com/rlrangel/DEMLab/tree/master/examples
 [contribute_link]:      https://github.com/rlrangel/DEMLab/blob/master/CONTRIBUTING.md
 [citation_link]:        https://github.com/rlrangel/DEMLab/blob/master/CITATION.cff
-[zenodo_link]:          https://zenodo.org/doi/10.5281/zenodo.6509865
+[zenodo_link]:          https://zenodo.org/doi/10.5281/zenodo.10689851
 [cimne_website]:        https://www.cimne.com/
 [upc_website]:          https://camins.upc.edu/
 [mathegram_website]:    https://www.surrey.ac.uk/mathegram

@@ -9,6 +9,6 @@ version: 1.0.1
 date-released: "2024-02-22"
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.6509865
+    value: 10.5281/zenodo.10689851
 license: MIT
 repository-code: "https://github.com/rlrangel/DEMLab"
