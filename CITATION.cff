@@ -6,9 +6,9 @@ authors:
   - family-names: Rangel
     given-names: Rafael L.
 version: 1.0.1
-date-released: "2024-02-22"
+date-released: "2024-02-24"
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.10689851
+    value: 10.5281/zenodo.6509865
 license: MIT
 repository-code: "https://github.com/rlrangel/DEMLab"
