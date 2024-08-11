@@ -190,7 +190,9 @@ Please check the [contribution guidelines][contribute_link].
 
 ## How to Cite
 
-If you use this software, please cite it through this [article][article_link].
+If you use this software, please cite it through this [article][article_link]:
+
+R.L. Rangel, "DEMLab: A Discrete Element Method development environment". _Software_ _Impacts_, Vol. 21, 100670, 2024.
 
 ## Authorship
 
