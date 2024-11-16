@@ -35,7 +35,7 @@ classdef Driver_Thermal < Driver
             this.alpha       = inf; % convex hull
             this.por_freq    = NaN; % never compute
             this.vor_freq    = NaN; % never compute
-            this.workers     = parcluster('local').NumWorkers; % max. available
+            this.workers     = 1; % parcluster('local').NumWorkers;
             this.nprog       = 1;
             this.nout        = 100;
             % Vectors

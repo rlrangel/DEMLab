@@ -42,7 +42,7 @@ classdef Driver_Mechanical < Driver
             this.por_freq    = NaN; % never compute
             this.vor_freq    = NaN; % never compute
             this.eval_freq   = 1;   % always compute
-            this.workers     = parcluster('local').NumWorkers; % max. available
+            this.workers     = 1; % parcluster('local').NumWorkers;
             this.nprog       = 1;
             this.nout        = 100;
             % Vectors
