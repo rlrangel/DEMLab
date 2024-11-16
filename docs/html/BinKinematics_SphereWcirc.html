@@ -1,13 +1,18 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>BinKinematics_SphereWcirc class</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-19"><meta name="DC.source" content="BinKinematics_SphereWcirc.m"><style type="text/css">
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+      -->
+<title>BinKinematics_SphereWcirc class</title>
+<meta name="generator" content="MATLAB 23.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-11-16">
+<meta name="DC.source" content="BinKinematics_SphereWcirc.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
 html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
@@ -23,7 +28,7 @@ a:visited { color:#004aa0; text-decoration:none; }
 
 p { padding:0px; margin:0px 0px 20px; }
 img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
 
 ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
 ul li { padding:0px; margin:0px 0px 7px 0px; }
@@ -52,6 +57,7 @@ span.comment { color:#228B22 }
 span.string { color:#A020F0 }
 span.untermstring { color:#B20000 }
 span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
 
 .footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
 .footer p { margin:0px; }
@@ -66,16 +72,49 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>BinKinematics_SphereWcirc class</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Public properties</a></li><li><a href="#3">Constructor method</a></li><li><a href="#4">Public methods: implementation of super-class declarations</a></li></ul></div><h2 id="1">Description</h2><p>This is a sub-class of the <a href="BinKinematics.html">BinKinematics</a> class for the implementation of the <b>Sphere-Wall Circle</b> binary kinematics for particle-wall interactions of types <a href="Particle_Sphere.html">Particle Sphere</a> and <a href="Wall_Circle.html">Wall Circle</a>.</p><pre class="codeinput"><span class="keyword">classdef</span> BinKinematics_SphereWcirc &lt; BinKinematics
-</pre><h2 id="2">Public properties</h2><pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
+  </style>
+</head>
+<body>
+<div class="content">
+<h1>BinKinematics_SphereWcirc class</h1>
+<!--introduction-->
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Description</a>
+</li>
+<li>
+<a href="#2">Public properties</a>
+</li>
+<li>
+<a href="#3">Constructor method</a>
+</li>
+<li>
+<a href="#4">Public methods: implementation of super-class declarations</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Description</h2>
+<p>This is a sub-class of the <a href="BinKinematics.html">BinKinematics</a> class for the implementation of the <b>Sphere-Wall Circle</b> binary kinematics for particle-wall interactions of types <a href="Particle_Sphere.html">Particle Sphere</a> and <a href="Wall_Circle.html">Wall Circle</a>.</p>
+<pre class="codeinput">
+<span class="keyword">classdef</span> BinKinematics_SphereWcirc &lt; BinKinematics
+</pre>
+<h2 id="2">Public properties</h2>
+<pre class="codeinput">    properties (SetAccess = public, GetAccess = public)
         inside <span class="string">logical</span> <span class="string">=</span> <span class="string">logical.empty</span>;   <span class="comment">% flag for particle inside the circular wall</span>
     <span class="keyword">end</span>
-</pre><h2 id="3">Constructor method</h2><pre class="codeinput">    methods
+</pre>
+<h2 id="3">Constructor method</h2>
+<pre class="codeinput">    methods
         <span class="keyword">function</span> this = BinKinematics_SphereWcirc()
             this = this@BinKinematics(BinKinematics.PARTICLE_WALL,BinKinematics.SPHERE_WALL_CIRCLE);
         <span class="keyword">end</span>
     <span class="keyword">end</span>
-</pre><h2 id="4">Public methods: implementation of super-class declarations</h2><pre class="codeinput">    methods
+</pre>
+<h2 id="4">Public methods: implementation of super-class declarations</h2>
+<pre class="codeinput">    methods
         <span class="comment">%------------------------------------------------------------------</span>
         <span class="keyword">function</span> setEffParams(~,int)
             p  = int.elem1;  w  = int.elem2;
@@ -95,7 +134,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
                     <span class="keyword">end</span>
                 <span class="keyword">end</span>
                 <span class="keyword">if</span> (~isempty(mp.shear) &amp;&amp; ~isempty(mp.poisson))
-                    int.eff_shear = mp.shear / (2 - mp.poisson^2);
+                    int.eff_shear = mp.shear / (2 - mp.poisson);
                 <span class="keyword">end</span>
                 <span class="keyword">if</span> (~isempty(mp.poisson))
                     int.avg_poisson = mp.poisson;
@@ -114,7 +153,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
                     <span class="keyword">end</span>
                 <span class="keyword">end</span>
                 <span class="keyword">if</span> (~isempty(mp.shear) &amp;&amp; ~isempty(mp.poisson) &amp;&amp; ~isempty(mw.shear) &amp;&amp; ~isempty(mw.poisson))
-                    int.eff_shear = 1 / ((2-mp.poisson^2)/mp.shear + (2-mw.poisson^2)/mw.shear);
+                    int.eff_shear = 1 / ((2-mp.poisson)/mp.shear + (2-mw.poisson)/mw.shear);
                 <span class="keyword">end</span>
                 <span class="keyword">if</span> (~isempty(mp.poisson) &amp;&amp; ~isempty(mw.poisson))
                     int.avg_poisson = (mp.poisson + mw.poisson) / 2;
@@ -272,8 +311,17 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
             int.elem1.heat_rate = int.elem1.heat_rate + int.iconduc.total_hrate;
         <span class="keyword">end</span>
     <span class="keyword">end</span>
-</pre><pre class="codeinput"><span class="keyword">end</span>
-</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+</pre>
+<pre class="codeinput">
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023b</a>
+<br>
+</p>
+</div>
+<!--
 ##### SOURCE BEGIN #####
 %% BinKinematics_SphereWcirc class
 %
@@ -319,7 +367,7 @@ classdef BinKinematics_SphereWcirc < BinKinematics
                     end
                 end
                 if (~isempty(mp.shear) && ~isempty(mp.poisson))
-                    int.eff_shear = mp.shear / (2 - mp.poisson^2);
+                    int.eff_shear = mp.shear / (2 - mp.poisson);
                 end
                 if (~isempty(mp.poisson))
                     int.avg_poisson = mp.poisson;
@@ -338,7 +386,7 @@ classdef BinKinematics_SphereWcirc < BinKinematics
                     end
                 end
                 if (~isempty(mp.shear) && ~isempty(mp.poisson) && ~isempty(mw.shear) && ~isempty(mw.poisson))
-                    int.eff_shear = 1 / ((2-mp.poisson^2)/mp.shear + (2-mw.poisson^2)/mw.shear);
+                    int.eff_shear = 1 / ((2-mp.poisson)/mp.shear + (2-mw.poisson)/mw.shear);
                 end
                 if (~isempty(mp.poisson) && ~isempty(mw.poisson))
                     int.avg_poisson = (mp.poisson + mw.poisson) / 2;
@@ -498,4 +546,6 @@ classdef BinKinematics_SphereWcirc < BinKinematics
     end
 end
 ##### SOURCE END #####
---></body></html>
+-->
+</body>
+</html>
