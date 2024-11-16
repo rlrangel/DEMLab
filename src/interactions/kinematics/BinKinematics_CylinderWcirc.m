@@ -42,7 +42,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
                     end
                 end
                 if (~isempty(mp.shear) && ~isempty(mp.poisson))
-                    int.eff_shear = mp.shear / (2 - mp.poisson^2);
+                    int.eff_shear = mp.shear / (2 - mp.poisson);
                 end
                 if (~isempty(mp.poisson))
                     int.avg_poisson = mp.poisson;
@@ -61,7 +61,7 @@ classdef BinKinematics_CylinderWcirc < BinKinematics
                     end
                 end
                 if (~isempty(mp.shear) && ~isempty(mp.poisson) && ~isempty(mw.shear) && ~isempty(mw.poisson))
-                    int.eff_shear = 1 / ((2-mp.poisson^2)/mp.shear + (2-mw.poisson^2)/mw.shear);
+                    int.eff_shear = 1 / ((2-mp.poisson)/mp.shear + (2-mw.poisson)/mw.shear);
                 end
                 if (~isempty(mp.poisson) && ~isempty(mw.poisson))
                     int.avg_poisson = (mp.poisson + mw.poisson) / 2;

@@ -41,7 +41,7 @@ classdef BinKinematics_CylinderCylinder < BinKinematics
                 end
             end
             if (~isempty(m1.shear) && ~isempty(m1.poisson) && ~isempty(m2.shear) && ~isempty(m2.poisson))
-                int.eff_shear = 1 / ((2-m1.poisson^2)/m1.shear + (2-m2.poisson^2)/m2.shear);
+                int.eff_shear = 1 / ((2-m1.poisson)/m1.shear + (2-m2.poisson)/m2.shear);
             end
             if (~isempty(m1.poisson) && ~isempty(m2.poisson))
                 int.avg_poisson = (m1.poisson + m2.poisson) / 2;
